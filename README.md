@@ -20,7 +20,7 @@
 | [Diagramma UML iniziale di model e controller](deliverables/initial-uml.png)  | :white_check_mark: |
 
 ## Funzionalità avanzate
-| **Funzionalità** | Realizzazione |
-|------------------|---------------|
-| Chat             | :x:           |
-| Persistenza      | :x:           |
+| Funzionalità | Realizzazione |
+|--------------|---------------|
+| Chat         | :x:           |
+| Persistenza  | :x:           |
