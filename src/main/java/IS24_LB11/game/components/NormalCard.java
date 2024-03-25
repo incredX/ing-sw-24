@@ -30,8 +30,8 @@ public class NormalCard implements PlayableCard {
         frontCorners = new Corners(id);
         mainSuit = Suit.fromCharacter(id.charAt(4));
         char charFace = id.charAt(5);
-        if (charFace == 'b' || charFace == 'f') {
-            faceDown = charFace == 'b';
+        if (charFace == 'B' || charFace == 'F') {
+            faceDown = charFace == 'B';
         } else {
             throw new SyntaxException(String.format(Symbol.INVALID_CHAR_MSG, charFace));
         }
@@ -49,7 +49,7 @@ public class NormalCard implements PlayableCard {
         String str = "R";
         str += frontCorners.asString();
         str += Symbol.toChar(mainSuit);
-        str += (faceDown) ? 'b' : 'f';
+        str += (faceDown) ? 'B' : 'F';
         str += points;
         return str;
     }

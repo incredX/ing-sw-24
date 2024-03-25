@@ -13,7 +13,7 @@ public enum Suit implements Symbol {
         if (c == 'F') return MUSHROOM;
         if (c == 'I') return INSECT;
         if (c == 'P') return PLANT;
-        if (c == '_') return null;
+        if (c == Symbol.nullChar) return null;
         throw new SyntaxException(String.format(Symbol.INVALID_CHAR_MSG, c));
     }
 
