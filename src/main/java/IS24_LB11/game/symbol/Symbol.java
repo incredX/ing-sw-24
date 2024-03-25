@@ -4,7 +4,7 @@ import IS24_LB11.game.utils.SyntaxException;
 
 public interface Symbol {
     String INVALID_CHAR_MSG = "invalid char ('%c')";
-    Character nullChar = ' ';
+    Character nullChar = '_';
 
     //Character getChar();
 
