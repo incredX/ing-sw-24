@@ -3,20 +3,10 @@ package IS24_LB11.game.symbol;
 import IS24_LB11.game.utils.SyntaxException;
 
 public enum Suit implements Symbol {
-    ANIMAL ('A'),
-    MUSHROOM ('F'),
-    INSECT ('I'),
-    PLANT ('P');
-
-    private final Character symbol;
-
-    Suit(Character symbol) {
-        this.symbol = symbol;
-    }
-
-    public Character getSymbol() {
-        return symbol;
-    }
+    ANIMAL,
+    MUSHROOM,
+    INSECT,
+    PLANT;
 
     public static Suit fromCharacter(Character c) throws SyntaxException {
         if (c == 'A') return ANIMAL;

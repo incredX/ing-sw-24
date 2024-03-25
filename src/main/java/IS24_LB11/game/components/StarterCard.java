@@ -35,7 +35,7 @@ public class StarterCard extends NormalCard {
 
     public String asString() {
         String str = super.asString();
-        str += centralSuits.stream().map(s -> s.getSymbol().toString()).reduce("", (acc, s) -> acc+s);
+        str += centralSuits.stream().map(s -> Symbol.toChar(s).toString()).reduce("", (acc, s) -> acc+s);
         str += backCorners.asString();
         return str;
     }
@@ -43,7 +43,7 @@ public class StarterCard extends NormalCard {
     @Override
     public void updateCounters(HashMap<Symbol, Integer> counters) {
         if (faceDown) {
-            backCorners.updateCorners(counters);
+            backCorners.updateCounters(counters);
         }
         centralSuits.forEach(symbol -> counters.computeIfPresent(symbol, ((s, cnt) -> cnt+1)));
     }

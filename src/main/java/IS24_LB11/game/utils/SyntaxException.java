@@ -17,7 +17,7 @@ public class SyntaxException extends Exception {
     }
 
     public SyntaxException addContext(String context) {
-        this.context += context;
+        this.context += " " + context;
         return this;
     }
 

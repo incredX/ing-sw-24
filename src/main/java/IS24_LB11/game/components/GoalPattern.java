@@ -9,12 +9,12 @@ public class GoalPattern extends GoalSymbol {
 
     public GoalPattern(String id) throws SyntaxException {
         super(id);
-        if (id.length() < 10) {
+        if (id.length() < 7) {
             throw new SyntaxException(String.format(SHORT_ID_MSG, id));
         }
-        char c8 = id.charAt(8);
+        char c8 = id.charAt(6);
 
-        variant = id.charAt(7);
+        variant = id.charAt(5);
         dir = c8 - '0';
 
         if (dir < 0 || dir > 9) {
@@ -26,7 +26,7 @@ public class GoalPattern extends GoalSymbol {
                 throw new SyntaxException(String.format(INVALID_DIGIT_MSG, c8))
                         .addContext("(expected a digit in range 0..=3)");
             }
-        } else if (variant == 'X') {
+        } else if (variant == 'D') {
             if (dir >= 2) {
                 throw new SyntaxException(String.format(INVALID_DIGIT_MSG, c8))
                         .addContext("(expected a digit in range 0..=2)");
@@ -42,4 +42,8 @@ public class GoalPattern extends GoalSymbol {
         str += "P" + variant + dir;
         return str;
     }
+
+    public char getVariant() { return variant; }
+
+    public int getDir() { return dir; }
 }
