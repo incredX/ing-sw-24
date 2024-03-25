@@ -2,7 +2,6 @@ package IS24_LB11.game.components;
 
 import IS24_LB11.game.symbol.Suit;
 import IS24_LB11.game.symbol.Symbol;
-import IS24_LB11.game.symbol.SymbolFactory;
 import IS24_LB11.game.utils.SyntaxException;
 
 import java.util.ArrayList;
@@ -26,7 +25,7 @@ public class GoldenCard extends NormalCard {
         if (id.length() < 9) {
             throw new SyntaxException(String.format(SHORT_ID_MSG, id));
         }
-        pointsCondition = SymbolFactory.fromCharacter(id.charAt(7));
+        pointsCondition = Symbol.fromChar(id.charAt(7));
         suitsNeeded = new ArrayList<>();
         for (int i = 8; i < id.length(); i++) {
             suitsNeeded.add(Suit.fromCharacter(id.charAt(i)));
@@ -36,8 +35,8 @@ public class GoldenCard extends NormalCard {
     @Override
     public String asString() {
         String str = super.asString();
-        str += pointsCondition.getSymbol();
-        str += suitsNeeded.stream().map(s -> s.getSymbol().toString()).reduce("", (acc, s) -> acc+s);
+        str += Symbol.toChar(pointsCondition);
+        str += suitsNeeded.stream().map(s -> Symbol.toChar(s).toString()).reduce("", (acc, s) -> acc+s);
         return str;
     }
 

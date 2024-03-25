@@ -2,22 +2,12 @@ package IS24_LB11.game.symbol;
 
 import IS24_LB11.game.utils.SyntaxException;
 
-public enum CodexObj implements Symbol {
-    QUILL('Q'),
-    INKWELL('K'),
-    MANUSCRIPT('M');
+public enum Item implements Symbol {
+    QUILL,
+    INKWELL,
+    MANUSCRIPT;
 
-    private final Character symbol;
-
-    CodexObj(Character symbol) {
-        this.symbol = symbol;
-    }
-
-    public Character getSymbol() {
-        return symbol;
-    }
-
-    public static CodexObj fromCharacter(Character c) throws SyntaxException {
+    public static Item fromCharacter(Character c) throws SyntaxException {
         if (c == 'Q') return QUILL;
         if (c == 'K') return INKWELL;
         if (c == 'M') return MANUSCRIPT;

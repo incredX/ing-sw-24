@@ -1,13 +1,13 @@
 package IS24_LB11.game.components;
 
-import IS24_LB11.game.symbol.EmptySymbol;
+import IS24_LB11.game.symbol.Empty;
 import IS24_LB11.game.symbol.Suit;
 import IS24_LB11.game.symbol.Symbol;
 import IS24_LB11.game.utils.*;
 
 import java.util.HashMap;
 
-public class NormalCard implements Card {
+public class NormalCard implements PlayableCard {
     protected final Suit mainSuit;
     protected final Corners frontCorners;
     protected boolean faceDown;
@@ -30,8 +30,8 @@ public class NormalCard implements Card {
         frontCorners = new Corners(id);
         mainSuit = Suit.fromCharacter(id.charAt(4));
         char charFace = id.charAt(5);
-        if (charFace == 'b' || charFace == 'f') {
-            faceDown = charFace == 'b';
+        if (charFace == 'B' || charFace == 'F') {
+            faceDown = charFace == 'B';
         } else {
             throw new SyntaxException(String.format(Symbol.INVALID_CHAR_MSG, charFace));
         }
@@ -48,8 +48,8 @@ public class NormalCard implements Card {
     public String asString() {
         String str = "R";
         str += frontCorners.asString();
-        str += mainSuit.getSymbol();
-        str += (faceDown) ? 'b' : 'f';
+        str += Symbol.toChar(mainSuit);
+        str += (faceDown) ? 'B' : 'F';
         str += points;
         return str;
     }
@@ -58,7 +58,7 @@ public class NormalCard implements Card {
         if (faceDown) {
             counters.computeIfPresent(mainSuit, ((symbol, integer) -> integer+1));
         }
-        frontCorners.updateCorners(counters);
+        frontCorners.updateCounters(counters);
     }
 
     public void flip() {
@@ -68,7 +68,7 @@ public class NormalCard implements Card {
     public Symbol getSuit() { return mainSuit; }
 
     public Symbol getCorner(int dir) {
-        if (faceDown) return new EmptySymbol();
+        if (faceDown) return Empty.symbol();
         return frontCorners.getCorner(dir);
     }
 
