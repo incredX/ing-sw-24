@@ -1,7 +1,7 @@
 package IS24_LB11.game.utils;
 
-import org.wasd.game.symbol.Symbol;
-import org.wasd.game.symbol.SymbolFactory;
+import IS24_LB11.game.symbol.Symbol;
+import IS24_LB11.game.symbol.SymbolFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -1,6 +1,6 @@
 package IS24_LB11.game.symbol;
 
-import org.wasd.game.utils.SyntaxException;
+import IS24_LB11.game.utils.SyntaxException;
 
 public enum CodexObj implements Symbol {
     QUILL('Q'),

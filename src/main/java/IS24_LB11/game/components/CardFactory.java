@@ -1,8 +1,8 @@
 package IS24_LB11.game.components;
 
-import org.wasd.game.utils.SerialObject;
-import org.wasd.game.symbol.Symbol;
-import org.wasd.game.utils.SyntaxException;
+import IS24_LB11.game.utils.SerialObject;
+import IS24_LB11.game.symbol.Symbol;
+import IS24_LB11.game.utils.SyntaxException;
 
 public class CardFactory {
     public static Card newCard(String str) throws SyntaxException {
