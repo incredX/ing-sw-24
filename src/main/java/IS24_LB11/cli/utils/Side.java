@@ -1,4 +1,4 @@
-package org.example.cli.utils;
+package IS24_LB11.cli.utils;
 
 public enum Side {
     NORD,

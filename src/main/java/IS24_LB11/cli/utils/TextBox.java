@@ -1,8 +1,8 @@
-package org.example.cli.utils;
+package IS24_LB11.cli.utils;
 
+import IS24_LB11.cli.style.SingleBorderStyle;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
-import org.example.cli.style.SingleBorderStyle;
 
 import java.util.ArrayList;
 import java.util.Arrays;

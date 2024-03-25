@@ -1,4 +1,4 @@
-package org.example.cli;
+package IS24_LB11.cli;
 
 public class Debugger {
     private boolean active;

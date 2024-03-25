@@ -1,17 +1,17 @@
-package org.example.cli;
+package IS24_LB11.cli;
 
+import IS24_LB11.cli.style.SingleBorderStyle;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.terminal.Terminal;
-import org.example.cli.style.SingleBorderStyle;
-import org.example.cli.utils.CliBox;
-import org.example.cli.utils.TerminalRectangle;
+import IS24_LB11.cli.utils.CliBox;
+import IS24_LB11.cli.utils.TerminalRectangle;
 
 import java.io.IOException;
 import java.util.ArrayDeque;
 
-import static org.example.cli.utils.Side.WEST;
-import static org.example.cli.utils.Side.EAST;
+import static IS24_LB11.cli.utils.Side.WEST;
+import static IS24_LB11.cli.utils.Side.EAST;
 
 
 public class Stage extends CliBox {

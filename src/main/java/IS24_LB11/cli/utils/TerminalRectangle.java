@@ -1,4 +1,4 @@
-package org.example.cli.utils;
+package IS24_LB11.cli.utils;
 
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;

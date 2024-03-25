@@ -1,10 +1,10 @@
-package org.example.cli;
+package IS24_LB11.cli;
 
+import IS24_LB11.cli.event.Event;
+import IS24_LB11.cli.event.ResizeEvent;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.terminal.SimpleTerminalResizeListener;
 import com.googlecode.lanterna.terminal.Terminal;
-import org.example.cli.event.Event;
-import org.example.cli.event.ResizeEvent;
 
 import java.io.IOException;
 import java.util.concurrent.ArrayBlockingQueue;

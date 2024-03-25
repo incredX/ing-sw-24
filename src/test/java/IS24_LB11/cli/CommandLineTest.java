@@ -1,6 +1,7 @@
-package org.example.cli;
+package IS24_LB11.cli;
 
 
+import IS24_LB11.cli.CommandLine;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

@@ -1,4 +1,4 @@
-package org.example.cli.event;
+package IS24_LB11.cli.event;
 
 import com.googlecode.lanterna.input.KeyStroke;
 

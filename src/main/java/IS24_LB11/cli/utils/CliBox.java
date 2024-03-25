@@ -1,14 +1,10 @@
-package org.example.cli.utils;
+package IS24_LB11.cli.utils;
 
+import IS24_LB11.cli.style.BorderStyle;
+import IS24_LB11.cli.style.SingleBorderStyle;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.terminal.Terminal;
-import org.example.cli.utils.Cell;
-import org.example.cli.utils.CliFrame;
-import org.example.cli.utils.Side;
-import org.example.cli.utils.TerminalRectangle;
-import org.example.cli.style.BorderStyle;
-import org.example.cli.style.SingleBorderStyle;
 
 import java.io.IOException;
 

@@ -1,10 +1,10 @@
-package org.example.cli;
+package IS24_LB11.cli;
 
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
-import org.example.cli.utils.Side;
-import org.example.cli.utils.TerminalRectangle;
-import org.example.cli.utils.TextBox;
+import IS24_LB11.cli.utils.Side;
+import IS24_LB11.cli.utils.TerminalRectangle;
+import IS24_LB11.cli.utils.TextBox;
 
 import java.util.Optional;
 

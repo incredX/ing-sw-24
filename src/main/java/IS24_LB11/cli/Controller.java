@@ -1,12 +1,11 @@
-package org.example.cli;
+package IS24_LB11.cli;
 
+import IS24_LB11.cli.event.CommandEvent;
+import IS24_LB11.cli.event.Event;
+import IS24_LB11.cli.event.KeyboardEvent;
+import IS24_LB11.cli.event.ResizeEvent;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.input.KeyStroke;
-
-import org.example.cli.event.CommandEvent;
-import org.example.cli.event.Event;
-import org.example.cli.event.KeyboardEvent;
-import org.example.cli.event.ResizeEvent;
 
 import java.io.IOException;
 import java.util.HashMap;

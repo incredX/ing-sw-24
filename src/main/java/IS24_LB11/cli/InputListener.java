@@ -1,11 +1,11 @@
-package org.example.cli;
+package IS24_LB11.cli;
 
+import IS24_LB11.cli.event.Event;
+import IS24_LB11.cli.event.KeyboardEvent;
+import IS24_LB11.cli.event.MessageEvent;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.terminal.Terminal;
-import org.example.cli.event.Event;
-import org.example.cli.event.KeyboardEvent;
-import org.example.cli.event.MessageEvent;
 
 import java.io.IOException;
 import java.util.concurrent.ArrayBlockingQueue;

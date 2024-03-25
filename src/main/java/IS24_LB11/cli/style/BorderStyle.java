@@ -1,6 +1,6 @@
-package org.example.cli.style;
+package IS24_LB11.cli.style;
 
-import org.example.cli.utils.Side;
+import IS24_LB11.cli.utils.Side;
 
 public interface BorderStyle {
     char getHLine();
