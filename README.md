@@ -24,3 +24,5 @@
 |--------------|---------------|
 | Chat         | :x:           |
 | Persistenza  | :x:           |
+
+## Tabella Voto
