@@ -83,8 +83,8 @@ public class Controller {
     private void eventSorting(Event event) {
         switch (event) {
             case KeyboardEvent kb -> processKeyStroke(kb.getKeyStroke());
-            case CommandEvent cmd -> processCommand(cmd.getCommand());
-            case ResizeEvent re -> processResize(re.getSize());
+            case CommandEvent cmd -> processCommand(cmd.command());
+            case ResizeEvent re -> processResize(re.size());
             default -> System.out.println("Unknown event");
         }
     }

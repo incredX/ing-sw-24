@@ -67,7 +67,7 @@ public class Board {
     }
 
     public boolean spotTaken(Position position) {
-        return placedCards.stream().anyMatch(card -> card.getPosition().equals(position));
+        return placedCards.stream().anyMatch(card -> card.position().equals(position));
     }
 
     public boolean spotAvailable(Position position) {
@@ -76,12 +76,12 @@ public class Board {
 
     public Optional<PlacedCard> getPlacedCard(Position position) {
         return placedCards.stream()
-                .filter(card -> card.getPosition().equals(position))
+                .filter(card -> card.position().equals(position))
                 .findFirst();
     }
 
     public Optional<PlayableCard> getPlayableCard(Position position) {
-        return getPlacedCard(position).map(PlacedCard::getCard);
+        return getPlacedCard(position).map(PlacedCard::card);
     }
 
     public ArrayList<PlacedCard> getPlacedCards() {
