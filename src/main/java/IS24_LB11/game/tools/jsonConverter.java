@@ -1,25 +1,33 @@
 package IS24_LB11.game.tools;
-import IS24_LB11.game.components.Card;
-import IS24_LB11.game.components.GoldenCard;
-import IS24_LB11.game.components.NormalCard;
-import IS24_LB11.game.utils.SyntaxException;
-import com.google.gson.Gson;
-public class jsonConverter {
 
+import IS24_LB11.game.components.*;
+import IS24_LB11.game.utils.*;
+
+import static IS24_LB11.game.utils.SerialObject.INVALID_INPUT;
+
+public class JsonConverter {
     /*
     Per le carte non è necessario un vero e proprio to JSON basta fare override del metodo to String.
     Per board game e player sarà necessario l'utilizzo della libreria toJSON
     */
-    public String objectToJSON(Object object){
-        Gson gson = new Gson();
-        return gson.toJson(object);
-    }
-    public String objectToJSON(Card card){
-        return card.toString();
-    }
 
-    public Object JSONToObject(String jsonString){
-        return null;
+    public String objectToJSON(PlayableCard card) throws JsonStringException {
+        String cardString = card.asString();
+        System.out.println(cardString);
+        switch (cardString.length()) {
+            case 5:
+                return "{ \"GoalCard\" \"" + card.asString() + "\" }";
+            case 7:
+                if (cardString.charAt(0)=='O')
+                    return "{ \"GoalCard\" \"" + card.asString() + "\" }";
+                else
+                    return "{ \"NormalCard\" \"" + card.asString() + "\" }";
+            case 12:
+                return "{ \"GoldenCard\" \"" + card.asString() + "\" }";
+            case 13:
+                return "{ \"StarterCard\" \"" + card.asString() + "\" }";
+            default:
+                throw new JsonStringException(String.format(INVALID_INPUT, cardString));
+        }
     }
-
 }
