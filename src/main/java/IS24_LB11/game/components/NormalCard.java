@@ -6,6 +6,7 @@ import IS24_LB11.game.symbol.Symbol;
 import IS24_LB11.game.utils.*;
 
 import java.util.HashMap;
+import java.util.function.Consumer;
 
 public class NormalCard implements PlayableCard {
     protected final Suit mainSuit;
@@ -57,8 +58,23 @@ public class NormalCard implements PlayableCard {
     public void updateCounters(HashMap<Symbol, Integer> counters) {
         if (faceDown) {
             counters.computeIfPresent(mainSuit, ((symbol, integer) -> integer+1));
+            return;
         }
         frontCorners.updateCounters(counters);
+    }
+
+    @Override
+    public void forEachCorner(Consumer<Symbol> consumer) {
+        for (int i=0; i<4; i++) {
+            if (hasCorner(i)) consumer.accept(getCorner(i));
+        }
+    }
+
+    @Override
+    public void forEachDirection(Consumer<Integer> consumer) {
+        for (int i=0; i<4; i++) {
+            consumer.accept(i);
+        }
     }
 
     public void flip() {
