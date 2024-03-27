@@ -5,7 +5,11 @@ import java.util.function.Consumer;
 
 import IS24_LB11.game.components.PlayableCard;
 import IS24_LB11.game.components.StarterCard;
+import IS24_LB11.game.symbol.Empty;
+import IS24_LB11.game.symbol.Item;
+import IS24_LB11.game.symbol.Suit;
 import IS24_LB11.game.symbol.Symbol;
+import IS24_LB11.game.utils.Corners;
 import IS24_LB11.game.utils.Position;
 
 public class Board {
@@ -22,39 +26,49 @@ public class Board {
     public void start(StarterCard starterCard) {
         Position start = new Position(0, 0);
         placedCards.add(new PlacedCard(starterCard, start));
+        for (Suit suit: Suit.values()) symbolCounter.put(suit, 0);
+        for (Item item: Item.values()) symbolCounter.put(item, 0);
+        updateCounters(start);
         updateSpots(start);
     }
 
     public boolean placeCard(PlayableCard card, Position position) {
         if (!spotAvailable(position) || spotTaken(position)) return false;
         placedCards.add(new PlacedCard(card, position));
-        updateSpots(position);
         updateCounters(position);
+        updateSpots(position);
         return true;
     }
 
     private void updateSpots(Position position) {
         availableSpots.remove(position);
 
-        getPlayableCard(position).ifPresent(card -> {
+        getPlayableCard(position).ifPresent(card ->
             card.forEachDirection(dir -> {
                 int dx = 2*(dir&1)-1; // dx = -1 || +1
                 int dy = 2*(dir>>1)-1; // dy = -1 || +1
                 Position cornerPosition = position.withRelative(dx, dy);
                 if (card.hasCorner(dir) && !(spotAvailable(cornerPosition) || spotTaken(cornerPosition)))
                     availableSpots.add(cornerPosition);
-            });
-        });
+            })
+        );
     }
 
     private void updateCounters(Position position) {
         getPlayableCard(position).ifPresent(card -> card.updateCounters(symbolCounter));
-        forEachCorner(position, corner -> {
-            getPlayableCard(corner).ifPresent( card -> {
-                card.forEachCorner( cardCorner ->
-                        symbolCounter.computeIfPresent(cardCorner, (symbol, integer) -> integer--));
-            });
-        });
+
+        forEachCorner(position, corner ->
+            getPlayableCard(corner).ifPresent(card -> {
+                int x = (corner.getX() - position.getX() +1) / 2;
+                int y = (corner.getY() - position.getY() +1) / 2;
+                int dir = x + (y<<1);
+                if (!card.isFaceDown() && card.hasCorner(Corners.opposite(dir))) {
+                    Symbol symbol = card.getCorner(Corners.opposite(dir));
+                    if (symbolCounter.containsKey(symbol))
+                        symbolCounter.replace(symbol, symbolCounter.get(symbol) -1);
+                }
+            }
+        ));
     }
 
     private void forEachCorner(Position position, Consumer<Position> consumer) {
@@ -91,6 +105,4 @@ public class Board {
     public HashMap<Symbol, Integer> getSymbolCounter() {
         return symbolCounter;
     }
-
-    public ArrayList<Position> getAvailableSpots() { return availableSpots; }
 }
