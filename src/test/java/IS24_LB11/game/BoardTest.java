@@ -8,6 +8,7 @@ import IS24_LB11.game.symbol.Suit;
 import IS24_LB11.game.symbol.Symbol;
 import IS24_LB11.game.utils.Position;
 import IS24_LB11.game.utils.SyntaxException;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -24,8 +25,8 @@ public class BoardTest {
                 ),
                 new Placement(
                     false,
-                    new NormalCard("EAE_AB1"),
-                    new Position(2, -1), // Wrong placement (2 cards can't be side by side)
+                    new NormalCard("EAE_AF1"),
+                    new Position(2, -1), // Wrong placement (a card can't cover 2 corners of the same card)
                     PositionArray(new Integer[][] { {-1,-1}, {-1,1}, {1,1}, {0,-2}, {2,-2} }) // available spots unchanged
                 ),
                 new Placement(
@@ -62,7 +63,7 @@ public class BoardTest {
 
         for (Placement placement : placements) {
             boolean result = board.placeCard(placement.card(), placement.position());
-            assert (result == placement.isGood());
+            Assertions.assertEquals(placement.isGood(), result, String.format("placement of %s", placement.card().asString()));
             for (Position spot : placement.availableSpot()) {
                 assert (board.spotAvailable(spot));
             }
@@ -85,7 +86,6 @@ public class BoardTest {
         counters.put(Item.INKWELL, 1);
 
         counters.forEach((Symbol symbol, Integer count) -> {
-            System.out.printf("%s : expected=%2d, actual=%2d\n", symbol, board.getSymbolCounter().get(symbol), count);
             assert (board.getSymbolCounter().get(symbol).compareTo(count) == 0);
         });
     }

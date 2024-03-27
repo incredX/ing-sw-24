@@ -1,6 +1,7 @@
 package IS24_LB11.game;
 
 import java.util.*;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import IS24_LB11.game.components.PlayableCard;
@@ -23,6 +24,11 @@ public class Board {
         symbolCounter = new HashMap<>();
     }
 
+    /**
+     * constrain the initialization of the board with a <code>StarterCard</code>
+     *
+     * @param starterCard first card of the board
+     */
     public void start(StarterCard starterCard) {
         Position start = new Position(0, 0);
         placedCards.add(new PlacedCard(starterCard, start));
@@ -32,8 +38,16 @@ public class Board {
         updateSpots(start);
     }
 
+    /**
+     * place the specified card in the given position, if able.
+     * To be placed, the card's position must belong to the available spots.
+     *
+     * @param card <code>PlayableCard</code> to be placed
+     * @param position where the card is to be placed
+     * @return true if the card has been placed
+     */
     public boolean placeCard(PlayableCard card, Position position) {
-        if (!spotAvailable(position) || spotTaken(position)) return false;
+        if (!spotAvailable(position)) return false;
         placedCards.add(new PlacedCard(card, position));
         updateCounters(position);
         updateSpots(position);
@@ -41,15 +55,13 @@ public class Board {
     }
 
     private void updateSpots(Position position) {
-        availableSpots.remove(position);
+        availableSpots.removeIf(spot -> spot.equals(position));
 
         getPlayableCard(position).ifPresent(card ->
-            card.forEachDirection(dir -> {
-                int dx = 2*(dir&1)-1; // dx = -1 || +1
-                int dy = 2*(dir>>1)-1; // dy = -1 || +1
-                Position cornerPosition = position.withRelative(dx, dy);
-                if (card.hasCorner(dir) && !(spotAvailable(cornerPosition) || spotTaken(cornerPosition)))
-                    availableSpots.add(cornerPosition);
+            forEachDiagonal(position, (diagonal, direction) -> {
+                if (card.hasCorner(direction) && !(spotAvailable(diagonal) || spotTaken(diagonal))){
+                    availableSpots.add(diagonal);
+                }
             })
         );
     }
@@ -57,26 +69,20 @@ public class Board {
     private void updateCounters(Position position) {
         getPlayableCard(position).ifPresent(card -> card.updateCounters(symbolCounter));
 
-        forEachCorner(position, corner ->
-            getPlayableCard(corner).ifPresent(card -> {
-                int x = (corner.getX() - position.getX() +1) / 2;
-                int y = (corner.getY() - position.getY() +1) / 2;
-                int dir = x + (y<<1);
-                if (!card.isFaceDown() && card.hasCorner(Corners.opposite(dir))) {
-                    Symbol symbol = card.getCorner(Corners.opposite(dir));
-                    if (symbolCounter.containsKey(symbol))
-                        symbolCounter.replace(symbol, symbolCounter.get(symbol) -1);
+        forEachDiagonal(position, (diagonal, direction) -> {
+            getPlayableCard(diagonal).ifPresent(card -> {
+                if (!card.isFaceDown() && card.hasCorner(Corners.opposite(direction))) {
+                    Symbol symbol = card.getCorner(Corners.opposite(direction));
+                    symbolCounter.computeIfPresent(symbol, (s, count) -> count-1);
                 }
-            }
-        ));
+            });
+        });
     }
 
-    private void forEachCorner(Position position, Consumer<Position> consumer) {
-        for (int x=-1; x<=1; x+=2) {
-            for (int y=-1; y<=1; y+=2) {
-                Position cornerPos = position.withRelative(x, y);
-                consumer.accept(cornerPos);
-            }
+    private void forEachDiagonal(Position position, BiConsumer<Position, Integer> consumer) {
+        for (int dir=0; dir<4; dir++) {
+            Position diagonalPosition = position.withRelative(2*(dir&1)-1, (dir&2)-1);
+            consumer.accept(diagonalPosition, dir);
         }
     }
 

@@ -24,4 +24,6 @@ public class Position {
     public int getY() {
         return y;
     }
+
+    public String toString() { return String.format("%2d;%2d", getX(), getY()); }
 }
