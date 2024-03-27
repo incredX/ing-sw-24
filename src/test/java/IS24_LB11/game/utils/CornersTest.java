@@ -1,4 +1,4 @@
-package IS24_LB11.game;
+package IS24_LB11.game.utils;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,7 +21,7 @@ public class CornersTest {
     @Test
     @DisplayName("Corners to/from valid strings")
     void testValidStrings() throws SyntaxException {
-        String[] valid_ids = new String[] { "FAPI", "__  ", "    ", "F_P ", "_QKM" };
+        String[] valid_ids = new String[] { "FAPI", "EE__", "____", "FEP_", "EQKM" };
         for (String id: valid_ids) {
             assert (id.equals(new Corners(id).asString()));
         }
@@ -30,7 +30,7 @@ public class CornersTest {
     @Test
     @DisplayName("Corners to/from invalid strings")
     void testInvalidStrings() {
-        String[] valid_ids = new String[] { "fapi", " 1api", "api", "__ ", "_qkm", "fapi__" };
+        String[] valid_ids = new String[] { "fapi", " 1api", "api", "EE_", "_qkm", "fapiEE" };
         for (String id: valid_ids) {
             assertThrows(SyntaxException.class, () -> new Corners(id));
         }
@@ -38,7 +38,7 @@ public class CornersTest {
 
     @Test
     void testHasCorner() throws SyntaxException {
-        Corners corners = new Corners("A_Q ");
+        Corners corners = new Corners("AEQ_");
         assert ( corners.hasCorner(UP_LEFT));
         assert ( corners.hasCorner(UP_RIGHT));
         assert ( corners.hasCorner(DOWN_LEFT));
@@ -49,7 +49,7 @@ public class CornersTest {
 
     @Test
     void testGetCorner() throws SyntaxException {
-        Corners corners = new Corners("FQ _");
+        Corners corners = new Corners("FQ_E");
         Symbol[] symbols = new Symbol[] {Suit.MUSHROOM, Item.QUILL, null, Empty.symbol()};
         for (int i=0; i<4; i++) assert(symbols[i] == corners.getCorner(i));
     }

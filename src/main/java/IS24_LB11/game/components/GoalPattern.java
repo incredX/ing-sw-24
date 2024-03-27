@@ -7,6 +7,15 @@ public class GoalPattern extends GoalSymbol {
     private final char variant;
     private final int dir;
 
+    /**
+     * Construct a <code>GoalPattern</code> from the information encoded in the given <code>String</code> with the following syntax:
+     * <code>char</code> 1-4 : same syntax followed by <code>GoalSymbol</code>
+     * <code>char</code> 5   : represents the pattern's variant (expected 'D' or 'L')
+     * <code>char</code> 6   : represents the pattern's direction
+     *
+     * @param id a <code>String</code> containing the encoded information that identify the card
+     * @throws SyntaxException if the information are not correctly encoded or missing
+     */
     public GoalPattern(String id) throws SyntaxException {
         super(id);
         if (id.length() < 7) {

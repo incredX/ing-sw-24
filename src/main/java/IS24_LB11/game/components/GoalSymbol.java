@@ -12,11 +12,9 @@ public class GoalSymbol implements GoalCard {
     protected final int points;
 
     /**
-     * Construct a <code>NormalCard</code> from the information encoded in the given <code>String</code> with the following syntax:
+     * Construct a <code>GoalSymbol</code> from the information encoded in the given <code>String</code> with the following syntax:
      * <code>char</code> 1   : represent the goal's points. Must be parsable into an int between 2 and 3
      * <code>char</code> 2-4 : represents the goal's <code>Symbol</code>s needed. If less than 3 symbols are required, the remaining chars must be '_'
-     * <code>char</code> 5   : represents the card's visible face ('f': front, 'b': back)
-     * <code>char</code> 6   : represents the card's points. Must be parsable into an int between 0 and 9
      *
      * @param id a <code>String</code> containing the encoded information that identify the card
      * @throws SyntaxException if the information are not correctly encoded or missing
