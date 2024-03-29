@@ -26,3 +26,10 @@
 | Persistenza  | :x:           |
 
 ## Tabella Voto
+| Requisiti                                           | Voto Massimo | Realizzazione |
+|-----------------------------------------------------|--------------|---------------|
+| Regole semplificate + comunicazione + CLI           | 18           | :x:           |
+| Regole complete + comunicazione + CLI               | 21           | :x:           |
+| Regole complete + comunicazione + GUI               | 24           | :x:           |
+| Regole complete + comunicazione + GUI + 1FA         | 27           | :x:           |
+| Regole complete + comunicazione + CLI + GUI + 1 FA  | 30/30L       | :x:           |
