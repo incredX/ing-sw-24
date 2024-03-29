@@ -35,6 +35,7 @@ public class StarterCard extends NormalCard {
 
     public String asString() {
         String str = super.asString();
+        str.replace(str.charAt(0),'S');
         str += centralSuits.stream().map(s -> Symbol.toChar(s).toString()).reduce("", (acc, s) -> acc+s);
         str += backCorners.asString();
         return str;
