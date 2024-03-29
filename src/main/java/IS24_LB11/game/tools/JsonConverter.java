@@ -1,9 +1,7 @@
 package IS24_LB11.game.tools;
 
-import IS24_LB11.game.components.*;
+import IS24_LB11.game.components.CardInterface;
 import IS24_LB11.game.utils.*;
-
-import static IS24_LB11.game.utils.SerialObject.INVALID_INPUT;
 
 public class JsonConverter {
     /*
@@ -11,7 +9,7 @@ public class JsonConverter {
     Per board game e player sarà necessario l'utilizzo della libreria toJSON
     */
 
-    public String objectToJSON(Card card) throws JsonStringException {
+    public String objectToJSON(CardInterface card) throws JsonStringException {
         String cardString = card.asString();
         System.out.println(cardString);
         switch (cardString.charAt(0)){

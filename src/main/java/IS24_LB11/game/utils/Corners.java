@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
 
-import static IS24_LB11.game.utils.SerialObject.SHORT_ID_MSG;
+import static IS24_LB11.game.components.CardInterface.SHORT_ID_MSG;
 
 public class Corners {
     public static final int UP_LEFT = 0, UP_RIGHT = 1, DOWN_LEFT = 2, DOWN_RIGHT = 3;
