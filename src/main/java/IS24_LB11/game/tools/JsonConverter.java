@@ -11,7 +11,7 @@ public class JsonConverter {
     Per board game e player sarà necessario l'utilizzo della libreria toJSON
     */
 
-    public String objectToJSON(CardInterface card) throws JsonStringException {
+    public String objectToJSON(Card card) throws JsonStringException {
         String cardString = card.asString();
         System.out.println(cardString);
         switch (cardString.charAt(0)){
@@ -20,7 +20,6 @@ public class JsonConverter {
                     return "{ \"GoalCard\" \"" + card.asString() + "\" }";
                 else
                     return "{ \"GoalCard\" \"" + card.asString() + "\" }";
-                break;
             case 'G':
 
                 break;
@@ -42,5 +41,6 @@ public class JsonConverter {
 //            default:
 //                throw new JsonStringException(String.format(INVALID_INPUT, cardString));
         }
+    return ";";
     }
 }
