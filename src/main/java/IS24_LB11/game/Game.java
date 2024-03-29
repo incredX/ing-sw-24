@@ -7,9 +7,9 @@ import java.util.ArrayList;
 
 public class Game {
 
-    private Deck goalDdeck;
+    private Deck goalDeck;
     private Deck goldenDeck;
-    private Deck NormalDeck;
+    private Deck normalDeck;
     private ArrayList<GoalCard> publicGoals = new ArrayList<GoalCard>();
     private ArrayList<Player> players = new ArrayList<Player>();
 
