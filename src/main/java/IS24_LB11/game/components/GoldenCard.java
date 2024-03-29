@@ -14,7 +14,7 @@ public class GoldenCard extends NormalCard {
      * Construct a <code>GoldenCard</code> from the information encoded in the given <code>String</code> with the following syntax:
      * <code>char</code> 0-6 : same syntax followed by <code>NormalCard</code>
      * <code>char</code> 7   : represents the card's condition to win its points. Must be parsable into <code>Symbol</code>. In this case ' ' stands for corners and '_' stands for no-condition
-     * <code>char</code> 8-* : represent the card's suits needed to be played
+     * <code>char</code> 8-13: represent the card's suits needed to be played
      *
      * @param id a <code>String</code> containing the encoded information that identify the card
      * @throws SyntaxException if the information are not correctly encoded or missing
@@ -22,12 +22,12 @@ public class GoldenCard extends NormalCard {
      */
     public GoldenCard(String id) throws SyntaxException {
         super(id);
-        if (id.length() < 9) {
+        if (id.length() < 14) {
             throw new SyntaxException(String.format(SHORT_ID_MSG, id));
         }
         pointsCondition = Symbol.fromChar(id.charAt(7));
         suitsNeeded = new ArrayList<>();
-        for (int i = 8; i < id.length(); i++) {
+        for (int i = 8; i < 14; i++) {
             suitsNeeded.add(Suit.fromCharacter(id.charAt(i)));
         }
     }

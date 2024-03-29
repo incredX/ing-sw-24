@@ -1,6 +1,7 @@
 package IS24_LB11.game;
 
 import IS24_LB11.game.components.PlayableCard;
+import IS24_LB11.game.utils.Position;
 
 public class PlacedCard {
     private Integer x;

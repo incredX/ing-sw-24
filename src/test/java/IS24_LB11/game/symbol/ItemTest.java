@@ -1,4 +1,4 @@
-package IS24_LB11.game;
+package IS24_LB11.game.symbol;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
