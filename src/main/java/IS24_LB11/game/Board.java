@@ -108,6 +108,7 @@ public class Board {
         return placedCards;
     }
 
+
     public HashMap<Symbol, Integer> getSymbolCounter() {
         return symbolCounter;
     }
