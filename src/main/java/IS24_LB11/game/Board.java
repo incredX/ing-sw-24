@@ -9,5 +9,8 @@ public class Board {
     private int currentZIndex;
 
     //we should add some methods about cards and other players' board visualization
+    //get placedcards
+    //get symbol counter
+    //get avilable spots
 
 }
