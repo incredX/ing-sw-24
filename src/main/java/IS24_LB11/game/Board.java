@@ -8,4 +8,6 @@ public class Board {
     private HashMap <Symbol, Integer> symbolCounter = new HashMap<Symbol, Integer>();
     private int currentZIndex;
 
+    //we should add some methods about cards' and other players' board visualization
+
 }

@@ -7,4 +7,6 @@ public class PlacedCard {
     private Integer y;
     private Integer z;
     private PlayableCard card;
+
+    //we should need to add some methods about cards' visualization
 }
