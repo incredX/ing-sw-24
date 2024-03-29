@@ -2,11 +2,9 @@ package IS24_LB11.game;
 
 import java.util.*;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 import IS24_LB11.game.components.PlayableCard;
 import IS24_LB11.game.components.StarterCard;
-import IS24_LB11.game.symbol.Empty;
 import IS24_LB11.game.symbol.Item;
 import IS24_LB11.game.symbol.Suit;
 import IS24_LB11.game.symbol.Symbol;
@@ -69,14 +67,14 @@ public class Board {
     private void updateCounters(Position position) {
         getPlayableCard(position).ifPresent(card -> card.updateCounters(symbolCounter));
 
-        forEachDiagonal(position, (diagonal, direction) -> {
+        forEachDiagonal(position, (diagonal, direction) ->
             getPlayableCard(diagonal).ifPresent(card -> {
                 if (!card.isFaceDown() && card.hasCorner(Corners.opposite(direction))) {
                     Symbol symbol = card.getCorner(Corners.opposite(direction));
                     symbolCounter.computeIfPresent(symbol, (s, count) -> count-1);
                 }
-            });
-        });
+            })
+        );
     }
 
     private void forEachDiagonal(Position position, BiConsumer<Position, Integer> consumer) {
