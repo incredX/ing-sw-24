@@ -18,7 +18,7 @@ public class NormalCard implements PlayableCard {
      * Construct a <code>NormalCard</code> from the information encoded in the given <code>String</code> with the following syntax:
      * <code>char</code> 0-3 : represent the card's corners. Must be parsable into <code>Symbol</code>
      * <code>char</code> 4   : represents the card's <code>Suit</code> and must be parsable as such
-     * <code>char</code> 5   : represents the card's visible face ('f': front, 'b': back)
+     * <code>char</code> 5   : represents the card's visible face ('F': front, 'B': back)
      * <code>char</code> 6   : represents the card's points. Must be parsable into an int between 0 and 9
      *
      * @param id a <code>String</code> containing the encoded information that identify the card

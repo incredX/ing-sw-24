@@ -12,9 +12,9 @@ public class GoldenCard extends NormalCard {
 
     /**
      * Construct a <code>GoldenCard</code> from the information encoded in the given <code>String</code> with the following syntax:
-     * <code>char</code> 0-6 : same syntax followed by <code>NormalCard</code>
-     * <code>char</code> 7   : represents the card's condition to win its points. Must be parsable into <code>Symbol</code>. In this case ' ' stands for corners and '_' stands for no-condition
-     * <code>char</code> 8-13: represent the card's suits needed to be played
+     * <code>char</code> 0-5 : same syntax followed by <code>NormalCard</code>
+     * <code>char</code> 6   : represents the card's condition to win its points. Must be parsable into <code>Symbol</code>. In this case 'E' stands for corners and '_' stands for no-condition
+     * <code>char</code> 7-12: represent the card's suits needed to be played
      *
      * @param id a <code>String</code> containing the encoded information that identify the card
      * @throws SyntaxException if the information are not correctly encoded or missing
