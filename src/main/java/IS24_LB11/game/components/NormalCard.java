@@ -47,7 +47,7 @@ public class NormalCard implements PlayableCard {
      * @return a <code>String</code> that identify the card and its state with the syntax described in <code>NormalCard</code>
      */
     public String asString() {
-        String str = "R";
+        String str = "N";
         str += frontCorners.asString();
         str += Symbol.toChar(mainSuit);
         str += (faceDown) ? 'B' : 'F';
