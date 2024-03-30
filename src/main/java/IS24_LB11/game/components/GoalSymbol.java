@@ -20,10 +20,10 @@ public class GoalSymbol implements GoalCard {
      * @throws SyntaxException if the information are not correctly encoded or missing
      */
     public GoalSymbol(String id) throws SyntaxException {
-        if (id.length() < 5) {
+        if (id.length() < 4) {
             throw new SyntaxException(String.format(SHORT_ID_MSG, id));
         }
-        points = id.charAt(1) - '0';
+        points = id.charAt(0) - '0';
         if (points < 0 || points > 9) {
             throw new SyntaxException(String.format(NOT_A_DIGIT_MSG, id.charAt(1)));
         }
@@ -33,7 +33,7 @@ public class GoalSymbol implements GoalCard {
         }
 
         symbols = new ArrayList<>();
-        for (int i = 2; i < 5; i++) {
+        for (int i = 1; i < 4; i++) {
             symbols.add(Symbol.fromChar(id.charAt(i)));
         }
     }

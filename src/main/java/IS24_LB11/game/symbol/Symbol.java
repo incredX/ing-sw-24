@@ -24,7 +24,7 @@ public interface Symbol {
         if (symbol == Item.QUILL) return 'Q';
         if (symbol == Item.INKWELL) return 'K';
         if (symbol == Item.MANUSCRIPT) return 'M';
-        if (symbol.equals(Empty.symbol())) return Empty.CHAR;
+        if (Empty.symbol().equals(symbol)) return Empty.CHAR;
         return nullChar;
     }
 }
