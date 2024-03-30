@@ -110,4 +110,5 @@ public class Board {
     public HashMap<Symbol, Integer> getSymbolCounter() {
         return symbolCounter;
     }
+    public ArrayList<Position> getAvailableSpots() {return availableSpots;}
 }
