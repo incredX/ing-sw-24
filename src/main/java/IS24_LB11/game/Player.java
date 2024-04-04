@@ -18,4 +18,51 @@ public class Player {
     private Color color;
     private int score;
 
+    public String getName() {
+        return name;
+    }
+
+    public Color getColor() {
+        return color;
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public GoalCard getPersonalGoal() {
+        return personalGoal;
+    }
+
+    public ArrayList<PlayableCard> getOnHandCard() {
+        return onHandCard;
+    }
+
+    public boolean isStatus() {
+        return status;
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setOnHandCard(ArrayList<PlayableCard> onHandCard) {
+        this.onHandCard = onHandCard;
+    }
+
+    public void setPersonalGoal(GoalCard personalGoal) {
+        this.personalGoal = personalGoal;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
+    }
+
+    public void setStatus(boolean status) {
+        this.status = status;
+    }
 }

@@ -1,6 +1,8 @@
 package IS24_LB11.tools;
 
 import IS24_LB11.game.Board;
+import IS24_LB11.game.PlacedCard;
+import IS24_LB11.game.Player;
 import IS24_LB11.game.components.*;
 import IS24_LB11.game.tools.JsonConverter;
 import IS24_LB11.game.utils.JsonException;
@@ -9,6 +11,7 @@ import IS24_LB11.game.utils.SyntaxException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.awt.*;
 import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -52,5 +55,31 @@ public class JsonConverterTest {
         board.placeCard(normalCard, new Position(1,1));
         board.placeCard(goldenCard, new Position(-1,1));
         System.out.println(jsonConverter.objectToJSON(board));
+        //manca assert
+    }
+
+    @Test
+    @DisplayName("Converting object player to json")
+    public void playerConversionTest() throws JsonException,SyntaxException{
+        JsonConverter jsonConverter = new JsonConverter();
+        ArrayList<PlayableCard> cardList = new ArrayList<>();
+        CardFactory cardFactory = new CardFactory();
+        Player player = new Player();
+
+        PlayableCard normalCard1 = (NormalCard) cardFactory.newPlayableCard("NFEF_FF0");
+        PlayableCard normalCard2 = (NormalCard) cardFactory.newPlayableCard("NKF_AFF0");
+        PlayableCard goldenCard = (GoldenCard) cardFactory.newPlayableCard("GEK_EFF1KFFP__");
+        GoalCard goalCard = (GoalCard) cardFactory.newSerialCard("O2FFF");
+        cardList.add(normalCard2);
+        cardList.add(normalCard1);
+        cardList.add(goldenCard);
+
+        player.setName("NameTest");
+        player.setColor(new Color(1,2,3));
+        player.setScore(10);
+        player.setOnHandCard(cardList);
+        player.setStatus(false);
+        player.setPersonalGoal(goalCard);
+        System.out.println(jsonConverter.objectToJSON(player));
     }
 }
