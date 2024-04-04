@@ -41,6 +41,10 @@ public class Corners {
         return isCorner(dir) && corners.get(dir) != null;
     }
 
+    public static Position getRelativePosition(int dir) {
+        return new Position(2*(dir&1)-1, (dir&2)-1);
+    }
+
     public Symbol getCorner(int dir) {
         if (isCorner(dir)) return corners.get(dir);
         return null;

@@ -3,6 +3,7 @@ package IS24_LB11.game;
 import java.util.*;
 import java.util.function.BiConsumer;
 
+import IS24_LB11.game.components.GoalPattern;
 import IS24_LB11.game.components.PlayableCard;
 import IS24_LB11.game.components.StarterCard;
 import IS24_LB11.game.symbol.Item;
@@ -77,6 +78,36 @@ public class Board {
         );
     }
 
+    private int countPatterns(GoalPattern goal) {
+        ArrayList<Symbol> symbols = goal.getSymbols();
+        Position[] steps = goal.getPatternSteps();
+        Integer patternsFound = 0;
+        for(PlacedCard placedCard: placedCards.stream().skip(1).toList()) {
+            Position position = placedCard.position();
+            int matchedSteps = 1, counter = 1;
+            if (placedCard.isVisited() || placedCard.card().getSuit() != symbols.getFirst()) continue;
+            for (Position step : steps) {
+                Optional<PlacedCard> card = getPlacedCard(position.withRelative(step));
+                if (card.isPresent()) {
+                    if (!card.get().isVisited() && card.get().card().getSuit() == symbols.get(counter))
+                        matchedSteps++;
+                }
+                counter++;
+            }
+            if (matchedSteps == counter) {
+                patternsFound++;
+                placedCard.setVisited(true);
+                for (Position step : steps)
+                    getPlacedCard(position.withRelative(step)).ifPresent(card -> card.setVisited(true));
+            }
+        }
+        if (patternsFound > 0) {
+            for (PlacedCard placedCard: placedCards.stream().skip(1).toList())
+                getPlacedCard(placedCard.position()).ifPresent(card -> card.setVisited(false));
+        }
+        return  patternsFound;
+    }
+
     private void forEachDiagonal(Position position, BiConsumer<Position, Integer> consumer) {
         for (int dir=0; dir<4; dir++) {
             Position diagonalPosition = position.withRelative(2*(dir&1)-1, (dir&2)-1);
@@ -105,7 +136,6 @@ public class Board {
     public ArrayList<PlacedCard> getPlacedCards() {
         return placedCards;
     }
-
 
     public HashMap<Symbol, Integer> getSymbolCounter() {
         return symbolCounter;
