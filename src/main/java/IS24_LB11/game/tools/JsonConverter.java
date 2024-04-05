@@ -142,27 +142,18 @@ public class JsonConverter {
         String auxString;
         checkNullObject(stringInput);
         Board convertedBoard = new Board();
-//        System.out.println(stringInput);
         int cnt = 3;
         while (stringInput.contains("Card")){
             auxString = stringInput.substring(stringInput.indexOf("{"),stringInput.indexOf("}")+1);
-//            System.out.println("auxString " +auxString);
             int X = Integer.valueOf(auxString.substring(auxString.indexOf("X")+1,auxString.indexOf("Y")));
             int Y = Integer.valueOf(auxString.substring(auxString.indexOf("Y")+1,auxString.indexOf("}")));
             PlayableCard playableCard = (PlayableCard) JSONToCard(auxString.substring(auxString.indexOf("{"),auxString.indexOf(",")));
-//            System.out.println("X " + X);
-//            System.out.println("Y " + Y);
-//            System.out.println("Carte piazzata " + playableCard.asString());
-
             if (playableCard.asString().startsWith("S"))
                 convertedBoard.start((StarterCard) playableCard);
             else
                 convertedBoard.placeCard((PlayableCard) JSONToCard(auxString.substring(auxString.indexOf("{"),auxString.indexOf(","))),new Position(X,Y));
-//            System.out.println("Before " + stringInput);
             stringInput = stringInput.substring(stringInput.indexOf("}")+1);
-//            System.out.println("After " + stringInput);
         }
-//        System.out.println(objectToJSON(convertedBoard));
         return convertedBoard;
     }
 
