@@ -1,7 +1,6 @@
 package IS24_LB11.tools;
 
 import IS24_LB11.game.Board;
-import IS24_LB11.game.PlacedCard;
 import IS24_LB11.game.Player;
 import IS24_LB11.game.components.*;
 import IS24_LB11.game.tools.JsonConverter;
@@ -23,14 +22,15 @@ public class JsonConverterTest {
     public void cardConversionTest() throws JsonException,SyntaxException {
         JsonConverter jsonConverter = new JsonConverter();
         ArrayList<String> stringCards = new ArrayList<>();
-        stringCards.add("{ \"NormalCard\": \"" + "NFEF_FF0" + "\" }");
-        stringCards.add("{ \"GoldenCard\": \"" + "GEK_EFF1KFFP__" + "\" }");
-        stringCards.add("{ \"StarterCard\": \"" + "SEEEE_F0AI_PIAF" + "\" }");
-        stringCards.add("{ \"GoalCard\": \"" + "O2FFF" + "\" }");
-        stringCards.add("{ \"GoalCard\": \"" + "O2FFFD1" + "\" }");
-        
         CardFactory cardFactory = new CardFactory();
         ArrayList<CardInterface> cardList = new ArrayList<>();
+
+        stringCards.add("{ \"Card\": \"" + "NFEF_FF0" + "\" }");
+        stringCards.add("{ \"Card\": \"" + "GEK_EFF1KFFP__" + "\" }");
+        stringCards.add("{ \"Card\": \"" + "SEEEE_F0AI_PIAF" + "\" }");
+        stringCards.add("{ \"Card\": \"" + "O2FFF" + "\" }");
+        stringCards.add("{ \"Card\": \"" + "O2FFFD1" + "\" }");
+        
         cardList.add(cardFactory.newPlayableCard("NFEF_FF0"));
         cardList.add(cardFactory.newPlayableCard("GEK_EFF1KFFP__"));
         cardList.add(cardFactory.newPlayableCard("SEEEE_F0AI_PIAF"));
@@ -38,13 +38,14 @@ public class JsonConverterTest {
         cardList.add(cardFactory.newSerialCard("O2FFFD1"));
         
         for (int index = 0; index < cardList.size(); index++) {
-            assert(jsonConverter.objectToJSON(cardList.get(index)).equals(stringCards.get(index)));
+            assert(jsonConverter.objectToJSON(cardList.get(index)).compareTo(stringCards.get(index))==0);
         }
     }
 
     @Test
     @DisplayName("Converting object board to json")
-    public void boardConversionTest() throws JsonException, SyntaxException {
+    public void boardConversionTest() throws JsonException,SyntaxException {
+        String str = "{ \"Board\": { \"placedCards\": [ { \"Card\": \"SEEEE_F0AI_PIAF\", X0Y0}, { \"Card\": \"NFEF_FF0\", X1Y1}, { \"Card\": \"GEK_EFF1KFFP__\", X-1Y1} ] }";
         JsonConverter jsonConverter = new JsonConverter();
         Board board = new Board();
         CardFactory cardFactory = new CardFactory();
@@ -54,13 +55,15 @@ public class JsonConverterTest {
         board.start(starterCard);
         board.placeCard(normalCard, new Position(1,1));
         board.placeCard(goldenCard, new Position(-1,1));
+        System.out.println(str);
         System.out.println(jsonConverter.objectToJSON(board));
-        //manca assert
+        assert(jsonConverter.objectToJSON(board).compareTo(str)==0);
     }
 
     @Test
     @DisplayName("Converting object player to json")
     public void playerConversionTest() throws JsonException,SyntaxException{
+        String str = "{ \"Player\": { \"Status\": false, \"Name\": NameTest, \"PersonalGoal\": { \"Card\": \"O2FFF\" }, \"OnHandCard\": {{ \"Card\": \"NKF_AFF0\" }, { \"Card\": \"NFEF_FF0\" }, { \"Card\": \"GEK_EFF1KFFP__\" }, }, \"Color\": java.awt.Color[r=1,g=2,b=3], \"Score\": 10} }";
         JsonConverter jsonConverter = new JsonConverter();
         ArrayList<PlayableCard> cardList = new ArrayList<>();
         CardFactory cardFactory = new CardFactory();
@@ -75,11 +78,51 @@ public class JsonConverterTest {
         cardList.add(goldenCard);
 
         player.setName("NameTest");
-        player.setColor(new Color(1,2,3));
+        player.setColor(new Color(16, 103, 1));
         player.setScore(10);
         player.setOnHandCard(cardList);
         player.setStatus(false);
         player.setPersonalGoal(goalCard);
         System.out.println(jsonConverter.objectToJSON(player));
+        assert(jsonConverter.objectToJSON(player).compareTo(str)==0);
+    }
+
+    @Test
+    @DisplayName("Converting JSON to all types of card")
+    public void jsonCardConversionTest() throws JsonException,SyntaxException{
+        JsonConverter jsonConverter = new JsonConverter();
+        CardFactory cardFactory = new CardFactory();
+        ArrayList<CardInterface> cardListGenerated = new ArrayList<>();
+        ArrayList<CardInterface> cardListConverted = new ArrayList<>();
+
+        ArrayList<String> stringCards = new ArrayList<>();
+
+        cardListGenerated.add(cardFactory.newPlayableCard("NFEF_FF0"));
+        cardListGenerated.add(cardFactory.newPlayableCard("GEK_EFF1KFFP__"));
+        cardListGenerated.add(cardFactory.newPlayableCard("SEEEE_F0AI_PIAF"));
+        cardListGenerated.add(cardFactory.newSerialCard("O2FFF"));
+        cardListGenerated.add(cardFactory.newSerialCard("O2FFFD1"));
+
+        stringCards.add("{ \"Card\": \"" + "NFEF_FF0" + "\" }");
+        stringCards.add("{ \"Card\": \"" + "GEK_EFF1KFFP__" + "\" }");
+        stringCards.add("{ \"Card\": \"" + "SEEEE_F0AI_PIAF" + "\" }");
+        stringCards.add("{ \"Card\": \"" + "O2FFF" + "\" }");
+        stringCards.add("{ \"Card\": \"" + "O2FFFD1" + "\" }");
+
+        for (int index = 0; index < cardListGenerated.size(); index++) {
+            cardListConverted.add((CardInterface) jsonConverter.JSONToObject(stringCards.get(index)));
+            assert(cardListConverted.get(index).asString().compareTo(cardListGenerated.get(index).asString())==0);
+        }
+
+    }
+    @Test
+    @DisplayName("Converting JSON to all types of card")
+    public void jsonBoardConversionTest() throws JsonException,SyntaxException {
+        JsonConverter jsonConverter = new JsonConverter();
+        String str = "{ \"Board\": { \"placedCards\": [ { \"Card\": \"SEEEE_F0AI_PIAF\", X0Y0}, { \"Card\": \"NFEF_FF0\", X1Y1}, { \"Card\": \"GEK_EFF1KFFP__\", X-1Y1} ] }";
+        Board board = (Board) jsonConverter.JSONToObject(str);
+        System.out.println(str);
+        System.out.println(jsonConverter.objectToJSON(board));
+        assert(jsonConverter.objectToJSON(board).compareTo(str)==0);
     }
 }

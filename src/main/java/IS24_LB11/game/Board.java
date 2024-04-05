@@ -3,6 +3,7 @@ package IS24_LB11.game;
 import java.util.*;
 import java.util.function.BiConsumer;
 
+import IS24_LB11.game.components.JsonConvertable;
 import IS24_LB11.game.components.PlayableCard;
 import IS24_LB11.game.components.StarterCard;
 import IS24_LB11.game.symbol.Item;
@@ -11,7 +12,7 @@ import IS24_LB11.game.symbol.Symbol;
 import IS24_LB11.game.utils.Corners;
 import IS24_LB11.game.utils.Position;
 
-public class Board {
+public class Board implements JsonConvertable {
     private final ArrayList<PlacedCard> placedCards;
     private final ArrayList<Position> availableSpots;
     private final HashMap<Symbol, Integer> symbolCounter;

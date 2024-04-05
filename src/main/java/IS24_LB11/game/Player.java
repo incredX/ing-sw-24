@@ -1,6 +1,7 @@
 package IS24_LB11.game;
 
 import IS24_LB11.game.components.GoalCard;
+import IS24_LB11.game.components.JsonConvertable;
 import IS24_LB11.game.components.PlayableCard;
 
 import java.awt.*;
@@ -9,7 +10,7 @@ java.awt.* (Abstract Window Toolkit)  allows us to use some intefaces that help 
  */
 import java.util.ArrayList;
 
-public class Player {
+public class Player implements JsonConvertable {
 
     private boolean status;
     private String name;
