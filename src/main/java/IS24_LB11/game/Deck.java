@@ -1,15 +1,16 @@
 package IS24_LB11.game;
 
+import IS24_LB11.game.components.CardInterface;
 import IS24_LB11.game.components.PlayableCard;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Optional;
 
 public class Deck {
-    private ArrayList<PlayableCard> cards = new ArrayList<PlayableCard>();
+    private ArrayList<CardInterface> cards = new ArrayList<CardInterface>();
 
-    public Deck () {
-        cards = new ArrayList<PlayableCard> ();
+    public Deck (ArrayList<CardInterface> cards) {
+        this.cards = cards;
     }
 
     /**
@@ -26,7 +27,7 @@ public class Deck {
      * @return the selected card removing it from the deck
      * @throw the DeckException when there aren't any cards left or the index is not allowed
      */
-    public PlayableCard drawCard(int cardIndex) throws DeckException {
+    public CardInterface drawCard(int cardIndex) throws DeckException {
 
         if (cards.isEmpty()) {
             throw new DeckException("The deck is empty. \n");
@@ -37,7 +38,7 @@ public class Deck {
             throw new DeckException("Index out of bound. \n");
         }
 
-        PlayableCard card = cards.remove(cards.size()-cardIndex);
+        CardInterface card = cards.remove(cards.size()-cardIndex);
         return card;
     }
 
@@ -47,7 +48,7 @@ public class Deck {
      * @return the selected card without removing it
      * @throw the DeckException when there aren't any cards left or the index is not allowed
      */
-    public PlayableCard showCard(int cardIndex) throws DeckException{
+    public CardInterface showCard(int cardIndex) throws DeckException{
         if (cards.isEmpty()) {
             throw new DeckException("The deck is empty. \n");
         }
@@ -56,7 +57,7 @@ public class Deck {
             throw new DeckException("Index out of bound. \n");
         }
 
-        PlayableCard card = cards.get( cards.size()-cardIndex );
+        CardInterface card = cards.get( cards.size()-cardIndex );
         return card;
     };
 
