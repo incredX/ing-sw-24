@@ -1,6 +1,7 @@
 package IS24_LB11.game.components;
 
 import IS24_LB11.game.symbol.Symbol;
+import IS24_LB11.game.utils.Direction;
 
 import java.util.HashMap;
 import java.util.function.Consumer;
@@ -12,7 +13,9 @@ public interface PlayableCard extends CardInterface {
     void flip();
     Symbol getSuit();
     Symbol getCorner(int dir);
+    Symbol getCorner(Direction dir);
     int getPoints();
     boolean hasCorner(int dir);
+    boolean hasCorner(Direction dir);
     boolean isFaceDown();
 }

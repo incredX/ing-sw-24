@@ -1,7 +1,7 @@
 package IS24_LB11.game.components;
 
 import IS24_LB11.game.symbol.Symbol;
-import IS24_LB11.game.utils.Corners;
+import IS24_LB11.game.utils.Direction;
 import IS24_LB11.game.utils.Position;
 import IS24_LB11.game.utils.SyntaxException;
 
@@ -56,7 +56,7 @@ public class GoalPattern extends GoalSymbol {
 
     public Position[] getPatternSteps() {
         Position[] steps = new Position[2];
-        steps[0] = Corners.getRelativePosition(Corners.opposite(dir));
+        steps[0] = Direction.parse(dir).opposite().relativePosition();
         switch (variant) {
             case 'L' -> {
                 steps[1] = steps[0].transformY(y -> y*2);

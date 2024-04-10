@@ -1,7 +1,6 @@
 package IS24_LB11.game;
 
 import java.util.*;
-import java.util.function.BiConsumer;
 
 import IS24_LB11.game.components.GoalPattern;
 import IS24_LB11.game.components.PlayableCard;
@@ -9,7 +8,7 @@ import IS24_LB11.game.components.StarterCard;
 import IS24_LB11.game.symbol.Item;
 import IS24_LB11.game.symbol.Suit;
 import IS24_LB11.game.symbol.Symbol;
-import IS24_LB11.game.utils.Corners;
+import IS24_LB11.game.utils.Direction;
 import IS24_LB11.game.utils.Position;
 
 public class Board {
@@ -57,25 +56,27 @@ public class Board {
         availableSpots.removeIf(spot -> spot.equals(position));
 
         getPlayableCard(position).ifPresent(card ->
-            forEachDiagonal(position, (diagonal, direction) -> {
-                if (card.hasCorner(direction) && !(spotAvailable(diagonal) || spotTaken(diagonal))){
-                    availableSpots.add(diagonal);
-                }
-            })
+                Direction.forEachDirection(corner -> {
+                    Position diagonal = position.withRelative(corner.relativePosition());
+                    if (card.hasCorner(corner) && !(spotAvailable(diagonal) || spotTaken(diagonal))){
+                        availableSpots.add(diagonal);
+                    }
+                })
         );
     }
 
     private void updateCounters(Position position) {
         getPlayableCard(position).ifPresent(card -> card.updateCounters(symbolCounter));
 
-        forEachDiagonal(position, (diagonal, direction) ->
-            getPlayableCard(diagonal).ifPresent(card -> {
-                if (!card.isFaceDown() && card.hasCorner(Corners.opposite(direction))) {
-                    Symbol symbol = card.getCorner(Corners.opposite(direction));
+        Direction.forEachDirection(corner -> {
+            Position cornerPosition = position.withRelative(corner.relativePosition());
+            getPlayableCard(cornerPosition).ifPresent(card -> {
+                if (!card.isFaceDown() && card.hasCorner(corner.opposite())) {
+                    Symbol symbol = card.getCorner(corner.opposite());
                     symbolCounter.computeIfPresent(symbol, (s, count) -> count-1);
                 }
-            })
-        );
+            });
+        });
     }
 
     private int countPatterns(GoalPattern goal) {
@@ -106,13 +107,6 @@ public class Board {
                 getPlacedCard(placedCard.position()).ifPresent(card -> card.setVisited(false));
         }
         return  patternsFound;
-    }
-
-    private void forEachDiagonal(Position position, BiConsumer<Position, Integer> consumer) {
-        for (int dir=0; dir<4; dir++) {
-            Position diagonalPosition = position.withRelative(2*(dir&1)-1, (dir&2)-1);
-            consumer.accept(diagonalPosition, dir);
-        }
     }
 
     public boolean spotTaken(Position position) {
