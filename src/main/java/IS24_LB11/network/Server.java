@@ -7,7 +7,9 @@ import java.util.ArrayList;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
-
+/**
+ * This class represents a server that listens for client connections and handles them accordingly.
+ */
 public class Server
 {
     //initialize socket and input stream
@@ -20,8 +22,9 @@ public class Server
     // before the session is over
     private int numOfConnectedClientsThisSession = 0;
     /**
+     * Constructs a Server instance with the specified port.
      *
-     * @param PORT should be in range 49152-65535
+     * @param PORT the port number the server will listen on (should be in range 49152-65535).
      */
     public Server(int PORT)
     {
@@ -37,7 +40,9 @@ public class Server
             System.out.println(e.getMessage());
         }
     }
-
+    /**
+     * Starts the server, listens for client connections, and handles them.
+     */
     public void start() {
         System.out.println("Server started");
         System.out.println("Waiting for clients to connect");
@@ -75,18 +80,31 @@ public class Server
             }
         }
     }
-
+    /**
+     * Cleans up and shuts down the server.
+     *
+     * @throws IOException if an I/O error occurs.
+     */
     public void exit() throws IOException {
         //TODO: cleanup and server shutdown
         socket.close();
     }
-
+    /**
+     * Checks if the provided port number is within the valid range.
+     *
+     * @param PORT the port number to check.
+     * @return true if the port number is within the valid range, false otherwise.
+     */
     private boolean isValidPort(int PORT){
         if(PORT >= 49152 && PORT <= 65535)
             return true;
         return false;
     }
-
+    /**
+     * Retrieves the list of active client handlers.
+     *
+     * @return the list of active client handlers.
+     */
     public ArrayList<ClientHandler> getActiveClients(){
         return activeClients;
     }

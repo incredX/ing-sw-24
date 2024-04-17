@@ -4,12 +4,21 @@ import java.net.*;
 import java.util.*;
 import com.google.gson.*;
 
+/**
+ * This class represents a client that connects to a server and sends/receives messages.
+ */
 public class Client {
     private Socket socket;
     private BufferedReader userInput;
     private BufferedReader in;
     private PrintWriter out;
 
+    /**
+     * Constructs a Client instance and connects it to the specified server.
+     *
+     * @param serverIP   the IP address of the server.
+     * @param serverPORT the port number of the server.
+     */
     public Client(String serverIP, int serverPORT) {
         try {
             socket = new Socket(serverIP, serverPORT);
