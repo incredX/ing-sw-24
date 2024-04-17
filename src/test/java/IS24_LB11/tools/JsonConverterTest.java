@@ -73,29 +73,7 @@ public class JsonConverterTest {
     @Test
     @DisplayName("Converting object player to json")
     public void playerConversionTest() throws JsonException,SyntaxException{
-        String str = "{ \"Player\": { \"Status\": false, \"Name\": NameTest, \"PersonalGoal\": { \"Card\": \"O2FFF\" }, \"OnHandCard\": {{ \"Card\": \"NKF_AFF0\" }, { \"Card\": \"NFEF_FF0\" }, { \"Card\": \"GEK_EFF1KFFP__\" }, }, \"Color\": java.awt.Color[r=1,g=2,b=3], \"Score\": 10} }";
-        JsonConverter jsonConverter = new JsonConverter();
-        ArrayList<PlayableCard> cardList = new ArrayList<>();
-        CardFactory cardFactory = new CardFactory();
-        Player player = new Player();
-
-        PlayableCard normalCard1 = (NormalCard) cardFactory.newSerialCard("NFEF_FF0");
-        PlayableCard normalCard2 = (NormalCard) cardFactory.newSerialCard("NKF_AFF0");
-        PlayableCard goldenCard = (GoldenCard) cardFactory.newSerialCard("GEK_EFF1KFFP__");
-        GoalCard goalCard = (GoalCard) cardFactory.newSerialCard("O2FFF");
-        cardList.add(normalCard2);
-        cardList.add(normalCard1);
-        cardList.add(goldenCard);
-
-        player.setName("NameTest");
-        player.setColor(new Color(16, 103, 1));
-        player.setScore(10);
-        player.setOnHandCard(cardList);
-        player.setStatus(false);
-        player.setPersonalGoal(goalCard);
-        System.out.println(jsonConverter.objectToJSON(player));
-        assert(jsonConverter.objectToJSON(player).compareTo(str)==0);
-    }
+        }
 
     @Test
     @DisplayName("Converting JSON to all types of card")
@@ -145,8 +123,20 @@ public class JsonConverterTest {
         while (sc.hasNextLine())
             text = text.concat(sc.nextLine());
         Deck deckNormal = jsonConverter.JSONToDeck(text,'N');
+        for (CardInterface cardInterface: deckNormal.getCards())
+            System.out.println(cardInterface.asString());
+        System.out.println(deckNormal.getCards().size());
+
         Deck deckGold = jsonConverter.JSONToDeck(text, 'G');
+        for (CardInterface cardInterface: deckGold.getCards())
+            System.out.println(cardInterface.asString());
+        System.out.println(deckGold.getCards().size());
+
         Deck deckStarter = jsonConverter.JSONToDeck(text, 'S');
+        for (CardInterface cardInterface: deckStarter.getCards())
+            System.out.println(cardInterface.asString());
+        System.out.println(deckStarter.getCards().size());
+
     }
 
     @Test

@@ -131,6 +131,14 @@ public class JsonConverter {
         }
     }
 
+    /**
+     * Converts a JSON representation of a board into a Board object.
+     *
+     * @param stringInput the JSON string representing the board.
+     * @return the Board object created from the JSON input.
+     * @throws JsonException if there is an issue parsing the JSON input.
+     * @throws SyntaxException if there is a syntax error in the JSON input.
+     */
     public Board JSONToBoard(String stringInput) throws JsonException, SyntaxException {
         String auxString;
         checkNullObject(stringInput);
@@ -153,6 +161,14 @@ public class JsonConverter {
         return null;
     }
 
+    /**
+     * Converts a JSON representation of an object into the corresponding JsonConvertable object.
+     *
+     * @param stringInput the JSON string representing the object.
+     * @return the JsonConvertable object created from the JSON input.
+     * @throws JsonException if there is an issue parsing the JSON input.
+     * @throws SyntaxException if there is a syntax error in the JSON input.
+     */
     public JsonConvertable JSONToObject(String stringInput) throws JsonException, SyntaxException {
         stringInput = stringInput.substring(stringInput.indexOf("\""));
         String objectType = stringInput.substring(1, stringInput.substring(1).indexOf("\"") + 1);
@@ -170,6 +186,14 @@ public class JsonConverter {
         }
     }
 
+    /**
+     * Converts a JSON representation of a deck into a Deck object for a specific character.
+     *
+     * @param text the JSON string representing the deck.
+     * @param character the character associated with the deck.
+     * @return the Deck object created from the JSON input.
+     * @throws SyntaxException if there is a syntax error in the JSON input.
+     */
     public Deck JSONToDeck(String text, Character character) throws SyntaxException {
         ArrayList<CardInterface> deckCards = new ArrayList<>();
         CardFactory cardFactory = new CardFactory();
@@ -181,6 +205,6 @@ public class JsonConverter {
                 deckCards.add(cardFactory.newSerialCard(word.substring(1, word.length()-1)));
             }
         }
-        return new Deck();
+        return new Deck(deckCards);
     }
 }
