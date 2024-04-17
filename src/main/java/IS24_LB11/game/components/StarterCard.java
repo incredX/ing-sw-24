@@ -45,7 +45,8 @@ public class StarterCard extends NormalCard {
     public void updateCounters(HashMap<Symbol, Integer> counters) {
         if (faceDown) {
             backCorners.updateCounters(counters);
-        } else {
+        }
+        else {
             frontCorners.updateCounters(counters);
             centralSuits.forEach(symbol -> counters.computeIfPresent(symbol, ((s, cnt) -> cnt+1)));
         }
