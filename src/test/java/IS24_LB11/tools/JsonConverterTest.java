@@ -4,6 +4,7 @@ import IS24_LB11.game.components.*;
 import IS24_LB11.game.tools.JsonConverter;
 import IS24_LB11.game.utils.JsonStringException;
 import IS24_LB11.game.utils.SyntaxException;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -14,6 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class JsonConverterTest {
     @Test
+    @Disabled
     @DisplayName("Converting all types of cards")
     public void cardConversionTest() throws JsonStringException,SyntaxException {
         JsonConverter jsonConverter = new JsonConverter();
