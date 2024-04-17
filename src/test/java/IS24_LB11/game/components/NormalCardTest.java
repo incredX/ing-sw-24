@@ -28,7 +28,7 @@ public class NormalCardTest {
                 "____AB0",
         };
         for (String id: validId) {
-            assert (new NormalCard(id).asString().equals("R" + id));
+            assert (new NormalCard(id).asString().equals("N" + id));
         }
     }
 
