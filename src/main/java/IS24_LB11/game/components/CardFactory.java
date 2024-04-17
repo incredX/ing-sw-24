@@ -5,6 +5,9 @@ import IS24_LB11.game.utils.SyntaxException;
 
 public class CardFactory {
     public static PlayableCard newPlayableCard(String str) throws SyntaxException {
+        if(str.isEmpty()) {
+            throw new  SyntaxException("Empty string id");
+        }
         char c = str.charAt(0);
         try {
             if (c == 'N') return new NormalCard(str.substring(1));

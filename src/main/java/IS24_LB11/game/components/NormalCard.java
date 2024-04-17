@@ -37,7 +37,7 @@ public class NormalCard implements PlayableCard {
             throw new SyntaxException(String.format(Symbol.INVALID_CHAR_MSG, charFace));
         }
         points = id.charAt(6) - '0';
-        if (points < 0 || points > 9) {
+        if (points < 0 || points > 5) {
             throw new SyntaxException(String.format(NOT_A_DIGIT_MSG, id.charAt(6)));
         }
     }
