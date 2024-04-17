@@ -8,13 +8,11 @@ import IS24_LB11.game.symbol.Empty;
 import IS24_LB11.game.symbol.Item;
 import IS24_LB11.game.symbol.Suit;
 import IS24_LB11.game.symbol.Symbol;
-import IS24_LB11.game.utils.Corners;
-import IS24_LB11.game.utils.SyntaxException;
 
-import static IS24_LB11.game.utils.Corners.UP_LEFT;
-import static IS24_LB11.game.utils.Corners.UP_RIGHT;
-import static IS24_LB11.game.utils.Corners.DOWN_LEFT;
-import static IS24_LB11.game.utils.Corners.DOWN_RIGHT;
+import static IS24_LB11.game.utils.Direction.UP_LEFT;
+import static IS24_LB11.game.utils.Direction.UP_RIGHT;
+import static IS24_LB11.game.utils.Direction.DOWN_LEFT;
+import static IS24_LB11.game.utils.Direction.DOWN_RIGHT;
 
 public class CornersTest {
 
@@ -43,39 +41,12 @@ public class CornersTest {
         assert ( corners.hasCorner(UP_RIGHT));
         assert ( corners.hasCorner(DOWN_LEFT));
         assert (!corners.hasCorner(DOWN_RIGHT));
-        assert (!corners.hasCorner(4));
-        assert (!corners.hasCorner(-1));
     }
 
     @Test
     void testGetCorner() throws SyntaxException {
         Corners corners = new Corners("FQ_E");
         Symbol[] symbols = new Symbol[] {Suit.MUSHROOM, Item.QUILL, null, Empty.symbol()};
-        for (int i=0; i<4; i++) assert(symbols[i] == corners.getCorner(i));
+        for (int i=0; i<4; i++) assert(symbols[i] == corners.getCorner(Direction.parse(i)));
     }
-
-    @Test
-    void testOpposite() {
-        assert (DOWN_RIGHT == Corners.opposite(UP_LEFT));
-        assert (DOWN_LEFT == Corners.opposite(UP_RIGHT));
-        assert (UP_RIGHT == Corners.opposite(DOWN_LEFT));
-        assert (UP_LEFT == Corners.opposite(DOWN_RIGHT));
-    }
-
-    @Test
-    void testIsRight() {
-        assert (Corners.isRight(UP_RIGHT));
-        assert (Corners.isRight(DOWN_RIGHT));
-        assert (!Corners.isRight(UP_LEFT));
-        assert (!Corners.isRight(DOWN_LEFT));
-    }
-
-    @Test
-    void testIsUp() {
-        assert (Corners.isUp(UP_LEFT));
-        assert (Corners.isUp(UP_RIGHT));
-        assert (!Corners.isUp(DOWN_LEFT));
-        assert (!Corners.isUp(DOWN_RIGHT));
-    }
-
 }

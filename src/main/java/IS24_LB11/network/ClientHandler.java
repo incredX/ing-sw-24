@@ -53,7 +53,7 @@ public class ClientHandler implements Runnable {
 //                    new Thread(() -> broadcast(finalInputLine) );
                     broadcast(inputLine);
                     // Parse JSON
-                    JsonObject jsonObject = JsonParser.parseString(inputLine).getAsJsonObject();
+                    //JsonObject jsonObject = JsonParser.parseString(inputLine).getAsJsonObject();
 
                     // Do something with the received JSON data
 

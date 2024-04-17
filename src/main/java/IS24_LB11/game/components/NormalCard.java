@@ -85,13 +85,22 @@ public class NormalCard implements PlayableCard {
 
     public Symbol getCorner(int dir) {
         if (faceDown) return Empty.symbol();
-        return frontCorners.getCorner(dir);
+        return frontCorners.getCorner(Direction.parse(dir));
+    }
+
+    public Symbol getCorner(Direction direction) {
+        if (faceDown) return Empty.symbol();
+        return frontCorners.getCorner(direction);
     }
 
     public int getPoints() { return points; }
 
     public boolean hasCorner(int dir) {
-        return faceDown || frontCorners.hasCorner(dir);
+        return faceDown || frontCorners.hasCorner(Direction.parse(dir));
+    }
+
+    public boolean hasCorner(Direction direction) {
+        return faceDown || frontCorners.hasCorner(direction);
     }
 
     public boolean isFaceDown() { return faceDown; }

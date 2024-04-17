@@ -1,69 +1,56 @@
 package IS24_LB11.game;
 
 import IS24_LB11.game.components.GoalCard;
-import IS24_LB11.game.components.JsonConvertable;
 import IS24_LB11.game.components.PlayableCard;
+import IS24_LB11.game.utils.Color;
+import IS24_LB11.game.utils.Position;
 
-import java.awt.*;
-/**
- * java.awt.* (Abstract Window Toolkit)  allows us to use some intefaces that help us to menage graphic intefaces
+/*
+java.awt.* (Abstract Window Toolkit)  allows us to use some intefaces that help us to menage graphic intefaces
  */
 import java.util.ArrayList;
 
-public class Player implements JsonConvertable {
-
-    private boolean status;
-    private String name;
+public class Player {
+    private final String name;
+    private final Color color;
+    private final Board board;
+    private final PlayerSetup setup;
+    private final ArrayList<PlayableCard> hand;
     private GoalCard personalGoal;
-    private ArrayList<PlayableCard> onHandCard = new ArrayList<PlayableCard>();
-    private Color color;
     private int score;
 
-    public String getName() {
+    public Player(String name, Color color, PlayerSetup setup) {
+        this.name = name;
+        this.color = color;
+        this.board = new Board();
+        this.setup = setup;
+        this.hand = setup.hand();
+        this.personalGoal = null;
+        this.score = 0;
+    }
+
+    public void applySetup() {
+        this.personalGoal = setup.chosenGoal().get();
+        this.board.start(setup.starterCard());
+    }
+
+    public boolean placeCard(PlayableCard card, Position position) {
+        return board.placeCard(card, position);
+    }
+
+    public void incrementScore(int amount) {
+        score += amount;
+    }
+
+    public String name() {
         return name;
     }
 
-    public Color getColor() {
-        return color;
+    public PlayerSetup setup() {
+        return setup;
     }
 
     public int getScore() {
         return score;
-    }
-
-    public GoalCard getPersonalGoal() {
-        return personalGoal;
-    }
-
-    public ArrayList<PlayableCard> getOnHandCard() {
-        return onHandCard;
-    }
-
-    public boolean isStatus() {
-        return status;
-    }
-
-    public void setColor(Color color) {
-        this.color = color;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setOnHandCard(ArrayList<PlayableCard> onHandCard) {
-        this.onHandCard = onHandCard;
-    }
-
-    public void setPersonalGoal(GoalCard personalGoal) {
-        this.personalGoal = personalGoal;
-    }
-
-    public void setScore(int score) {
-        this.score = score;
-    }
-
-    public void setStatus(boolean status) {
-        this.status = status;
     }
 }
