@@ -1,6 +1,6 @@
 package IS24_LB11.game.components;
 
-public interface CardInterface {
+public interface CardInterface extends JsonConvertable{
     String SHORT_ID_MSG = "string %s is not long enough";
     String NOT_A_DIGIT_MSG = "'%c' is not a digit";
     String INVALID_DIGIT_MSG = "'%c' is not a valid digit";
