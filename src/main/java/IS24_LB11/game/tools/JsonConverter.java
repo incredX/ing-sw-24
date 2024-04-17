@@ -84,18 +84,7 @@ public class JsonConverter {
      * @throws JsonException if the provided player object is null
      */
     public String objectToJSON(Player player) throws JsonException {
-        checkNullObject(player);
-        String str = "\"Player\": { ";
-        str += "\"Status\": " + player.isStatus() + ", ";
-        str += "\"Name\": " + player.getName() + ", ";
-        str += "\"PersonalGoal\": " + objectToJSON(player.getPersonalGoal()) + ", ";
-        str += "\"OnHandCard\": {";
-        for (CardInterface card : player.getOnHandCard())
-            str = str + objectToJSON(card) + ", ";
-        str += "}, ";
-        str += "\"Color\": " + player.getColor() + ", ";
-        str += "\"Score\": " + player.getScore() + "}";
-        return wrapTextBrackets(str);
+        return null;
     }
 
     /**
