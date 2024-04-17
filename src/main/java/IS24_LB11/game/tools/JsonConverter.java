@@ -10,7 +10,8 @@ import IS24_LB11.game.utils.*;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-import static IS24_LB11.game.components.CardInterface.INVALID_INPUT;
+import static IS24_LB11.game.tools.JsonException.INVALID_INPUT;
+import static IS24_LB11.game.tools.JsonException.PLACEDCARDS_NOT_FOUND;
 
 public class JsonConverter {
     /**
@@ -165,7 +166,7 @@ public class JsonConverter {
             case "Board":
                 if (stringInput.contains("placedCards"))
                     return JSONToBoard(stringInput.substring(stringInput.indexOf("["), stringInput.indexOf("]") + 1));
-                throw new JsonException(String.format(INVALID_INPUT, stringInput));
+                throw new JsonException(String.format(PLACEDCARDS_NOT_FOUND, stringInput));
             case "Player":
                 return null;//JSONToPlayer(stringInput)
             case "Card":
