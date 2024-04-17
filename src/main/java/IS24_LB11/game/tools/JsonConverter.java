@@ -178,7 +178,7 @@ public class JsonConverter {
                     return JSONToBoard(stringInput.substring(stringInput.indexOf("["), stringInput.indexOf("]") + 1));
                 throw new JsonException(String.format(INVALID_INPUT, stringInput));
             case "Player":
-                return JSONToPlayer(stringInput);
+                return null;//JSONToPlayer(stringInput)
             case "Card":
                 return JSONToCard(stringInput);
             default:
