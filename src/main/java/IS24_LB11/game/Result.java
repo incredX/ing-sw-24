@@ -55,6 +55,10 @@ public class Result<T> {
         return value;
     }
 
+    public T getOrElse(T defaultValue) {
+        return isOk() ? value : defaultValue;
+    }
+
     public String getError() {
         return error;
     }

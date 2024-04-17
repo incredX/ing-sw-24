@@ -1,6 +1,9 @@
-package IS24_LB11.game.components;
+package IS24_LB11.game;
 
 import IS24_LB11.game.Result;
+import IS24_LB11.game.components.GoalCard;
+import IS24_LB11.game.components.PlayableCard;
+import IS24_LB11.game.components.StarterCard;
 
 import java.util.ArrayList;
 import java.util.Arrays;

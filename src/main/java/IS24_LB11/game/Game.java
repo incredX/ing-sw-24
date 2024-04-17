@@ -1,9 +1,6 @@
 package IS24_LB11.game;
 
-import IS24_LB11.game.components.GoalCard;
 import IS24_LB11.game.components.PlayableCard;
-import IS24_LB11.game.components.PlayerSetup;
-import IS24_LB11.game.utils.Color;
 import IS24_LB11.game.utils.Position;
 
 import java.util.ArrayList;
@@ -15,8 +12,6 @@ public class Game {
     private final Deck goldenDeck;
     private final Deck normalDeck;
     private final ArrayList<Player> players;
-    private final ArrayList<PlayerSetup> setups;
-
 
     public Game(int numPlayers) {
         this.turn = 0;
@@ -25,7 +20,6 @@ public class Game {
         this.goldenDeck = null; // <- here we load deck from json
         this.normalDeck = null; // <- here we load deck from json
         this.players = new ArrayList<>(numPlayers);
-        this.setups = new ArrayList<>(numPlayers);
     }
 
     public Result<String> newPlayer(String name) {
