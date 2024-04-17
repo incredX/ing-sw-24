@@ -13,4 +13,8 @@ public class Game {
     private ArrayList<GoalCard> publicGoals = new ArrayList<GoalCard>();
     private ArrayList<Player> players = new ArrayList<Player>();
 
+    public void manageTurn() {
+
+    }
+
 }

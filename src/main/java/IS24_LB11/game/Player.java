@@ -5,8 +5,8 @@ import IS24_LB11.game.components.JsonConvertable;
 import IS24_LB11.game.components.PlayableCard;
 
 import java.awt.*;
-/*
-java.awt.* (Abstract Window Toolkit)  allows us to use some intefaces that help us to menage graphic intefaces
+/**
+ * java.awt.* (Abstract Window Toolkit)  allows us to use some intefaces that help us to menage graphic intefaces
  */
 import java.util.ArrayList;
 

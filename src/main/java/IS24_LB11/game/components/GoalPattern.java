@@ -9,9 +9,9 @@ public class GoalPattern extends GoalSymbol {
 
     /**
      * Construct a <code>GoalPattern</code> from the information encoded in the given <code>String</code> with the following syntax:
-     * <code>char</code> 1-4 : same syntax followed by <code>GoalSymbol</code>
-     * <code>char</code> 5   : represents the pattern's variant (expected 'D' or 'L')
-     * <code>char</code> 6   : represents the pattern's direction
+     * <code>char</code> 0-3 : same syntax followed by <code>GoalSymbol</code>
+     * <code>char</code> 4   : represents the pattern's variant (expected 'D' or 'L')
+     * <code>char</code> 5   : represents the pattern's direction
      *
      * @param id a <code>String</code> containing the encoded information that identify the card
      * @throws SyntaxException if the information are not correctly encoded or missing
