@@ -4,6 +4,7 @@ import IS24_LB11.game.components.CardInterface;
 import IS24_LB11.game.components.PlayableCard;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.Optional;
 
 public class Deck {
@@ -69,5 +70,17 @@ public class Deck {
         return cards.isEmpty();
     }
 
+    public ArrayList<CardInterface> getCards() {
+        return cards;
+    }
 
+
+    public int size() {
+        return cards.size();
+
+    }
+
+    public boolean contains (CardInterface card) {
+        return cards.contains(card);
+    }
 }

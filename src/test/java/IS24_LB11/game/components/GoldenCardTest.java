@@ -38,7 +38,7 @@ public class GoldenCardTest {
     void testInvalidCardCreation () throws  SyntaxException {
 
         String [] invalidId = new String [] {
-                "TEEQFF1QFFA__",
+                "TEEQFF1QFFA_________________",
                 "ZK_EFF1KFFP__",
                 "EEE_FF2EFHFP_",
                 "EEE_FF",
@@ -46,7 +46,7 @@ public class GoldenCardTest {
                 "EEE_FF2E}FP_",
                 "EEE_FF2EP_",
                 "EEE_FF2EFFFP@",
-                "EEE_FF2EFFFZ_"
+                "EEE_FF2EFFFZ_MNVC"
         };
         for (String id: invalidId) {
             assertThrows(SyntaxException.class, () -> new GoldenCard(id));
@@ -66,19 +66,19 @@ public class GoldenCardTest {
 
     @Test
     void testCountersUpdate() throws SyntaxException {
-        String[] ids = {"_EEQFF1QFFA__", "EK_EFF1KFFP__", "MEE_FF1MFFI__", "EE_EFF2EFFFA_", "EEE_FF2EFFFP_"};
+        String[] ids = {"_EEQFF1QFFA__", "EK_EFF1KFFP__", "MEE_FF1MFFI__", "EE_EFF2EFFFA_", "EEE_FF2EFFFP_", "EEE_IB2EIIIP_"};
         HashMap<Symbol, Integer> counters = new HashMap<>();
 
         for (Suit suit: Suit.values()) counters.put(suit, 0);
         for (Item item: Item.values()) counters.put(item, 0);
 
         for (String id: ids) {
-            NormalCard card = new NormalCard(id);
+            GoldenCard card = new GoldenCard(id);
             card.updateCounters(counters);
         }
         assert (counters.get(Suit.MUSHROOM) == 0);
         assert (counters.get(Suit.ANIMAL) == 0);
-        assert (counters.get(Suit.INSECT) == 0);
+        assert (counters.get(Suit.INSECT) == 1);
         assert (counters.get(Suit.PLANT) == 0);
         assert (counters.get(Item.QUILL) == 1);
         assert (counters.get(Item.INKWELL) == 1);
