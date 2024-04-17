@@ -11,7 +11,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.awt.*;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -31,9 +34,9 @@ public class JsonConverterTest {
         stringCards.add("{ \"Card\": \"" + "O2FFF" + "\" }");
         stringCards.add("{ \"Card\": \"" + "O2FFFD1" + "\" }");
         
-        cardList.add(cardFactory.newPlayableCard("NFEF_FF0"));
-        cardList.add(cardFactory.newPlayableCard("GEK_EFF1KFFP__"));
-        cardList.add(cardFactory.newPlayableCard("SEEEE_F0AI_PIAF"));
+        cardList.add(cardFactory.newSerialCard("NFEF_FF0"));
+        cardList.add(cardFactory.newSerialCard("GEK_EFF1KFFP__"));
+        cardList.add(cardFactory.newSerialCard("SEEEE_F0AI_PIAF"));
         cardList.add(cardFactory.newSerialCard("O2FFF"));
         cardList.add(cardFactory.newSerialCard("O2FFFD1"));
         
@@ -49,9 +52,9 @@ public class JsonConverterTest {
         JsonConverter jsonConverter = new JsonConverter();
         Board board = new Board();
         CardFactory cardFactory = new CardFactory();
-        StarterCard starterCard = (StarterCard) cardFactory.newPlayableCard("SEEEE_F0AI_PIAF");
-        NormalCard normalCard = (NormalCard) cardFactory.newPlayableCard("NFEF_FF0");
-        GoldenCard goldenCard = (GoldenCard) cardFactory.newPlayableCard("GEK_EFF1KFFP__");
+        StarterCard starterCard = (StarterCard) cardFactory.newSerialCard("SEEEE_F0AI_PIAF");
+        NormalCard normalCard = (NormalCard) cardFactory.newSerialCard("NFEF_FF0");
+        GoldenCard goldenCard = (GoldenCard) cardFactory.newSerialCard("GEK_EFF1KFFP__");
         board.start(starterCard);
         board.placeCard(normalCard, new Position(1,1));
         board.placeCard(goldenCard, new Position(-1,1));
@@ -69,9 +72,9 @@ public class JsonConverterTest {
         CardFactory cardFactory = new CardFactory();
         Player player = new Player();
 
-        PlayableCard normalCard1 = (NormalCard) cardFactory.newPlayableCard("NFEF_FF0");
-        PlayableCard normalCard2 = (NormalCard) cardFactory.newPlayableCard("NKF_AFF0");
-        PlayableCard goldenCard = (GoldenCard) cardFactory.newPlayableCard("GEK_EFF1KFFP__");
+        PlayableCard normalCard1 = (NormalCard) cardFactory.newSerialCard("NFEF_FF0");
+        PlayableCard normalCard2 = (NormalCard) cardFactory.newSerialCard("NKF_AFF0");
+        PlayableCard goldenCard = (GoldenCard) cardFactory.newSerialCard("GEK_EFF1KFFP__");
         GoalCard goalCard = (GoalCard) cardFactory.newSerialCard("O2FFF");
         cardList.add(normalCard2);
         cardList.add(normalCard1);
@@ -97,9 +100,9 @@ public class JsonConverterTest {
 
         ArrayList<String> stringCards = new ArrayList<>();
 
-        cardListGenerated.add(cardFactory.newPlayableCard("NFEF_FF0"));
-        cardListGenerated.add(cardFactory.newPlayableCard("GEK_EFF1KFFP__"));
-        cardListGenerated.add(cardFactory.newPlayableCard("SEEEE_F0AI_PIAF"));
+        cardListGenerated.add(cardFactory.newSerialCard("NFEF_FF0"));
+        cardListGenerated.add(cardFactory.newSerialCard("GEK_EFF1KFFP__"));
+        cardListGenerated.add(cardFactory.newSerialCard("SEEEE_F0AI_PIAF"));
         cardListGenerated.add(cardFactory.newSerialCard("O2FFF"));
         cardListGenerated.add(cardFactory.newSerialCard("O2FFFD1"));
 
@@ -124,5 +127,18 @@ public class JsonConverterTest {
         System.out.println(str);
         System.out.println(jsonConverter.objectToJSON(board));
         assert(jsonConverter.objectToJSON(board).compareTo(str)==0);
+    }
+
+    @Test
+    @DisplayName("Deck initialiazing")
+    public void jsonDeck() throws FileNotFoundException, SyntaxException {
+        JsonConverter jsonConverter = new JsonConverter();
+        Scanner sc = new Scanner(new File("resources/Cards.json"));
+        String text = "";
+        while (sc.hasNextLine())
+            text = text.concat(sc.nextLine());
+        jsonConverter.JSONToDeck(text,'N');
+
+
     }
 }

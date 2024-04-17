@@ -1,12 +1,14 @@
 package IS24_LB11.game.tools;
 
 import IS24_LB11.game.Board;
+import IS24_LB11.game.Deck;
 import IS24_LB11.game.PlacedCard;
 import IS24_LB11.game.Player;
 import IS24_LB11.game.components.*;
 import IS24_LB11.game.utils.*;
 
 import java.util.ArrayList;
+import java.util.Scanner;
 
 import static IS24_LB11.game.components.CardInterface.INVALID_INPUT;
 
@@ -22,6 +24,7 @@ public class JsonConverter {
         if (object == null)
             throw new JsonException("Object is null");
     }
+
     /**
      * Wraps the provided string with curly brackets and returns the result.
      *
@@ -34,6 +37,7 @@ public class JsonConverter {
         checkNullObject(string);
         return "{ " + string + " }";
     }
+
     /**
      * Converts a CardInterface object to its JSON representation.
      *
@@ -47,7 +51,7 @@ public class JsonConverter {
         switch (cardString.charAt(0)) {
             case 'O':
                 if (cardString.length() == 6)
-                    return  wrapTextBrackets("\"Card\": \"" + card.asString() + "\"");
+                    return wrapTextBrackets("\"Card\": \"" + card.asString() + "\"");
                 else
                     return wrapTextBrackets("\"Card\": \"" + card.asString() + "\"");
             case 'N':
@@ -60,6 +64,7 @@ public class JsonConverter {
                 throw new JsonException(String.format(INVALID_INPUT, cardString));
         }
     }
+
     /**
      * Converts a Board object to its JSON representation.
      *
@@ -72,11 +77,11 @@ public class JsonConverter {
         String str = "\"Board\": { ";
 
         str += "\"placedCards\": [ ";
-        for (PlacedCard placedCard: board.getPlacedCards()) {
+        for (PlacedCard placedCard : board.getPlacedCards()) {
             str += objectToJSON(placedCard.card());
-            str = str.substring(0,str.length()-2) + ", X" + placedCard.position().getX() + "Y" + placedCard.position().getY() + "}, ";
+            str = str.substring(0, str.length() - 2) + ", X" + placedCard.position().getX() + "Y" + placedCard.position().getY() + "}, ";
         }
-        str = str.substring(0,str.length()-2);
+        str = str.substring(0, str.length() - 2);
 
         str += " ]";
         //manca da implementare symbolCounter
@@ -97,7 +102,7 @@ public class JsonConverter {
         str += "\"Name\": " + player.getName() + ", ";
         str += "\"PersonalGoal\": " + objectToJSON(player.getPersonalGoal()) + ", ";
         str += "\"OnHandCard\": {";
-        for (CardInterface card: player.getOnHandCard())
+        for (CardInterface card : player.getOnHandCard())
             str = str + objectToJSON(card) + ", ";
         str += "}, ";
         str += "\"Color\": " + player.getColor() + ", ";
@@ -120,7 +125,7 @@ public class JsonConverter {
             throw new JsonException(String.format(INVALID_INPUT, stringInput));
 
         stringInput = stringInput.substring(stringInput.indexOf("Card") + 8);
-        stringInput = stringInput.substring(0,stringInput.indexOf("\""));
+        stringInput = stringInput.substring(0, stringInput.indexOf("\""));
         switch (stringInput.charAt(0)) {
             case 'O':
                 if (stringInput.length() == 6)
@@ -128,11 +133,11 @@ public class JsonConverter {
                 else
                     return cardFactory.newSerialCard(stringInput);
             case 'N':
-                return cardFactory.newPlayableCard(stringInput);
+                return cardFactory.newSerialCard(stringInput);
             case 'G':
-                return cardFactory.newPlayableCard(stringInput);
+                return cardFactory.newSerialCard(stringInput);
             case 'S':
-                return cardFactory.newPlayableCard(stringInput);
+                return cardFactory.newSerialCard(stringInput);
             default:
                 throw new JsonException(String.format(INVALID_INPUT, stringInput));
         }
@@ -143,30 +148,31 @@ public class JsonConverter {
         checkNullObject(stringInput);
         Board convertedBoard = new Board();
         int cnt = 3;
-        while (stringInput.contains("Card")){
-            auxString = stringInput.substring(stringInput.indexOf("{"),stringInput.indexOf("}")+1);
-            int X = Integer.valueOf(auxString.substring(auxString.indexOf("X")+1,auxString.indexOf("Y")));
-            int Y = Integer.valueOf(auxString.substring(auxString.indexOf("Y")+1,auxString.indexOf("}")));
-            PlayableCard playableCard = (PlayableCard) JSONToCard(auxString.substring(auxString.indexOf("{"),auxString.indexOf(",")));
+        while (stringInput.contains("Card")) {
+            auxString = stringInput.substring(stringInput.indexOf("{"), stringInput.indexOf("}") + 1);
+            int X = Integer.valueOf(auxString.substring(auxString.indexOf("X") + 1, auxString.indexOf("Y")));
+            int Y = Integer.valueOf(auxString.substring(auxString.indexOf("Y") + 1, auxString.indexOf("}")));
+            PlayableCard playableCard = (PlayableCard) JSONToCard(auxString.substring(auxString.indexOf("{"), auxString.indexOf(",")));
             if (playableCard.asString().startsWith("S"))
                 convertedBoard.start((StarterCard) playableCard);
             else
-                convertedBoard.placeCard((PlayableCard) JSONToCard(auxString.substring(auxString.indexOf("{"),auxString.indexOf(","))),new Position(X,Y));
-            stringInput = stringInput.substring(stringInput.indexOf("}")+1);
+                convertedBoard.placeCard((PlayableCard) JSONToCard(auxString.substring(auxString.indexOf("{"), auxString.indexOf(","))), new Position(X, Y));
+            stringInput = stringInput.substring(stringInput.indexOf("}") + 1);
         }
         return convertedBoard;
     }
 
-    public  Player JSONToPlayer(String stringInput) throws JsonException {
+    public Player JSONToPlayer(String stringInput) throws JsonException {
         return null;
     }
+
     public JsonConvertable JSONToObject(String stringInput) throws JsonException, SyntaxException {
         stringInput = stringInput.substring(stringInput.indexOf("\""));
-        String objectType = stringInput.substring(1, stringInput.substring(1).indexOf("\"")+1);
+        String objectType = stringInput.substring(1, stringInput.substring(1).indexOf("\"") + 1);
         switch (objectType) {
             case "Board":
                 if (stringInput.contains("placedCards"))
-                    return JSONToBoard(stringInput.substring(stringInput.indexOf("["),stringInput.indexOf("]")+1));
+                    return JSONToBoard(stringInput.substring(stringInput.indexOf("["), stringInput.indexOf("]") + 1));
                 throw new JsonException(String.format(INVALID_INPUT, stringInput));
             case "Player":
                 return JSONToPlayer(stringInput);
@@ -175,5 +181,22 @@ public class JsonConverter {
             default:
                 throw new JsonException(String.format(INVALID_INPUT, stringInput));
         }
+    }
+
+    public Deck JSONToDeck(String text, Character character) throws SyntaxException {
+        ArrayList<CardInterface> deckCards = new ArrayList<>();
+        CardFactory cardFactory = new CardFactory();
+        Scanner sc = new Scanner(text);
+        while (sc.hasNext()) {
+            String word = sc.next();
+            word = word.endsWith(",")?word.substring(0,word.length()-1):word;
+            if (word.startsWith("\"" + character) && word.length()>5) {
+                System.out.println(word.substring(1, word.length()-1));
+                //System.out.println(cardFactory.newSerialCard(word.substring(1, word.length())).asString());
+                deckCards.add(cardFactory.newSerialCard(word.substring(1, word.length()-1)));
+            }
+        }
+        System.out.println(deckCards.size());
+        return new Deck();
     }
 }
