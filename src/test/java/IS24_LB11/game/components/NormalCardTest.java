@@ -2,7 +2,7 @@ package IS24_LB11.game.components;
 
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import IS24_LB11.game.symbol.Symbol;
 import IS24_LB11.game.symbol.Empty;
 import IS24_LB11.game.symbol.Item;
@@ -11,24 +11,24 @@ import IS24_LB11.game.utils.SyntaxException;
 
 import java.util.HashMap;
 
-import static IS24_LB11.game.utils.Corners.UP_LEFT;
-import static IS24_LB11.game.utils.Corners.UP_RIGHT;
-import static IS24_LB11.game.utils.Corners.DOWN_LEFT;
-import static IS24_LB11.game.utils.Corners.DOWN_RIGHT;
+import static IS24_LB11.game.utils.Direction.UP_LEFT;
+import static IS24_LB11.game.utils.Direction.UP_RIGHT;
+import static IS24_LB11.game.utils.Direction.DOWN_LEFT;
+import static IS24_LB11.game.utils.Direction.DOWN_RIGHT;
 
 public class NormalCardTest {
 
     @Test
     void testValidCardCreation() throws SyntaxException {
         String[] validId = new String[]{
-                "FEF_FF0",
-                "FEF_FB0",
-                "_EAAAF0",
-                "EEEEAB0",
-                "____AB0",
+                "NFEF_FF0",
+                "NFEF_FB0",
+                "N_EAAAF0",
+                "NEEEEAB0",
+                "N____AB0",
         };
         for (String id: validId) {
-            assert (new NormalCard(id).asString().equals("N" + id));
+            assertEquals (id, CardFactory.newPlayableCard(id).asString(), "id: "+id);
         }
     }
 
@@ -36,23 +36,26 @@ public class NormalCardTest {
     void testInvalidCardCreation() {
         String[] invalidId = new String[]{
                 "FEF_",
-                "FEF_FF_",
+                "___________FEF_FF_",
                 "EE__F[0",
                 "EE__fB0",
-                "____XB0"
+                "____XB0",
+                ""
         };
 
         for (String id: invalidId) {
-            assertThrows(SyntaxException.class, () -> new NormalCard(id));
+            assertThrows(SyntaxException.class, () -> CardFactory.newPlayableCard(id).asString().equals(id), "id: "+id);
         }
     }
 
     @Test
     void testCorners() throws SyntaxException {
-        String id = "FQE_FF0";
-        NormalCard nc = new NormalCard(id);
-        assert (!nc.hasCorner(DOWN_RIGHT));
+        String id = "NFQE_FF0";
+        NormalCard nc = (NormalCard) CardFactory.newPlayableCard(id);
         assert (nc.hasCorner(UP_LEFT));
+        assert (nc.hasCorner(UP_RIGHT));
+        assert (nc.hasCorner(DOWN_LEFT));
+        assert (!nc.hasCorner(DOWN_RIGHT));
         assert (nc.getCorner(UP_LEFT) == Suit.MUSHROOM);
         assert (nc.getCorner(UP_RIGHT) == Item.QUILL);
         assert (nc.getCorner(DOWN_LEFT) == Empty.symbol());
@@ -60,14 +63,14 @@ public class NormalCardTest {
 
     @Test
     void testCountersUpdate() throws SyntaxException {
-        String[] ids = {"FQE_FF0", "KF_AFF0", "FIMEFF0", "EI_IIB0"};
+        String[] ids = {"NFQE_FF0", "NKF_AFF0", "NFIMEFF0", "NEI_IIB0"};
         HashMap<Symbol, Integer> counters = new HashMap<>();
 
         for (Suit suit: Suit.values()) counters.put(suit, 0);
         for (Item item: Item.values()) counters.put(item, 0);
 
         for (String id: ids) {
-            NormalCard card = new NormalCard(id);
+            NormalCard card = (NormalCard) CardFactory.newPlayableCard(id);
             card.updateCounters(counters);
         }
         assert (counters.get(Suit.MUSHROOM) == 3);

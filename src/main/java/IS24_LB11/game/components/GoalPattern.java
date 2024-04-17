@@ -1,6 +1,8 @@
 package IS24_LB11.game.components;
 
 import IS24_LB11.game.symbol.Symbol;
+import IS24_LB11.game.utils.Direction;
+import IS24_LB11.game.utils.Position;
 import IS24_LB11.game.utils.SyntaxException;
 
 public class GoalPattern extends GoalSymbol {
@@ -50,6 +52,20 @@ public class GoalPattern extends GoalSymbol {
         String str = super.asString();
         str = str + variant + dir;
         return str;
+    }
+
+    public Position[] getPatternSteps() {
+        Position[] steps = new Position[2];
+        steps[0] = Direction.parse(dir).opposite().relativePosition();
+        switch (variant) {
+            case 'L' -> {
+                steps[1] = steps[0].transformY(y -> y*2);
+            }
+            case 'D' -> {
+                steps[1] = steps[0].transform(c -> c*2);
+            }
+        }
+        return steps;
     }
 
     public char getVariant() { return variant; }

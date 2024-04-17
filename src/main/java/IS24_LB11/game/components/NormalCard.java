@@ -37,7 +37,7 @@ public class NormalCard implements PlayableCard {
             throw new SyntaxException(String.format(Symbol.INVALID_CHAR_MSG, charFace));
         }
         points = id.charAt(6) - '0';
-        if (points < 0 || points > 9) {
+        if (points < 0 || points > 5) {
             throw new SyntaxException(String.format(NOT_A_DIGIT_MSG, id.charAt(6)));
         }
     }
@@ -85,13 +85,22 @@ public class NormalCard implements PlayableCard {
 
     public Symbol getCorner(int dir) {
         if (faceDown) return Empty.symbol();
-        return frontCorners.getCorner(dir);
+        return frontCorners.getCorner(Direction.parse(dir));
+    }
+
+    public Symbol getCorner(Direction direction) {
+        if (faceDown) return Empty.symbol();
+        return frontCorners.getCorner(direction);
     }
 
     public int getPoints() { return points; }
 
     public boolean hasCorner(int dir) {
-        return faceDown || frontCorners.hasCorner(dir);
+        return faceDown || frontCorners.hasCorner(Direction.parse(dir));
+    }
+
+    public boolean hasCorner(Direction direction) {
+        return faceDown || frontCorners.hasCorner(direction);
     }
 
     public boolean isFaceDown() { return faceDown; }
