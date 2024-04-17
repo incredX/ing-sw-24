@@ -105,3 +105,6 @@ record Placement(
         Position position,
         Position[] availableSpot
 ) { }
+
+
+//manca il test sui pattern
