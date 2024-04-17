@@ -46,7 +46,11 @@ public class StarterCard extends NormalCard {
         if (faceDown) {
             backCorners.updateCounters(counters);
         }
-        centralSuits.forEach(symbol -> counters.computeIfPresent(symbol, ((s, cnt) -> cnt+1)));
+        else {
+            frontCorners.updateCounters(counters);
+            centralSuits.forEach(symbol -> counters.computeIfPresent(symbol, ((s, cnt) -> cnt+1)));
+        }
+
     }
 
     public Symbol getCorner(int dir) {
