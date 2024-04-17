@@ -80,7 +80,7 @@ public class Board implements JsonConvertable {
         });
     }
 
-    private int countPatterns(GoalPattern goal) {
+    public int countPatterns(GoalPattern goal) {
         ArrayList<Symbol> symbols = goal.getSymbols();
         Position[] steps = goal.getPatternSteps();
         Integer patternsFound = 0;
