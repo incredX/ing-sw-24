@@ -28,7 +28,7 @@ public class ServerReceivingThread implements Runnable {
                 System.out.println("Received from client " + clientSocket.getInetAddress().getHostName() + ": " + inputLine);
 
                 // Do something with the received JSON data
-                out.println(ServerEventHandler.handleEvent(clientHandler, inputLine).toString());
+                ServerEventHandler.handleEvent(clientHandler, out, inputLine);
             }
         } catch (IOException e) {
             e.printStackTrace();

@@ -13,31 +13,37 @@ public class ServerEventHandler {
 
     private static final Gson gson = new Gson();
     private static ClientHandler clientHandler;
+    private static PrintWriter outputToClient;
 
     // Method to handle incoming events
-    public static JsonObject handleEvent(ClientHandler ch, String eventJson) {
+    public static void handleEvent(ClientHandler ch,PrintWriter out, String eventJson) {
         clientHandler = ch;
+        outputToClient = out;
 
         JsonObject event = gson.fromJson(eventJson, JsonObject.class);
 
-        String eventType = event.get("type").getAsString();
+        String eventType = event.get("type").getAsString().toLowerCase();
         switch (eventType) {
             case "login":
-                return handleLoginEvent(event);
+                handleLoginEvent(event);
+                break;
             case "quit":
-                return handleQuitEvent(event);
+                handleQuitEvent(event);
+                break;
             case "message":
-                return handleMessageEvent(event);
+                handleMessageEvent(event);
+                break;
             default:
                 JsonObject error = new JsonObject();
                 error.addProperty("error", "Unknown event");
-                return error;
+                outputToClient.println(error);
+                break;
 
         }
     }
 
     // Method to handle login event
-    private static JsonObject handleLoginEvent(JsonObject event) {
+    private static void handleLoginEvent(JsonObject event) {
         System.out.println("Login request received");
 
         String username = null;
@@ -46,33 +52,28 @@ public class ServerEventHandler {
             username = event.get("username").getAsString();
         else {
             response.addProperty("error", "Wrong login request, username property missing");
-            return response;
+            outputToClient.println(response);
         }
 
         if(clientHandler.getAllUsernames().contains(username)) {
             response.addProperty("error", "Wrong login request, username already in use");
-            return response;
+            outputToClient.println(response);
         }
 
         clientHandler.setUserName(username);
         response.addProperty("value", "Welcome " + username);
-        return response;
+        outputToClient.println(response);
 
     }
 
     // Method to handle message event
-    private static JsonObject handleMessageEvent(JsonObject event) {
-
-        // TODO: message logic here
-        return null;
+    private static void handleMessageEvent(JsonObject event) {
+        System.out.println("Login request received");
     }
 
 
     // Method to handle quit event
-    private static JsonObject handleQuitEvent(JsonObject event) {
+    private static void handleQuitEvent(JsonObject event) {
         // TODO: quit logic here
-
-        return null;
-
     }
 }
