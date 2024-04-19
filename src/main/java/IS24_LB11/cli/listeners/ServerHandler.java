@@ -25,11 +25,15 @@ public class ServerHandler extends Listener implements Runnable {
         super(state);
         socket = new Socket(serverIP, serverPORT);
         parser = new JsonStreamParser(new InputStreamReader(socket.getInputStream()));
-        writer = new PrintWriter(socket.getOutputStream(), true);
+        writer = new PrintWriter(socket.getOutputStream());
     }
 
     public void run() {
         System.out.println("server-handler: online");
+
+        Thread.currentThread().setName("server-handler");
+        try { Thread.sleep(500); }
+        catch (InterruptedException ignored) { }
 
         while (!Thread.interrupted()) {
             if (socket.isClosed()) break;
@@ -62,6 +66,8 @@ public class ServerHandler extends Listener implements Runnable {
     }
     
     public void write(JsonObject object) {
-        writer.write(object.toString());
+        System.out.println(object.toString());
+        writer.println(object.toString());
+        writer.flush();
     }
 }

@@ -34,7 +34,7 @@ public class ClientInLobby extends ClientState {
             System.out.println("ERROR: " + result.getError());
             if (result.getCause() != null) System.out.println("CAUSE: " + result.getCause());
         } else
-            System.out.println("OK: " + result.toString());
+            System.out.println("OK: " + result.get().toString());
     }
 
     private void processCommand(String command) {
@@ -47,6 +47,7 @@ public class ClientInLobby extends ClientState {
                     JsonObject object = new JsonObject();
                     object.addProperty("type", "LOGIN");
                     object.addProperty("data", tokens[1]);
+                    System.out.println("sended: "+ object.toString());
                     serverHandler.write(object);
                 }
             }
