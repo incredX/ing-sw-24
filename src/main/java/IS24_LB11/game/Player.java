@@ -2,6 +2,8 @@ package IS24_LB11.game;
 
 import IS24_LB11.game.components.GoalCard;
 import IS24_LB11.game.components.PlayableCard;
+import IS24_LB11.game.tools.JsonConverter;
+import IS24_LB11.game.tools.JsonException;
 import IS24_LB11.game.utils.Color;
 import IS24_LB11.game.utils.Position;
 
@@ -34,7 +36,7 @@ public class Player {
         this.board.start(setup.starterCard());
     }
 
-    public boolean placeCard(PlayableCard card, Position position) {
+    public boolean placeCard(PlayableCard card, Position position) throws JsonException {
         if (hand.stream().mapToInt(x->x.asString().compareTo(card.asString())).findFirst()==null)
             return false;
         return board.placeCard(card, position);
@@ -58,5 +60,9 @@ public class Player {
 
     public Board getBoard() {
         return board;
+    }
+
+    public GoalCard getPersonalGoal(){
+        return personalGoal;
     }
 }
