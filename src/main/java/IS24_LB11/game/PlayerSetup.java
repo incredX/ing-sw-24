@@ -53,4 +53,8 @@ public class PlayerSetup {
     public GoalCard[] getGoals() {
         return goals;
     }
+
+    public int getChosenGoalIndex() {
+        return chosenGoalIndex;
+    }
 }

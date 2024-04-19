@@ -3,6 +3,8 @@ package IS24_LB11.game.tools;
 import IS24_LB11.game.*;
 import IS24_LB11.game.components.*;
 import IS24_LB11.game.utils.*;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -86,14 +88,23 @@ public class JsonConverter {
     public String objectToJSON(Player player) throws JsonException {
         checkNullObject(player);
         String str = "\"Player\":{";
-        str = str +  "\"name\":" + player.name() + ",";
-        str = str + "\"Color\":" +player.getColor() + ",";
+        str = str +  "\"name\":\"" + player.name() + "\",";
+        str = str + "\"Color\":\"" +player.getColor() + "\",";
         str = str + "\"Hand\":[";
         for (PlayableCard playableCard:player.getHand())
             str = str + objectToJSON(playableCard) + ",";
         str = str.substring(0,str.length()-1) + "],";
         str = str + "\"PersonalGoal\":" + objectToJSON(player.getPersonalGoal()) + ",";
-        str = str + "\"Score\":" + player.getScore();
+        str = str + "\"Score\":\"" + player.getScore() +"\",";
+        str = str + "\"PlayerSetup\":{";
+        str = str + "\"StarterCard\":" + objectToJSON(player.getSetup().starterCard()) + ",";
+        str = str + "\"Goals\":[" + objectToJSON(player.getSetup().getGoals()[0]) + "," + objectToJSON(player.getSetup().getGoals()[1]) + "],";
+        str = str + "\"Hand\":[";
+        for (PlayableCard playableCard:player.getSetup().hand())
+            str = str + objectToJSON(playableCard) + ",";
+        str = str.substring(0,str.length()-1) + "],";
+        str = str + "\"chosenGoalIndex\":" + player.getSetup().getChosenGoalIndex() + "\"},";
+        str = str + objectToJSON(player.getBoard()).substring(1);
         return wrapTextBrackets(str);
     }
 
@@ -156,9 +167,24 @@ public class JsonConverter {
         return convertedBoard;
     }
 
-    private JsonConvertable JSONToPlayer(String stringInput) throws JsonException {
+    private JsonConvertable JSONToPlayer(String stringInput) throws JsonException, SyntaxException {
         System.out.println(stringInput);
-
+        String auxString = stringInput.substring(stringInput.indexOf("name")+7);
+        System.out.println(auxString);
+        String name = auxString.substring(0, auxString.indexOf("\""));
+        System.out.println(name);
+        Character character = auxString.charAt(auxString.indexOf("Color")+8);
+        Color color = Color.fromChar(character);
+        System.out.println(color);
+        auxString = auxString.substring(auxString.indexOf("Hand")+7,auxString.indexOf("]"));
+        ArrayList<PlayableCard> hand = new ArrayList<>();
+        for (int i = 0; i < 3; i++) {
+            System.out.println(auxString);
+            hand.add((PlayableCard) JSONToObject(auxString.substring(auxString.indexOf("{"),auxString.indexOf("}"))));
+            auxString= (i!=2) ? auxString.substring(auxString.indexOf("}")+2) : auxString;
+        }
+        for (PlayableCard playableCard: hand)
+            System.out.println(playableCard.asString());
         return null;
     }
 
