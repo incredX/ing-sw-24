@@ -1,5 +1,6 @@
 package IS24_LB11.cli;
 
+import IS24_LB11.cli.view.BoardView;
 import IS24_LB11.cli.view.PopUpView;
 import IS24_LB11.game.Board;
 import com.googlecode.lanterna.TerminalPosition;

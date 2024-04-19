@@ -4,7 +4,9 @@ import IS24_LB11.cli.event.CommandEvent;
 import IS24_LB11.cli.event.Event;
 import IS24_LB11.cli.event.KeyboardEvent;
 import IS24_LB11.cli.event.ResizeEvent;
-import IS24_LB11.cli.utils.Side;
+import IS24_LB11.cli.listeners.InputListener;
+import IS24_LB11.cli.listeners.ResizeListener;
+import IS24_LB11.cli.view.BoardView;
 import IS24_LB11.game.Board;
 import IS24_LB11.game.components.GoldenCard;
 import IS24_LB11.game.components.NormalCard;
@@ -47,7 +49,7 @@ public class Controller {
         ResizeListener reListener;
         HashMap<String, Thread> threadMap = new HashMap<>();
 
-        try {
+        /*try {
             ctrl = new Controller();
             inListener = new InputListener(ctrl.hub.getTerminal(), ctrl.queue);
             reListener = new ResizeListener(ctrl.hub.getTerminal(), ctrl.queue);
@@ -74,7 +76,7 @@ public class Controller {
         try { System.in.close(); }
         catch (IOException e) { dbg.printException(e); }
         threadMap.get("resize").interrupt();
-        threadMap.get("views").interrupt();
+        threadMap.get("views").interrupt();*/
     }
 
     private void start() throws IOException, SyntaxException {
@@ -87,8 +89,9 @@ public class Controller {
         boardView = (BoardView) hub.getStage();
         board.start(new StarterCard("EPIE_F0I__FPIA"));
         board.placeCard(new NormalCard("IPK_IF0"), new Position(-1,-1));
-        board.placeCard(new GoldenCard("_EEQFF1QFFA__"), new Position(1,1)); //GE_KEPF1KPPA__
-        boardView.setCurrentCardView(new GoldenCard("E_KEPF1KPPA__"), new Position(1,-1));
+        board.placeCard(new GoldenCard("_EEQFF1QFFA__"), new Position(1,1));
+        board.placeCard(new GoldenCard("E_KEPF1KPPA__"), new Position(1,-1)); //GE_KEPF1KPPA__
+        boardView.setPointer(new Position(0,0));
         boardView.loadCardViews();
         boardView.build();
         boardView.buildCommandLine(cmdLine);
@@ -109,7 +112,7 @@ public class Controller {
 
     private void eventSorting(Event event) {
         switch (event) {
-            case KeyboardEvent kb -> processKeyStroke(kb.getKeyStroke());
+            case KeyboardEvent kb -> processKeyStroke(kb.keyStroke());
             case CommandEvent cmd -> processCommand(cmd.command());
             case ResizeEvent re -> processResize(re.size());
             default -> System.out.println("Unknown event");
