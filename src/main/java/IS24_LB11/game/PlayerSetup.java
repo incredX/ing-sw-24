@@ -22,11 +22,11 @@ public class PlayerSetup {
     }
 
     public boolean selectGoal(GoalCard goalCard) {
-        if (goalCard.asString() == goals[0].asString()) {
+        if (goalCard.asString().compareTo(goals[0].asString())==0) {
             chosenGoalIndex = 0;
             return true;
         }
-        if (goalCard.asString() == goals[1].asString()){
+        if (goalCard.asString().compareTo(goals[1].asString())==0) {
             chosenGoalIndex = 1;
             return true;
         }
@@ -49,8 +49,19 @@ public class PlayerSetup {
     public ArrayList<PlayableCard> hand() {
         return hand;
     }
+
     //ONLY FOR TESTS
     public GoalCard[] getGoals() {
         return goals;
+    }
+
+    @Override
+    public String toString() {
+        return "PlayerSetup{" +
+                "starterCard=" + starterCard.asString() +
+                ", goals=" + goals[0].asString() + " " + goals[1].asString() +
+                ", hand=" + hand.stream().map(x -> x.asString()).reduce("", (x, y) -> x + " " + y) +
+                ", chosenGoalIndex=" + chosenGoalIndex +
+                '}';
     }
 }

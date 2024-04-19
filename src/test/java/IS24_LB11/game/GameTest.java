@@ -27,19 +27,21 @@ public class GameTest {
         //Receiving players name
         ArrayList<String> playerNames = new ArrayList<>(playersNumber);
         for (int i = 0; i < 4; i++)
-            playerNames.add("Player " + (i+1));
+            playerNames.add("Player " + (i + 1));
         game.setupGame(playerNames);
         //Receiving players Goal
         ArrayList<GoalCard> goalCardsChoosen = new ArrayList<>();
         for (int i = 0; i < 4; i++)
-            goalCardsChoosen.add(game.getPlayers().get(i).getSetup().getGoals()[i%2]);
+            goalCardsChoosen.add(game.getPlayers().get(i).getSetup().getGoals()[i % 2]);
         game.chooseGoalPhase(goalCardsChoosen);
-        //TODO last print
+        for (Player player: game.getPlayers())
+            System.out.println(player);
 
     }
+
     @Test
     @DisplayName("Simulating normal turn")
-    public void normalTurnSample(){
+    public void normalTurnSample() {
 
     }
 }

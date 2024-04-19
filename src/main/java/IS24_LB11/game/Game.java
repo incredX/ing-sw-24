@@ -91,6 +91,10 @@ public class Game {
         }
         return "CHOOSE GOAL PHASE COMPLETED, READY TO GO";
     }
+
+    public String executeTurn(Player player, PlayableCard playableCard, Position position){
+     return null;
+    }
     //ONLY FOR TESTS
     public ArrayList<Player> getPlayers() {
         return players;

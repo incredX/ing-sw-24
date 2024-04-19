@@ -69,4 +69,22 @@ public class Player {
     public PlayerSetup getSetup() {
         return setup;
     }
+
+    @Override
+    public String toString() {
+        JsonConverter jsonConverter = new JsonConverter();
+        try {
+            return "Player{" +
+                    "name='" + name + '\'' +
+                    ", color=" + color +
+                    ", board=" + jsonConverter.objectToJSON(board) +
+                    ", setup=" + setup +
+                    ", hand=" + hand.stream().map(x -> x.asString()).reduce("",(x,y)->x+" "+y) +
+                    ", personalGoal=" + personalGoal.asString() +
+                    ", score=" + score +
+                    '}';
+        } catch (JsonException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
