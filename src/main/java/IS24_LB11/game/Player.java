@@ -35,6 +35,8 @@ public class Player {
     }
 
     public boolean placeCard(PlayableCard card, Position position) {
+        if (hand.stream().mapToInt(x->x.asString().compareTo(card.asString())).findFirst()==null)
+            return false;
         return board.placeCard(card, position);
     }
 
@@ -52,5 +54,9 @@ public class Player {
 
     public int getScore() {
         return score;
+    }
+
+    public Board getBoard() {
+        return board;
     }
 }
