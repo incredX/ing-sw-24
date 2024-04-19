@@ -26,9 +26,13 @@ public class ClientHandler implements Runnable {
             in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             out = new PrintWriter(clientSocket.getOutputStream(), true);
 
+            System.out.println("Client connected, starting receiving thread");
             // Start thread for receiving messages
-            Thread receivingThread = new Thread(new ServerReceivingThread(this, clientSocket, in, out));
+            ServerReceivingThread serverReceivingThread = new ServerReceivingThread(this, clientSocket, in, out);
+            Thread receivingThread = new Thread(serverReceivingThread);
             receivingThread.start();
+            System.out.println("Started receiving thread");
+
 
             // Wait for thread to finish
             receivingThread.join();
