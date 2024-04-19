@@ -27,6 +27,7 @@ public class Client {
             inListener = new InputListener(state);
             reListener = new ResizeListener(state);
             serverHandler = new ServerHandler(state, "127.0.0.1", 54321);
+            state.setServerHandler(serverHandler);
         } catch (IOException e) {
             dbg.printException(e);
             return;

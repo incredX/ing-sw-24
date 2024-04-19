@@ -60,4 +60,8 @@ public class ServerHandler extends Listener implements Runnable {
         }
         System.out.println("server-handler offline");
     }
+    
+    public void write(JsonObject object) {
+        writer.write(object.toString());
+    }
 }

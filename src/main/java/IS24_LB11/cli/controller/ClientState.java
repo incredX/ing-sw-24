@@ -4,6 +4,7 @@ import IS24_LB11.cli.CommandLine;
 import IS24_LB11.cli.Stage;
 import IS24_LB11.cli.ViewHub;
 import IS24_LB11.cli.event.Event;
+import IS24_LB11.cli.listeners.ServerHandler;
 import IS24_LB11.game.Board;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.terminal.Terminal;
@@ -21,6 +22,7 @@ public abstract class ClientState {
     protected final ArrayBlockingQueue<Event> queue;
     protected final ViewHub hub;
     protected final CommandLine cmdLine;
+    protected ServerHandler serverHandler;
     protected Board board;
     protected Stage stage;
     protected boolean popUpOn;
@@ -71,6 +73,10 @@ public abstract class ClientState {
 
     protected void setNextState(ClientState nextState) {
         this.nextState = Optional.of(nextState);
+    }
+    
+    public void setServerHandler(ServerHandler serverHandler) {
+        this.serverHandler = serverHandler;
     }
 
     public Board getBoard() {

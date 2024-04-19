@@ -5,6 +5,8 @@ import IS24_LB11.cli.event.*;
 import IS24_LB11.game.Board;
 import IS24_LB11.game.Result;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.googlecode.lanterna.input.KeyStroke;
 
 import java.io.IOException;
@@ -36,16 +38,26 @@ public class ClientInLobby extends ClientState {
     }
 
     private void processCommand(String command) {
-        if (command.equalsIgnoreCase("quit")) {
-            quit();
-            return;
-        }
-        System.out.println("command: \"" + command + "\"");
-        String[] tokens = command.split(" ", 3);
-        if (tokens[0].equalsIgnoreCase("popup")) {
-            hub.addPopUp(tokens[2], tokens[1]);
-            popUpOn = true;
-        }
+        String[] tokens = command.split(" ", 2);
+        if (tokens.length == 0) return;
+        switch (tokens[0].toUpperCase()) {
+            case "QUIT" -> quit();
+            case "LOGIN" -> {
+                if (tokens.length >= 2) {
+                    JsonObject object = new JsonObject();
+                    object.addProperty("type", "LOGIN");
+                    object.addProperty("data", tokens[1]);
+                    serverHandler.write(object);
+                }
+            }
+            case "POPUP" -> {
+                if (tokens.length >= 3) {
+                    hub.addPopUp(tokens[2], tokens[1]);
+                    popUpOn = true;
+                }
+            }
+            default -> tryQueueEvent(new ResultEvent(Result.Error("invalid input")));
+        };
     }
 
     private void processKeyStroke(KeyStroke keyStroke) {
