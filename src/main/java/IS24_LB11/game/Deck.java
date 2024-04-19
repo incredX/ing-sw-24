@@ -43,6 +43,16 @@ public class Deck {
         return card;
     }
 
+
+    public CardInterface drawCard() throws DeckException {
+
+        if (cards.isEmpty()) {
+            throw new DeckException("The deck is empty. \n");
+        }
+        CardInterface card = cards.removeLast();
+        return card;
+    }
+
     /**
      * This methods show the cards in the position 1,2,3
      * @param cardIndex represent wich card draw: 1/2 = 1st/2nd visible card, 3 = covered card
@@ -74,13 +84,15 @@ public class Deck {
         return cards;
     }
 
-
     public int size() {
         return cards.size();
-
     }
 
     public boolean contains (CardInterface card) {
         return cards.contains(card);
+    }
+
+    public void reverse() {
+        Collections.reverse(cards);
     }
 }
