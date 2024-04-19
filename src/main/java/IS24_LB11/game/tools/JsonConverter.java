@@ -7,6 +7,8 @@ import IS24_LB11.game.Player;
 import IS24_LB11.game.components.*;
 import IS24_LB11.game.utils.*;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -96,7 +98,7 @@ public class JsonConverter {
      * @throws JsonException   If there is an issue with parsing the JSON string.
      * @throws SyntaxException If there is a syntax error in the JSON string.
      */
-    public CardInterface JSONToCard(String stringInput) throws JsonException, SyntaxException {
+    private CardInterface JSONToCard(String stringInput) throws JsonException, SyntaxException {
         CardFactory cardFactory = new CardFactory();
         checkNullObject(stringInput);
         if (!stringInput.contains("Card"))
@@ -129,7 +131,7 @@ public class JsonConverter {
      * @throws JsonException if there is an issue parsing the JSON input.
      * @throws SyntaxException if there is a syntax error in the JSON input.
      */
-    public Board JSONToBoard(String stringInput) throws JsonException, SyntaxException {
+    private Board JSONToBoard(String stringInput) throws JsonException, SyntaxException {
         String auxString;
         checkNullObject(stringInput);
         Board convertedBoard = new Board();
@@ -147,7 +149,7 @@ public class JsonConverter {
         return convertedBoard;
     }
 
-    public Player JSONToPlayer(String stringInput) throws JsonException {
+    private Player JSONToPlayer(String stringInput) throws JsonException {
         return null;
     }
 
@@ -184,7 +186,11 @@ public class JsonConverter {
      * @return the Deck object created from the JSON input.
      * @throws SyntaxException if there is a syntax error in the JSON input.
      */
-    public Deck JSONToDeck(String text, Character character) throws SyntaxException {
+    public Deck JSONToDeck(Character character) throws SyntaxException, FileNotFoundException {
+        Scanner scFile = new Scanner(new File("resources/Cards.json"));
+        String text = "";
+        while (scFile.hasNextLine())
+            text = text.concat(scFile.nextLine());
         ArrayList<CardInterface> deckCards = new ArrayList<>();
         CardFactory cardFactory = new CardFactory();
         Scanner sc = new Scanner(text);

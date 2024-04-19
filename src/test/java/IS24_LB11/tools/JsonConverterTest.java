@@ -113,24 +113,27 @@ public class JsonConverterTest {
     @DisplayName("Deck initialiazing")
     public void jsonDeck() throws FileNotFoundException, SyntaxException {
         JsonConverter jsonConverter = new JsonConverter();
-        Scanner sc = new Scanner(new File("resources/Cards.json"));
-        String text = "";
-        while (sc.hasNextLine())
-            text = text.concat(sc.nextLine());
-        Deck deckNormal = jsonConverter.JSONToDeck(text,'N');
+
+        Deck deckNormal = jsonConverter.JSONToDeck('N');
         for (CardInterface cardInterface: deckNormal.getCards())
             System.out.println(cardInterface.asString());
         System.out.println(deckNormal.getCards().size());
 
-        Deck deckGold = jsonConverter.JSONToDeck(text, 'G');
+        Deck deckGold = jsonConverter.JSONToDeck('G');
         for (CardInterface cardInterface: deckGold.getCards())
             System.out.println(cardInterface.asString());
         System.out.println(deckGold.getCards().size());
 
-        Deck deckStarter = jsonConverter.JSONToDeck(text, 'S');
+        Deck deckStarter = jsonConverter.JSONToDeck('S');
         for (CardInterface cardInterface: deckStarter.getCards())
             System.out.println(cardInterface.asString());
         System.out.println(deckStarter.getCards().size());
+
+        Deck goalDeck = jsonConverter.JSONToDeck('O');
+        for (CardInterface cardInterface: goalDeck.getCards())
+            System.out.println(cardInterface.asString());
+        System.out.println(goalDeck.getCards().size());
+
 
     }
 
