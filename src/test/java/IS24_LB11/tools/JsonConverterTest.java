@@ -2,9 +2,12 @@ package IS24_LB11.tools;
 
 import IS24_LB11.game.Board;
 import IS24_LB11.game.Deck;
+import IS24_LB11.game.Player;
+import IS24_LB11.game.PlayerSetup;
 import IS24_LB11.game.components.*;
 import IS24_LB11.game.tools.JsonConverter;
 import IS24_LB11.game.tools.JsonException;
+import IS24_LB11.game.utils.Color;
 import IS24_LB11.game.utils.Position;
 import IS24_LB11.game.utils.SyntaxException;
 import com.google.gson.Gson;
@@ -68,6 +71,21 @@ public class JsonConverterTest {
     @Test
     @DisplayName("Converting object player to json")
     public void playerConversionTest() throws JsonException,SyntaxException{
+        JsonConverter jsonConverter = new JsonConverter();
+        CardFactory cardFactory = new CardFactory();
+        GoalCard[] goalCards = new GoalCard[2];
+        goalCards[0] = (GoalCard) cardFactory.newSerialCard("O2FFF");
+        goalCards[1] = (GoalCard) cardFactory.newSerialCard("O2PPP");
+        ArrayList<PlayableCard> playerHand = new ArrayList<>();
+        playerHand.add((PlayableCard) cardFactory.newSerialCard("NFEF_FF0"));
+        playerHand.add((PlayableCard) cardFactory.newSerialCard("N_FEFFF0"));
+        playerHand.add((PlayableCard) cardFactory.newSerialCard("GEK_EFF1KFFP__"));
+
+        PlayerSetup playerSetup = new PlayerSetup((StarterCard) cardFactory.newSerialCard("SEEEE_F0AI_PIAF"),goalCards,playerHand);
+        Player player = new Player("Test", Color.fromInt(1),playerSetup);
+        player.getSetup().selectGoal(goalCards[1]);
+        player.applySetup();
+        System.out.println(jsonConverter.objectToJSON(player));
         }
 
     @Test
@@ -108,6 +126,15 @@ public class JsonConverterTest {
         System.out.println(jsonConverter.objectToJSON(board));
         assert(jsonConverter.objectToJSON(board).compareTo(str)==0);
     }
+
+    @Test
+    @DisplayName("Converting JSON to player")
+    public void jsonPlayerConversionTest() throws JsonException, SyntaxException {
+        JsonConverter jsonConverter = new JsonConverter();
+        String str="{\"Player\":{\"name\":Test,\"Color\":GREEN,\"Hand\":[{\"Card\":\"NFEF_FF0\"},{\"Card\":\"N_FEFFF0\"},{\"Card\":\"GEK_EFF1KFFP__\"}],\"PersonalGoal\":{\"Card\":\"O2PPP\"},\"Score\":0}";
+        Player player = (Player) jsonConverter.JSONToObject(str);
+    }
+
 
     @Test
     @DisplayName("Deck initialiazing")

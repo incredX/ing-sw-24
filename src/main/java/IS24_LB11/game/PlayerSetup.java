@@ -22,11 +22,11 @@ public class PlayerSetup {
     }
 
     public boolean selectGoal(GoalCard goalCard) {
-        if (goalCard.asString() == goals[0].asString()) {
+        if (goalCard.asString().compareTo(goals[0].asString())==0) {
             chosenGoalIndex = 0;
             return true;
         }
-        if (goalCard.asString() == goals[1].asString()){
+        if (goalCard.asString().compareTo(goals[1].asString())==0){
             chosenGoalIndex = 1;
             return true;
         }

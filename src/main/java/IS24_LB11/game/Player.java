@@ -69,4 +69,12 @@ public class Player {
     public PlayerSetup getSetup() {
         return setup;
     }
+
+    public Color getColor() {
+        return color;
+    }
+
+    public ArrayList<PlayableCard> getHand() {
+        return hand;
+    }
 }

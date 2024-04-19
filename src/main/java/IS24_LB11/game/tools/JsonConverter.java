@@ -1,9 +1,6 @@
 package IS24_LB11.game.tools;
 
-import IS24_LB11.game.Board;
-import IS24_LB11.game.Deck;
-import IS24_LB11.game.PlacedCard;
-import IS24_LB11.game.Player;
+import IS24_LB11.game.*;
 import IS24_LB11.game.components.*;
 import IS24_LB11.game.utils.*;
 
@@ -87,7 +84,17 @@ public class JsonConverter {
      * @throws JsonException if the provided player object is null
      */
     public String objectToJSON(Player player) throws JsonException {
-        return null;
+        checkNullObject(player);
+        String str = "\"Player\":{";
+        str = str +  "\"name\":" + player.name() + ",";
+        str = str + "\"Color\":" +player.getColor() + ",";
+        str = str + "\"Hand\":[";
+        for (PlayableCard playableCard:player.getHand())
+            str = str + objectToJSON(playableCard) + ",";
+        str = str.substring(0,str.length()-1) + "],";
+        str = str + "\"PersonalGoal\":" + objectToJSON(player.getPersonalGoal()) + ",";
+        str = str + "\"Score\":" + player.getScore();
+        return wrapTextBrackets(str);
     }
 
     /**
@@ -149,7 +156,9 @@ public class JsonConverter {
         return convertedBoard;
     }
 
-    private Player JSONToPlayer(String stringInput) throws JsonException {
+    private JsonConvertable JSONToPlayer(String stringInput) throws JsonException {
+        System.out.println(stringInput);
+
         return null;
     }
 
@@ -170,7 +179,7 @@ public class JsonConverter {
                     return JSONToBoard(stringInput.substring(stringInput.indexOf("["), stringInput.indexOf("]") + 1));
                 throw new JsonException(String.format(PLACEDCARDS_NOT_FOUND, stringInput));
             case "Player":
-                return null;//JSONToPlayer(stringInput)
+                return JSONToPlayer(stringInput);
             case "Card":
                 return JSONToCard(stringInput);
             default:
