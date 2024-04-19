@@ -20,6 +20,9 @@ public class CardFactory {
     }
 
     public static CardInterface newSerialCard(String str) throws SyntaxException {
+        if(str.isEmpty()) {
+            throw new  SyntaxException("Empty string id");
+        }
         char c = str.charAt(0);
         try {
             if (c == 'N') return new NormalCard(str.substring(1));

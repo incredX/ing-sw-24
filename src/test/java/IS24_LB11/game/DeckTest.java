@@ -78,10 +78,12 @@ public class DeckTest {
         int cursor;
         Deck FullDeck = new Deck(cards);
 
-        for (cursor=FullDeck.size()-1; cursor>0; cursor--) {
+        for (cursor=FullDeck.size()-1; cursor>=0; cursor--) {
             assertEquals (FullDeck.drawCard(1).asString(), CardFactory.newPlayableCard(GoldenIds[cursor]).asString(), "id: "+GoldenIds[cursor]);
         }
 
         assertThrows(DeckException.class, () -> FullDeck.drawCard(1));
+
+        assert (FullDeck.size() == 0);
     }
 }

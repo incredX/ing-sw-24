@@ -35,7 +35,7 @@ public class Deck {
         }
 
         // throw exception if the wanted card doesn't exist into the deck or cardIndex isn't between 1 and 3 (included)
-        if (cards.size() <= cardIndex || cardIndex < 1 || cardIndex > 3) {
+        if (cards.size() < cardIndex || cardIndex < 1 || cardIndex > 3) {
             throw new DeckException("Index out of bound. \n");
         }
 
