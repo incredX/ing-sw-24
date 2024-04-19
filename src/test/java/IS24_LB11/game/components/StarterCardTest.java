@@ -10,10 +10,10 @@ import IS24_LB11.game.utils.SyntaxException;
 
 import java.util.HashMap;
 
-import static IS24_LB11.game.utils.Corners.UP_LEFT;
-import static IS24_LB11.game.utils.Corners.UP_RIGHT;
-import static IS24_LB11.game.utils.Corners.DOWN_LEFT;
-import static IS24_LB11.game.utils.Corners.DOWN_RIGHT;
+import static IS24_LB11.game.utils.Direction.UP_LEFT;
+import static IS24_LB11.game.utils.Direction.UP_RIGHT;
+import static IS24_LB11.game.utils.Direction.DOWN_LEFT;
+import static IS24_LB11.game.utils.Direction.DOWN_RIGHT;
 
 
 public class StarterCardTest {
