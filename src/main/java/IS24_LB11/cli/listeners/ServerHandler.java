@@ -31,43 +31,49 @@ public class ServerHandler extends Listener implements Runnable {
     public void run() {
         System.out.println("server-handler: online");
 
-        Thread.currentThread().setName("server-handler");
-        try { Thread.sleep(500); }
-        catch (InterruptedException ignored) { }
+        Thread.currentThread().setName("thread-server-handler");
 
-        while (!Thread.interrupted()) {
+        while (true) {
             if (socket.isClosed()) break;
-            synchronized (parser) {
-                try {
-                    if (parser.hasNext()) {
-                        JsonObject event;
-                        try { event = parser.next().getAsJsonObject(); }
-                        catch (JsonSyntaxException | IllegalStateException e) {
-                            state.queueEvent(new ResultEvent(Error("Bad request", "json syntax error")));
-                            continue;
-                        }
-                        state.queueEvent(new ResultEvent(Ok(event)));
+            try {
+                synchronized (parser) { parser.wait(100); }
+                if (parser.hasNext()) {
+                    JsonObject event;
+                    try {
+                        System.out.println("parsing event...");
+                        event = parser.next().getAsJsonObject();
                     }
-                    parser.wait(250);
+                    catch (JsonSyntaxException | IllegalStateException e) {
+                        state.queueEvent(new ResultEvent(Error("Bad request", "json syntax error")));
+                        continue;
+                    }
+                    state.queueEvent(new ResultEvent(Ok(event)));
                 }
-                catch (JsonSyntaxException | IllegalStateException e) {
-                    state.tryQueueEvent(new ResultEvent(Error("Bad request", "json syntax error")));
-                }
-                catch (JsonIOException e) {
-                    System.out.println("caught exception: " + e.toString()); }
-                catch (InterruptedException e) { break; }
             }
+            catch (JsonSyntaxException | IllegalStateException e) {
+                state.tryQueueEvent(new ResultEvent(Error("Bad request", "json syntax error")));
+            }
+            catch (JsonIOException e) {
+                System.out.println("caught exception: " + e.toString());
+                break;
+            }
+            catch (InterruptedException e) { break; }
         }
         if (!socket.isClosed()) {
             try { socket.close(); }
             catch (IOException e) { System.out.printf("%s\n", e); }
         }
-        System.out.println("server-handler offline");
+        System.out.println(Thread.currentThread().getName() + " offline");
     }
     
     public void write(JsonObject object) {
-        System.out.println(object.toString());
         writer.println(object.toString());
         writer.flush();
+    }
+
+    public void shutdown() {
+        try {
+            if (!socket.isClosed()) socket.close();
+        } catch (IOException ignored) {}
     }
 }

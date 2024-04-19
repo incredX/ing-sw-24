@@ -1,7 +1,7 @@
-package IS24_LB11.cli;
+package IS24_LB11.cli.view;
 
-import IS24_LB11.cli.view.BoardView;
-import IS24_LB11.cli.view.PopUpView;
+import IS24_LB11.cli.CommandLine;
+import IS24_LB11.cli.Stage;
 import IS24_LB11.game.Board;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
@@ -31,11 +31,12 @@ public class ViewHub implements Runnable {
 
     @Override
     public void run() {
+        Thread.currentThread().setName("thread-view-hub");
         stage.build();
         while (true) {
             synchronized (terminal) {
                 try {
-                    terminal.wait(50);
+                    terminal.wait(20);
                     stage.print(terminal);
                     popUp.ifPresent(p -> {
                         try { p.print(terminal); }
@@ -50,6 +51,7 @@ public class ViewHub implements Runnable {
         try {
             terminal.exitPrivateMode();
         } catch (IOException ignored) { }
+        System.out.println(Thread.currentThread().getName() + " offline");
     }
 
     public void resize(TerminalSize size, CommandLine commandLine) {

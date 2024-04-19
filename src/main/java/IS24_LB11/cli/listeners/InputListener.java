@@ -18,6 +18,7 @@ public class InputListener extends Listener implements Runnable {
     }
 
     public void run() {
+        Thread.currentThread().setName("thread-input-listener");
         while (true) {
             try {
                 KeyStroke keyStroke = terminal.readInput();
@@ -30,5 +31,11 @@ public class InputListener extends Listener implements Runnable {
                 break;
             }
         }
+        System.out.println(Thread.currentThread().getName() + " offline");
+    }
+
+    public void shutdown() {
+        try { System.in.close(); } // <- to close gracefuly the input listener
+        catch (IOException ignored) { }
     }
 }

@@ -27,7 +27,7 @@ public class PopUpView extends TextBox {
     public void loadText() {
         int row = firstRow()+1;
         for (String line: lines) {
-            int offset = (innerWidth()-line.length())/2;
+            int offset = Integer.max(0,(innerWidth()-line.length())/2);
             fillRow(row, offset, line);
             if (row == lastRow()-1) break;
             row++;
