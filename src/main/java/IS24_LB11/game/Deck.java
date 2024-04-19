@@ -59,6 +59,7 @@ public class Deck {
      * @return the selected card without removing it
      * @throw the DeckException when there aren't any cards left or the index is not allowed
      */
+
     public CardInterface showCard(int cardIndex) throws DeckException{
         if (cards.isEmpty()) {
             throw new DeckException("The deck is empty. \n");
