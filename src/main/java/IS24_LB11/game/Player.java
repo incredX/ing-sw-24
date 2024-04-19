@@ -65,4 +65,8 @@ public class Player {
     public GoalCard getPersonalGoal(){
         return personalGoal;
     }
+
+    public PlayerSetup getSetup() {
+        return setup;
+    }
 }

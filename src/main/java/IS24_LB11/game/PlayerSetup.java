@@ -21,8 +21,16 @@ public class PlayerSetup {
         this.chosenGoalIndex = -1;
     }
 
-    public void selectGoal(int index) {
-        chosenGoalIndex = index%2; // <- module 2 to prevent possible errors
+    public boolean selectGoal(GoalCard goalCard) {
+        if (goalCard.asString() == goals[0].asString()) {
+            chosenGoalIndex = 0;
+            return true;
+        }
+        if (goalCard.asString() == goals[1].asString()){
+            chosenGoalIndex = 1;
+            return true;
+        }
+        return false;
     }
 
     public void flipCard() {
@@ -40,5 +48,9 @@ public class PlayerSetup {
 
     public ArrayList<PlayableCard> hand() {
         return hand;
+    }
+    //ONLY FOR TESTS
+    public GoalCard[] getGoals() {
+        return goals;
     }
 }

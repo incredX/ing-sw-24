@@ -39,14 +39,14 @@ public class Game {
     private final Deck starterDeck;
     private final ArrayList<Player> players;
 
-    public Game(int numPlayers, Deck starterDeck) throws SyntaxException, FileNotFoundException {
+    public Game(int numPlayers) throws SyntaxException, FileNotFoundException {
         JsonConverter jsonConverter = new JsonConverter();
         this.turn = 0;
         this.numPlayers = numPlayers;
         this.goalDeck = jsonConverter.JSONToDeck('O'); // <- here we load the deck from json
         this.goldenDeck = jsonConverter.JSONToDeck('G'); // <- here we load deck from json
         this.normalDeck = jsonConverter.JSONToDeck('N'); // <- here we load deck from json
-        this.starterDeck = jsonConverter.JSONToDeck('S');
+        this.starterDeck = jsonConverter.JSONToDeck('S'); // <- here we load deck from json
         this.players = new ArrayList<>(numPlayers);
         this.finalTurn=false;
     }
@@ -56,32 +56,43 @@ public class Game {
         return players.get(turn%players.size());
     }
 
-    public boolean addPlayer(String name) throws DeckException {
-        if (players.size()==numPlayers) return false;
+    private void setupPlayer(String name) throws DeckException {
         GoalCard[] goalCards = new GoalCard[] {
-                (GoalCard) goalDeck.drawCard(0),
-                (GoalCard) goalDeck.drawCard(0)
+                (GoalCard) goalDeck.drawCard(),
+                (GoalCard) goalDeck.drawCard()
         };
         ArrayList<PlayableCard> playerHand = new ArrayList<>();
-        playerHand.add((PlayableCard) normalDeck.drawCard(0));
-        playerHand.add((PlayableCard) normalDeck.drawCard(0));
-        playerHand.add((PlayableCard) goldenDeck.drawCard(0));
-        PlayerSetup playerSetup = new PlayerSetup((StarterCard) starterDeck.drawCard(1),goalCards,playerHand);
+        playerHand.add((PlayableCard) normalDeck.drawCard());
+        playerHand.add((PlayableCard) normalDeck.drawCard());
+        playerHand.add((PlayableCard) goldenDeck.drawCard());
+        PlayerSetup playerSetup = new PlayerSetup((StarterCard) starterDeck.drawCard(),goalCards,playerHand);
         players.add(new Player(name,Color.fromInt(players.size()),playerSetup));
-
     }
 
-    public String setupGame(){
+    public String setupGame(ArrayList<String> playerNames) throws DeckException {
+        if (playerNames.size()!=numPlayers) return "ERROR_TOO_MUCH_NAMES";
         goalDeck.shuffle();
         goldenDeck.shuffle();
         normalDeck.shuffle();
-        //distribuziuone carte
-
-        //player sceglie goal
-        //player ssetp
-
-        //capire come voglio comportarmi
+        starterDeck.shuffle();
+        for (String name: playerNames)
+            setupPlayer(name);
         return SETUP_COMPLETE;
     }
 
+    public String chooseGoalPhase(ArrayList<GoalCard> playersGoalCardChoosen){
+        //not cheking if goal card not present in player hand
+        for (Player player: players) {
+            for (GoalCard goalCard :playersGoalCardChoosen){
+                if (player.getSetup().selectGoal(goalCard))
+                    break;
+            }
+            player.applySetup();
+        }
+        return "CHOOSE GOAL PHASE COMPLETED, READY TO GO";
+    }
+    //ONLY FOR TESTS
+    public ArrayList<Player> getPlayers() {
+        return players;
+    }
 }
