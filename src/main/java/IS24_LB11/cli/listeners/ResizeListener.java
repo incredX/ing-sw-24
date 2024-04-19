@@ -1,22 +1,20 @@
-package IS24_LB11.cli;
+package IS24_LB11.cli.listeners;
 
-import IS24_LB11.cli.event.Event;
+import IS24_LB11.cli.controller.ClientState;
 import IS24_LB11.cli.event.ResizeEvent;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.terminal.SimpleTerminalResizeListener;
 import com.googlecode.lanterna.terminal.Terminal;
 
 import java.io.IOException;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.TimeUnit;
 
-public class ResizeListener implements Runnable {
+public class ResizeListener extends Listener implements Runnable {
     private final SimpleTerminalResizeListener listener;
-    private final ArrayBlockingQueue<Event> queue;
 
-    public ResizeListener(Terminal terminal, ArrayBlockingQueue<Event> queue) throws IOException {
+    public ResizeListener(ClientState state) throws IOException {
+        super(state);
+        Terminal terminal = state.getTerminal();
         this.listener = new SimpleTerminalResizeListener(terminal.getTerminalSize());
-        this.queue = queue;
         terminal.addResizeListener(this.listener);
     }
 
@@ -32,10 +30,7 @@ public class ResizeListener implements Runnable {
                     counter = 0;
                     TerminalSize size = listener.getLastKnownSize();
                     try {
-                        synchronized (queue) {
-                            queue.offer(new ResizeEvent(size), 100, TimeUnit.MILLISECONDS);
-                            queue.notify();
-                        }
+                        state.queueEvent(new ResizeEvent(size));
                     } catch (InterruptedException e) { break; }
                 }
             } else {

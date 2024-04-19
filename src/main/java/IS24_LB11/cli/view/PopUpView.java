@@ -1,4 +1,4 @@
-package IS24_LB11.cli;
+package IS24_LB11.cli.view;
 
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
