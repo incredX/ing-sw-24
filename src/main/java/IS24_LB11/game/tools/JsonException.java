@@ -1,6 +1,9 @@
-package IS24_LB11.game.utils;
+package IS24_LB11.game.tools;
 
 public class JsonException extends Exception {
+
+    public static final String INVALID_INPUT = "Json input not valid";
+    public static final String PLACEDCARDS_NOT_FOUND = "Placed Card not found";
     private String message;
     private String context;
 
