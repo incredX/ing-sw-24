@@ -2,13 +2,14 @@ package IS24_LB11.game;
 
 import IS24_LB11.game.Result;
 import IS24_LB11.game.components.GoalCard;
+import IS24_LB11.game.components.JsonConvertable;
 import IS24_LB11.game.components.PlayableCard;
 import IS24_LB11.game.components.StarterCard;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class PlayerSetup {
+public class PlayerSetup implements JsonConvertable {
     private final StarterCard starterCard;
     private final GoalCard[] goals;
     private final ArrayList<PlayableCard> hand;

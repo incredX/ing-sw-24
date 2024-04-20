@@ -48,16 +48,16 @@ public class Game {
         this.normalDeck = jsonConverter.JSONToDeck('N'); // <- here we load deck from json
         this.starterDeck = jsonConverter.JSONToDeck('S'); // <- here we load deck from json
         this.players = new ArrayList<>(numPlayers);
-        this.finalTurn=false;
+        this.finalTurn = false;
     }
 
 
     private Player currentPlayer() {
-        return players.get(turn%players.size());
+        return players.get(turn % players.size());
     }
 
     private void setupPlayer(String name) throws DeckException {
-        GoalCard[] goalCards = new GoalCard[] {
+        GoalCard[] goalCards = new GoalCard[]{
                 (GoalCard) goalDeck.drawCard(),
                 (GoalCard) goalDeck.drawCard()
         };
@@ -65,25 +65,25 @@ public class Game {
         playerHand.add((PlayableCard) normalDeck.drawCard());
         playerHand.add((PlayableCard) normalDeck.drawCard());
         playerHand.add((PlayableCard) goldenDeck.drawCard());
-        PlayerSetup playerSetup = new PlayerSetup((StarterCard) starterDeck.drawCard(),goalCards,playerHand);
-        players.add(new Player(name,Color.fromInt(players.size()),playerSetup));
+        PlayerSetup playerSetup = new PlayerSetup((StarterCard) starterDeck.drawCard(), goalCards, playerHand);
+        players.add(new Player(name, Color.fromInt(players.size()), playerSetup));
     }
 
     public String setupGame(ArrayList<String> playerNames) throws DeckException {
-        if (playerNames.size()!=numPlayers) return "ERROR_TOO_MUCH_NAMES";
+        if (playerNames.size() != numPlayers) return "ERROR_TOO_MUCH_NAMES";
         goalDeck.shuffle();
         goldenDeck.shuffle();
         normalDeck.shuffle();
         starterDeck.shuffle();
-        for (String name: playerNames)
+        for (String name : playerNames)
             setupPlayer(name);
         return SETUP_COMPLETE;
     }
 
-    public String chooseGoalPhase(ArrayList<GoalCard> playersGoalCardChoosen){
+    public String chooseGoalPhase(ArrayList<GoalCard> playersGoalCardChoosen) {
         //not cheking if goal card not present in player hand
-        for (Player player: players) {
-            for (GoalCard goalCard :playersGoalCardChoosen){
+        for (Player player : players) {
+            for (GoalCard goalCard : playersGoalCardChoosen) {
                 if (player.getSetup().selectGoal(goalCard))
                     break;
             }
@@ -91,6 +91,49 @@ public class Game {
         }
         return "CHOOSE GOAL PHASE COMPLETED, READY TO GO";
     }
+
+    //Check if is not player turn
+    public String executeTurn(String playerName, Position position, PlayableCard playableCard, boolean deckType, int indexDeck) throws JsonException, DeckException, SyntaxException {
+        if (playerName.compareTo(players.get(turn % players.size()).name()) != 0) return NOT_PLAYER_TURN;
+        return finalTurn ? executeFinalTurn() : executeNormalTurn(position, playableCard, deckType, indexDeck);
+    }
+
+    public String executeNormalTurn(Position position, PlayableCard playableCard, boolean deckType, int indexDeck) throws DeckException, JsonException, SyntaxException {
+        Player player = players.get(turn % players.size());
+        if (player.placeCard(playableCard, position) == false)
+            return INVALID_POSITION_CARD_OR_NOT_IN_HAND;
+        else {
+            player.incrementScoreLastCardPlaced();
+        }
+        //0 for standard deck, 1 for gold deck
+        //deck empty o provo a pescare una carta non esistente
+        if (deckType && !normalDeck.isEmpty())
+            normalDeck.drawCard(indexDeck);
+        else if (!deckType && !goldenDeck.isEmpty())
+            goldenDeck.drawCard(indexDeck);
+        turn++;
+        //controllo se turno finale lo faccio solo sull'ultima persona controllando tutti i punteggi
+        if (!finalTurn)
+            isFinalTurn();
+        return VALID_TURN;
+    }
+
+    public String executeFinalTurn() {
+        return null;
+    }
+    //remind to check if front or back
+
+    private void isFinalTurn() {
+        if (turn % players.size() == 0 && finalTurn==false) {
+            if (normalDeck.isEmpty() && goldenDeck.isEmpty())
+                finalTurn = true;
+            for (Player player : players)
+                if (player.getScore() >= 20)
+                    finalTurn = true;
+
+        }
+    }
+
     //ONLY FOR TESTS
     public ArrayList<Player> getPlayers() {
         return players;
