@@ -16,7 +16,7 @@ public class ClientHandler implements Runnable {
     private int HEARTBEAT_INTERVAL = 2;
     private long lastHeartbeatTime;
 
-    private ArrayList<Thread> allStartedThreads;
+    private ArrayList<Thread> allStartedThreads = new ArrayList<>();
 
     //useful to convert json to string and viceversa
     private Gson gson = new Gson();
