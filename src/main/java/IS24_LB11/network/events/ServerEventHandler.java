@@ -48,8 +48,10 @@ public class ServerEventHandler {
 
         String username = null;
         JsonObject response = new JsonObject();
-        if(event != null && event.has("username"))
-            username = event.get("username").getAsString();
+        if(event != null && event.has("data") &&
+                event.getAsJsonObject("data").has("username"))
+
+            username = event.getAsJsonObject("data").get("username").getAsString();
         else {
             response.addProperty("error", "Wrong login request, username property missing");
             outputToClient.println(response);

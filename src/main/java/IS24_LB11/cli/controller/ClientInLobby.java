@@ -46,7 +46,12 @@ public class ClientInLobby extends ClientState {
                 if (tokens.length >= 2) {
                     JsonObject object = new JsonObject();
                     object.addProperty("type", "LOGIN");
-                    object.addProperty("data", tokens[1]);
+
+                    // adding username property inside data
+                    JsonObject innerObject = new JsonObject();
+                    innerObject.addProperty("username", tokens[1]);
+                    object.add("data", innerObject);
+
                     System.out.println("sended: "+ object.toString());
                     serverHandler.write(object);
                 }
