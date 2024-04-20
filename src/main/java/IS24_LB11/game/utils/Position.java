@@ -32,6 +32,10 @@ public class Position {
         return new Position(x, function.apply(y));
     }
 
+    public Position transformX(Function<Integer, Integer> function) {
+        return new Position(function.apply(x), y);
+    }
+
     public int getX() {
         return x;
     }

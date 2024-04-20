@@ -11,6 +11,9 @@ import IS24_LB11.game.utils.SyntaxException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import java.util.HashMap;
 
 public class BoardTest {
@@ -20,13 +23,14 @@ public class BoardTest {
         Board board = new Board();
         JsonConverter jsonConverter = new JsonConverter();
         board.start((StarterCard)CardFactory.newPlayableCard("SEPIE_F0I__FPIA"));
-        board.placeCard((GoldenCard)CardFactory.newPlayableCard("G_EEQFF1QFFA__"),new Position(1,1));
-        board.placeCard((GoldenCard)CardFactory.newPlayableCard("GE_EEAF2EAAAF_"),new Position(-1,1));
-        board.placeCard((GoldenCard)CardFactory.newPlayableCard("G_EEEAF2EAAAP_"),new Position(-1,-1));
-        board.placeCard((GoldenCard)CardFactory.newPlayableCard("GEM__IF3_III__"),new Position(1,-1));
 
-        System.out.println(jsonConverter.objectToJSON(board));
+        assertEquals(false, board.placeCard((GoldenCard)CardFactory.newPlayableCard("G_EEQFF1QFFA__"),new Position(1,1)));
+        assertEquals(false, board.placeCard((GoldenCard)CardFactory.newPlayableCard("GE_EEAF2EAAAF_"),new Position(1,1)));
+        assertEquals(false, board.placeCard((GoldenCard)CardFactory.newPlayableCard("G_EEEAF2EAAAP_"),new Position(1,1)));
+        assertEquals(false, board.placeCard((GoldenCard)CardFactory.newPlayableCard("GEM__IF3_III__"),new Position(1,1)));
+
     }
+
     @Test
     void testPlacement() throws SyntaxException {
         Placement[] placements = new Placement[] {
@@ -154,15 +158,126 @@ public class BoardTest {
 
 
 
- @Test
-    void testCountL0Pattern() throws SyntaxException {
+     @Test
+     void testCountL0Pattern() throws SyntaxException {
         GoalPattern goalL0 = (GoalPattern) CardFactory.newSerialCard("O3AIIL0");
 
         Board board = new Board();
         board.start((StarterCard)CardFactory.newPlayableCard("SEPIE_F0I__FPIA"));
 
+        assert board.placeCard(CardFactory.newPlayableCard("GKEE_AB1KAAI__"), new Position(1,1));
+        assert board.placeCard(CardFactory.newPlayableCard("GEE_EAB2EAAAI_"), new Position(2,0));
+        assert board.placeCard(CardFactory.newPlayableCard("N_QAIIB0"), new Position(2,2));
+        assert board.placeCard(CardFactory.newPlayableCard("NA_AEAB0"), new Position(3,-1));
+        assert board.placeCard(CardFactory.newPlayableCard("NI_EEIB1"), new Position(4,0));
+        assert board.placeCard(CardFactory.newPlayableCard("GEE__IB5_IIIII"), new Position(3,1));
+        assert board.placeCard(CardFactory.newPlayableCard("NEE_IIB1"), new Position(4,2));
+        assert board.placeCard(CardFactory.newPlayableCard("NKF_AFB0"), new Position(5,3));
+        assert board.placeCard(CardFactory.newPlayableCard("N_FEFFB0"), new Position(4,4));
+        assert board.placeCard(CardFactory.newPlayableCard("NMI_FIB0"), new Position(3,3));
+        assert board.placeCard(CardFactory.newPlayableCard("GE_EEIB2EIIIF_"), new Position(2,4));
 
-   }
+        assertEquals(9, board.countPatterns(goalL0));
+    }
+
+    @Test
+    void testCountL1Pattern() throws SyntaxException {
+        GoalPattern goalL1 = (GoalPattern) CardFactory.newSerialCard("O3FAAL1");
+
+        Board board = new Board();
+        board.start((StarterCard)CardFactory.newPlayableCard("SEPIE_F0I__FPIA"));
+
+        assert board.placeCard(CardFactory.newPlayableCard("NAAE_AB0"), new Position(1,-1));
+        assert board.placeCard(CardFactory.newPlayableCard("NFEF_FB0"), new Position(2,-2));
+        assert board.placeCard(CardFactory.newPlayableCard("NFF_EFB0"), new Position(3,-1));
+        assert board.placeCard(CardFactory.newPlayableCard("N_EAAAB0"), new Position(1,1));
+        assert board.placeCard(CardFactory.newPlayableCard("NA_AEAB0"), new Position(2,2));
+        assert board.placeCard(CardFactory.newPlayableCard("NEA_AAB0"), new Position(2,0));
+        assert board.placeCard(CardFactory.newPlayableCard("NE_FFFB0"), new Position(0,2));
+        assert board.placeCard(CardFactory.newPlayableCard("N_FEFFB0"), new Position(-1,1));
+        assert board.placeCard(CardFactory.newPlayableCard("GKEE_AB1KAAI__"), new Position(-2,2));
+        assert board.placeCard(CardFactory.newPlayableCard("G_EEMAB1MAAP__"), new Position(-1,3));
+        assert board.placeCard(CardFactory.newPlayableCard("GE_QEAB1QAAF__"), new Position(-2,4));
+        assert board.placeCard(CardFactory.newPlayableCard("GEE_EAB2EAAAI_"), new Position(-1,5));
+
+        assertEquals(12, board.countPatterns(goalL1));
+
+    }
+
+    @Test
+    void testCountL2Pattern() throws SyntaxException {
+        GoalPattern goalL2 = (GoalPattern) CardFactory.newSerialCard("O3IPPL2");
+
+        Board board = new Board();
+        board.start((StarterCard)CardFactory.newPlayableCard("SEPIE_F0I__FPIA"));
+
+        assert board.placeCard(CardFactory.newPlayableCard("NAAE_AB0"), new Position(1,-1));
+        assert board.placeCard(CardFactory.newPlayableCard("NM_PAPB0"), new Position(2,-2));
+        assert board.placeCard(CardFactory.newPlayableCard("NEEP_PB1"), new Position(3,-1));
+        assert board.placeCard(CardFactory.newPlayableCard("NEE_IIB1"), new Position(1,1));
+        assert board.placeCard(CardFactory.newPlayableCard("N_IEEIF1"), new Position(2,2));
+        assert board.placeCard(CardFactory.newPlayableCard("NEE_PPB1"), new Position(2,0));
+        assert board.placeCard(CardFactory.newPlayableCard("N_PEEPB1"), new Position(3,1));
+        assert board.placeCard(CardFactory.newPlayableCard("NE_PPPB0"), new Position(0,2));
+        assert board.placeCard(CardFactory.newPlayableCard("N_PEPPB0"), new Position(-1,1));
+        assert board.placeCard(CardFactory.newPlayableCard("N_IQPPB0"), new Position(-1,3));
+        assert board.placeCard(CardFactory.newPlayableCard("NFP_KPB0"), new Position(0,4));
+        assert board.placeCard(CardFactory.newPlayableCard("GK_E_IB3_III__"), new Position(-2,4));
+        assert board.placeCard(CardFactory.newPlayableCard("G__QEIB3_III__"), new Position(-1,5));
+
+        assertEquals(12, board.countPatterns(goalL2));
+    }
+
+    @Test
+    void testCountL3Pattern() throws SyntaxException {
+        GoalPattern goalL2 = (GoalPattern) CardFactory.newSerialCard("O3PFFL3");
+
+        Board board = new Board();
+        board.start((StarterCard)CardFactory.newPlayableCard("SEPIE_F0I__FPIA"));
+
+        assert board.placeCard(CardFactory.newPlayableCard("NFEF_FB0"), new Position(1,-1));
+        assert board.placeCard(CardFactory.newPlayableCard("NFF_EFB0"), new Position(2,-2));
+        assert board.placeCard(CardFactory.newPlayableCard("NE_FFFB0"), new Position(1,1));
+        assert board.placeCard(CardFactory.newPlayableCard("N_FEFFB0"), new Position(2,0));
+        assert board.placeCard(CardFactory.newPlayableCard("NPEP_PB0"), new Position(2,2));
+        assert board.placeCard(CardFactory.newPlayableCard("NPP_EPB0"), new Position(3,1));
+        assert board.placeCard(CardFactory.newPlayableCard("G_EEQFB1QFFA__"), new Position(-1,1));
+        assert board.placeCard(CardFactory.newPlayableCard("GMEE_FB1MFFI__"), new Position(-2,2));
+        assert board.placeCard(CardFactory.newPlayableCard("GEK_EFB1KFFP__"), new Position(-1,3));
+        assert board.placeCard(CardFactory.newPlayableCard("GEE_EFB2EFFFA_"), new Position(-2,4));
+        assert board.placeCard(CardFactory.newPlayableCard("GQEE_PB1QPPI__"), new Position(0,4));
+        assert board.placeCard(CardFactory.newPlayableCard("GEM_EPB1MPPF__"), new Position(-1,5));
+
+        assertEquals(12, board.countPatterns(goalL2));
+    }
+
+    @Test
+    void testCountMixedPattern() throws SyntaxException {
+        GoalPattern goalL0 = (GoalPattern) CardFactory.newSerialCard("O3AIIL0");
+        GoalPattern goalD1 = (GoalPattern) CardFactory.newSerialCard("O2AAAD1");
+        GoalPattern goalD0 = (GoalPattern) CardFactory.newSerialCard("O2IIID0");
+
+        Board board = new Board();
+        board.start((StarterCard)CardFactory.newPlayableCard("SEPIE_F0I__FPIA"));
+
+        assert board.placeCard(CardFactory.newPlayableCard("GKEE_AB1KAAI__"), new Position(1,1));
+        assert board.placeCard(CardFactory.newPlayableCard("GEE_EAB2EAAAI_"), new Position(2,0));
+        assert board.placeCard(CardFactory.newPlayableCard("N_QAIIB0"), new Position(2,2));
+        assert board.placeCard(CardFactory.newPlayableCard("NA_AEAB0"), new Position(3,-1));
+        assert board.placeCard(CardFactory.newPlayableCard("NI_EEIB1"), new Position(4,0));
+        assert board.placeCard(CardFactory.newPlayableCard("GEE__IB5_IIIII"), new Position(3,1));
+        assert board.placeCard(CardFactory.newPlayableCard("NEE_IIB1"), new Position(4,2));
+        assert board.placeCard(CardFactory.newPlayableCard("N_EIIIB0"), new Position(5,3));
+        assert board.placeCard(CardFactory.newPlayableCard("GEE_EIB2EIIIA_"), new Position(4,4));
+        assert board.placeCard(CardFactory.newPlayableCard("NMI_FIB0"), new Position(3,3));
+        assert board.placeCard(CardFactory.newPlayableCard("GE_EEIB2EIIIF_"), new Position(2,4));
+
+        assertEquals(9, board.countPatterns(goalL0));
+        assertEquals(4, board.countPatterns(goalD0));
+        assertEquals(2, board.countPatterns(goalD1));
+
+    }
+
 
 }
 

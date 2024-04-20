@@ -59,7 +59,7 @@ public class GoalPattern extends GoalSymbol {
         steps[0] = Direction.parse(dir).opposite().relativePosition();
         switch (variant) {
             case 'L' -> {
-                steps[1] = steps[0].transformY(y -> y*2);
+                steps[1] = steps[0].transformY(y -> y*3);
             }
             case 'D' -> {
                 steps[1] = steps[0].transform(c -> c*2);
