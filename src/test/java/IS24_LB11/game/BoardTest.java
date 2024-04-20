@@ -278,6 +278,26 @@ public class BoardTest {
 
     }
 
+    @Test
+    void testCalculateScoreOnLastPlacedCard() throws SyntaxException {
+        Board board = new Board();
+        HashMap<Symbol, Integer> symbolCounterCard = new HashMap<>();
+
+        board.start((StarterCard)CardFactory.newPlayableCard("SEEEE_F0PF_IAFP"));
+
+
+        assert board.placeCard(CardFactory.newPlayableCard("N_IKAAF0"), new Position(1,1));
+        assert board.placeCard(CardFactory.newPlayableCard("NIPK_IF0"), new Position(-1,1));
+        assert board.placeCard(CardFactory.newPlayableCard("NKF_AFF0"), new Position(-1,-1));
+        assert board.placeCard(CardFactory.newPlayableCard("NFP_KPF0"), new Position(1,-1));
+        assert board.placeCard(CardFactory.newPlayableCard("GEK_EFF1KFFP__"), new Position(2,2));
+
+
+        System.out.println(board.getSymbolCounter());
+
+
+
+    }
 
 }
 

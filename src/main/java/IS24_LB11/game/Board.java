@@ -2,10 +2,7 @@ package IS24_LB11.game;
 
 import java.util.*;
 
-import IS24_LB11.game.components.JsonConvertable;
-import IS24_LB11.game.components.GoalPattern;
-import IS24_LB11.game.components.PlayableCard;
-import IS24_LB11.game.components.StarterCard;
+import IS24_LB11.game.components.*;
 import IS24_LB11.game.symbol.Item;
 import IS24_LB11.game.symbol.Suit;
 import IS24_LB11.game.symbol.Symbol;
@@ -55,18 +52,22 @@ public class Board implements JsonConvertable {
         return true;
     }
 
-    public boolean placeGoldCardCheck(PlayableCard card) throws SyntaxException {
+    //we need to fix placeGoldCardCheck method
+    public boolean placeGoldCardCheck(GoldenCard card) throws SyntaxException {
         //creating hasmap to find gold card needed symbols
         HashMap<Symbol, Integer> symbolCounterGoldenCard = new HashMap<>();
         String cardString = card.asString();
         for (int i = 9; i < 14; i++) {
             Symbol symbol = Symbol.fromChar(cardString.charAt(i));
-            if (symbolCounterGoldenCard.containsKey(symbol))
-                symbolCounterGoldenCard.put(symbol, symbolCounterGoldenCard.get(symbol) + 1);
-            else
-                symbolCounterGoldenCard.put(symbol, 1);
+            if(!symbol.equals(Symbol.nullChar)){
+                if (symbolCounterGoldenCard.containsKey(symbol))
+                    symbolCounterGoldenCard.put(symbol, symbolCounterGoldenCard.get(symbol) + 1);
+                else
+                    symbolCounterGoldenCard.put(symbol, 1);
+            }
         }
         //Verifying if needed symbols are present
+        System.out.println(symbolCounterGoldenCard);
         for (Symbol symbol : symbolCounterGoldenCard.keySet()) {
             if (!symbolCounter.containsKey(symbol))
                 return false;
@@ -169,6 +170,7 @@ public class Board implements JsonConvertable {
                 return 0;
         }
     }
+    
 
     public boolean spotTaken(Position position) {
         return placedCards.stream().anyMatch(card -> card.position().equals(position));
