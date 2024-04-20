@@ -52,9 +52,7 @@ public class ClientHandler implements Runnable {
                             out.println(heartbeat.toString());
 
                         } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
+                            exit();
                         }
                     }
                 }
@@ -124,15 +122,19 @@ public class ClientHandler implements Runnable {
         this.lastHeartbeatTime = lastHeartbeatTime;
     }
 
-    private void exit() throws IOException {
-        connectionClosed = true;
-        in.close();
-        out.close();
-        clientSocket.close();
-        for (Thread thread : allStartedThreads){
-            thread.interrupt();
+    private void exit() {
+        try {
+            connectionClosed = true;
+            in.close();
+            out.close();
+            clientSocket.close();
+            for (Thread thread : allStartedThreads){
+                thread.interrupt();
+            }
+            server.removeClientHandler(this);
+        } catch (IOException e) {
+
         }
-        server.removeClientHandler(this);
     }
 
 }

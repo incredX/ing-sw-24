@@ -52,7 +52,6 @@ public class ServerEventHandler {
         String messageEventSyntax = hasPropertiesInData(event, "username");
 
         if(messageEventSyntax.equals("OK"))
-
             username = event.getAsJsonObject("data").get("username").getAsString();
         else {
             response.addProperty("error", messageEventSyntax);
@@ -70,6 +69,7 @@ public class ServerEventHandler {
 
         JsonObject data = new JsonObject();
         data.addProperty("message", "Welcome " + username);
+        data.addProperty("username", clientHandler.getUserName());
 
         response.addProperty("type", "OK");
         response.add("data", data);
@@ -88,8 +88,10 @@ public class ServerEventHandler {
         // checks Syntax of json event and returns message
         String messageEventSyntax = hasPropertiesInData(event, "message", "to", "from");
 
-        if(messageEventSyntax.equals("OK")) {
+        System.out.println(event.toString());
 
+        if(messageEventSyntax.equals("OK")) {
+            event.addProperty("from", clientHandler.getUserName());
             JsonObject data = event.getAsJsonObject("data");
             if(data.get("to").equals("")){
                 clientHandler.broadcast(event.toString());
