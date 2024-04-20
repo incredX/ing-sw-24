@@ -21,7 +21,7 @@ public class NormalCardTest {
     @Test
     void testValidCardCreation() throws SyntaxException {
         String[] validId = new String[]{
-              //  "NFEF_FF0",
+                "NFEF_FF0",
                 "NFEF_FB0",
                 "N_EAAAF0",
                 "NEEEEAB0",
