@@ -45,36 +45,18 @@ public class Board implements JsonConvertable {
      */
     public boolean placeCard(PlayableCard card, Position position) throws SyntaxException {
         if (!spotAvailable(position)) return false;
-        if (card.asString().charAt(0) == 'G' && !placeGoldCardCheck(card) && !card.isFaceDown()) return false;
+        if (card.asString().charAt(0) == 'G' && !placeGoldCardCheck((GoldenCard) card) && !card.isFaceDown()) return false;
         placedCards.add(new PlacedCard(card, position));
         updateCounters(position);
         updateSpots(position);
         return true;
     }
 
-    //we need to fix placeGoldCardCheck method
     public boolean placeGoldCardCheck(GoldenCard card) throws SyntaxException {
-        //creating hasmap to find gold card needed symbols
-        HashMap<Symbol, Integer> symbolCounterGoldenCard = new HashMap<>();
-        String cardString = card.asString();
-        for (int i = 9; i < 14; i++) {
-            Symbol symbol = Symbol.fromChar(cardString.charAt(i));
-            if(!symbol.equals(Symbol.nullChar)){
-                if (symbolCounterGoldenCard.containsKey(symbol))
-                    symbolCounterGoldenCard.put(symbol, symbolCounterGoldenCard.get(symbol) + 1);
-                else
-                    symbolCounterGoldenCard.put(symbol, 1);
-            }
-        }
-        //Verifying if needed symbols are present
-        System.out.println(symbolCounterGoldenCard);
-        for (Symbol symbol : symbolCounterGoldenCard.keySet()) {
-            if (!symbolCounter.containsKey(symbol))
+        ArrayList<Suit> suitNeeded = card.getSuitsNeeded();
+        for (Symbol symbol:symbolCounter.keySet())
+            if (symbolCounter.get(symbol)<suitNeeded.stream().filter(x->x==symbol).count())
                 return false;
-            else if (symbolCounter.get(symbol) < symbolCounterGoldenCard.get(symbol))
-                return false;
-
-        }
         return true;
     }
 
@@ -136,7 +118,7 @@ public class Board implements JsonConvertable {
 
     public int calculateScoreOnLastPlacedCard() {
         PlayableCard playableCard = placedCards.getLast().card();
-        int score = Integer.valueOf(playableCard.asString().charAt(7));
+        int score = playableCard.asString().charAt(7)-48;
         HashMap<Symbol, Integer> symbolCounter = getSymbolCounter();
         if (playableCard.isFaceDown()) return 0;
         switch (playableCard.asString().charAt(0)) {
@@ -170,7 +152,6 @@ public class Board implements JsonConvertable {
                 return 0;
         }
     }
-    
 
     public boolean spotTaken(Position position) {
         return placedCards.stream().anyMatch(card -> card.position().equals(position));
@@ -196,5 +177,9 @@ public class Board implements JsonConvertable {
 
     public HashMap<Symbol, Integer> getSymbolCounter() {
         return symbolCounter;
+    }
+
+    public ArrayList<Position> getAvailableSpots() {
+        return availableSpots;
     }
 }

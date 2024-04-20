@@ -21,6 +21,10 @@ import java.util.stream.Collectors;
 public class Game {
     private String NOT_NORMAL_TURN = "Not normal turn";
     private String NOT_FINAL_TURN = "Not final turn";
+    private String CANT_DRAW_FROM_NORMAL_DECK_IS_EMPTY = "Normal Deck is empty";
+    private String CANT_DRAW_FROM_GOLDEN_DECK_IS_EMPTY = "Golden Deck is empty";
+
+    private String INDEX_DECK_WRONG = "Index not available";
 
     private String NOT_PLAYER_TURN = "Not this player turn";
     private String INVALID_POSITION_CARD_OR_NOT_IN_HAND = "Invalid placement of card or card is not in player's hand";
@@ -98,8 +102,14 @@ public class Game {
         return finalTurn ? executeFinalTurn() : executeNormalTurn(position, playableCard, deckType, indexDeck);
     }
 
-    public String executeNormalTurn(Position position, PlayableCard playableCard, boolean deckType, int indexDeck) throws DeckException, JsonException, SyntaxException {
+    private String executeNormalTurn(Position position, PlayableCard playableCard, boolean deckType, int indexDeck) throws DeckException, JsonException, SyntaxException {
         Player player = players.get(turn % players.size());
+        if (normalDeck.isEmpty() && deckType == false)
+            return CANT_DRAW_FROM_NORMAL_DECK_IS_EMPTY;
+        if (goldenDeck.isEmpty() && deckType == true)
+            return CANT_DRAW_FROM_GOLDEN_DECK_IS_EMPTY;
+        if ((!deckType && normalDeck.getCards().size() - indexDeck < 0 )|| (deckType && goldenDeck.getCards().size() - indexDeck < 0))
+            return INDEX_DECK_WRONG;
         if (player.placeCard(playableCard, position) == false)
             return INVALID_POSITION_CARD_OR_NOT_IN_HAND;
         else {
@@ -107,10 +117,13 @@ public class Game {
         }
         //0 for standard deck, 1 for gold deck
         //deck empty o provo a pescare una carta non esistente
-        if (deckType && !normalDeck.isEmpty())
-            normalDeck.drawCard(indexDeck);
-        else if (!deckType && !goldenDeck.isEmpty())
-            goldenDeck.drawCard(indexDeck);
+
+
+        if (!deckType)
+            player.addCardToHand((PlayableCard) normalDeck.drawCard(indexDeck));
+        else if (deckType)
+            player.addCardToHand((PlayableCard) goldenDeck.drawCard(indexDeck));
+
         turn++;
         //controllo se turno finale lo faccio solo sull'ultima persona controllando tutti i punteggi
         if (!finalTurn)
@@ -118,13 +131,13 @@ public class Game {
         return VALID_TURN;
     }
 
-    public String executeFinalTurn() {
+    private String executeFinalTurn() {
         return null;
     }
     //remind to check if front or back
 
     private void isFinalTurn() {
-        if (turn % players.size() == 0 && finalTurn==false) {
+        if (turn % players.size() == 0 && finalTurn == false) {
             if (normalDeck.isEmpty() && goldenDeck.isEmpty())
                 finalTurn = true;
             for (Player player : players)
@@ -137,5 +150,21 @@ public class Game {
     //ONLY FOR TESTS
     public ArrayList<Player> getPlayers() {
         return players;
+    }
+
+    public int getTurn() {
+        return turn;
+    }
+
+    public boolean getFinalTurn() {
+        return finalTurn;
+    }
+
+    public Deck getGoldenDeck() {
+        return goldenDeck;
+    }
+
+    public Deck getNormalDeck() {
+        return normalDeck;
     }
 }
