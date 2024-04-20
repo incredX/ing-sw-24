@@ -135,7 +135,7 @@ public class Board implements JsonConvertable {
 
     public int calculateScoreOnLastPlacedCard() {
         PlayableCard playableCard = placedCards.getLast().card();
-        int score = Integer.valueOf(playableCard.asString().charAt(7));
+        int score = playableCard.asString().charAt(7)-48;
         HashMap<Symbol, Integer> symbolCounter = getSymbolCounter();
         if (playableCard.isFaceDown()) return 0;
         switch (playableCard.asString().charAt(0)) {
@@ -194,5 +194,9 @@ public class Board implements JsonConvertable {
 
     public HashMap<Symbol, Integer> getSymbolCounter() {
         return symbolCounter;
+    }
+
+    public ArrayList<Position> getAvailableSpots() {
+        return availableSpots;
     }
 }

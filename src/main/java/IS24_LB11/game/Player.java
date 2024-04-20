@@ -38,13 +38,19 @@ public class Player {
     }
 
     public boolean placeCard(PlayableCard card, Position position) throws JsonException, SyntaxException {
-        if (hand.stream().mapToInt(x -> x.asString().compareTo(card.asString())).findFirst() == null)
+        if (hand.stream().filter(x -> x.asString().compareTo(card.asString()) == 0).count() == 0) {
             return false;
-        return board.placeCard(card, position);
+        }
+        if (board.placeCard(card, position)) {
+            hand.removeIf(carhand -> carhand.asString().compareTo(card.asString()) == 0);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public void incrementScoreLastCardPlaced() {
-        score+=board.calculateScoreOnLastPlacedCard();
+        score += board.calculateScoreOnLastPlacedCard();
     }
 
     public void incrementScore(int amount) {
@@ -75,6 +81,14 @@ public class Player {
         return setup;
     }
 
+    public ArrayList<PlayableCard> getHand() {
+        return hand;
+    }
+
+    public void addCardToHand(PlayableCard playableCard) {
+        hand.add(playableCard);
+    }
+
     @Override
     public String toString() {
         JsonConverter jsonConverter = new JsonConverter();
@@ -82,11 +96,12 @@ public class Player {
             return "Player{" +
                     "name='" + name + '\'' +
                     ", color=" + color +
+                    ", ACTUALhand=" + hand.stream().map(x -> x.asString()).reduce("", (x, y) -> x + " " + y) +
                     ", board=" + jsonConverter.objectToJSON(board) +
                     ", setup=" + setup +
-                    ", hand=" + hand.stream().map(x -> x.asString()).reduce("", (x, y) -> x + " " + y) +
                     ", personalGoal=" + personalGoal.asString() +
                     ", score=" + score +
+                    ", symbols= " + board.getSymbolCounter() +
                     '}';
         } catch (JsonException e) {
             throw new RuntimeException(e);
