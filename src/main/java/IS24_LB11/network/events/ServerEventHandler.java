@@ -91,15 +91,15 @@ public class ServerEventHandler {
         System.out.println(event.toString());
 
         if(messageEventSyntax.equals("OK")) {
-            event.addProperty("from", clientHandler.getUserName());
             JsonObject data = event.getAsJsonObject("data");
-            if(data.get("to").equals("")){
+            data.addProperty("from", clientHandler.getUserName());
+            if(!data.get("to").toString().equals("")){
                 clientHandler.broadcast(event.toString());
             }
             else {
                 ClientHandler destinationClientHandler = clientHandler.getClientHandlerWithUsername(data.get("to").toString());
                 if(destinationClientHandler != null) {
-                    clientHandler.sendMessage(event.toString());
+                    destinationClientHandler.sendMessage(event.toString());
                 }
                 else {
                     JsonObject response = new JsonObject();
