@@ -48,7 +48,7 @@ public class Board implements JsonConvertable {
      */
     public boolean placeCard(PlayableCard card, Position position) throws SyntaxException {
         if (!spotAvailable(position)) return false;
-        if (card.asString().charAt(0)=='G' && !placeGoldCardCheck(card) && card.asString().charAt(6)=='B') return false;
+        if (card.asString().charAt(0)=='G' && !placeGoldCardCheck(card) && card.isFaceDown()) return false;
         placedCards.add(new PlacedCard(card, position));
         updateCounters(position);
         updateSpots(position);

@@ -122,7 +122,7 @@ public class Game {
     public String executeFinalTurn() {
         return null;
     }
-
+    //remind to check if front or back
     private int scoreTurnPlayer(Player player, PlayableCard playableCard) {
         int score = Integer.valueOf(playableCard.asString().charAt(7));
         HashMap<Symbol, Integer> symbolCounter = player.getBoard().getSymbolCounter();
