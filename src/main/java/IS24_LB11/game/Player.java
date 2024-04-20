@@ -38,9 +38,13 @@ public class Player {
     }
 
     public boolean placeCard(PlayableCard card, Position position) throws JsonException, SyntaxException {
-        if (hand.stream().mapToInt(x->x.asString().compareTo(card.asString())).findFirst()==null)
+        if (hand.stream().mapToInt(x -> x.asString().compareTo(card.asString())).findFirst() == null)
             return false;
         return board.placeCard(card, position);
+    }
+
+    public void incrementScoreLastCardPlaced() {
+        score+=board.calculateScoreOnLastPlacedCard();
     }
 
     public void incrementScore(int amount) {
@@ -63,7 +67,7 @@ public class Player {
         return board;
     }
 
-    public GoalCard getPersonalGoal(){
+    public GoalCard getPersonalGoal() {
         return personalGoal;
     }
 
@@ -80,7 +84,7 @@ public class Player {
                     ", color=" + color +
                     ", board=" + jsonConverter.objectToJSON(board) +
                     ", setup=" + setup +
-                    ", hand=" + hand.stream().map(x -> x.asString()).reduce("",(x,y)->x+" "+y) +
+                    ", hand=" + hand.stream().map(x -> x.asString()).reduce("", (x, y) -> x + " " + y) +
                     ", personalGoal=" + personalGoal.asString() +
                     ", score=" + score +
                     '}';
