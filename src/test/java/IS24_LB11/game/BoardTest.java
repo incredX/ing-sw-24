@@ -1,8 +1,6 @@
 package IS24_LB11.game;
 
-import IS24_LB11.game.components.NormalCard;
-import IS24_LB11.game.components.PlayableCard;
-import IS24_LB11.game.components.StarterCard;
+import IS24_LB11.game.components.*;
 import IS24_LB11.game.symbol.Item;
 import IS24_LB11.game.symbol.Suit;
 import IS24_LB11.game.symbol.Symbol;
@@ -20,37 +18,37 @@ public class BoardTest {
                 new Placement(
                     true,
                     new NormalCard("IPK_IF0"),
-                    new Position(1, -1), // ok placement
+                    new Position(1, -1), // Ok placement
                     PositionArray(new Integer[][] { {-1,-1}, {-1,1}, {1,1}, {0,-2}, {2,-2} })
                 ),
                 new Placement(
                     false,
                     new NormalCard("EAE_AF1"),
                     new Position(2, -1), // Wrong placement (a card can't cover 2 corners of the same card)
-                    PositionArray(new Integer[][] { {-1,-1}, {-1,1}, {1,1}, {0,-2}, {2,-2} }) // available spots unchanged
+                    PositionArray(new Integer[][] { {-1,-1}, {-1,1}, {1,1}, {0,-2}, {2,-2} }) // Available spots unchanged
                 ),
                 new Placement(
                     false,
                     new NormalCard("EAE_AB1"),
                     new Position(1, -1), // Wrong placement (can't place one card on top of the other)
-                    PositionArray(new Integer[][] { {-1,-1}, {-1,1}, {1,1}, {0,-2}, {2,-2} }) // available spots unchanged
+                    PositionArray(new Integer[][] { {-1,-1}, {-1,1}, {1,1}, {0,-2}, {2,-2} }) // Available spots unchanged
                 ),
                 new Placement(
                     false,
                     new NormalCard("EAE_AB1"),
                     new Position(2, 0), // Wrong placement (can't place a card over a missing corner)
-                    PositionArray(new Integer[][] { {-1,-1}, {-1,1}, {1,1}, {0,-2}, {2,-2} }) // available spots unchanged
+                    PositionArray(new Integer[][] { {-1,-1}, {-1,1}, {1,1}, {0,-2}, {2,-2} }) // Available spots unchanged
                 ),
                 new Placement(
                     false,
                     new NormalCard("EAE_AB1"),
                     new Position(2, 2), // Wrong placement (can't place a card "disconnected" from the others)
-                    PositionArray(new Integer[][] { {-1,-1}, {-1,1}, {1,1}, {0,-2}, {2,-2} }) // available spots unchanged
+                    PositionArray(new Integer[][] { {-1,-1}, {-1,1}, {1,1}, {0,-2}, {2,-2} }) // Available spots unchanged
                 ),
                 new Placement(
                     true,
                     new NormalCard("EAE_AB1"),
-                    new Position(0, -2), // ok placement
+                    new Position(0, -2), // Ok placement
                     PositionArray(new Integer[][] { {-1,-1}, {-1,1}, {1,1}, {2,-2}, {2,-2}, {-1,-3}, {1,-3} })
                 ),
         };
@@ -97,6 +95,62 @@ public class BoardTest {
         }
         return positions;
     }
+
+
+    @Test
+    void testCountD0Patter() throws SyntaxException{
+        GoalPattern goalD0 = (GoalPattern) CardFactory.newSerialCard("O2IIID0");
+
+        Board board = new Board();
+        board.start((StarterCard)CardFactory.newPlayableCard("SEE___F0AIPIFPA"));
+
+        assert board.placeCard(CardFactory.newPlayableCard("NIIE_IF0"), new Position(-1,-1));
+        assert board.placeCard(CardFactory.newPlayableCard("NI_IEIF0"), new Position(-2,-2));
+        assert board.placeCard(CardFactory.newPlayableCard("N_EIIIF0"), new Position(-3,-3));
+        assert board.placeCard(CardFactory.newPlayableCard("NEI_IIF0"), new Position(1,1));
+        assert board.placeCard(CardFactory.newPlayableCard("N_QAIIF0"), new Position(2,2));
+        assert board.placeCard(CardFactory.newPlayableCard("NMI_FIF0"), new Position(3,3));
+        assert board.placeCard(CardFactory.newPlayableCard("NEE_IIF1"), new Position(4,4));
+        assert board.placeCard(CardFactory.newPlayableCard("NI_EEIF1"), new Position(5,5));
+        assert board.placeCard(CardFactory.newPlayableCard("NIPK_IF0"), new Position(6,6));
+
+        System.out.println(board.countPatterns(goalD0));
+        assert ((board.countPatterns(goalD0)) == 6);
+    }
+    @Test
+    void testCountD1Pattern() throws SyntaxException{
+
+        GoalPattern goalD1 = (GoalPattern) CardFactory.newSerialCard("O2IIID1");
+
+        Board board = new Board();
+        board.start((StarterCard)CardFactory.newPlayableCard("SEEEE_F0AI_PIAF"));
+
+
+        assert board.placeCard(CardFactory.newPlayableCard("GEEE_IB2EIIIP_"), new Position(-1,1));
+        assert board.placeCard(CardFactory.newPlayableCard("N_QAIIB0"), new Position(-2,2));
+        assert board.placeCard(CardFactory.newPlayableCard("GE_EEIB2EIIIF_"), new Position(-3,3));
+        assert board.placeCard(CardFactory.newPlayableCard("GK_E_IB3_III__"), new Position(1,-1));
+        assert board.placeCard(CardFactory.newPlayableCard("GEE__IB5_IIIII"), new Position(2,-2));
+        assert board.placeCard(CardFactory.newPlayableCard("NMI_FIB0"), new Position(3,-3));
+        assert board.placeCard(CardFactory.newPlayableCard("NIPK_IB0"), new Position(4,-4));
+        assert board.placeCard(CardFactory.newPlayableCard("NI_EEIB1"), new Position(5,-5));
+        assert board.placeCard(CardFactory.newPlayableCard("NEE_IIB1"), new Position(6,-6));
+
+        System.out.println(board.countPatterns(goalD1));
+        assert ((board.countPatterns(goalD1)) == 6);
+    }
+
+
+
+//    @Test
+//    void testCountL0Pattern() throws SyntaxException {
+//        GoalPattern goalL0 = (GoalPattern) CardFactory.newSerialCard("O3AIIL0");
+//
+//        Board board = new Board();
+//        board.start((StarterCard)CardFactory.newPlayableCard("SEPIE_F0I__FPIA"));
+//
+//
+//    }
 }
 
 record Placement(
@@ -105,6 +159,3 @@ record Placement(
         Position position,
         Position[] availableSpot
 ) { }
-
-
-//manca il test sui pattern

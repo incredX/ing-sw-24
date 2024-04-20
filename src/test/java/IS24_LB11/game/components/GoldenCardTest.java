@@ -21,7 +21,6 @@ import static IS24_LB11.game.utils.Direction.DOWN_RIGHT;
 public class GoldenCardTest {
 
     @Test
-
     void testValidCardCreation () throws SyntaxException {
 
         String [] validId = new String[] {
