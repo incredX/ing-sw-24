@@ -13,7 +13,7 @@ public class ClientHandler implements Runnable {
     private String userName;
     private Server server;
     private boolean connectionClosed = false;
-    private int HEARTBEAT_INTERVAL = 2;
+    private int HEARTBEAT_INTERVAL = 2000;
     private long lastHeartbeatTime;
 
     private ArrayList<Thread> allStartedThreads = new ArrayList<>();
@@ -72,11 +72,7 @@ public class ClientHandler implements Runnable {
                 ServerEventHandler.handleEvent(this, inputLine);
             }
 
-            heartbeatThread.interrupt();
-            in.close();
-            out.close();
-            clientSocket.close();
-            server.removeClientHandler(this);
+            exit();
         } catch (IOException e) {
             e.printStackTrace();
         }
