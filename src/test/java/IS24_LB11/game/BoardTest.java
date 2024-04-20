@@ -4,6 +4,8 @@ import IS24_LB11.game.components.*;
 import IS24_LB11.game.symbol.Item;
 import IS24_LB11.game.symbol.Suit;
 import IS24_LB11.game.symbol.Symbol;
+import IS24_LB11.game.tools.JsonConverter;
+import IS24_LB11.game.utils.JsonException;
 import IS24_LB11.game.utils.Position;
 import IS24_LB11.game.utils.SyntaxException;
 import org.junit.jupiter.api.Assertions;
@@ -142,15 +144,23 @@ public class BoardTest {
 
 
 
-//    @Test
-//    void testCountL0Pattern() throws SyntaxException {
-//        GoalPattern goalL0 = (GoalPattern) CardFactory.newSerialCard("O3AIIL0");
-//
-//        Board board = new Board();
-//        board.start((StarterCard)CardFactory.newPlayableCard("SEPIE_F0I__FPIA"));
-//
-//
-//    }
+ @Test
+    void testCountL0Pattern() throws SyntaxException {
+        GoalPattern goalL0 = (GoalPattern) CardFactory.newSerialCard("O3AIIL0");
+
+        Board board = new Board();
+        board.start((StarterCard)CardFactory.newPlayableCard("SEPIE_F0I__FPIA"));
+
+
+   }
+   @Test
+    public void testPlaceCard() throws SyntaxException, JsonException {
+       Board board = new Board();
+       JsonConverter jsonConverter = new JsonConverter();
+       board.start((StarterCard)CardFactory.newPlayableCard("SEPIE_F0I__FPIA"));
+       board.placeCard((GoldenCard)CardFactory.newPlayableCard("G_EEQFF1QFFA__"),new Position(1,1));
+       System.out.println(jsonConverter.objectToJSON(board));
+   }
 }
 
 record Placement(
