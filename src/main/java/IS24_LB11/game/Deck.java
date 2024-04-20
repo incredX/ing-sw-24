@@ -35,7 +35,7 @@ public class Deck {
         }
 
         // throw exception if the wanted card doesn't exist into the deck or cardIndex isn't between 1 and 3 (included)
-        if (cards.size() <= cardIndex || cardIndex < 1 || cardIndex > 3) {
+        if (cards.size() < cardIndex || cardIndex < 1 || cardIndex > 3) {
             throw new DeckException("Index out of bound. \n");
         }
 
@@ -59,6 +59,7 @@ public class Deck {
      * @return the selected card without removing it
      * @throw the DeckException when there aren't any cards left or the index is not allowed
      */
+
     public CardInterface showCard(int cardIndex) throws DeckException{
         if (cards.isEmpty()) {
             throw new DeckException("The deck is empty. \n");

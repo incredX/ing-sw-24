@@ -107,7 +107,7 @@ public class Board implements JsonConvertable {
             for (PlacedCard placedCard: placedCards.stream().skip(1).toList())
                 getPlacedCard(placedCard.position()).ifPresent(card -> card.setVisited(false));
         }
-        return  patternsFound;
+        return  patternsFound * (goal.getPoints());
     }
 
     public boolean spotTaken(Position position) {

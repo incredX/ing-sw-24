@@ -25,10 +25,10 @@ public class GoalSymbol implements GoalCard {
         }
         points = id.charAt(0) - '0';
         if (points < 0 || points > 9) {
-            throw new SyntaxException(String.format(NOT_A_DIGIT_MSG, id.charAt(1)));
+            throw new SyntaxException(String.format(NOT_A_DIGIT_MSG, id.charAt(0)));
         }
         if (points != 2 && points != 3) {
-            throw new SyntaxException(String.format(INVALID_DIGIT_MSG, id.charAt(1)))
+            throw new SyntaxException(String.format(INVALID_DIGIT_MSG, id.charAt(0)))
                     .addContext("(expected digits: 2 or 3)");
         }
 
