@@ -24,6 +24,7 @@ public class ResizeListener extends Listener implements Runnable {
         int minMillisBetweenResizes = millis * 8;
         int counter = 0;
 
+        Thread.currentThread().setName("thread-resize-listener");
         while (true) {
             if (listener.isTerminalResized()) {
                 if (counter > minMillisBetweenResizes) {
@@ -39,5 +40,6 @@ public class ResizeListener extends Listener implements Runnable {
                 counter += millis;
             }
         }
+        System.out.println(Thread.currentThread().getName() + " offline");
     }
 }
