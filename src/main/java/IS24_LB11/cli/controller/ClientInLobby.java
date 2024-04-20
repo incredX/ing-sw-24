@@ -19,29 +19,7 @@ public class ClientInLobby extends ClientState {
         this.name = "";
     }
 
-    protected void handleEvent(Event event) {
-        switch (event) {
-            case CommandEvent commandEvent -> processCommand(commandEvent.command());
-            case KeyboardEvent keyboardEvent -> processKeyStroke(keyboardEvent.keyStroke());
-            case ResizeEvent resizeEvent -> processResize(resizeEvent.size());
-            case ResultServerEvent resultServerEvent -> processResult(resultServerEvent.result());
-            default -> System.out.println("Unknown event: " + event.getClass().getName());
-        };
-    }
-
-    private void processResult(Result<ServerEvent> result) {
-        if (result.isError()) {
-            String text;
-            text = result.getError();
-            if (result.getCause() != null)
-                text += "\ncause:"+result.getCause();
-            popUpQueue.addUrgentPopUp("ERROR", text);
-            return;
-        }
-        processServerEvent(result.get());
-    }
-
-    private void processServerEvent(ServerEvent serverEvent) {
+    protected void processServerEvent(ServerEvent serverEvent) {
         switch (serverEvent) {
             case ServerOkEvent okEvent -> {
                 if (!okEvent.message().isEmpty())
@@ -59,14 +37,14 @@ public class ClientInLobby extends ClientState {
             }
             case ServerHeartBeatEvent heartBeatEvent -> {
                 JsonObject response = new JsonObject();
-                response.addProperty("type", "online");
+                response.addProperty("type", "heartbeat");
                 serverHandler.write(response);
             }
             default -> processResult(Result.Error("received unknown server event"));
         }
     }
 
-    private void processCommand(String command) {
+    protected void processCommand(String command) {
         String[] tokens = command.split(" ", 2);
         if (tokens.length == 0) return;
         //TODO: (inGame) command center set pointer in (0,0)
@@ -103,7 +81,7 @@ public class ClientInLobby extends ClientState {
         };
     }
 
-    private void processKeyStroke(KeyStroke keyStroke) {
+    protected void processKeyStroke(KeyStroke keyStroke) {
         for (KeyConsumer listener: keyConsumers) {
             // if a listener use the keyStroke then no one with less priority will
             if (listener.consumeKeyStroke(keyStroke)) return;

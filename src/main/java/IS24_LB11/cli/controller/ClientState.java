@@ -2,13 +2,15 @@ package IS24_LB11.cli.controller;
 
 import IS24_LB11.cli.CommandLine;
 import IS24_LB11.cli.Stage;
+import IS24_LB11.cli.event.*;
 import IS24_LB11.cli.popup.PopUpQueue;
 import IS24_LB11.cli.view.ViewHub;
-import IS24_LB11.cli.event.Event;
 import IS24_LB11.cli.KeyConsumer;
 import IS24_LB11.cli.listeners.ServerHandler;
 import IS24_LB11.game.Board;
+import IS24_LB11.game.Result;
 import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.terminal.Terminal;
 
 import java.io.IOException;
@@ -56,7 +58,38 @@ public abstract class ClientState {
         return null;
     }
 
-    protected abstract void handleEvent(Event event);
+    protected void handleEvent(Event event) {
+        switch (event) {
+            case CommandEvent commandEvent -> processCommand(commandEvent.command());
+            case KeyboardEvent keyboardEvent -> processKeyStroke(keyboardEvent.keyStroke());
+            case ResizeEvent resizeEvent -> processResize(resizeEvent.size());
+            case ResultServerEvent resultServerEvent -> processResult(resultServerEvent.result());
+            default -> System.out.println("Unknown event: " + event.getClass().getName());
+        };
+    }
+
+    protected void processResult(Result<ServerEvent> result) {
+        if (result.isError()) {
+            String text;
+            text = result.getError();
+            if (result.getCause() != null)
+                text += "\ncause:"+result.getCause();
+            popUpQueue.addUrgentPopUp("ERROR", text);
+            return;
+        }
+        processServerEvent(result.get());
+    }
+
+    protected void processResize(TerminalSize size) {
+        cmdLine.setWidth(size.getColumns());
+        hub.resize(size, cmdLine);
+    }
+
+    protected abstract void processKeyStroke(KeyStroke keyStroke);
+
+    protected abstract void processCommand(String command);
+
+    protected abstract void processServerEvent(ServerEvent event);
 
     public void queueEvent(Event event) throws InterruptedException {
         synchronized (queue) {
@@ -69,11 +102,6 @@ public abstract class ClientState {
         synchronized (queue) {
             if (queue.offer(event)) queue.notify();
         }
-    }
-
-    protected void processResize(TerminalSize size) {
-        cmdLine.setWidth(size.getColumns());
-        hub.resize(size, cmdLine);
     }
 
     protected void setNextState(ClientState nextState) {
