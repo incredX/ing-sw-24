@@ -5,7 +5,7 @@ import IS24_LB11.game.symbol.Item;
 import IS24_LB11.game.symbol.Suit;
 import IS24_LB11.game.symbol.Symbol;
 import IS24_LB11.game.tools.JsonConverter;
-import IS24_LB11.game.utils.JsonException;
+import IS24_LB11.game.tools.JsonException;
 import IS24_LB11.game.utils.Position;
 import IS24_LB11.game.utils.SyntaxException;
 import org.junit.jupiter.api.Assertions;
