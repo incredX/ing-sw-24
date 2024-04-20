@@ -21,9 +21,10 @@ public class ClientHandler implements Runnable {
     //useful to convert json to string and viceversa
     private Gson gson = new Gson();
 
-    public ClientHandler(Server server, Socket socket) {
+    public ClientHandler(Server server, Socket socket, String userName) {
         this.clientSocket = socket;
         this.server = server;
+        this.userName = userName;
         this.lastHeartbeatTime = System.currentTimeMillis();
     }
 
@@ -39,6 +40,7 @@ public class ClientHandler implements Runnable {
                             Thread.sleep(HEARTBEAT_INTERVAL);
                             long currentTime = System.currentTimeMillis();
                             if (currentTime - lastHeartbeatTime > HEARTBEAT_INTERVAL * 2) {
+                                System.out.println("Heartbeat timed out for " + userName);
                                 exit();
                                 break;
                             }
@@ -46,9 +48,8 @@ public class ClientHandler implements Runnable {
                             JsonObject heartbeat = new JsonObject();
                             heartbeat.addProperty("type", "heartbeat");
                             heartbeat.add("data", new JsonObject());
-                            object.add("value", heartbeat);
-                            System.out.println(object.toString());
-                            out.println(object.toString());
+                            System.out.println(heartbeat.toString());
+                            out.println(heartbeat.toString());
 
                         } catch (InterruptedException e) {
                             e.printStackTrace();

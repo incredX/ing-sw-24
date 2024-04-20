@@ -55,7 +55,7 @@ public class Server
                     System.out.println("New client connected: " + clientSocket.getInetAddress().getHostName());
 
                     // Create client handler and start thread
-                    ClientHandler clientHandler = new ClientHandler(this, clientSocket);
+                    ClientHandler clientHandler = new ClientHandler(this, clientSocket, "player" + (clientHandlers.size() + 1));
                     this.clientHandlers.add(clientHandler);
                     new Thread(clientHandler).start();
                 }
