@@ -9,7 +9,7 @@ public class KeyboardEvent implements Event {
         this.keyStroke = keyStroke;
     }
 
-    public KeyStroke getKeyStroke() {
+    public KeyStroke keyStroke() {
         return keyStroke;
     }
 }

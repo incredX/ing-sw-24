@@ -20,6 +20,11 @@ public final class Cell {
         this.color = color;
     }
 
+    public Cell(Cell cell) {
+        this.value = cell.value;
+        this.color = cell.color;
+    }
+
     //public Cell(String value) {
     //    this(value, TextColor.ANSI.DEFAULT);
     //}

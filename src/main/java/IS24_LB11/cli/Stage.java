@@ -1,8 +1,10 @@
 package IS24_LB11.cli;
 
 import IS24_LB11.cli.style.SingleBorderStyle;
+import IS24_LB11.cli.utils.Side;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.terminal.Terminal;
 import IS24_LB11.cli.utils.CliBox;
 import IS24_LB11.cli.utils.TerminalRectangle;
@@ -15,7 +17,8 @@ import static IS24_LB11.cli.utils.Side.EAST;
 
 
 public class Stage extends CliBox {
-    private static final String COMMAND_INTRO = " > ";
+    protected static final String COMMAND_INTRO = " > ";
+
     private final ArrayDeque<TerminalRectangle> builtAreas;
     private TerminalPosition cursorPosition;
 
@@ -30,24 +33,22 @@ public class Stage extends CliBox {
     }
 
     @Override
+    public void clear() {
+        super.clear();
+        buildRelativeArea(borderArea.getSize(), firstColumn(), firstRow());
+    }
+
+    @Override
     public void build() {
         drawBorders();
-        drawBottomDiv();
-        fillRow(lastRow(), COMMAND_INTRO);
-        buildRelativeArea(new TerminalRectangle(
-                new TerminalSize(getWidth(), getHeight()),
-                new TerminalPosition(0, 0)
-        ));
+        drawCommandLine();
     }
 
     public void buildCommandLine(CommandLine commandLine) {
         setCursorPosition(commandLine.getCursor());
         fillRow(lastRow(), COMMAND_INTRO.length(), ' ');
         fillRow(lastRow(), COMMAND_INTRO.length(), commandLine.getVisibleLine());
-        buildRelativeArea(new TerminalRectangle(
-                new TerminalSize(innerWidth(), 1),
-                new TerminalPosition(0, lastRow())
-        ));
+        buildRelativeArea(new TerminalSize(innerWidth(), 1), new TerminalPosition(0, lastRow()));
     }
 
     public void buildArea(TerminalRectangle area) {
@@ -55,39 +56,70 @@ public class Stage extends CliBox {
     }
 
     public void buildRelativeArea(TerminalRectangle area) {
-        builtAreas.add(area.withRelative(getPosition()));
+        builtAreas.add(area.withRelative(getTerminalPosition()));
+    }
+
+    public void buildRelativeArea(TerminalSize size, TerminalPosition position) {
+        builtAreas.add(new TerminalRectangle(size, position.withRelative(getTerminalPosition())));
+    }
+
+    public void buildRelativeArea(TerminalSize size, int col, int row) {
+        builtAreas.add(new TerminalRectangle(size, new TerminalPosition(col, row).withRelative(getTerminalPosition())));
+    }
+
+    public void buildRelativeArea(int width, int height, int col, int row) {
+        builtAreas.add(new TerminalRectangle(new TerminalSize(width, height), new TerminalPosition(col, row).withRelative(getTerminalPosition())));
     }
 
     @Override
     public void print(Terminal terminal) throws IOException {
-        //super.print(terminal);
         while (!builtAreas.isEmpty()) {
             TerminalRectangle area = builtAreas.removeLast();
             TerminalPosition base = area.getPosition();
             TerminalPosition relative;
             for (int r=0; r<area.getHeight(); r++) {
-                relative = base.withRelativeRow(r).minus(this.getPosition());
+                relative = base.withRelativeRow(r).minus(this.getTerminalPosition());
                 terminal.setCursorPosition(base.withRelativeRow(r));
                 for (int c=0; c<area.getWidth(); c++) {
-                    image[relative.getRow()][relative.getColumn()+c].print(terminal);
+                    if (relative.getRow() < rectangle.getHeight() && relative.getColumn()+c < rectangle.getWidth())
+                        image[relative.getRow()][relative.getColumn()+c].print(terminal);
                 }
             }
         }
         terminal.setCursorPosition(cursorPosition);
     }
 
+    protected void drawCommandLine() {
+        drawBottomDiv();
+        fillRow(lastRow(), COMMAND_INTRO);
+        buildRelativeArea(borderArea.getWidth(), 2, 0, lastRow()-1);
+    }
+
     private void drawBottomDiv() {
-        fillRow(lastRow()-1, borderStyle.getHLine());
+        fillRow(lastRow()-1, borderStyle.getHLine(), TextColor.ANSI.DEFAULT);
         drawCell(new TerminalPosition(borderArea.side(WEST), lastRow()-1), borderStyle.getSeparator(WEST));
         drawCell(new TerminalPosition(borderArea.side(EAST), lastRow()-1), borderStyle.getSeparator(EAST));
     }
 
     @Override
+    protected void drawBorders() {
+        super.drawBorders();
+        buildRelativeArea(rectangle.getWidth(), 1, 0, 0);
+        buildRelativeArea(rectangle.getWidth(), 1, 0, borderArea.getYAndHeight());
+        buildRelativeArea(1, rectangle.getHeight(), 0, 0);
+        buildRelativeArea(1, rectangle.getHeight(), borderArea.getXAndWidth(), 0);
+    }
+
+    @Override
     public void resize(TerminalSize terminalSize) {
-        clear();
         super.resize(terminalSize.withRelative(0, -2));
-        updateInnerArea();
-        build();
+        System.out.println("rectangle  : "+rectangle.getPosition()+"  "+rectangle.getHeight()+";"+rectangle.getWidth());
+        System.out.println("border area: "+borderArea.getPosition()+"  "+borderArea.getHeight()+";"+borderArea.getWidth());
+        System.out.println("inner area : "+innerArea.getPosition()+"  "+innerArea.getHeight()+";"+innerArea.getWidth());
+    }
+
+    public void shift(Side side) {
+        return;
     }
 
     public void setCursorPosition(int cursor) {
@@ -96,6 +128,6 @@ public class Stage extends CliBox {
     }
 
     public TerminalPosition getCenter() {
-        return getPosition().withRelative(getWidth()/2, getHeight()/2);
+        return getTerminalPosition().withRelative(getWidth()/2, getHeight()/2);
     }
 }

@@ -30,7 +30,9 @@ public class Client {
             e.printStackTrace();
         }
     }
-
+    /**
+     * Starts the client, allowing it to send and receive messages.
+     */
     public void start() {
         // Thread for receiving messages from the server
         Thread receivingThread = new Thread(() -> {
