@@ -92,6 +92,7 @@ public class Game {
         return "CHOOSE GOAL PHASE COMPLETED, READY TO GO";
     }
 
+    //Check if is not player turn
     public String executeTurn(String playerName, Position position, PlayableCard playableCard, boolean deckType, int indexDeck) throws JsonException, DeckException, SyntaxException {
         if (playerName.compareTo(players.get(turn % players.size()).name()) != 0) return NOT_PLAYER_TURN;
         return finalTurn ? executeFinalTurn() : executeNormalTurn(position, playableCard, deckType, indexDeck);
@@ -102,8 +103,7 @@ public class Game {
         if (player.placeCard(playableCard, position) == false)
             return INVALID_POSITION_CARD_OR_NOT_IN_HAND;
         else {
-            if (playableCard.asString().charAt(7) != 0)
-                player.incrementScore(scoreTurnPlayer(player, playableCard));
+            player.incrementScoreLastCardPlaced();
         }
         //0 for standard deck, 1 for gold deck
         //deck empty o provo a pescare una carta non esistente
@@ -112,7 +112,6 @@ public class Game {
         else if (!deckType && !goldenDeck.isEmpty())
             goldenDeck.drawCard(indexDeck);
         turn++;
-
         //controllo se turno finale lo faccio solo sull'ultima persona controllando tutti i punteggi
         if (!finalTurn)
             isFinalTurn();
@@ -123,43 +122,16 @@ public class Game {
         return null;
     }
     //remind to check if front or back
-    private int scoreTurnPlayer(Player player, PlayableCard playableCard) {
-        int score = Integer.valueOf(playableCard.asString().charAt(7));
-        HashMap<Symbol, Integer> symbolCounter = player.getBoard().getSymbolCounter();
-        switch (playableCard.asString().charAt(0)) {
-            case 'N':
-                return score;
-            case 'G':
-                switch (playableCard.asString().charAt(8)) {
-                    case 'A':
-                        return symbolCounter.get(Suit.ANIMAL);
-                    case 'I':
-                        return symbolCounter.get(Suit.INSECT);
-                    case 'F':
-                        return symbolCounter.get(Suit.MUSHROOM);
-                    case 'P':
-                        return symbolCounter.get(Suit.PLANT);
-                    case 'Q':
-                        return symbolCounter.get(Item.QUILL);
-                    case 'K':
-                        return symbolCounter.get(Item.INKWELL);
-                    case 'M':
-                        return symbolCounter.get(Item.MANUSCRIPT);
-                    case 'E':
-                        return score;
-                    default:
-                        return 0;
-                }
-            default:
-                return 0;
-        }
-    }
 
     private void isFinalTurn() {
-        if (normalDeck.isEmpty() && goldenDeck.isEmpty())
+        if (turn % players.size() == 0 && finalTurn==false) {
+            if (normalDeck.isEmpty() && goldenDeck.isEmpty())
+                finalTurn = true;
             for (Player player : players)
                 if (player.getScore() >= 20)
                     finalTurn = true;
+
+        }
     }
 
     //ONLY FOR TESTS
