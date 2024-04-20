@@ -13,7 +13,7 @@ public class ClientHandler implements Runnable {
     private String userName;
     private Server server;
     private boolean connectionClosed = false;
-    private int HEARTBEAT_INTERVAL = 2;
+    private int HEARTBEAT_INTERVAL = 2000;
     private long lastHeartbeatTime;
 
     private ArrayList<Thread> allStartedThreads = new ArrayList<>();
@@ -21,9 +21,10 @@ public class ClientHandler implements Runnable {
     //useful to convert json to string and viceversa
     private Gson gson = new Gson();
 
-    public ClientHandler(Server server, Socket socket) {
+    public ClientHandler(Server server, Socket socket, String userName) {
         this.clientSocket = socket;
         this.server = server;
+        this.userName = userName;
         this.lastHeartbeatTime = System.currentTimeMillis();
     }
 
@@ -39,6 +40,7 @@ public class ClientHandler implements Runnable {
                             Thread.sleep(HEARTBEAT_INTERVAL);
                             long currentTime = System.currentTimeMillis();
                             if (currentTime - lastHeartbeatTime > HEARTBEAT_INTERVAL * 2) {
+                                System.out.println("Heartbeat timed out for " + userName);
                                 exit();
                                 break;
                             }
@@ -46,14 +48,11 @@ public class ClientHandler implements Runnable {
                             JsonObject heartbeat = new JsonObject();
                             heartbeat.addProperty("type", "heartbeat");
                             heartbeat.add("data", new JsonObject());
-                            object.add("value", heartbeat);
-                            System.out.println(object.toString());
-                            out.println(object.toString());
+                            System.out.println(heartbeat.toString());
+                            out.println(heartbeat.toString());
 
                         } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
+                            exit();
                         }
                     }
                 }
@@ -72,11 +71,7 @@ public class ClientHandler implements Runnable {
                 ServerEventHandler.handleEvent(this, inputLine);
             }
 
-            heartbeatThread.interrupt();
-            in.close();
-            out.close();
-            clientSocket.close();
-            server.removeClientHandler(this);
+            exit();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -127,15 +122,19 @@ public class ClientHandler implements Runnable {
         this.lastHeartbeatTime = lastHeartbeatTime;
     }
 
-    private void exit() throws IOException {
-        connectionClosed = true;
-        in.close();
-        out.close();
-        clientSocket.close();
-        for (Thread thread : allStartedThreads){
-            thread.interrupt();
+    private void exit() {
+        try {
+            connectionClosed = true;
+            in.close();
+            out.close();
+            clientSocket.close();
+            for (Thread thread : allStartedThreads){
+                thread.interrupt();
+            }
+            server.removeClientHandler(this);
+        } catch (IOException e) {
+
         }
-        server.removeClientHandler(this);
     }
 
 }
