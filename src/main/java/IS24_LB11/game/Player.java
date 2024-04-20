@@ -6,6 +6,7 @@ import IS24_LB11.game.tools.JsonConverter;
 import IS24_LB11.game.tools.JsonException;
 import IS24_LB11.game.utils.Color;
 import IS24_LB11.game.utils.Position;
+import IS24_LB11.game.utils.SyntaxException;
 
 /*
 java.awt.* (Abstract Window Toolkit)  allows us to use some intefaces that help us to menage graphic intefaces
@@ -36,10 +37,14 @@ public class Player {
         this.board.start(setup.starterCard());
     }
 
-    public boolean placeCard(PlayableCard card, Position position) throws JsonException {
-        if (hand.stream().mapToInt(x->x.asString().compareTo(card.asString())).findFirst()==null)
+    public boolean placeCard(PlayableCard card, Position position) throws JsonException, SyntaxException {
+        if (hand.stream().mapToInt(x -> x.asString().compareTo(card.asString())).findFirst() == null)
             return false;
         return board.placeCard(card, position);
+    }
+
+    public void incrementScoreLastCardPlaced() {
+        score+=board.calculateScoreOnLastPlacedCard();
     }
 
     public void incrementScore(int amount) {
@@ -62,12 +67,30 @@ public class Player {
         return board;
     }
 
-    public GoalCard getPersonalGoal(){
+    public GoalCard getPersonalGoal() {
         return personalGoal;
     }
 
     public PlayerSetup getSetup() {
         return setup;
+    }
+
+    @Override
+    public String toString() {
+        JsonConverter jsonConverter = new JsonConverter();
+        try {
+            return "Player{" +
+                    "name='" + name + '\'' +
+                    ", color=" + color +
+                    ", board=" + jsonConverter.objectToJSON(board) +
+                    ", setup=" + setup +
+                    ", hand=" + hand.stream().map(x -> x.asString()).reduce("", (x, y) -> x + " " + y) +
+                    ", personalGoal=" + personalGoal.asString() +
+                    ", score=" + score +
+                    '}';
+        } catch (JsonException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public Color getColor() {
