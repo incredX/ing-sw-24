@@ -29,11 +29,9 @@ public class CardFactory {
             if (c == 'G') return new GoldenCard(str.substring(1));
             if (c == 'S') return new StarterCard(str.substring(1));
             if (c == 'O') {
-                char c1 = str.charAt(1);
                 if (str.length() == 5) return new GoalSymbol(str.substring(1));
-                if (str.length() == 7) return new GoalPattern(str.substring(1));
+                else return new GoalPattern(str.substring(1));
 
-                throw new SyntaxException(String.format(Symbol.INVALID_CHAR_MSG, c1));
             }
         } catch (SyntaxException e) {
             throw e.addContext("in " + str);
