@@ -1,10 +1,8 @@
 package IS24_LB11.network.events;
 
-import IS24_LB11.game.Result;
 import IS24_LB11.network.ClientHandler;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.googlecode.lanterna.terminal.ansi.TelnetTerminalServer;
 
 import java.io.PrintWriter;
 
@@ -13,12 +11,10 @@ public class ServerEventHandler {
 
     private static final Gson gson = new Gson();
     private static ClientHandler clientHandler;
-    private static PrintWriter outputToClient;
 
     // Method to handle incoming events
-    public static void handleEvent(ClientHandler ch,PrintWriter out, String eventJson) {
+    public static void handleEvent(ClientHandler ch, String eventJson) {
         clientHandler = ch;
-        outputToClient = out;
 
         JsonObject event = gson.fromJson(eventJson, JsonObject.class);
 
@@ -33,10 +29,13 @@ public class ServerEventHandler {
             case "message":
                 handleMessageEvent(event);
                 break;
+            case "heartbeat":
+                handleHeartBeatEvent(event);
+                break;
             default:
                 JsonObject error = new JsonObject();
                 error.addProperty("error", "Unknown event");
-                outputToClient.println(error);
+                clientHandler.sendMessage(error.toString());
                 break;
 
         }
@@ -49,60 +48,88 @@ public class ServerEventHandler {
         String username = null;
         JsonObject response = new JsonObject();
 
+        // checks Syntax of json event and returns message
+        String messageEventSyntax = hasPropertiesInData(event, "username");
 
-
-        if(event != null && event.has("data") &&
-                event.getAsJsonObject("data").has("username"))
+        if(messageEventSyntax.equals("OK"))
 
             username = event.getAsJsonObject("data").get("username").getAsString();
         else {
-            response.addProperty("error", "Wrong login request, data or username property missing");
-            outputToClient.println(response);
+            response.addProperty("error", messageEventSyntax);
+            clientHandler.sendMessage(response.toString());
             return;
         }
 
         if(clientHandler.getAllUsernames().contains(username)) {
-            response.addProperty("error", "Wrong login request, username already in use");
-            outputToClient.println(response);
+            response.addProperty("error", "Username is already in use");
+            clientHandler.sendMessage(response.toString());
             return;
         }
 
         clientHandler.setUserName(username);
 
         response.addProperty("value", "Welcome " + username);
-        outputToClient.println(response);
+        clientHandler.sendMessage(response.toString());
         return;
+    }
+
+    private static void handleHeartBeatEvent(JsonObject event) {
+        clientHandler.setLastHeartbeatTime(System.currentTimeMillis());
     }
 
     // Method to handle message event
     private static void handleMessageEvent(JsonObject event) {
 
-        JsonObject response = new JsonObject();
-        if(event != null && event.has("data") &&
-                event.getAsJsonObject("data").has("message"))
+        // checks Syntax of json event and returns message
+        String messageEventSyntax = hasPropertiesInData(event, "message", "to", "from");
 
+        if(messageEventSyntax.equals("OK")) {
 
-        System.out.println("Login request received");
+            JsonObject data = event.getAsJsonObject("data");
+            if(data.get("to").equals("")){
+                clientHandler.broadcast(event.toString());
+            }
+            else {
+                ClientHandler destinationClientHandler = clientHandler.getClientHandlerWithUsername(data.get("to").toString());
+                if(destinationClientHandler != null) {
+                    clientHandler.sendMessage(event.toString());
+                }
+                else {
+                    JsonObject response = new JsonObject();
+                    response.addProperty("error", "Unknown username");
+                    clientHandler.sendMessage(response.toString());
+                }
+            }
+        }
     }
 
 
     // Method to handle quit event
     private static void handleQuitEvent(JsonObject event) {
-        // TODO: quit logic here
+        JsonObject response = new JsonObject();
+        response.addProperty("type", "notification");
+        JsonObject data = new JsonObject();
+        data.addProperty("message", "Player " + clientHandler.getUserName() + " left the game");
+        response.addProperty("data", data.toString());
+
+        clientHandler.broadcast(response.toString());
+
+        clientHandler.setConnectionClosed(true);
+
     }
 
     private static String hasPropertiesInData(JsonObject event, String... properties) {
 
         // Check if data object is null
         if (event == null || !event.has("data")) {
-            return "Wrong request, data is not inside";
+            return "Wrong request, property 'data' missing";
         }
         JsonObject data = event.getAsJsonObject("data");
 
         // Check if data object has all the specified properties
         for (String property : properties) {
             if (!data.has(property)) {
-                return "Wrong request, properties missing missing";
+                return "Wrong request, properties missing";
             }
         }
 

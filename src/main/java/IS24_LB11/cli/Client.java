@@ -5,27 +5,27 @@ import IS24_LB11.cli.controller.ClientState;
 import IS24_LB11.cli.listeners.InputListener;
 import IS24_LB11.cli.listeners.ResizeListener;
 import IS24_LB11.cli.listeners.ServerHandler;
+import IS24_LB11.cli.view.ViewHub;
 import IS24_LB11.game.Board;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Optional;
 
 public class Client {
     public static void main(String[] args) {
         Debugger dbg = new Debugger();
         ClientState state;
         ViewHub viewHub;
-        InputListener inListener;
-        ResizeListener reListener;
+        InputListener inputListener;
+        ResizeListener resizeListener;
         ServerHandler serverHandler;
         HashMap<String, Thread> threadMap = new HashMap<>();
 
         try {
             viewHub = new ViewHub();
             state = new ClientInLobby(new Board(), viewHub);
-            inListener = new InputListener(state);
-            reListener = new ResizeListener(state);
+            resizeListener = new ResizeListener(state);
+            inputListener = new InputListener(state);
             serverHandler = new ServerHandler(state, "127.0.0.1", 54321);
             state.setServerHandler(serverHandler);
         } catch (IOException e) {
@@ -34,9 +34,9 @@ public class Client {
         }
         dbg.printIntro("init DONE.");
 
-        threadMap.put("input", new Thread(inListener));
-        threadMap.put("resize", new Thread(reListener));
         threadMap.put("views", new Thread(viewHub));
+        threadMap.put("input", new Thread(inputListener));
+        threadMap.put("resize", new Thread(resizeListener));
         threadMap.put("server", new Thread(serverHandler));
 
         for (Thread t: threadMap.values()) t.start();
@@ -47,12 +47,12 @@ public class Client {
             else state = nextState;
         }
 
-        dbg.printMessage("closing controller.");
+        dbg.printMessage("closing client.");
 
-        try { System.in.close(); }
-        catch (IOException e) { dbg.printException(e); }
-        threadMap.get("resize").interrupt();
+        inputListener.shutdown();
+        serverHandler.shutdown();
         threadMap.get("views").interrupt();
+        threadMap.get("resize").interrupt();
         threadMap.get("server").interrupt();
     }
 }

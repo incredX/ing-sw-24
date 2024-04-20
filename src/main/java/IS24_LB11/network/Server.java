@@ -119,6 +119,10 @@ public class Server
         return clientHandlers;
     }
 
+    public void removeClientHandler(ClientHandler clientHandler){
+        clientHandlers.remove(clientHandler);
+    }
+
     public static void main(String args[])
     {
         Server server = new Server(54321);
