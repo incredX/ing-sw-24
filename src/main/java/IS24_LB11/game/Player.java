@@ -6,6 +6,7 @@ import IS24_LB11.game.tools.JsonConverter;
 import IS24_LB11.game.tools.JsonException;
 import IS24_LB11.game.utils.Color;
 import IS24_LB11.game.utils.Position;
+import IS24_LB11.game.utils.SyntaxException;
 
 /*
 java.awt.* (Abstract Window Toolkit)  allows us to use some intefaces that help us to menage graphic intefaces
@@ -36,7 +37,7 @@ public class Player {
         this.board.start(setup.starterCard());
     }
 
-    public boolean placeCard(PlayableCard card, Position position) throws JsonException {
+    public boolean placeCard(PlayableCard card, Position position) throws JsonException, SyntaxException {
         if (hand.stream().mapToInt(x->x.asString().compareTo(card.asString())).findFirst()==null)
             return false;
         return board.placeCard(card, position);
