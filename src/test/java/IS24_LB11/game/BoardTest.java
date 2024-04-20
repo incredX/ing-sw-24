@@ -14,6 +14,19 @@ import org.junit.jupiter.api.Test;
 import java.util.HashMap;
 
 public class BoardTest {
+
+    @Test
+    public void testInvalidPlaceCard() throws SyntaxException, JsonException {
+        Board board = new Board();
+        JsonConverter jsonConverter = new JsonConverter();
+        board.start((StarterCard)CardFactory.newPlayableCard("SEPIE_F0I__FPIA"));
+        board.placeCard((GoldenCard)CardFactory.newPlayableCard("G_EEQFF1QFFA__"),new Position(1,1));
+        board.placeCard((GoldenCard)CardFactory.newPlayableCard("GE_EEAF2EAAAF_"),new Position(-1,1));
+        board.placeCard((GoldenCard)CardFactory.newPlayableCard("G_EEEAF2EAAAP_"),new Position(-1,-1));
+        board.placeCard((GoldenCard)CardFactory.newPlayableCard("GEM__IF3_III__"),new Position(1,-1));
+
+        System.out.println(jsonConverter.objectToJSON(board));
+    }
     @Test
     void testPlacement() throws SyntaxException {
         Placement[] placements = new Placement[] {
@@ -104,7 +117,7 @@ public class BoardTest {
         GoalPattern goalD0 = (GoalPattern) CardFactory.newSerialCard("O2IIID0");
 
         Board board = new Board();
-        board.start((StarterCard)CardFactory.newPlayableCard("SEE___F0AIPIFPA"));
+        board.start((StarterCard)CardFactory.newPlayableCard("SEEEE_F0PF_IAFP"));
 
         assert board.placeCard(CardFactory.newPlayableCard("NIIE_IF0"), new Position(-1,-1));
         assert board.placeCard(CardFactory.newPlayableCard("NI_IEIF0"), new Position(-2,-2));
@@ -116,12 +129,10 @@ public class BoardTest {
         assert board.placeCard(CardFactory.newPlayableCard("NI_EEIF1"), new Position(5,5));
         assert board.placeCard(CardFactory.newPlayableCard("NIPK_IF0"), new Position(6,6));
 
-        System.out.println(board.countPatterns(goalD0));
         assert ((board.countPatterns(goalD0)) == 6);
     }
     @Test
     void testCountD1Pattern() throws SyntaxException{
-
         GoalPattern goalD1 = (GoalPattern) CardFactory.newSerialCard("O2IIID1");
 
         Board board = new Board();
@@ -138,7 +149,6 @@ public class BoardTest {
         assert board.placeCard(CardFactory.newPlayableCard("NI_EEIB1"), new Position(5,-5));
         assert board.placeCard(CardFactory.newPlayableCard("NEE_IIB1"), new Position(6,-6));
 
-        System.out.println(board.countPatterns(goalD1));
         assert ((board.countPatterns(goalD1)) == 6);
     }
 
@@ -153,14 +163,7 @@ public class BoardTest {
 
 
    }
-   @Test
-    public void testPlaceCard() throws SyntaxException, JsonException {
-       Board board = new Board();
-       JsonConverter jsonConverter = new JsonConverter();
-       board.start((StarterCard)CardFactory.newPlayableCard("SEPIE_F0I__FPIA"));
-       board.placeCard((GoldenCard)CardFactory.newPlayableCard("G_EEQFF1QFFA__"),new Position(1,1));
-       System.out.println(jsonConverter.objectToJSON(board));
-   }
+
 }
 
 record Placement(
