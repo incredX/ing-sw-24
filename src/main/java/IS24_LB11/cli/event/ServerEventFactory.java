@@ -49,11 +49,7 @@ public class ServerEventFactory {
                 return Error(object.get("error").getAsString(), object.get("cause").getAsString());
             else
                 return Error(object.get("error").getAsString());
-        } else if (object.has("value")) {
-            return Ok(object.get("value"));
-        } else {
-            return Error("result syntax error", "missing expected fields (error | value)");
-        }
+        } else return Ok(object);
     }
 
     private static Result<String> extractString(JsonObject object, String key) {
