@@ -48,8 +48,7 @@ public class ClientHandler implements Runnable {
                             JsonObject heartbeat = new JsonObject();
                             heartbeat.addProperty("type", "heartbeat");
                             heartbeat.add("data", new JsonObject());
-                            System.out.println(heartbeat.toString());
-                            out.println(heartbeat.toString());
+                            out.println(heartbeat.getAsString());
 
                         } catch (InterruptedException e) {
                             exit();
@@ -65,7 +64,7 @@ public class ClientHandler implements Runnable {
 
             String inputLine;
             while (!connectionClosed && (inputLine = in.readLine()) != null) {
-                System.out.println("Received from client " + clientSocket.getInetAddress().getHostName() + ": " + inputLine);
+//                System.out.println("Received from client " + this.userName + ": " + inputLine);
 
                 // Handle the received JSON data
                 ServerEventHandler.handleEvent(this, inputLine);

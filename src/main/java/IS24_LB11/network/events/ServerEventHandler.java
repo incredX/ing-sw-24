@@ -35,7 +35,7 @@ public class ServerEventHandler {
             default:
                 JsonObject error = new JsonObject();
                 error.addProperty("error", "Unknown event");
-                clientHandler.sendMessage(error.toString());
+                clientHandler.sendMessage(error.getAsString());
                 break;
 
         }
@@ -55,13 +55,13 @@ public class ServerEventHandler {
             username = event.getAsJsonObject("data").get("username").getAsString();
         else {
             response.addProperty("error", messageEventSyntax);
-            clientHandler.sendMessage(response.toString());
+            clientHandler.sendMessage(response.getAsString());
             return;
         }
 
         if(clientHandler.getAllUsernames().contains(username)) {
             response.addProperty("error", "Username is already in use");
-            clientHandler.sendMessage(response.toString());
+            clientHandler.sendMessage(response.getAsString());
             return;
         }
 
@@ -74,7 +74,7 @@ public class ServerEventHandler {
         response.addProperty("type", "OK");
         response.add("data", data);
 
-        clientHandler.sendMessage(response.toString());
+        clientHandler.sendMessage(response.getAsString());
         return;
     }
 
@@ -88,23 +88,24 @@ public class ServerEventHandler {
         // checks Syntax of json event and returns message
         String messageEventSyntax = hasPropertiesInData(event, "message", "to", "from");
 
-        System.out.println(event.toString());
+        System.out.println(event.getAsString());
 
         if(messageEventSyntax.equals("OK")) {
             JsonObject data = event.getAsJsonObject("data");
             data.addProperty("from", clientHandler.getUserName());
-            if(!data.get("to").toString().equals("")){
-                clientHandler.broadcast(event.toString());
+            System.out.println(data.get("to").getAsString());
+            if(data.get("to").getAsString().equals("")){
+                clientHandler.broadcast(event.getAsString());
             }
             else {
-                ClientHandler destinationClientHandler = clientHandler.getClientHandlerWithUsername(data.get("to").toString());
+                ClientHandler destinationClientHandler = clientHandler.getClientHandlerWithUsername(data.get("to").getAsString());
                 if(destinationClientHandler != null) {
-                    destinationClientHandler.sendMessage(event.toString());
+                    destinationClientHandler.sendMessage(event.getAsString());
                 }
                 else {
                     JsonObject response = new JsonObject();
                     response.addProperty("error", "Unknown username");
-                    clientHandler.sendMessage(response.toString());
+                    clientHandler.sendMessage(response.getAsString());
                 }
             }
         }
@@ -117,9 +118,9 @@ public class ServerEventHandler {
         response.addProperty("type", "notification");
         JsonObject data = new JsonObject();
         data.addProperty("message", "Player " + clientHandler.getUserName() + " left the game");
-        response.addProperty("data", data.toString());
+        response.addProperty("data", data.getAsString());
 
-        clientHandler.broadcast(response.toString());
+        clientHandler.broadcast(response.getAsString());
 
         clientHandler.setConnectionClosed(true);
 
