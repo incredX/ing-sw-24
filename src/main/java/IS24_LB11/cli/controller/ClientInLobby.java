@@ -61,6 +61,23 @@ public class ClientInLobby extends ClientState {
                         serverHandler.write(object);
                 }
             }
+            case "SENDTO" -> {
+                tokens = tokens[1].split(" ", 2);
+                JsonObject object = new JsonObject();
+                JsonObject data = new JsonObject();
+                object.addProperty("type", "message");
+                if (tokens.length == 1) {
+                    data.addProperty("to", "");
+                    data.addProperty("from", "");
+                    data.addProperty("message", tokens[0]);
+                } else {
+                    data.addProperty("to", tokens[0]);
+                    data.addProperty("from", "");
+                    data.addProperty("message", tokens[1]);
+                }
+                object.add("data", data);
+                serverHandler.write(object);
+            }
             case "POPUP" -> {
                 tokens = tokens[1].split(" ", 3);
                 System.out.print("POPUP: ");
