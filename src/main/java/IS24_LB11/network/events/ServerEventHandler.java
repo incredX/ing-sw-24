@@ -91,9 +91,9 @@ public class ServerEventHandler {
         System.out.println(event.toString());
 
         if(messageEventSyntax.equals("OK")) {
-            event.addProperty("from", clientHandler.getUserName());
             JsonObject data = event.getAsJsonObject("data");
-            if(data.get("to").equals("")){
+            data.addProperty("from", clientHandler.getUserName());
+            if(!data.get("to").equals("")){
                 clientHandler.broadcast(event.toString());
             }
             else {
