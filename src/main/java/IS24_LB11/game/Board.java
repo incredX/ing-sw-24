@@ -2,10 +2,7 @@ package IS24_LB11.game;
 
 import java.util.*;
 
-import IS24_LB11.game.components.JsonConvertable;
-import IS24_LB11.game.components.GoalPattern;
-import IS24_LB11.game.components.PlayableCard;
-import IS24_LB11.game.components.StarterCard;
+import IS24_LB11.game.components.*;
 import IS24_LB11.game.symbol.Item;
 import IS24_LB11.game.symbol.Suit;
 import IS24_LB11.game.symbol.Symbol;
@@ -48,32 +45,18 @@ public class Board implements JsonConvertable {
      */
     public boolean placeCard(PlayableCard card, Position position) throws SyntaxException {
         if (!spotAvailable(position)) return false;
-        if (card.asString().charAt(0) == 'G' && !placeGoldCardCheck(card) && !card.isFaceDown()) return false;
+        if (card.asString().charAt(0) == 'G' && !placeGoldCardCheck((GoldenCard) card) && !card.isFaceDown()) return false;
         placedCards.add(new PlacedCard(card, position));
         updateCounters(position);
         updateSpots(position);
         return true;
     }
 
-    public boolean placeGoldCardCheck(PlayableCard card) throws SyntaxException {
-        //creating hasmap to find gold card needed symbols
-        HashMap<Symbol, Integer> symbolCounterGoldenCard = new HashMap<>();
-        String cardString = card.asString();
-        for (int i = 9; i < 14; i++) {
-            Symbol symbol = Symbol.fromChar(cardString.charAt(i));
-            if (symbolCounterGoldenCard.containsKey(symbol))
-                symbolCounterGoldenCard.put(symbol, symbolCounterGoldenCard.get(symbol) + 1);
-            else
-                symbolCounterGoldenCard.put(symbol, 1);
-        }
-        //Verifying if needed symbols are present
-        for (Symbol symbol : symbolCounterGoldenCard.keySet()) {
-            if (!symbolCounter.containsKey(symbol))
+    public boolean placeGoldCardCheck(GoldenCard card) throws SyntaxException {
+        ArrayList<Suit> suitNeeded = card.getSuitsNeeded();
+        for (Symbol symbol:symbolCounter.keySet())
+            if (symbolCounter.get(symbol)<suitNeeded.stream().filter(x->x==symbol).count())
                 return false;
-            else if (symbolCounter.get(symbol) < symbolCounterGoldenCard.get(symbol))
-                return false;
-
-        }
         return true;
     }
 
