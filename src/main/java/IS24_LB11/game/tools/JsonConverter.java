@@ -131,7 +131,7 @@ public class JsonConverter {
      * @throws JsonException if there is an issue parsing the JSON input.
      * @throws SyntaxException if there is a syntax error in the JSON input.
      */
-    private Board JSONToBoard(String stringInput) throws JsonException, SyntaxException {
+    public Board JSONToBoard(String stringInput) throws JsonException, SyntaxException {
         String auxString;
         checkNullObject(stringInput);
         Board convertedBoard = new Board();

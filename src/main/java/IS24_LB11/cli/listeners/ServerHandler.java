@@ -1,12 +1,10 @@
 package IS24_LB11.cli.listeners;
 
 import IS24_LB11.cli.controller.ClientState;
-import IS24_LB11.cli.event.ResultEvent;
+import IS24_LB11.cli.event.ResultServerEvent;
 
-import com.google.gson.JsonIOException;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonStreamParser;
-import com.google.gson.JsonSyntaxException;
+import IS24_LB11.cli.event.ServerEventFactory;
+import com.google.gson.*;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -14,7 +12,6 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 import static IS24_LB11.game.Result.Error;
-import static IS24_LB11.game.Result.Ok;
 
 public class ServerHandler extends Listener implements Runnable {
     private final Socket socket;
@@ -40,18 +37,18 @@ public class ServerHandler extends Listener implements Runnable {
                 if (parser.hasNext()) {
                     JsonObject event;
                     try {
-                        System.out.println("parsing event...");
                         event = parser.next().getAsJsonObject();
                     }
                     catch (JsonSyntaxException | IllegalStateException e) {
-                        state.queueEvent(new ResultEvent(Error("Bad request", "json syntax error")));
+                        state.queueEvent(new ResultServerEvent(Error("Bad request", "json syntax error")));
                         continue;
                     }
-                    state.queueEvent(new ResultEvent(Ok(event)));
+                    System.out.println(event.toString());
+                    state.queueEvent(new ResultServerEvent(ServerEventFactory.createServerEvent(event)));
                 }
             }
             catch (JsonSyntaxException | IllegalStateException e) {
-                state.tryQueueEvent(new ResultEvent(Error("Bad request", "json syntax error")));
+                state.tryQueueEvent(new ResultServerEvent(Error("Bad request", "json syntax error")));
             }
             catch (JsonIOException e) {
                 System.out.println("caught exception: " + e.toString());
