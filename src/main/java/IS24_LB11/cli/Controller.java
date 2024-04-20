@@ -4,12 +4,23 @@ import IS24_LB11.cli.event.CommandEvent;
 import IS24_LB11.cli.event.Event;
 import IS24_LB11.cli.event.KeyboardEvent;
 import IS24_LB11.cli.event.ResizeEvent;
+import IS24_LB11.cli.listeners.InputListener;
+import IS24_LB11.cli.listeners.ResizeListener;
+import IS24_LB11.cli.view.BoardView;
+import IS24_LB11.game.Board;
+import IS24_LB11.game.components.GoldenCard;
+import IS24_LB11.game.components.NormalCard;
+import IS24_LB11.game.components.StarterCard;
+import IS24_LB11.game.utils.Position;
+import IS24_LB11.game.utils.SyntaxException;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.input.KeyStroke;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.concurrent.ArrayBlockingQueue;
+
+import static IS24_LB11.cli.utils.Side.*;
 
 public class Controller {
     private static final int QUEUE_CAPACITY = 64;
@@ -18,6 +29,7 @@ public class Controller {
     private final ArrayBlockingQueue<Event> queue;
     private final ViewHub hub;
     private final CommandLine cmdLine;
+    private Stage stage;
     private boolean running;
     private boolean popUpOn;
 
@@ -25,6 +37,7 @@ public class Controller {
         queue = new ArrayBlockingQueue<>(QUEUE_CAPACITY);
         hub = new ViewHub();
         cmdLine = new CommandLine(hub.getTerminal().getTerminalSize().getColumns());
+        stage = hub.getStage();
         running = true;
         popUpOn = false;
     }
@@ -36,7 +49,7 @@ public class Controller {
         ResizeListener reListener;
         HashMap<String, Thread> threadMap = new HashMap<>();
 
-        try {
+        /*try {
             ctrl = new Controller();
             inListener = new InputListener(ctrl.hub.getTerminal(), ctrl.queue);
             reListener = new ResizeListener(ctrl.hub.getTerminal(), ctrl.queue);
@@ -53,19 +66,36 @@ public class Controller {
 
         for (Thread t: threadMap.values()) t.start();
 
-        ctrl.start();
+        try { ctrl.start(); }
+        catch (IOException | SyntaxException e) {
+            System.err.println(e.getMessage());
+        }
 
         dbg.printMessage("closing controller.");
 
         try { System.in.close(); }
         catch (IOException e) { dbg.printException(e); }
         threadMap.get("resize").interrupt();
-        threadMap.get("views").interrupt();
+        threadMap.get("views").interrupt();*/
     }
 
-    private void start() {
+    private void start() throws IOException, SyntaxException {
+        Board board = new Board();
+        BoardView boardView;
+        hub.setBoardStage(board);
         hub.addPopUp(LOREM, " 1/1 : LOREM ");
         popUpOn = true;
+
+        boardView = (BoardView) hub.getStage();
+        board.start(new StarterCard("EPIE_F0I__FPIA"));
+        board.placeCard(new NormalCard("IPK_IF0"), new Position(-1,-1));
+        board.placeCard(new GoldenCard("_EEQFF1QFFA__"), new Position(1,1));
+        board.placeCard(new GoldenCard("E_KEPF1KPPA__"), new Position(1,-1)); //GE_KEPF1KPPA__
+        boardView.setPointer(new Position(0,0));
+        boardView.loadCardViews();
+        boardView.build();
+        boardView.buildCommandLine(cmdLine);
+        stage = boardView;
 
         while (running) {
             Event event;
@@ -82,7 +112,7 @@ public class Controller {
 
     private void eventSorting(Event event) {
         switch (event) {
-            case KeyboardEvent kb -> processKeyStroke(kb.getKeyStroke());
+            case KeyboardEvent kb -> processKeyStroke(kb.keyStroke());
             case CommandEvent cmd -> processCommand(cmd.command());
             case ResizeEvent re -> processResize(re.size());
             default -> System.out.println("Unknown event");
@@ -121,10 +151,30 @@ public class Controller {
                 }
                 cmdLine.clearLine();
                 break;
+            case ArrowUp:
+                if (keyStroke.isCtrlDown()) {
+                    stage.shift(NORD);
+                    hub.update();
+                }
+                break;
+            case ArrowDown:
+                if (keyStroke.isCtrlDown()) {
+                    stage.shift(SUD);
+                    hub.update();
+                }
+                break;
             case ArrowLeft:
+                if (keyStroke.isCtrlDown()) {
+                    stage.shift(WEST);
+                    hub.update();
+                }
                 cmdLine.moveCursor(-1);
                 break;
             case ArrowRight:
+                if (keyStroke.isCtrlDown()) {
+                    stage.shift(EAST);
+                    hub.update();
+                }
                 cmdLine.moveCursor(1);
                 break;
             case Escape:

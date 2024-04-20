@@ -1,6 +1,7 @@
 package IS24_LB11.cli.style;
 
 import IS24_LB11.cli.utils.Side;
+import IS24_LB11.game.utils.Direction;
 
 public class DashedBorderStyle implements BorderStyle {
     private static final char HORIZONTAL = '-';
@@ -11,6 +12,7 @@ public class DashedBorderStyle implements BorderStyle {
     public char getHLine() { return HORIZONTAL; }
     public char getVLine() { return VERTICAL; }
     public char getCorner(int dir) { return CORNER; }
+    public char getCorner(Direction dir) { return CORNER; }
     public char getSeparator(int dir) { return SEPARATOR; }
     public char getSeparator(Side side) { return SEPARATOR; }
 }

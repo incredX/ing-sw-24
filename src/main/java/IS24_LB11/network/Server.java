@@ -16,11 +16,11 @@ public class Server
     private Socket socket = null;
     private ServerSocket server = null;
     private DataInputStream in	 = null;
-    private ArrayList<ClientHandler> activeClients = new ArrayList<ClientHandler>();
+    private ArrayList<ClientHandler> clientHandlers = new ArrayList<ClientHandler>();
 
-    // this variable is useful so we can prevent that when a client disconnects another one joins in his place
-    // before the session is over
-    private int numOfConnectedClientsThisSession = 0;
+    //useful to convert json to string and viceversa
+    private Gson gson = new Gson();
+
     /**
      * Constructs a Server instance with the specified port.
      *
@@ -40,6 +40,7 @@ public class Server
             System.out.println(e.getMessage());
         }
     }
+
     /**
      * Starts the server, listens for client connections, and handles them.
      */
@@ -50,13 +51,12 @@ public class Server
             try {
                 Socket clientSocket = server.accept();
 
-                if(numOfConnectedClientsThisSession < 4) {
+                if(clientHandlers.size() < 4) {
                     System.out.println("New client connected: " + clientSocket.getInetAddress().getHostName());
-                    numOfConnectedClientsThisSession = numOfConnectedClientsThisSession + 1;
 
                     // Create client handler and start thread
                     ClientHandler clientHandler = new ClientHandler(this, clientSocket);
-                    this.activeClients.add(clientHandler);
+                    this.clientHandlers.add(clientHandler);
                     new Thread(clientHandler).start();
                 }
                 else{
@@ -65,7 +65,6 @@ public class Server
 
                     // Send message to client why they can't join
                     OutputStream outputStream = clientSocket.getOutputStream();
-                    Gson gson = new Gson();
                     JsonObject jsonResponse = new JsonObject();
                     jsonResponse.addProperty("error", "Server full, try again later.");
 
@@ -80,6 +79,7 @@ public class Server
             }
         }
     }
+
     /**
      * Cleans up and shuts down the server.
      *
@@ -89,6 +89,7 @@ public class Server
         //TODO: cleanup and server shutdown
         socket.close();
     }
+
     /**
      * Checks if the provided port number is within the valid range.
      *
@@ -100,13 +101,22 @@ public class Server
             return true;
         return false;
     }
+
+    public ArrayList<String> getAllUsernames(){
+        ArrayList<String> list = new ArrayList<>();
+        for(ClientHandler clientHandler : clientHandlers) {
+            list.add(clientHandler.getUserName());
+        }
+        return list;
+    }
+
     /**
      * Retrieves the list of active client handlers.
      *
      * @return the list of active client handlers.
      */
-    public ArrayList<ClientHandler> getActiveClients(){
-        return activeClients;
+    public ArrayList<ClientHandler> getClientHandlers(){
+        return clientHandlers;
     }
 
     public static void main(String args[])
