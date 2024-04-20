@@ -12,6 +12,11 @@ public class ClientHandler implements Runnable {
     private PrintWriter out;
     private String userName;
     private Server server;
+    private boolean connectionClosed = false;
+    private int HEARTBEAT_INTERVAL = 2;
+    private long lastHeartbeatTime;
+
+    private ArrayList<Thread> allStartedThreads;
 
     //useful to convert json to string and viceversa
     private Gson gson = new Gson();
@@ -19,25 +24,55 @@ public class ClientHandler implements Runnable {
     public ClientHandler(Server server, Socket socket) {
         this.clientSocket = socket;
         this.server = server;
+        this.lastHeartbeatTime = System.currentTimeMillis();
     }
 
     @Override
     public void run() {
         try {
+            // Start a thread to send heartbeat messages to the client
+            Thread heartbeatThread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    while (!connectionClosed) {
+                        try {
+                            Thread.sleep(HEARTBEAT_INTERVAL);
+                            long currentTime = System.currentTimeMillis();
+                            if (currentTime - lastHeartbeatTime > HEARTBEAT_INTERVAL * 2) {
+                                exit();
+                                break;
+                            }
+                            JsonObject heartbeat = new JsonObject();
+                            heartbeat.addProperty("type", "heartbeat");
+                            out.println(heartbeat.toString());
+
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                }
+            });
+            heartbeatThread.start();
+            addToStartedThreads(heartbeatThread);
+
             in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             out = new PrintWriter(clientSocket.getOutputStream(), true);
 
             String inputLine;
-            while ((inputLine = in.readLine()) != null) {
+            while (!connectionClosed && (inputLine = in.readLine()) != null) {
                 System.out.println("Received from client " + clientSocket.getInetAddress().getHostName() + ": " + inputLine);
 
-                // Do something with the received JSON data
-                ServerEventHandler.handleEvent(this, out, inputLine);
+                // Handle the received JSON data
+                ServerEventHandler.handleEvent(this, inputLine);
             }
 
+            heartbeatThread.interrupt();
             in.close();
             out.close();
             clientSocket.close();
+            server.removeClientHandler(this);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -63,9 +98,40 @@ public class ClientHandler implements Runnable {
         this.userName = userName;
     }
 
+    public void setConnectionClosed(boolean connectionClosed) {
+        this.connectionClosed = connectionClosed;
+    }
+
     public ArrayList<String> getAllUsernames() {
         return server.getAllUsernames();
     }
 
+    public ClientHandler getClientHandlerWithUsername(String username) {
+        for (ClientHandler clientHandler : server.getClientHandlers()){
+            if(clientHandler.getUserName().equals(username)){
+                return clientHandler;
+            }
+        }
+        return null;
+    }
+
+    public void addToStartedThreads(Thread thread) {
+        allStartedThreads.add(thread);
+    }
+
+    public void setLastHeartbeatTime(long lastHeartbeatTime) {
+        this.lastHeartbeatTime = lastHeartbeatTime;
+    }
+
+    private void exit() throws IOException {
+        connectionClosed = true;
+        in.close();
+        out.close();
+        clientSocket.close();
+        for (Thread thread : allStartedThreads){
+            thread.interrupt();
+        }
+        server.removeClientHandler(this);
+    }
 
 }
