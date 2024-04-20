@@ -1,5 +1,8 @@
 package IS24_LB11.cli;
 
+import IS24_LB11.cli.view.BoardView;
+import IS24_LB11.cli.view.PopUpView;
+import IS24_LB11.game.Board;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
@@ -15,7 +18,7 @@ import java.util.function.Consumer;
 
 public class ViewHub implements Runnable {
     private final Terminal terminal;
-    private final Stage stage;
+    private Stage stage;
     private Optional<PopUpView> popUp;
 
     public ViewHub() throws IOException {
@@ -32,7 +35,7 @@ public class ViewHub implements Runnable {
         while (true) {
             synchronized (terminal) {
                 try {
-                    terminal.wait(100);
+                    terminal.wait(50);
                     stage.print(terminal);
                     popUp.ifPresent(p -> {
                         try { p.print(terminal); }
@@ -51,10 +54,11 @@ public class ViewHub implements Runnable {
 
     public void resize(TerminalSize size, CommandLine commandLine) {
         stage.resize(size);
+        stage.build();
         stage.buildCommandLine(commandLine);
         popUp.ifPresent(popUp -> {
             int dx = popUp.getWidth()/2, dy = popUp.getHeight()/2;
-            popUp.setPosition(stage.getCenter().withRelative(-dx, -dy));
+            popUp.setTerminalPosition(stage.getCenter().withRelative(-dx, -dy));
         });
         synchronized (terminal) {
             try { terminal.clearScreen(); }
@@ -98,5 +102,22 @@ public class ViewHub implements Runnable {
         }
     }
 
+    public void setStage(Stage stage) {
+        this.stage = stage;
+        update();
+    }
+
+    public void setBoardStage(Board board) {
+        try {
+            stage = new BoardView(terminal.getTerminalSize(), board);
+            stage.build();
+            update();
+        } catch (IOException ignored) { }
+    }
+
     public Terminal getTerminal() { return terminal; }
+
+    public Stage getStage() {
+        return stage;
+    }
 }

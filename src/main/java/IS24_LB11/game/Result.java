@@ -1,5 +1,12 @@
 package IS24_LB11.game;
 
+import IS24_LB11.network.events.ClientEvent;
+import IS24_LB11.network.events.GetEvent;
+import IS24_LB11.network.events.LoginEvent;
+import IS24_LB11.network.events.QuitEvent;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -73,5 +80,18 @@ public class Result<T> {
 
     public boolean isError() {
         return error != null;
+    }
+
+    public static JsonObject toJson(Result<JsonElement> result) {
+        JsonObject object = new JsonObject();
+        if(result.isOk())
+            object.add("value", result.get());
+        else {
+            object.addProperty("error", result.getError());
+
+            if(result.getCause() != null)
+                object.addProperty("cause", result.getCause());
+        }
+        return object;
     }
 }

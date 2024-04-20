@@ -10,6 +10,6 @@ public interface CliFrame {
     void build();
     void rebuild();
     void print(Terminal terminal) throws IOException;
-    void setPosition(TerminalPosition newPosition);
-    TerminalPosition getPosition();
+    void setTerminalPosition(TerminalPosition newPosition);
+    TerminalPosition getTerminalPosition();
 }
