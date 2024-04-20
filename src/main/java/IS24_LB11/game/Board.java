@@ -11,6 +11,7 @@ import IS24_LB11.game.symbol.Suit;
 import IS24_LB11.game.symbol.Symbol;
 import IS24_LB11.game.utils.Direction;
 import IS24_LB11.game.utils.Position;
+import IS24_LB11.game.utils.SyntaxException;
 
 public class Board implements JsonConvertable {
     private final ArrayList<PlacedCard> placedCards;
@@ -45,17 +46,39 @@ public class Board implements JsonConvertable {
      * @param position where the card is to be placed
      * @return true if the card has been placed
      */
-    public boolean placeCard(PlayableCard card, Position position) {
+    public boolean placeCard(PlayableCard card, Position position) throws SyntaxException {
         if (!spotAvailable(position)) return false;
+        if (card.asString().charAt(0)=='G' && !placeGoldCardCheck(card) && card.asString().charAt(6)=='B') return false;
         placedCards.add(new PlacedCard(card, position));
         updateCounters(position);
         updateSpots(position);
         return true;
     }
 
+    public boolean placeGoldCardCheck(PlayableCard card) throws SyntaxException {
+        //creating hasmap to find gold card needed symbols
+        HashMap<Symbol, Integer> symbolCounterGoldenCard= new HashMap<>();
+        String cardString = card.asString();
+        for (int i = 9; i < 14; i++) {
+            Symbol symbol =Symbol.fromChar(cardString.charAt(i));
+            if (symbolCounterGoldenCard.containsKey(symbol))
+                symbolCounterGoldenCard.put(symbol,symbolCounterGoldenCard.get(symbol)+1);
+            else
+                symbolCounterGoldenCard.put(symbol,1);
+        }
+        //Verifying if needed symbols are present
+        for (Symbol symbol:symbolCounterGoldenCard.keySet()){
+            if (!symbolCounter.containsKey(symbol))
+                return false;
+            else
+                if (symbolCounter.get(symbol)<symbolCounterGoldenCard.get(symbol))
+                    return false;
+
+        }
+        return true;
+    }
     private void updateSpots(Position position) {
         availableSpots.removeIf(spot -> spot.equals(position));
-
         getPlayableCard(position).ifPresent(card ->
                 Direction.forEachDirection(corner -> {
                     Position diagonal = position.withRelative(corner.relativePosition());
@@ -107,7 +130,7 @@ public class Board implements JsonConvertable {
             for (PlacedCard placedCard: placedCards.stream().skip(1).toList())
                 getPlacedCard(placedCard.position()).ifPresent(card -> card.setVisited(false));
         }
-        return  patternsFound;
+        return  patternsFound * (goal.getPoints());
     }
 
     public boolean spotTaken(Position position) {
