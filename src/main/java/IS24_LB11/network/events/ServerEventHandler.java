@@ -48,28 +48,40 @@ public class ServerEventHandler {
 
         String username = null;
         JsonObject response = new JsonObject();
+
+
+
         if(event != null && event.has("data") &&
                 event.getAsJsonObject("data").has("username"))
 
             username = event.getAsJsonObject("data").get("username").getAsString();
         else {
-            response.addProperty("error", "Wrong login request, username property missing");
+            response.addProperty("error", "Wrong login request, data or username property missing");
             outputToClient.println(response);
+            return;
         }
 
         if(clientHandler.getAllUsernames().contains(username)) {
             response.addProperty("error", "Wrong login request, username already in use");
             outputToClient.println(response);
+            return;
         }
 
         clientHandler.setUserName(username);
+
         response.addProperty("value", "Welcome " + username);
         outputToClient.println(response);
-
+        return;
     }
 
     // Method to handle message event
     private static void handleMessageEvent(JsonObject event) {
+
+        JsonObject response = new JsonObject();
+        if(event != null && event.has("data") &&
+                event.getAsJsonObject("data").has("message"))
+
+
         System.out.println("Login request received");
     }
 
@@ -78,4 +90,23 @@ public class ServerEventHandler {
     private static void handleQuitEvent(JsonObject event) {
         // TODO: quit logic here
     }
+
+    private static String hasPropertiesInData(JsonObject event, String... properties) {
+
+        // Check if data object is null
+        if (event == null || !event.has("data")) {
+            return "Wrong request, data is not inside";
+        }
+        JsonObject data = event.getAsJsonObject("data");
+
+        // Check if data object has all the specified properties
+        for (String property : properties) {
+            if (!data.has(property)) {
+                return "Wrong request, properties missing missing";
+            }
+        }
+
+        return "OK";
+    }
+
 }

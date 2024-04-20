@@ -3,6 +3,7 @@ import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
 
+import IS24_LB11.network.events.ServerEventHandler;
 import com.google.gson.*;
 
 public class ClientHandler implements Runnable {
@@ -26,21 +27,18 @@ public class ClientHandler implements Runnable {
             in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             out = new PrintWriter(clientSocket.getOutputStream(), true);
 
-            System.out.println("Client connected, starting receiving thread");
-            // Start thread for receiving messages
-            ServerReceivingThread serverReceivingThread = new ServerReceivingThread(this, clientSocket, in, out);
-            Thread receivingThread = new Thread(serverReceivingThread);
-            receivingThread.start();
-            System.out.println("Started receiving thread");
+            String inputLine;
+            while ((inputLine = in.readLine()) != null) {
+                System.out.println("Received from client " + clientSocket.getInetAddress().getHostName() + ": " + inputLine);
 
-
-            // Wait for thread to finish
-            receivingThread.join();
+                // Do something with the received JSON data
+                ServerEventHandler.handleEvent(this, out, inputLine);
+            }
 
             in.close();
             out.close();
             clientSocket.close();
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
