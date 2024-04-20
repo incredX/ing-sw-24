@@ -68,7 +68,12 @@ public class ServerEventHandler {
 
         clientHandler.setUserName(username);
 
-        response.addProperty("value", "Welcome " + username);
+        JsonObject data = new JsonObject();
+        data.addProperty("message", "Welcome " + username);
+
+        response.addProperty("type", "OK");
+        response.add("data", data);
+
         clientHandler.sendMessage(response.toString());
         return;
     }
