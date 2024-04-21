@@ -37,7 +37,6 @@ public class BoardView extends Stage {
         drawGrid();
         drawCards();
         drawPointer();
-        drawCommandLine();
     }
 
     @Override

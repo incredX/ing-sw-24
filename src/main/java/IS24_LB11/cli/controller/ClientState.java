@@ -42,6 +42,7 @@ public abstract class ClientState {
         this.cmdLine = new CommandLine(hub.getTerminal().getTerminalSize().getColumns());
         this.stage = hub.getStage();
         this.board = board;
+        hub.updateCommandLine(cmdLine);
     }
 
     public ClientState execute() {

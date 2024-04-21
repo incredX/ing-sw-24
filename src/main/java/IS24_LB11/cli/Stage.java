@@ -17,18 +17,14 @@ import static IS24_LB11.cli.utils.Side.EAST;
 
 
 public class Stage extends CliBox {
-    protected static final String COMMAND_INTRO = " > ";
-
     private final ArrayDeque<TerminalRectangle> builtAreas;
-    private TerminalPosition cursorPosition;
 
     public Stage(TerminalSize terminalSize) {
-        super(terminalSize.withRelative(0, -2),
+        super(terminalSize.withRelative(0, -4),
                 new TerminalPosition(0, 2),
                 new SingleBorderStyle());
         setMargins(0);
         updateInnerArea();
-        setCursorPosition(0);
         builtAreas = new ArrayDeque<>();
     }
 
@@ -41,14 +37,6 @@ public class Stage extends CliBox {
     @Override
     public void build() {
         drawBorders();
-        drawCommandLine();
-    }
-
-    public void buildCommandLine(CommandLine commandLine) {
-        setCursorPosition(commandLine.getCursor());
-        fillRow(lastRow(), COMMAND_INTRO.length(), ' ');
-        fillRow(lastRow(), COMMAND_INTRO.length(), commandLine.getVisibleLine());
-        buildRelativeArea(new TerminalSize(innerWidth(), 1), new TerminalPosition(0, lastRow()));
     }
 
     public void buildArea(TerminalRectangle area) {
@@ -73,6 +61,7 @@ public class Stage extends CliBox {
 
     @Override
     public void print(Terminal terminal) throws IOException {
+        TerminalPosition originalPosition = terminal.getCursorPosition();
         while (!builtAreas.isEmpty()) {
             TerminalRectangle area = builtAreas.removeLast();
             TerminalPosition base = area.getPosition();
@@ -86,20 +75,14 @@ public class Stage extends CliBox {
                 }
             }
         }
-        terminal.setCursorPosition(cursorPosition);
+        terminal.setCursorPosition(originalPosition);
     }
 
-    protected void drawCommandLine() {
-        drawBottomDiv();
-        fillRow(lastRow(), COMMAND_INTRO);
-        buildRelativeArea(borderArea.getWidth(), 2, 0, lastRow()-1);
-    }
-
-    private void drawBottomDiv() {
-        fillRow(lastRow()-1, borderStyle.getHLine(), TextColor.ANSI.DEFAULT);
-        drawCell(new TerminalPosition(borderArea.side(WEST), lastRow()-1), borderStyle.getSeparator(WEST));
-        drawCell(new TerminalPosition(borderArea.side(EAST), lastRow()-1), borderStyle.getSeparator(EAST));
-    }
+//    private void drawBottomDiv() {
+//        fillRow(lastRow()-1, borderStyle.getHLine(), TextColor.ANSI.DEFAULT);
+//        drawCell(new TerminalPosition(borderArea.side(WEST), lastRow()-1), borderStyle.getSeparator(WEST));
+//        drawCell(new TerminalPosition(borderArea.side(EAST), lastRow()-1), borderStyle.getSeparator(EAST));
+//    }
 
     @Override
     protected void drawBorders() {
@@ -112,19 +95,11 @@ public class Stage extends CliBox {
 
     @Override
     public void resize(TerminalSize terminalSize) {
-        super.resize(terminalSize.withRelative(0, -2));
-        System.out.println("rectangle  : "+rectangle.getPosition()+"  "+rectangle.getHeight()+";"+rectangle.getWidth());
-        System.out.println("border area: "+borderArea.getPosition()+"  "+borderArea.getHeight()+";"+borderArea.getWidth());
-        System.out.println("inner area : "+innerArea.getPosition()+"  "+innerArea.getHeight()+";"+innerArea.getWidth());
+        super.resize(terminalSize.withRelative(0, -4));
     }
 
     public void shift(Side side) {
         return;
-    }
-
-    public void setCursorPosition(int cursor) {
-        int column = firstColumn()+ COMMAND_INTRO.length() + cursor;
-        cursorPosition = rectangle.getPosition().withRelative(column, lastRow());
     }
 
     public TerminalPosition getCenter() {

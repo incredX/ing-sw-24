@@ -20,6 +20,7 @@ import java.util.function.Consumer;
 public class ViewHub implements Runnable {
     private final Terminal terminal;
     private Stage stage;
+    private CommandLineView commandLineView;
     private Optional<PopUpView> popUp;
 
     public ViewHub() throws IOException {
@@ -27,6 +28,7 @@ public class ViewHub implements Runnable {
         terminal = new DefaultTerminalFactory(System.out, System.in, charset).createTerminal();
         terminal.enterPrivateMode();
         stage = new Stage(terminal.getTerminalSize());
+        commandLineView = new CommandLineView(terminal.getTerminalSize());
         popUp = Optional.empty();
     }
 
@@ -39,6 +41,7 @@ public class ViewHub implements Runnable {
                 try {
                     terminal.wait(20);
                     stage.print(terminal);
+                    commandLineView.print(terminal);
                     popUp.ifPresent(p -> {
                         try { p.print(terminal); }
                         catch (IOException ignored) {}
@@ -58,7 +61,9 @@ public class ViewHub implements Runnable {
     public void resize(TerminalSize size, CommandLine commandLine) {
         stage.resize(size);
         stage.build();
-        stage.buildCommandLine(commandLine);
+        commandLineView.resize(size);
+        commandLineView.buildCommandLine(commandLine);
+        commandLineView.build();
         popUp.ifPresent(popUp -> {
             popUp.resize(size);
             popUp.build();
@@ -90,7 +95,8 @@ public class ViewHub implements Runnable {
     }
 
     public void updateCommandLine(CommandLine commandLine) {
-        update(s -> s.buildCommandLine(commandLine));
+        commandLineView.buildCommandLine(commandLine);
+        commandLineView.build();
     }
 
     public void addPopUp(String message, String title) {

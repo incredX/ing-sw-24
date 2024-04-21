@@ -26,7 +26,6 @@ public class LobbyStage extends Stage {
     @Override
     public void build() {
         drawBorders();
-        drawCommandLine();
         drawWallpaper();
     }
 

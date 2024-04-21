@@ -193,6 +193,7 @@ public abstract class CliBox implements CliFrame {
         updateInnerArea();
     }
 
+    //TODO: upgrade method (borderArea is not setted correctly)
     public void setSize(TerminalSize size) {
         rectangle.setSize(size);
         borderArea.setSize(rectangle.getSize().withRelative(-3,-1));

@@ -95,7 +95,6 @@ public class Controller {
         boardView.setPointer(new Position(0,0));
         boardView.loadCardViews();
         boardView.build();
-        boardView.buildCommandLine(cmdLine);
         stage = boardView;
 
         while (running) {
