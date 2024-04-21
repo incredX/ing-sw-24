@@ -28,7 +28,6 @@ public class CommandLineView extends CliBox {
                 new TerminalPosition(0, terminalSize.getRows()-3),
                 new SingleBorderStyle());
         setMargins(0);
-        updateInnerArea();
         setCursorPosition(0);
     }
 
@@ -65,7 +64,7 @@ public class CommandLineView extends CliBox {
     @Override
     public void resize(TerminalSize newSize) {
         rectangle.setPosition(0, newSize.getRows()-3);
-        rectangle.setSize(newSize.withRows(3));
+        setSize(newSize.withRows(3));
         updateInnerArea();
         resetImage();
     }

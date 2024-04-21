@@ -7,6 +7,7 @@ import com.googlecode.lanterna.TerminalSize;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+//TODO: No usages => delete it
 public class TextBox extends CliBox {
     protected final ArrayList<String> lines;
     protected int maxLineLenght;

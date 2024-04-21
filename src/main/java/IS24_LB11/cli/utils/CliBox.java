@@ -162,27 +162,6 @@ public abstract class CliBox implements CliFrame {
         }
     }
 
-    protected TerminalPosition getCornerPosition(int dir) {
-        int r = dir>>1, c = 2+(dir&1);
-        return new TerminalPosition(borderArea.side(c), borderArea.side(r));
-    }
-
-    protected TerminalPosition getCornerPosition(Direction dir) {
-        return getCornerPosition(dir.ordinal());
-    }
-
-    protected void updateInnerArea() {
-        innerArea.setPosition(borderArea.getPosition().withRelative(1,1));
-        innerArea.setSize(borderArea.getSize().withRelative(-2,-2));
-    }
-
-    protected int innerWidth() { return innerArea.getWidth(); }
-    protected int innerHeight() { return innerArea.getHeight(); }
-    protected int firstRow() { return innerArea.getY(); }
-    protected int lastRow() { return innerArea.getYAndHeight(); }
-    protected int firstColumn() { return innerArea.getX(); }
-    protected int lastColumn() { return innerArea.getXAndWidth(); }
-
     public void setBorderStyle(BorderStyle bs) {
         borderStyle = bs;
     }
@@ -196,20 +175,46 @@ public abstract class CliBox implements CliFrame {
     //TODO: upgrade method (borderArea is not setted correctly)
     public void setSize(TerminalSize size) {
         rectangle.setSize(size);
-        borderArea.setSize(rectangle.getSize().withRelative(-3,-1));
+        borderArea.setSize(rectangle.getSize().withRelative(-1,-1));
         updateInnerArea();
         resetImage();
     }
 
-    public void setTerminalPosition(TerminalPosition newPosition) {
+    public void setPosition(TerminalPosition newPosition) {
         rectangle.setPosition(newPosition);
     }
 
+    public void setPosition(int x, int y) {
+        rectangle.setPosition(x, y);
+    }
+
+    protected void updateInnerArea() {
+        innerArea.setPosition(borderArea.getPosition().withRelative(1,1));
+        innerArea.setSize(borderArea.getSize().withRelative(-2,-2));
+    }
+
+    protected TerminalPosition getCornerPosition(int dir) {
+        int r = dir>>1, c = 2+(dir&1);
+        return new TerminalPosition(borderArea.side(c), borderArea.side(r));
+    }
+
+    protected TerminalPosition getCornerPosition(Direction dir) {
+        return getCornerPosition(dir.ordinal());
+    }
+
+    protected int innerWidth() { return innerArea.getWidth(); }
+    protected int innerHeight() { return innerArea.getHeight(); }
+    protected int firstRow() { return innerArea.getY(); }
+    protected int lastRow() { return innerArea.getYAndHeight(); }
+    protected int firstColumn() { return innerArea.getX(); }
+    protected int lastColumn() { return innerArea.getXAndWidth(); }
+
     @Override
-    public TerminalPosition getTerminalPosition() {
-        return new TerminalPosition(rectangle.getX(), rectangle.getY());
+    public TerminalPosition getPosition() {
+        return rectangle.getPosition();
     }
     public TerminalSize getSize() { return rectangle.getSize(); }
     public int getHeight() { return rectangle.getHeight(); }
     public int getWidth() { return rectangle.getWidth(); }
+    public int getYAndHeight() { return rectangle.getYAndHeight(); }
 }

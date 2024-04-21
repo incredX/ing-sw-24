@@ -41,11 +41,11 @@ public class ViewHub implements Runnable {
                 try {
                     terminal.wait(20);
                     stage.print(terminal);
-                    commandLineView.print(terminal);
                     popUp.ifPresent(p -> {
                         try { p.print(terminal); }
                         catch (IOException ignored) {}
                     });
+                    commandLineView.print(terminal);
                     terminal.flush();
                 }
                 catch (InterruptedException e) { break; }
@@ -67,8 +67,7 @@ public class ViewHub implements Runnable {
         popUp.ifPresent(popUp -> {
             popUp.resize(size);
             popUp.build();
-            popUp.setTerminalPosition(popUpBasePosition()
-                    .withRelative(-popUp.getWidth()/2, -popUp.getHeight()/2));
+            popUp.setPosition(0, stage.getYAndHeight()-3);
         });
         synchronized (terminal) {
             try { terminal.clearScreen(); }
@@ -104,7 +103,7 @@ public class ViewHub implements Runnable {
             stage.buildArea(popUp.get().getRectangle());
             popUp = Optional.empty();
         }
-        popUp = Optional.of(new PopUpView(popUpBasePosition(), message, title));
+        popUp = Optional.of(new PopUpView(stage, title, message));
         popUp.get().build();
     }
 
@@ -145,12 +144,5 @@ public class ViewHub implements Runnable {
 
     public Stage getStage() {
         return stage;
-    }
-
-    private TerminalPosition popUpBasePosition() {
-        //int x = stage.getCenter().getColumn();
-        //int y = stage.getHeight()-1;
-        //return new TerminalPosition(x, y);
-        return stage.getCenter();
     }
 }

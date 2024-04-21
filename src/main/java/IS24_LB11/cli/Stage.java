@@ -4,16 +4,12 @@ import IS24_LB11.cli.style.SingleBorderStyle;
 import IS24_LB11.cli.utils.Side;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
-import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.terminal.Terminal;
 import IS24_LB11.cli.utils.CliBox;
 import IS24_LB11.cli.utils.TerminalRectangle;
 
 import java.io.IOException;
 import java.util.ArrayDeque;
-
-import static IS24_LB11.cli.utils.Side.WEST;
-import static IS24_LB11.cli.utils.Side.EAST;
 
 
 public class Stage extends CliBox {
@@ -44,19 +40,19 @@ public class Stage extends CliBox {
     }
 
     public void buildRelativeArea(TerminalRectangle area) {
-        builtAreas.add(area.withRelative(getTerminalPosition()));
+        builtAreas.add(area.withRelative(getPosition()));
     }
 
     public void buildRelativeArea(TerminalSize size, TerminalPosition position) {
-        builtAreas.add(new TerminalRectangle(size, position.withRelative(getTerminalPosition())));
+        builtAreas.add(new TerminalRectangle(size, position.withRelative(getPosition())));
     }
 
     public void buildRelativeArea(TerminalSize size, int col, int row) {
-        builtAreas.add(new TerminalRectangle(size, new TerminalPosition(col, row).withRelative(getTerminalPosition())));
+        builtAreas.add(new TerminalRectangle(size, new TerminalPosition(col, row).withRelative(getPosition())));
     }
 
     public void buildRelativeArea(int width, int height, int col, int row) {
-        builtAreas.add(new TerminalRectangle(new TerminalSize(width, height), new TerminalPosition(col, row).withRelative(getTerminalPosition())));
+        builtAreas.add(new TerminalRectangle(new TerminalSize(width, height), new TerminalPosition(col, row).withRelative(getPosition())));
     }
 
     @Override
@@ -67,7 +63,7 @@ public class Stage extends CliBox {
             TerminalPosition base = area.getPosition();
             TerminalPosition relative;
             for (int r=0; r<area.getHeight(); r++) {
-                relative = base.withRelativeRow(r).minus(this.getTerminalPosition());
+                relative = base.withRelativeRow(r).minus(this.getPosition());
                 terminal.setCursorPosition(base.withRelativeRow(r));
                 for (int c=0; c<area.getWidth(); c++) {
                     if (relative.getRow() < rectangle.getHeight() && relative.getColumn()+c < rectangle.getWidth())
@@ -103,6 +99,6 @@ public class Stage extends CliBox {
     }
 
     public TerminalPosition getCenter() {
-        return getTerminalPosition().withRelative(getWidth()/2, getHeight()/2);
+        return getPosition().withRelative(getWidth()/2, getHeight()/2);
     }
 }
