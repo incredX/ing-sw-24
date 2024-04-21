@@ -18,19 +18,13 @@ public abstract class CliBox implements CliFrame {
     protected Cell[][] image;
 
     public CliBox(TerminalSize size, TerminalPosition position, BorderStyle bs) {
-        image = new Cell[size.getRows()][size.getColumns()];
         rectangle = new TerminalRectangle(size, position);
-        borderArea = new TerminalRectangle(
-                rectangle.getSize().withRelative(-3, -1),
-                new TerminalPosition(1, 0));
-        innerArea = new TerminalRectangle(
-                borderArea.getSize().withRelative(-2, -2),
-                borderArea.getPosition().withRelative(1, 1));
+        borderArea = rectangle.withRelativeSize(-3, -1)
+                .withPosition(new TerminalPosition(1, 0));
+        innerArea = borderArea.withRelativeSize(-2, -2)
+                .withRelativePosition(1, 1);
         borderStyle = bs;
-
-        for (int r=0; r<getHeight(); r++) {
-            for (int c=0; c<getWidth(); c++) image[r][c] = new Cell(' ');
-        }
+        resetImage();
     }
 
     public CliBox(TerminalSize tSize, BorderStyle bs) {
@@ -67,8 +61,12 @@ public abstract class CliBox implements CliFrame {
         int deltaWidth = newSize.getColumns() - rectangle.getWidth();
         int deltaHeight = newSize.getRows() - rectangle.getHeight();
         rectangle.setSize(newSize);
-        borderArea.reSize(deltaWidth, deltaHeight);
+        borderArea.resize(deltaWidth, deltaHeight);
         updateInnerArea();
+        resetImage();
+    }
+
+    protected void resetImage() {
         image = new Cell[rectangle.getHeight()][rectangle.getWidth()];
         for (int r=0; r<getHeight(); r++) {
             for (int c=0; c<getWidth(); c++) image[r][c] = new Cell(' ', TextColor.ANSI.DEFAULT);
@@ -193,6 +191,13 @@ public abstract class CliBox implements CliFrame {
         borderArea.setPosition(margin, margin);
         borderArea.setSize(rectangle.getSize().withRelative(-2*margin-1, -2*margin-1));
         updateInnerArea();
+    }
+
+    public void setSize(TerminalSize size) {
+        rectangle.setSize(size);
+        borderArea.setSize(rectangle.getSize().withRelative(-3,-1));
+        updateInnerArea();
+        resetImage();
     }
 
     public void setTerminalPosition(TerminalPosition newPosition) {

@@ -9,6 +9,7 @@ import IS24_LB11.cli.KeyConsumer;
 import IS24_LB11.cli.listeners.ServerHandler;
 import IS24_LB11.game.Board;
 import IS24_LB11.game.Result;
+import com.google.gson.JsonObject;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.terminal.Terminal;
@@ -102,6 +103,30 @@ public abstract class ClientState {
         synchronized (queue) {
             if (queue.offer(event)) queue.notify();
         }
+    }
+
+    protected void sendToServer(String type, JsonObject data) {
+        if (serverHandler == null) return;
+        JsonObject object = new JsonObject();
+        object.addProperty("type", type);
+        object.add("data", data);
+        serverHandler.write(object);
+    }
+
+    protected void sendToServer(String type, String field, String value) {
+        JsonObject data = new JsonObject();
+        data.addProperty(field, value);
+        sendToServer(type, data);
+    }
+
+    protected void sendToServer(String type, String[] dataFields, String[] values) {
+        JsonObject object = new JsonObject();
+        JsonObject data = new JsonObject();
+        object.addProperty("type", type);
+        for (int i = 0; i < Integer.min(dataFields.length, values.length); i++)
+            data.addProperty(dataFields[i], values[i]);
+        object.add("data", data);
+        serverHandler.write(object);
     }
 
     protected void setNextState(ClientState nextState) {

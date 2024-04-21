@@ -93,11 +93,11 @@ public class ServerEventHandler {
         if(messageEventSyntax.equals("OK")) {
             JsonObject data = event.getAsJsonObject("data");
             data.addProperty("from", clientHandler.getUserName());
-            if(!data.get("to").toString().equals("")){
+            if(data.get("to").getAsString().isEmpty()){
                 clientHandler.broadcast(event.toString());
             }
             else {
-                ClientHandler destinationClientHandler = clientHandler.getClientHandlerWithUsername(data.get("to").toString());
+                ClientHandler destinationClientHandler = clientHandler.getClientHandlerWithUsername(data.get("to").getAsString());
                 if(destinationClientHandler != null) {
                     destinationClientHandler.sendMessage(event.toString());
                 }

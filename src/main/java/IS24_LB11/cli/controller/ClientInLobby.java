@@ -1,5 +1,6 @@
 package IS24_LB11.cli.controller;
 
+import IS24_LB11.cli.LobbyStage;
 import IS24_LB11.cli.popup.PopUp;
 import IS24_LB11.cli.view.ViewHub;
 import IS24_LB11.cli.event.*;
@@ -17,6 +18,12 @@ public class ClientInLobby extends ClientState {
     public ClientInLobby(Board board, ViewHub hub) throws IOException {
         super(board, hub);
         this.name = "";
+    }
+
+    @Override
+    public ClientState execute() {
+        hub.setLobbyStage();
+        return super.execute();
     }
 
     protected void processServerEvent(ServerEvent serverEvent) {
@@ -51,50 +58,22 @@ public class ClientInLobby extends ClientState {
         switch (tokens[0].toUpperCase()) {
             case "QUIT" -> quit();
             case "LOGIN" -> {
-                if (tokens.length >= 2) {
-                    JsonObject object = new JsonObject();
-                    JsonObject data = new JsonObject();
-                    data.addProperty("username", tokens[1]);
-                    object.addProperty("type", "LOGIN");
-                    object.add("data", data);
-                    if (serverHandler != null)
-                        serverHandler.write(object);
-                }
+                if (tokens.length == 2) processCommandLogin(tokens[1]);
+                else popUpQueue.addUrgentPopUp("ERROR", "missing argument");
             }
             case "SENDTO" -> {
-                tokens = tokens[1].split(" ", 2);
-                JsonObject object = new JsonObject();
-                JsonObject data = new JsonObject();
-                object.addProperty("type", "message");
-                if (tokens.length == 1) {
-                    data.addProperty("to", "");
-                    data.addProperty("from", "");
-                    data.addProperty("message", tokens[0]);
-                } else {
-                    data.addProperty("to", tokens[0]);
-                    data.addProperty("from", "");
-                    data.addProperty("message", tokens[1]);
-                }
-                object.add("data", data);
-                serverHandler.write(object);
+                if (tokens.length == 2) processCommandSendto(tokens[1]);
+                else popUpQueue.addUrgentPopUp("ERROR", "missing argument");
+            }
+            case "SENDTOALL" -> {
+                if (tokens.length == 2) processCommandSendtoall(tokens[1]);
+                else popUpQueue.addUrgentPopUp("ERROR", "missing argument");
             }
             case "POPUP" -> {
-                tokens = tokens[1].split(" ", 3);
-                System.out.print("POPUP: ");
-                for (String token: tokens) System.out.print(token + ", ");
-                System.out.print("\n");
-                int priority;
-                try { priority = Integer.parseInt(tokens[0]); }
-                catch (NumberFormatException e) { priority = 10; }
-                if (tokens.length >= 3) {
-                    popUpQueue.addPopUp(new PopUp(priority, tokens[1], tokens[2]));
-                    System.out.println("added popup.");
-                } else if (tokens.length == 2) {
-                    popUpQueue.addPopUp(new PopUp(priority, tokens[1]));
-                    System.out.println("added popup.");
-                }
+                if (tokens.length == 2) processCommandPopup(tokens[1]);
+                else popUpQueue.addUrgentPopUp("ERROR", "missing argument");
             }
-            default -> tryQueueEvent(new ResultServerEvent(Result.Error("invalid input")));
+            default -> popUpQueue.addUrgentPopUp("ERROR", tokens[0]+" is not a valid command");
         };
     }
 
@@ -130,6 +109,44 @@ public class ClientInLobby extends ClientState {
                 break;
         }
         hub.updateCommandLine(cmdLine);
+    }
+
+    private void processCommandLogin(String username) {
+        sendToServer("login", "username", username);
+    }
+
+    private void processCommandSendto(String argument) {
+        String[] tokens = argument.split(" ", 2);
+        if (tokens.length == 2) {
+            String[] fields = new String[] {"from", "to", "message"};
+            String[] values = new String[] {"", tokens[0], tokens[1]};
+            sendToServer("message", fields, values);
+        } else {
+            popUpQueue.addUrgentPopUp("ERROR", "syntax error in given commmand");
+        }
+    }
+
+    private void processCommandSendtoall(String message) {
+        String[] fields = new String[] {"from", "to", "message"};
+        String[] values = new String[] {"", "", message};
+        sendToServer("message", fields, values);
+    }
+
+    private void processCommandPopup(String argument) {
+        String[] tokens = argument.split(" ", 3);
+        System.out.print("POPUP: ");
+        for (String token: tokens) System.out.print(token + ", ");
+        System.out.print("\n");
+        int priority;
+        try { priority = Integer.parseInt(tokens[0]); }
+        catch (NumberFormatException e) { priority = 10; }
+        if (tokens.length >= 3) {
+            popUpQueue.addPopUp(new PopUp(priority, tokens[1], tokens[2]));
+            System.out.println("added popup.");
+        } else if (tokens.length == 2) {
+            popUpQueue.addPopUp(new PopUp(priority, tokens[1]));
+            System.out.println("added popup.");
+        }
     }
 
     private void quit() {

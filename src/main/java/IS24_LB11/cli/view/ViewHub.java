@@ -1,6 +1,7 @@
 package IS24_LB11.cli.view;
 
 import IS24_LB11.cli.CommandLine;
+import IS24_LB11.cli.LobbyStage;
 import IS24_LB11.cli.Stage;
 import IS24_LB11.game.Board;
 import com.googlecode.lanterna.TerminalPosition;
@@ -59,8 +60,10 @@ public class ViewHub implements Runnable {
         stage.build();
         stage.buildCommandLine(commandLine);
         popUp.ifPresent(popUp -> {
-            int dx = popUp.getWidth()/2, dy = popUp.getHeight()/2;
-            popUp.setTerminalPosition(stage.getCenter().withRelative(-dx, -dy));
+            popUp.resize(size);
+            popUp.build();
+            popUp.setTerminalPosition(popUpBasePosition()
+                    .withRelative(-popUp.getWidth()/2, -popUp.getHeight()/2));
         });
         synchronized (terminal) {
             try { terminal.clearScreen(); }
@@ -91,16 +94,23 @@ public class ViewHub implements Runnable {
     }
 
     public void addPopUp(String message, String title) {
-        TerminalSize size = new TerminalSize(stage.getWidth()/2, stage.getHeight()/2);
-        TerminalPosition position = stage.getCenter().withRelative(-size.getColumns()/2, -size.getRows()/2);
-        popUp = Optional.of(new PopUpView(size, position, message, title));
+        if (popUp.isPresent()) {
+            stage.buildArea(popUp.get().getRectangle());
+            popUp = Optional.empty();
+        }
+        popUp = Optional.of(new PopUpView(popUpBasePosition(), message, title));
         popUp.get().build();
+    }
+
+    public void addPopUp(String message) {
+        addPopUp(message, "");
     }
 
     public void removePopUp() {
         if (popUp.isPresent()) {
             stage.buildArea(popUp.get().getRectangle());
             popUp = Optional.empty();
+            update();
         }
     }
 
@@ -117,9 +127,24 @@ public class ViewHub implements Runnable {
         } catch (IOException ignored) { }
     }
 
+    public void setLobbyStage() {
+        try {
+            stage = new LobbyStage(terminal.getTerminalSize());
+            stage.build();
+            update();
+        } catch (IOException ignored) { }
+    }
+
     public Terminal getTerminal() { return terminal; }
 
     public Stage getStage() {
         return stage;
+    }
+
+    private TerminalPosition popUpBasePosition() {
+        //int x = stage.getCenter().getColumn();
+        //int y = stage.getHeight()-1;
+        //return new TerminalPosition(x, y);
+        return stage.getCenter();
     }
 }

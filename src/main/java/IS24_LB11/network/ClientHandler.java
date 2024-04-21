@@ -48,7 +48,6 @@ public class ClientHandler implements Runnable {
                             JsonObject heartbeat = new JsonObject();
                             heartbeat.addProperty("type", "heartbeat");
                             heartbeat.add("data", new JsonObject());
-                            System.out.println(heartbeat.toString());
                             out.println(heartbeat.toString());
 
                         } catch (InterruptedException e) {
