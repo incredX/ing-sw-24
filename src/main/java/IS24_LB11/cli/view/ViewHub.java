@@ -2,8 +2,10 @@ package IS24_LB11.cli.view;
 
 import IS24_LB11.cli.CommandLine;
 import IS24_LB11.cli.LobbyStage;
+import IS24_LB11.cli.SetupStage;
 import IS24_LB11.cli.Stage;
 import IS24_LB11.game.Board;
+import IS24_LB11.game.PlayerSetup;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
@@ -130,6 +132,16 @@ public class ViewHub implements Runnable {
             stage.build();
             update();
         } catch (IOException ignored) { }
+    }
+
+    public SetupStage setSetupStage(PlayerSetup setup) {
+        try {
+            SetupStage setupStage = new SetupStage(terminal.getTerminalSize(), setup);
+            stage = setupStage;
+            stage.build();
+            update();
+            return setupStage;
+        } catch (IOException ignored) { return null; }
     }
 
     public void setLobbyStage() {

@@ -7,7 +7,6 @@ import IS24_LB11.cli.popup.PopUpStack;
 import IS24_LB11.cli.view.ViewHub;
 import IS24_LB11.cli.KeyConsumer;
 import IS24_LB11.cli.listeners.ServerHandler;
-import IS24_LB11.game.Board;
 import IS24_LB11.game.Result;
 import com.google.gson.JsonObject;
 import com.googlecode.lanterna.TerminalSize;
@@ -27,22 +26,20 @@ public abstract class ClientState {
     protected final ArrayBlockingQueue<Event> queue;
     protected final PriorityQueue<KeyConsumer> keyConsumers;
     protected final PopUpStack popUpStack;
-    protected final ViewHub hub;
+    protected final ViewHub viewHub;
     protected final CommandLine cmdLine;
     protected ServerHandler serverHandler;
-    protected Board board;
     protected Stage stage;
 
-    public ClientState(Board board, ViewHub hub) throws IOException {
+    public ClientState(ViewHub viewHub) throws IOException {
         this.nextState = null;
         this.queue = new ArrayBlockingQueue<>(QUEUE_CAPACITY);
-        this.popUpStack = new PopUpStack(hub, 0);
+        this.popUpStack = new PopUpStack(viewHub, 0);
         this.keyConsumers = new PriorityQueue<>((k1, k2) -> Integer.compare(k1.priority(), k2.priority()));
-        this.hub = hub;
-        this.cmdLine = new CommandLine(hub.getTerminal().getTerminalSize().getColumns());
-        this.stage = hub.getStage();
-        this.board = board;
-        hub.updateCommandLine(cmdLine);
+        this.viewHub = viewHub;
+        this.cmdLine = new CommandLine(viewHub.getTerminal().getTerminalSize().getColumns());
+        this.stage = viewHub.getStage();
+        viewHub.updateCommandLine(cmdLine);
     }
 
     public ClientState execute() {
@@ -70,12 +67,21 @@ public abstract class ClientState {
         };
     }
 
+    protected void quit() {
+        setNextState(null);
+        Thread.currentThread().interrupt();
+    }
+
+    protected abstract void processCommand(String command);
+
+    protected abstract void processServerEvent(ServerEvent event);
+
     protected void processResult(Result<ServerEvent> result) {
         if (result.isError()) {
             String text;
             text = result.getError();
             if (result.getCause() != null)
-                text += "\ncause:"+result.getCause();
+                text += " : "+result.getCause();
             popUpStack.addUrgentPopUp("ERROR", text);
             return;
         }
@@ -84,14 +90,59 @@ public abstract class ClientState {
 
     protected void processResize(TerminalSize size) {
         cmdLine.setWidth(size.getColumns());
-        hub.resize(size, cmdLine);
+        viewHub.resize(size, cmdLine);
     }
 
-    protected abstract void processKeyStroke(KeyStroke keyStroke);
+    protected void processKeyStroke(KeyStroke keyStroke) {
+        for (KeyConsumer listener: keyConsumers) {
+            // if a listener use the keyStroke then no one with less priority will
+            if (listener.consumeKeyStroke(keyStroke)) return;
+        }
+        switch (keyStroke.getKeyType()) {
+            case Character:
+                cmdLine.insertChar(keyStroke.getCharacter());
+                break;
+            case Backspace:
+                cmdLine.deleteChar();
+                break;
+            case Enter:
+                tryQueueEvent(new CommandEvent(cmdLine.getFullLine()));
+                cmdLine.clearLine();
+                break;
+            case ArrowUp:
+                break;
+            case ArrowDown:
+                break;
+            case ArrowLeft:
+                cmdLine.moveCursor(-1);
+                break;
+            case ArrowRight:
+                cmdLine.moveCursor(1);
+                break;
+            case Escape:
+                quit();
+            default:
+                break;
+        }
+        viewHub.updateCommandLine(cmdLine);
+    }
 
-    protected abstract void processCommand(String command);
+    protected void processCommandSendto(String argument) {
+        String[] tokens = argument.split(" ", 2);
+        if (tokens.length == 2) {
+            String[] fields = new String[] {"from", "to", "message"};
+            String[] values = new String[] {"", tokens[0], tokens[1]};
+            sendToServer("message", fields, values);
+        } else {
+            popUpStack.addUrgentPopUp("ERROR", "syntax error in given commmand");
+        }
+    }
 
-    protected abstract void processServerEvent(ServerEvent event);
+    protected void processCommandSendtoall(String message) {
+        String[] fields = new String[] {"from", "to", "message"};
+        String[] values = new String[] {"", "", message};
+        sendToServer("message", fields, values);
+    }
 
     public void queueEvent(Event event) throws InterruptedException {
         synchronized (queue) {
@@ -138,11 +189,7 @@ public abstract class ClientState {
         this.serverHandler = serverHandler;
     }
 
-    public Board getBoard() {
-        return board;
-    }
-
     public Terminal getTerminal() {
-        return hub.getTerminal();
+        return viewHub.getTerminal();
     }
 }

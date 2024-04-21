@@ -33,6 +33,10 @@ public class PlayerSetup {
         return false;
     }
 
+    public void choseGoal(int index) {
+        chosenGoalIndex = index&1;
+    }
+
     public void flipCard() {
         starterCard.flip();
     }

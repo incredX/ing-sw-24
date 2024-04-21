@@ -7,7 +7,7 @@ import com.googlecode.lanterna.TerminalPosition;
 
 import static IS24_LB11.cli.utils.Side.NORD;
 
-public class GoalPatternView extends GoalSymbolView {
+public class GoalPatternView extends GoalView {
     public GoalPatternView(GoalPattern goal) {
         super(goal);
     }

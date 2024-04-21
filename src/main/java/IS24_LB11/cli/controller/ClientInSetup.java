@@ -1,24 +1,30 @@
 package IS24_LB11.cli.controller;
 
+import IS24_LB11.cli.SetupStage;
+import IS24_LB11.cli.event.*;
 import IS24_LB11.cli.popup.Priority;
 import IS24_LB11.cli.view.ViewHub;
-import IS24_LB11.cli.event.*;
+import IS24_LB11.game.PlayerSetup;
 import IS24_LB11.game.Result;
 import com.google.gson.JsonObject;
+import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.input.KeyType;
 
+import java.awt.event.KeyEvent;
 import java.io.IOException;
 
-public class ClientInLobby extends ClientState {
-    private String name;
+public class ClientInSetup extends ClientState {
+    private final PlayerSetup setup;
+    private SetupStage stage;
 
-    public ClientInLobby(ViewHub hub) throws IOException {
-        super(hub);
-        this.name = "";
+    public ClientInSetup(ViewHub viewHub, PlayerSetup setup) throws IOException {
+        super(viewHub);
+        this.setup = setup;
     }
 
     @Override
     public ClientState execute() {
-        viewHub.setLobbyStage();
+        stage = viewHub.setSetupStage(setup);
         return super.execute();
     }
 
@@ -37,20 +43,15 @@ public class ClientInLobby extends ClientState {
                 popUpStack.addPopUp(Priority.MEDIUM, text);
             }
             case ServerUpdateEvent updateEvent -> {
-                popUpStack.addPopUp(Priority.LOW, "received updated board of"+updateEvent.getUsername());
-            }
-            case ServerPlayerSetupEvent setupEvent -> {
-                popUpStack.addPopUp(Priority.LOW, "received player setup");
-                try { setNextState(new ClientInSetup(viewHub, setupEvent.getPlayerSetup())); }
-                catch (IOException e) {
-                    e.printStackTrace();
-                    quit();
-                }
+                popUpStack.addPopUp(Priority.LOW, "received updated players' state");
             }
             case ServerHeartBeatEvent heartBeatEvent -> {
                 JsonObject response = new JsonObject();
                 response.addProperty("type", "heartbeat");
                 serverHandler.write(response);
+            }
+            case ServerPlayerSetupEvent playerSetupEvent -> {
+                processResult(Result.Error("Invalid server event", "can't accept a new player setup"));
             }
             default -> processResult(Result.Error("received unknown server event"));
         }
@@ -62,10 +63,6 @@ public class ClientInLobby extends ClientState {
         //TODO: (inGame) command center set pointer in (0,0)
         switch (tokens[0].toUpperCase()) {
             case "QUIT" -> quit();
-            case "LOGIN" -> {
-                if (tokens.length == 2) processCommandLogin(tokens[1]);
-                else popUpStack.addUrgentPopUp("ERROR", "missing argument");
-            }
             case "SENDTO", "@" -> {
                 if (tokens.length == 2) processCommandSendto(tokens[1]);
                 else popUpStack.addUrgentPopUp("ERROR", "missing argument");
@@ -74,35 +71,38 @@ public class ClientInLobby extends ClientState {
                 if (tokens.length == 2) processCommandSendtoall(tokens[1]);
                 else popUpStack.addUrgentPopUp("ERROR", "missing argument");
             }
-            case "POPUP" -> {
-                if (tokens.length == 2) processCommandPopup(tokens[1]);
-                else popUpStack.addUrgentPopUp("ERROR", "missing argument");
+            case "GOAL", "G" -> {
+                try {
+                    int index = Integer.parseInt(tokens[1]);
+                    setChosenGoal(index);
+                }
+                catch (NumberFormatException e) {
+                    popUpStack.addUrgentPopUp("ERROR", "invalid index (expected an integer)");
+                }
+            }
+            case "READY" -> {
+                //switch to CLientInGame & inform the server
             }
             default -> popUpStack.addUrgentPopUp("ERROR", tokens[0]+" is not a valid command");
         };
     }
 
-    private void processCommandLogin(String username) {
-        sendToServer("login", "username", username);
+    @Override
+    protected void processKeyStroke(KeyStroke keyStroke) {
+        if (keyStroke.isCtrlDown()) {
+            if (keyStroke.getKeyType() == KeyType.ArrowUp) {
+                setChosenGoal(0);
+            } else if (keyStroke.getKeyType() == KeyType.ArrowDown) {
+                setChosenGoal(1);
+            }
+        } else {
+            super.processKeyStroke(keyStroke);
+        }
     }
 
-    private void processCommandPopup(String argument) {
-        String[] tokens = argument.split(" ", 3);
-        System.out.print("POPUP: ");
-        for (String token: tokens) System.out.print(token + ", ");
-        System.out.print("\n");
-        Priority priority;
-        try { priority = Priority.valueOf(tokens[0].toUpperCase()); }
-        catch (IllegalArgumentException e) {
-            popUpStack.addUrgentPopUp("ERROR", tokens[0]+" is not a valid priority");
-            return;
-        }
-        if (tokens.length >= 3) {
-            popUpStack.addPopUp(priority, tokens[1], tokens[2]);
-            System.out.println("added popup.");
-        } else if (tokens.length == 2) {
-            popUpStack.addPopUp(priority, tokens[1]);
-            System.out.println("added popup.");
-        }
+    private void setChosenGoal(int index) {
+        setup.choseGoal(index);
+        stage.setChosenGoal(index);
+        viewHub.update();
     }
 }

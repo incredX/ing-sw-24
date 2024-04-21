@@ -10,7 +10,7 @@ import com.googlecode.lanterna.terminal.Terminal;
 
 import java.io.IOException;
 
-public abstract class CliBox implements CliFrame {
+public class CliBox implements CliFrame {
     protected TerminalRectangle rectangle;
     protected TerminalRectangle innerArea;
     protected TerminalRectangle borderArea;
@@ -27,6 +27,10 @@ public abstract class CliBox implements CliFrame {
         resetImage();
     }
 
+    public CliBox(int width, int height, int x, int y, BorderStyle bs) {
+        this(new TerminalSize(width, height), new TerminalPosition(x, y), bs);
+    }
+
     public CliBox(TerminalSize tSize, BorderStyle bs) {
         this(tSize, new TerminalPosition(0,0), bs);
     }
@@ -39,6 +43,11 @@ public abstract class CliBox implements CliFrame {
         for (int r=0; r<getHeight(); r++) {
             for (int c=0; c<getWidth(); c++) image[r][c] = new Cell(' ', TextColor.ANSI.DEFAULT);
         }
+    }
+
+    @Override
+    public void build() {
+        drawBorders();
     }
 
     public void rebuild() {
@@ -108,36 +117,22 @@ public abstract class CliBox implements CliFrame {
         image[pos.getRow()][pos.getColumn()] = cell;
     }
 
-    protected void fillRow(int row, char c) {
-        for (int i=firstColumn(); i<=lastColumn(); i++) {
-            drawCell(new TerminalPosition(i, row), c);
-        }
-    }
-
-    protected void fillRow(int row, char c, TextColor color) {
-        for (int i=firstColumn(); i<=lastColumn(); i++) {
-            drawCell(new TerminalPosition(i, row), new Cell(c, color));
-        }
-    }
-
-    protected void fillRow(int row, int offset, char c) {
-        for (int i=firstColumn()+offset; i<=lastColumn(); i++) {
-            drawCell(new TerminalPosition(i, row), c);
-        }
-    }
-
     protected void fillRow(int row, int offset, char c, TextColor color) {
         for (int i=firstColumn()+offset; i<=lastColumn(); i++) {
             drawCell(new TerminalPosition(i, row), new Cell(c, color));
         }
     }
 
-    protected void fillRow(int row, String line) {
-        for (int i=firstColumn(),j=0; i<=lastColumn(); i++) {
-            if (j >= line.length()) break;
-            drawCell(new TerminalPosition(i, row), line.charAt(j));
-            j++;
-        }
+    protected void fillRow(int row, char c) {
+        fillRow(row, 0, c, TextColor.ANSI.DEFAULT);
+    }
+
+    protected void fillRow(int row, char c, TextColor color) {
+        fillRow(row, 0, c, color);
+    }
+
+    protected void fillRow(int row, int offset, char c) {
+        fillRow(row, offset, c, TextColor.ANSI.DEFAULT);
     }
 
     protected void fillRow(int row, int offset, String line) {
@@ -148,18 +143,26 @@ public abstract class CliBox implements CliFrame {
         }
     }
 
+    protected void fillRow(int row, String line) {
+        fillRow(row, 0, line);
+    }
+
     protected void fillColumn(int col, char c) {
         for (int i=firstRow(); i<=lastRow(); i++) {
             drawCell(new TerminalPosition(col, i), c);
         }
     }
 
-    protected void fillColumn(int col, String line) {
-        for (int i=firstRow(),j=0; i<=lastRow(); i++) {
+    protected void fillColumn(int col, int offset, String line) {
+        for (int i=firstRow()+offset,j=0; i<=lastRow(); i++) {
             if (j >= line.length()) break;
             drawCell(new TerminalPosition(col, i), line.charAt(j));
             j++;
         }
+    }
+
+    protected void fillColumn(int col, String line) {
+        fillColumn(col, 0, line);
     }
 
     public void setBorderStyle(BorderStyle bs) {
@@ -214,7 +217,9 @@ public abstract class CliBox implements CliFrame {
         return rectangle.getPosition();
     }
     public TerminalSize getSize() { return rectangle.getSize(); }
+    public TerminalRectangle getRectangle() { return rectangle; }
     public int getHeight() { return rectangle.getHeight(); }
     public int getWidth() { return rectangle.getWidth(); }
     public int getYAndHeight() { return rectangle.getYAndHeight(); }
+    public int getXAndWidth() { return rectangle.getXAndWidth(); }
 }
