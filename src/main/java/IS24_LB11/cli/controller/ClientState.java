@@ -3,7 +3,7 @@ package IS24_LB11.cli.controller;
 import IS24_LB11.cli.CommandLine;
 import IS24_LB11.cli.Stage;
 import IS24_LB11.cli.event.*;
-import IS24_LB11.cli.popup.PopUpQueue;
+import IS24_LB11.cli.popup.PopUpStack;
 import IS24_LB11.cli.view.ViewHub;
 import IS24_LB11.cli.KeyConsumer;
 import IS24_LB11.cli.listeners.ServerHandler;
@@ -26,7 +26,7 @@ public abstract class ClientState {
     private ClientState nextState;
     protected final ArrayBlockingQueue<Event> queue;
     protected final PriorityQueue<KeyConsumer> keyConsumers;
-    protected final PopUpQueue popUpQueue;
+    protected final PopUpStack popUpStack;
     protected final ViewHub hub;
     protected final CommandLine cmdLine;
     protected ServerHandler serverHandler;
@@ -36,7 +36,7 @@ public abstract class ClientState {
     public ClientState(Board board, ViewHub hub) throws IOException {
         this.nextState = null;
         this.queue = new ArrayBlockingQueue<>(QUEUE_CAPACITY);
-        this.popUpQueue = new PopUpQueue(hub, 0);
+        this.popUpStack = new PopUpStack(hub, 0);
         this.keyConsumers = new PriorityQueue<>((k1, k2) -> Integer.compare(k1.priority(), k2.priority()));
         this.hub = hub;
         this.cmdLine = new CommandLine(hub.getTerminal().getTerminalSize().getColumns());
@@ -46,7 +46,7 @@ public abstract class ClientState {
     }
 
     public ClientState execute() {
-        keyConsumers.add(popUpQueue);
+        keyConsumers.add(popUpStack);
         synchronized (queue) {
             while (true) {
                 try { queue.wait(); }
@@ -76,7 +76,7 @@ public abstract class ClientState {
             text = result.getError();
             if (result.getCause() != null)
                 text += "\ncause:"+result.getCause();
-            popUpQueue.addUrgentPopUp("ERROR", text);
+            popUpStack.addUrgentPopUp("ERROR", text);
             return;
         }
         processServerEvent(result.get());

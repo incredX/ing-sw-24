@@ -1,7 +1,7 @@
 package IS24_LB11.cli.controller;
 
-import IS24_LB11.cli.LobbyStage;
 import IS24_LB11.cli.popup.PopUp;
+import IS24_LB11.cli.popup.Priority;
 import IS24_LB11.cli.view.ViewHub;
 import IS24_LB11.cli.event.*;
 import IS24_LB11.cli.KeyConsumer;
@@ -30,17 +30,22 @@ public class ClientInLobby extends ClientState {
         switch (serverEvent) {
             case ServerOkEvent okEvent -> {
                 if (!okEvent.message().isEmpty())
-                    popUpQueue.addPopUp(new PopUp(16, okEvent.message()));
+                    popUpStack.addPopUp(Priority.LOW, okEvent.message());
             }
             case ServerMessageEvent messageEvent -> {
-                String text = "from "+messageEvent.from()+":\n"+messageEvent.message();
-                popUpQueue.addPopUp(new PopUp(8, "new message", text));
+                String text;
+                if (messageEvent.to().isEmpty())
+                    text = String.format("%s @ all : %s", messageEvent.from(), messageEvent.message());
+                else
+                    text = String.format("%s : %s", messageEvent.from(), messageEvent.message());
+                popUpStack.addPopUp(Priority.MEDIUM, text);
             }
             case ServerUpdateEvent updateEvent -> {
-                popUpQueue.addPopUp(new PopUp(24, "received updated board of"+updateEvent.getUsername()));
+                popUpStack.addPopUp(Priority.LOW, "received updated board of"+updateEvent.getUsername());
             }
             case ServerPlayerSetupEvent playerSetupEvent -> {
-                popUpQueue.addPopUp(new PopUp(16, "received player setup"));
+                popUpStack.addPopUp(Priority.LOW, "received player setup");
+                //TODO: switch state to CLientInSetup
             }
             case ServerHeartBeatEvent heartBeatEvent -> {
                 JsonObject response = new JsonObject();
@@ -59,21 +64,21 @@ public class ClientInLobby extends ClientState {
             case "QUIT" -> quit();
             case "LOGIN" -> {
                 if (tokens.length == 2) processCommandLogin(tokens[1]);
-                else popUpQueue.addUrgentPopUp("ERROR", "missing argument");
+                else popUpStack.addUrgentPopUp("ERROR", "missing argument");
             }
-            case "SENDTO" -> {
+            case "SENDTO", "@" -> {
                 if (tokens.length == 2) processCommandSendto(tokens[1]);
-                else popUpQueue.addUrgentPopUp("ERROR", "missing argument");
+                else popUpStack.addUrgentPopUp("ERROR", "missing argument");
             }
-            case "SENDTOALL" -> {
+            case "SENDTOALL", "@ALL" -> {
                 if (tokens.length == 2) processCommandSendtoall(tokens[1]);
-                else popUpQueue.addUrgentPopUp("ERROR", "missing argument");
+                else popUpStack.addUrgentPopUp("ERROR", "missing argument");
             }
             case "POPUP" -> {
                 if (tokens.length == 2) processCommandPopup(tokens[1]);
-                else popUpQueue.addUrgentPopUp("ERROR", "missing argument");
+                else popUpStack.addUrgentPopUp("ERROR", "missing argument");
             }
-            default -> popUpQueue.addUrgentPopUp("ERROR", tokens[0]+" is not a valid command");
+            default -> popUpStack.addUrgentPopUp("ERROR", tokens[0]+" is not a valid command");
         };
     }
 
@@ -122,7 +127,7 @@ public class ClientInLobby extends ClientState {
             String[] values = new String[] {"", tokens[0], tokens[1]};
             sendToServer("message", fields, values);
         } else {
-            popUpQueue.addUrgentPopUp("ERROR", "syntax error in given commmand");
+            popUpStack.addUrgentPopUp("ERROR", "syntax error in given commmand");
         }
     }
 
@@ -137,14 +142,17 @@ public class ClientInLobby extends ClientState {
         System.out.print("POPUP: ");
         for (String token: tokens) System.out.print(token + ", ");
         System.out.print("\n");
-        int priority;
-        try { priority = Integer.parseInt(tokens[0]); }
-        catch (NumberFormatException e) { priority = 10; }
+        Priority priority;
+        try { priority = Priority.valueOf(tokens[0].toUpperCase()); }
+        catch (IllegalArgumentException e) {
+            popUpStack.addUrgentPopUp("ERROR", tokens[0]+" is not a valid priority");
+            return;
+        }
         if (tokens.length >= 3) {
-            popUpQueue.addPopUp(new PopUp(priority, tokens[1], tokens[2]));
+            popUpStack.addPopUp(priority, tokens[1], tokens[2]);
             System.out.println("added popup.");
         } else if (tokens.length == 2) {
-            popUpQueue.addPopUp(new PopUp(priority, tokens[1]));
+            popUpStack.addPopUp(priority, tokens[1]);
             System.out.println("added popup.");
         }
     }

@@ -37,8 +37,10 @@ public class ServerEventFactory {
                             return Error("error parsing board");
                         }
                     }));
-            case "MESSAGE" -> extractString(data, "message").andThen(message ->
-                    extractString(data, "from").map(from -> new ServerMessageEvent(message, from)));
+            case "MESSAGE" -> extractString(data, "message")
+                    .andThen(message -> extractString(data, "from")
+                            .andThen(from -> extractStringOrElse(data, "to", "")
+                                    .map(to -> new ServerMessageEvent(message, from, to))));
             default -> Error("unknown server event", "received <"+type+">");
         };
     }
