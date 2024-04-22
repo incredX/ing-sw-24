@@ -63,6 +63,7 @@ public class JsonConverterTest {
         board.start(starterCard);
         board.placeCard(normalCard, new Position(1,1));
         board.placeCard(goldenCard, new Position(-1,1));
+
         System.out.println(str);
         System.out.println(jsonConverter.objectToJSON(board));
         assert(jsonConverter.objectToJSON(board).compareTo(str)==0);
@@ -79,7 +80,7 @@ public class JsonConverterTest {
         ArrayList<PlayableCard> playerHand = new ArrayList<>();
         playerHand.add((PlayableCard) cardFactory.newSerialCard("NFEF_FF0"));
         playerHand.add((PlayableCard) cardFactory.newSerialCard("N_FEFFF0"));
-        playerHand.add((PlayableCard) cardFactory.newSerialCard("GEK_EFF1KFFP__"));
+        playerHand.add((PlayableCard) cardFactory.newSerialCard("GEK_EFB1KFFP__"));
 
         PlayerSetup playerSetup = new PlayerSetup((StarterCard) cardFactory.newSerialCard("SEEEE_F0AI_PIAF"),goalCards,playerHand,Color.fromInt(1));
         Player player = new Player("Test",playerSetup);
