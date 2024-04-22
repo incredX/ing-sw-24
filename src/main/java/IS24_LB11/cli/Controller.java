@@ -6,7 +6,6 @@ import IS24_LB11.cli.event.KeyboardEvent;
 import IS24_LB11.cli.event.ResizeEvent;
 import IS24_LB11.cli.listeners.InputListener;
 import IS24_LB11.cli.listeners.ResizeListener;
-import IS24_LB11.cli.view.ViewHub;
 import IS24_LB11.game.Board;
 import IS24_LB11.game.components.GoldenCard;
 import IS24_LB11.game.components.NormalCard;

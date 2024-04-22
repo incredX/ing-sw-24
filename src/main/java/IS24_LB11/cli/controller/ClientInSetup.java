@@ -3,14 +3,12 @@ package IS24_LB11.cli.controller;
 import IS24_LB11.cli.SetupStage;
 import IS24_LB11.cli.event.*;
 import IS24_LB11.cli.popup.Priority;
-import IS24_LB11.cli.view.ViewHub;
+import IS24_LB11.cli.ViewHub;
 import IS24_LB11.game.PlayerSetup;
 import IS24_LB11.game.Result;
-import com.google.gson.JsonObject;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 
-import java.awt.event.KeyEvent;
 import java.io.IOException;
 
 public class ClientInSetup extends ClientState {
@@ -29,7 +27,7 @@ public class ClientInSetup extends ClientState {
     }
 
     protected void processServerEvent(ServerEvent serverEvent) {
-        if (processCommonServerEvent(serverEvent)) return;
+        if (processServerEventIfCommon(serverEvent)) return;
         switch (serverEvent) {
             case ServerUpdateEvent updateEvent -> {
                 popUpStack.addPopUp(Priority.LOW, "received updated players' state");
@@ -42,7 +40,7 @@ public class ClientInSetup extends ClientState {
     }
 
     protected void processCommand(String command) {
-        if (processCommonCommand(command)) return;
+        if (processCommandIfCommon(command)) return;
         String[] tokens = command.split(" ", 2);
         switch (tokens[0].toUpperCase()) {
             case "GOAL", "G" -> {
@@ -61,7 +59,7 @@ public class ClientInSetup extends ClientState {
                 sendToServer("setup",
                         new String[]{"startercard","chosengoal"},
                         new String[]{setup.getStarterCard().asString(), setup.chosenGoal().asString()});
-                try { setNextState(new ClientInGame(viewHub, setup)); }
+                try { setNextState(new ClientInGame(viewHub, setup)); } // wait server response to switch to InGame
                 catch (IOException e) {
                     e.printStackTrace();
                     quit();

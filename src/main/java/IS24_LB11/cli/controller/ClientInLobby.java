@@ -1,7 +1,7 @@
 package IS24_LB11.cli.controller;
 
 import IS24_LB11.cli.popup.Priority;
-import IS24_LB11.cli.view.ViewHub;
+import IS24_LB11.cli.ViewHub;
 import IS24_LB11.cli.event.*;
 import IS24_LB11.game.Result;
 
@@ -21,7 +21,7 @@ public class ClientInLobby extends ClientState {
     }
 
     protected void processServerEvent(ServerEvent serverEvent) {
-        if (processCommonServerEvent(serverEvent)) return;
+        if (processServerEventIfCommon(serverEvent)) return;
         switch (serverEvent) {
             case ServerLoginEvent loginEvent -> {
                 username = loginEvent.username();
@@ -42,20 +42,11 @@ public class ClientInLobby extends ClientState {
     }
 
     protected void processCommand(String command) {
+        if (processCommandIfCommon(command)) return;
         String[] tokens = command.split(" ", 2);
-        if (tokens.length == 0) return;
         switch (tokens[0].toUpperCase()) {
-            case "QUIT" -> quit();
             case "LOGIN" -> {
                 if (tokens.length == 2) processCommandLogin(tokens[1]);
-                else popUpStack.addUrgentPopUp("ERROR", "missing argument");
-            }
-            case "SENDTO", "@" -> {
-                if (tokens.length == 2) processCommandSendto(tokens[1]);
-                else popUpStack.addUrgentPopUp("ERROR", "missing argument");
-            }
-            case "SENDTOALL", "@ALL" -> {
-                if (tokens.length == 2) processCommandSendtoall(tokens[1]);
                 else popUpStack.addUrgentPopUp("ERROR", "missing argument");
             }
             case "POPUP" -> {

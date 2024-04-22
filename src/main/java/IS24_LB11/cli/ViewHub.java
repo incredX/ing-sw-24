@@ -1,6 +1,7 @@
-package IS24_LB11.cli.view;
+package IS24_LB11.cli;
 
-import IS24_LB11.cli.*;
+import IS24_LB11.cli.view.CommandLineView;
+import IS24_LB11.cli.view.PopUpView;
 import IS24_LB11.game.Board;
 import IS24_LB11.game.PlayerSetup;
 import com.googlecode.lanterna.TerminalSize;

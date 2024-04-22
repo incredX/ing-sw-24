@@ -5,7 +5,7 @@ import IS24_LB11.cli.Stage;
 import IS24_LB11.cli.event.*;
 import IS24_LB11.cli.popup.PopUpStack;
 import IS24_LB11.cli.popup.Priority;
-import IS24_LB11.cli.view.ViewHub;
+import IS24_LB11.cli.ViewHub;
 import IS24_LB11.cli.KeyConsumer;
 import IS24_LB11.cli.listeners.ServerHandler;
 import IS24_LB11.game.Result;
@@ -78,7 +78,7 @@ public abstract class ClientState {
 
     protected abstract void processCommand(String command);
 
-    protected boolean processCommonServerEvent(ServerEvent serverEvent) {
+    protected boolean processServerEventIfCommon(ServerEvent serverEvent) {
         switch (serverEvent) {
             case ServerNotificationEvent notificationEvent -> {
                 popUpStack.addPopUp(Priority.LOW, "from server", notificationEvent.message());
@@ -101,7 +101,7 @@ public abstract class ClientState {
         return true; //event processed
     }
 
-    protected boolean processCommonCommand(String command) {
+    protected boolean processCommandIfCommon(String command) {
         String[] tokens = command.split(" ", 2);
         if (tokens.length == 0) return true;
         switch (tokens[0].toUpperCase()) {

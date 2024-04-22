@@ -6,8 +6,6 @@ import IS24_LB11.cli.controller.ClientState;
 import IS24_LB11.cli.listeners.InputListener;
 import IS24_LB11.cli.listeners.ResizeListener;
 import IS24_LB11.cli.listeners.ServerHandler;
-import IS24_LB11.cli.view.ViewHub;
-import IS24_LB11.game.Board;
 import IS24_LB11.game.PlayerSetup;
 import IS24_LB11.game.components.*;
 import IS24_LB11.game.utils.Color;
@@ -15,7 +13,6 @@ import IS24_LB11.game.utils.SyntaxException;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
