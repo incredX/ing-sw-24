@@ -102,8 +102,11 @@ public class ServerEventHandler {
             clientHandler.broadcast(response.toString());
             clientHandler.sendMessage(response.toString());
 
-            // start game setup game
-            GameSetupPhase.startPhase(clientHandler.getGame(), clientHandler.getMaxPlayers());
+            // start game setup
+            new Thread(() -> {
+                GameSetupPhase.startPhase(clientHandler, clientHandler.getGame(), clientHandler.getMaxPlayers());
+            });
+
 
         }
     }

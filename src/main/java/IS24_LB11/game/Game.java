@@ -107,7 +107,7 @@ public class Game {
             return CANT_DRAW_FROM_NORMAL_DECK_IS_EMPTY;
         if (goldenDeck.isEmpty() && deckType == true)
             return CANT_DRAW_FROM_GOLDEN_DECK_IS_EMPTY;
-        if ((!deckType && normalDeck.getCards().size() - indexDeck < 0 )|| (deckType && goldenDeck.getCards().size() - indexDeck < 0) || indexDeck>3 || indexDeck<1)
+        if ((!deckType && normalDeck.getCards().size() - indexDeck < 0 )|| (deckType && goldenDeck.getCards().size() - indexDeck < 0))
             return INDEX_DECK_WRONG;
 
         if (player.placeCard(playableCard, position) == false)
