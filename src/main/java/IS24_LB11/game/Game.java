@@ -64,8 +64,8 @@ public class Game {
         playerHand.add((PlayableCard) normalDeck.drawCard());
         playerHand.add((PlayableCard) normalDeck.drawCard());
         playerHand.add((PlayableCard) goldenDeck.drawCard());
-        PlayerSetup playerSetup = new PlayerSetup((StarterCard) starterDeck.drawCard(), goalCards, playerHand);
-        players.add(new Player(name, Color.fromInt(players.size()), playerSetup));
+        PlayerSetup playerSetup = new PlayerSetup((StarterCard) starterDeck.drawCard(), goalCards, playerHand, Color.fromInt(players.size()));
+        players.add(new Player(name, playerSetup));
     }
 
     public String setupGame(ArrayList<String> playerNames) throws DeckException {

@@ -2,23 +2,27 @@ package IS24_LB11.game;
 
 import IS24_LB11.game.Result;
 import IS24_LB11.game.components.GoalCard;
+import IS24_LB11.game.components.JsonConvertable;
 import IS24_LB11.game.components.PlayableCard;
 import IS24_LB11.game.components.StarterCard;
+import IS24_LB11.game.utils.Color;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class PlayerSetup {
+public class PlayerSetup implements JsonConvertable {
     private final StarterCard starterCard;
     private final GoalCard[] goals;
     private final ArrayList<PlayableCard> hand;
     private int chosenGoalIndex;
+    private Color color;
 
-    public PlayerSetup(StarterCard starterCard, GoalCard[] goals, ArrayList<PlayableCard> hand) {
+    public PlayerSetup(StarterCard starterCard, GoalCard[] goals, ArrayList<PlayableCard> hand, Color color) {
         this.starterCard = starterCard;
         this.goals = goals;
         this.hand = hand;
-        this.chosenGoalIndex = 0;
+        this.chosenGoalIndex = -1;
+        this.color=color;
     }
 
     public boolean selectGoal(GoalCard goalCard) {
@@ -26,15 +30,11 @@ public class PlayerSetup {
             chosenGoalIndex = 0;
             return true;
         }
-        if (goalCard.asString().compareTo(goals[1].asString())==0) {
+        if (goalCard.asString().compareTo(goals[1].asString())==0){
             chosenGoalIndex = 1;
             return true;
         }
         return false;
-    }
-
-    public void choseGoal(int index) {
-        chosenGoalIndex = index&1;
     }
 
     public void flipCard() {
@@ -45,8 +45,9 @@ public class PlayerSetup {
         return starterCard;
     }
 
-    public GoalCard chosenGoal() {
-        return goals[chosenGoalIndex];
+    public Result<GoalCard> chosenGoal() {
+        if (chosenGoalIndex < 0) return Result.Error("no goal was chosen");
+        return Result.Ok(goals[chosenGoalIndex]);
     }
 
     public ArrayList<PlayableCard> hand() {
@@ -67,4 +68,10 @@ public class PlayerSetup {
                 ", chosenGoalIndex=" + chosenGoalIndex +
                 '}';
     }
+
+    public int getChosenGoalIndex() {
+        return chosenGoalIndex;
+    }
+
+    public Color getColor(){return color;}
 }
