@@ -51,6 +51,17 @@ public class JsonConverter {
         checkNullObject(card);
         String cardString = card.asString();
         Character c = cardString.charAt(0);
+        switch (c){
+            case 'O':
+                return wrapTextBrackets("\"goalCard\":\"" + card.asString() + "\"");
+            case 'G':
+                return wrapTextBrackets("\"goldenCard\":\"" + card.asString() + "\"");
+            case 'N':
+                return wrapTextBrackets("\"normalCard\":\"" + card.asString() + "\"");
+            case 'S':
+                return wrapTextBrackets("\"starterCard\":\"" + card.asString() + "\"");
+
+        }
         if (c == 'O' || c == 'N' || c == 'G' || c == 'S')
             return wrapTextBrackets("\"Card\":\"" + card.asString() + "\"");
         else
@@ -127,7 +138,6 @@ public class JsonConverter {
         checkNullObject(stringInput);
         if (!stringInput.contains("Card"))
             throw new JsonException(String.format(INVALID_INPUT, stringInput));
-
         stringInput = stringInput.substring(stringInput.indexOf("Card") + 7);
         stringInput = stringInput.substring(0, stringInput.indexOf("\""));
         switch (stringInput.charAt(0)) {
@@ -206,16 +216,18 @@ public class JsonConverter {
         return playerConverted;
     }
 
-    public PlayerSetup JSONToSetupPlayer(String stringInput) throws JsonException, SyntaxException {
+    private PlayerSetup JSONToSetupPlayer(String stringInput) throws JsonException, SyntaxException {
         String auxString = stringInput.substring(stringInput.indexOf("StarterCard") + 13);
         StarterCard starterCard = (StarterCard) JSONToCard(auxString.substring(0, auxString.indexOf(",")));
         auxString = stringInput.substring(stringInput.indexOf("Goals") + 8);
         auxString = auxString.substring(0, auxString.indexOf("]"));
         GoalCard[] goals = new GoalCard[2];
         for (int i = 0; i < 2; i++) {
+            System.out.println(auxString);
             goals[i] = ((GoalCard) JSONToObject(auxString.substring(auxString.indexOf("{"), auxString.indexOf("}"))));
             auxString = (i != 1) ? auxString.substring(auxString.indexOf("}") + 2) : auxString;
         }
+        System.out.println(auxString);
         auxString = stringInput.substring(stringInput.indexOf("Color") + 8);
         Color color = Color.fromChar(auxString.charAt(0));
         auxString = stringInput.substring(stringInput.indexOf("Hand") + 7);
@@ -248,13 +260,13 @@ public class JsonConverter {
                 if (stringInput.contains("placedCards"))
                     return JSONToBoard(stringInput.substring(stringInput.indexOf("["), stringInput.indexOf("]") + 1));
                 throw new JsonException(String.format(PLACEDCARDS_NOT_FOUND, stringInput));
-            case "Card":
-                return JSONToCard(stringInput);
             case "Player":
                 return JSONToPlayer(stringInput);
             case "PlayerSetup":
                 return JSONToSetupPlayer(stringInput);
             default:
+                if (objectType.contains("Card"))
+                    return JSONToCard(stringInput);
                 throw new JsonException(String.format(INVALID_INPUT, stringInput));
         }
     }
