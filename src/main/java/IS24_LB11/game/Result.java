@@ -1,16 +1,10 @@
 package IS24_LB11.game;
 
-import IS24_LB11.network.events.ClientEvent;
-import IS24_LB11.network.events.GetEvent;
-import IS24_LB11.network.events.LoginEvent;
-import IS24_LB11.network.events.QuitEvent;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 public class Result<T> {
     private final T value;
@@ -40,7 +34,7 @@ public class Result<T> {
         else return Result.Error(error, cause);
     }
 
-    public <U> Result<U> andThan(Function<T, Result<U>> function) {
+    public <U> Result<U> andThen(Function<T, Result<U>> function) {
         if (isOk()) return function.apply(value);
         return Result.Error(error, cause);
     }

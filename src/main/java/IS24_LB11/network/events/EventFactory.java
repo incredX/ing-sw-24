@@ -8,10 +8,10 @@ public class EventFactory {
 
     public static Result<ClientEvent> createEvent(JsonObject object) {
         Result<String> resultType = extractString(object, "type");
-        return resultType.andThan(type -> switch(type.toUpperCase()) {
+        return resultType.andThen(type -> switch(type.toUpperCase()) {
             case "QUIT" ->  Result.Ok(new QuitEvent());
-            case "LOGIN" -> extractString(object, "username").andThan(username -> Result.Ok(new LoginEvent(username)));
-            case "GET" -> extractJsonObject(object, "data").andThan(data -> Result.Ok(new GetEvent(data)));
+            case "LOGIN" -> extractString(object, "username").andThen(username -> Result.Ok(new LoginEvent(username)));
+            case "GET" -> extractJsonObject(object, "data").andThen(data -> Result.Ok(new GetEvent(data)));
             default -> Result.Error("Unknown event type");
         });
     }

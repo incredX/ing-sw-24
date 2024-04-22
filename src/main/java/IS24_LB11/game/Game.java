@@ -21,6 +21,10 @@ import java.util.stream.Collectors;
 public class Game {
     private String NOT_NORMAL_TURN = "Not normal turn";
     private String NOT_FINAL_TURN = "Not final turn";
+    private String CANT_DRAW_FROM_NORMAL_DECK_IS_EMPTY = "Normal Deck is empty";
+    private String CANT_DRAW_FROM_GOLDEN_DECK_IS_EMPTY = "Golden Deck is empty";
+
+    private String INDEX_DECK_WRONG = "Index not available";
 
     private String NOT_PLAYER_TURN = "Not this player turn";
     private String INVALID_POSITION_CARD_OR_NOT_IN_HAND = "Invalid placement of card or card is not in player's hand";
@@ -48,16 +52,16 @@ public class Game {
         this.normalDeck = jsonConverter.JSONToDeck('N'); // <- here we load deck from json
         this.starterDeck = jsonConverter.JSONToDeck('S'); // <- here we load deck from json
         this.players = new ArrayList<>(numPlayers);
-        this.finalTurn=false;
+        this.finalTurn = false;
     }
 
 
     private Player currentPlayer() {
-        return players.get(turn%players.size());
+        return players.get(turn % players.size());
     }
 
     private void setupPlayer(String name) throws DeckException {
-        GoalCard[] goalCards = new GoalCard[] {
+        GoalCard[] goalCards = new GoalCard[]{
                 (GoalCard) goalDeck.drawCard(),
                 (GoalCard) goalDeck.drawCard()
         };
@@ -65,25 +69,25 @@ public class Game {
         playerHand.add((PlayableCard) normalDeck.drawCard());
         playerHand.add((PlayableCard) normalDeck.drawCard());
         playerHand.add((PlayableCard) goldenDeck.drawCard());
-        PlayerSetup playerSetup = new PlayerSetup((StarterCard) starterDeck.drawCard(),goalCards,playerHand);
-        players.add(new Player(name,Color.fromInt(players.size()),playerSetup));
+        PlayerSetup playerSetup = new PlayerSetup((StarterCard) starterDeck.drawCard(), goalCards, playerHand);
+        players.add(new Player(name, Color.fromInt(players.size()), playerSetup));
     }
 
     public String setupGame(ArrayList<String> playerNames) throws DeckException {
-        if (playerNames.size()!=numPlayers) return "ERROR_TOO_MUCH_NAMES";
+        if (playerNames.size() != numPlayers) return "ERROR_TOO_MUCH_NAMES";
         goalDeck.shuffle();
         goldenDeck.shuffle();
         normalDeck.shuffle();
         starterDeck.shuffle();
-        for (String name: playerNames)
+        for (String name : playerNames)
             setupPlayer(name);
         return SETUP_COMPLETE;
     }
 
-    public String chooseGoalPhase(ArrayList<GoalCard> playersGoalCardChoosen){
+    public String chooseGoalPhase(ArrayList<GoalCard> playersGoalCardChoosen) {
         //not cheking if goal card not present in player hand
-        for (Player player: players) {
-            for (GoalCard goalCard :playersGoalCardChoosen){
+        for (Player player : players) {
+            for (GoalCard goalCard : playersGoalCardChoosen) {
                 if (player.getSetup().selectGoal(goalCard))
                     break;
             }
@@ -92,11 +96,75 @@ public class Game {
         return "CHOOSE GOAL PHASE COMPLETED, READY TO GO";
     }
 
-    public String executeTurn(Player player, PlayableCard playableCard, Position position){
-     return null;
+    //Check if is not player turn
+    public String executeTurn(String playerName, Position position, PlayableCard playableCard, boolean deckType, int indexDeck) throws JsonException, DeckException, SyntaxException {
+        if (playerName.compareTo(players.get(turn % players.size()).name()) != 0) return NOT_PLAYER_TURN;
+        return finalTurn ? executeFinalTurn() : executeNormalTurn(position, playableCard, deckType, indexDeck);
     }
+
+    private String executeNormalTurn(Position position, PlayableCard playableCard, boolean deckType, int indexDeck) throws DeckException, JsonException, SyntaxException {
+        Player player = players.get(turn % players.size());
+        if (normalDeck.isEmpty() && deckType == false)
+            return CANT_DRAW_FROM_NORMAL_DECK_IS_EMPTY;
+        if (goldenDeck.isEmpty() && deckType == true)
+            return CANT_DRAW_FROM_GOLDEN_DECK_IS_EMPTY;
+        if ((!deckType && normalDeck.getCards().size() - indexDeck < 0 )|| (deckType && goldenDeck.getCards().size() - indexDeck < 0))
+            return INDEX_DECK_WRONG;
+        if (player.placeCard(playableCard, position) == false)
+            return INVALID_POSITION_CARD_OR_NOT_IN_HAND;
+        else {
+            player.incrementScoreLastCardPlaced();
+        }
+        //0 for standard deck, 1 for gold deck
+        //deck empty o provo a pescare una carta non esistente
+
+
+        if (!deckType)
+            player.addCardToHand((PlayableCard) normalDeck.drawCard(indexDeck));
+        else if (deckType)
+            player.addCardToHand((PlayableCard) goldenDeck.drawCard(indexDeck));
+
+        turn++;
+        //controllo se turno finale lo faccio solo sull'ultima persona controllando tutti i punteggi
+        if (!finalTurn)
+            isFinalTurn();
+        return VALID_TURN;
+    }
+
+    private String executeFinalTurn() {
+        return null;
+    }
+    //remind to check if front or back
+
+    private void isFinalTurn() {
+        if (turn % players.size() == 0 && finalTurn == false) {
+            if (normalDeck.isEmpty() && goldenDeck.isEmpty())
+                finalTurn = true;
+            for (Player player : players)
+                if (player.getScore() >= 20)
+                    finalTurn = true;
+
+        }
+    }
+
     //ONLY FOR TESTS
     public ArrayList<Player> getPlayers() {
         return players;
+    }
+
+    public int getTurn() {
+        return turn;
+    }
+
+    public boolean getFinalTurn() {
+        return finalTurn;
+    }
+
+    public Deck getGoldenDeck() {
+        return goldenDeck;
+    }
+
+    public Deck getNormalDeck() {
+        return normalDeck;
     }
 }
