@@ -91,7 +91,6 @@ public class Game {
                 if(numberCharNotEqualInSamePosition(player.getSetup().getStarterCard().asString(),starterCard.asString()))
                     if (player.getSetup().getStarterCard().asString().charAt(6)!=starterCard.asString().charAt(6))
                         player.getSetup().flipStarterCard();
-
             player.applySetup();
         }
         return "CHOOSE GOAL PHASE COMPLETED, READY TO GO";

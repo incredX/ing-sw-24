@@ -113,10 +113,6 @@ public class Player implements JsonConvertable {
         return color;
     }
 
-    public ArrayList<PlayableCard> getHand() {
-        return hand;
-    }
-
     public void setBoard(Board board){
         this.board=board;
     }
