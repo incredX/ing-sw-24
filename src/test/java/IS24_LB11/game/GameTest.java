@@ -235,15 +235,15 @@ public class GameTest {
 
         Player player = game.getPlayers().getFirst();
 
-        System.out.println(player);
+        System.out.println(game.executeTurn(player.name(),player.getBoard().getAvailableSpots().getFirst(), player.getHand().getFirst(),true,2));
+
         System.out.println(game.executeTurn(player.name(),player.getBoard().getAvailableSpots().getFirst(), player.getHand().getFirst(),true,8));
-        System.out.println(player);
+
         System.out.println(game.executeTurn(player.name(),player.getBoard().getAvailableSpots().getFirst(), player.getHand().getFirst(),true,9));
-        System.out.println(player);
+
         System.out.println(game.executeTurn(player.name(),player.getBoard().getAvailableSpots().getFirst(), player.getHand().getFirst(),true,7));
-        System.out.println(player);
+
         System.out.println(game.executeTurn(player.name(),player.getBoard().getAvailableSpots().getFirst(), player.getHand().getFirst(),true,6));
-        System.out.println(player);
     }
 
     @Test
