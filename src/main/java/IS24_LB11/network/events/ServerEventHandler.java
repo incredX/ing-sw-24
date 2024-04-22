@@ -49,10 +49,10 @@ public class ServerEventHandler {
         JsonObject response = new JsonObject();
 
         // checks Syntax of json event and returns message
-        String messageEventSyntax = hasPropertiesInData(event, "username");
+        String messageEventSyntax = hasProperties(event, "username");
 
         if(messageEventSyntax.equals("OK"))
-            username = event.getAsJsonObject("data").get("username").getAsString();
+            username = event.get("username").getAsString();
         else {
             response.addProperty("error", messageEventSyntax);
             clientHandler.sendMessage(response.getAsString());
@@ -67,12 +67,10 @@ public class ServerEventHandler {
 
         clientHandler.setUserName(username);
 
-        JsonObject data = new JsonObject();
-        data.addProperty("message", "Welcome " + username);
-        data.addProperty("username", clientHandler.getUserName());
+        response.addProperty("message", "Welcome " + username);
+        response.addProperty("username", clientHandler.getUserName());
 
         response.addProperty("type", "OK");
-        response.add("data", data);
 
         clientHandler.sendMessage(response.getAsString());
         return;
@@ -86,28 +84,37 @@ public class ServerEventHandler {
     private static void handleMessageEvent(JsonObject event) {
 
         // checks Syntax of json event and returns message
-        String messageEventSyntax = hasPropertiesInData(event, "message", "to", "from");
+        String messageEventSyntax = hasProperties(event, "message", "to", "from");
 
         System.out.println(event.getAsString());
 
         if(messageEventSyntax.equals("OK")) {
-            JsonObject data = event.getAsJsonObject("data");
-            data.addProperty("from", clientHandler.getUserName());
-            System.out.println(data.get("to").getAsString());
-            if(data.get("to").getAsString().equals("")){
+            event.addProperty("from", clientHandler.getUserName());
+
+            System.out.println(event.get("to").getAsString());
+
+            if(event.get("to").getAsString().equals("")){
                 clientHandler.broadcast(event.getAsString());
             }
             else {
-                ClientHandler destinationClientHandler = clientHandler.getClientHandlerWithUsername(data.get("to").getAsString());
+                ClientHandler destinationClientHandler = clientHandler.getClientHandlerWithUsername(event.get("to").getAsString());
                 if(destinationClientHandler != null) {
                     destinationClientHandler.sendMessage(event.getAsString());
-                }
-                else {
+                } else if (destinationClientHandler.equals(clientHandler)) {
+                    JsonObject response = new JsonObject();
+                    response.addProperty("error", "If you want to send a message to yourself try saying it out loudly :)");
+                    clientHandler.sendMessage(response.getAsString());
+                } else {
                     JsonObject response = new JsonObject();
                     response.addProperty("error", "Unknown username");
                     clientHandler.sendMessage(response.getAsString());
                 }
             }
+        }
+        else {
+            JsonObject response = new JsonObject();
+            response.addProperty("error", messageEventSyntax);
+            clientHandler.sendMessage(response.getAsString());
         }
     }
 
@@ -116,9 +123,7 @@ public class ServerEventHandler {
     private static void handleQuitEvent(JsonObject event) {
         JsonObject response = new JsonObject();
         response.addProperty("type", "notification");
-        JsonObject data = new JsonObject();
-        data.addProperty("message", "Player " + clientHandler.getUserName() + " left the game");
-        response.addProperty("data", data.getAsString());
+        response.addProperty("message", "Player " + clientHandler.getUserName() + " left the game");
 
         clientHandler.broadcast(response.getAsString());
 
@@ -126,17 +131,10 @@ public class ServerEventHandler {
 
     }
 
-    private static String hasPropertiesInData(JsonObject event, String... properties) {
-
-        // Check if data object is null
-        if (event == null || !event.has("data")) {
-            return "Wrong request, property 'data' missing";
-        }
-        JsonObject data = event.getAsJsonObject("data");
-
-        // Check if data object has all the specified properties
+    private static String hasProperties(JsonObject event, String... properties) {
+        // Check if event object has all the specified properties
         for (String property : properties) {
-            if (!data.has(property)) {
+            if (!event.has(property)) {
                 return "Wrong request, properties missing";
             }
         }
