@@ -46,9 +46,8 @@ public class SetupStage extends Stage {
     @Override
     public void resize(TerminalSize terminalSize) {
         super.resize(terminalSize);
-        starterCardView.setPosition(0,0);
-        goalViews.getFirst().setPosition(starterCardView.getXAndWidth()+4, 2);
-        goalViews.getLast().setPosition(goalViews.getFirst().getXAndWidth()+4, 2);
+        placeStarterCard(terminalSize);
+        placeGoals(terminalSize);
         placeHandHorizontal(terminalSize);
     }
 
@@ -60,7 +59,7 @@ public class SetupStage extends Stage {
 
     public void buildStarterCard(StarterCard starterCard) {
         starterCardView = new StarterCardView(starterCard);
-        starterCardView.setPosition(1,3);
+        placeStarterCard(rectangle.getSize().withRelative(0, 4));
         drawStarterCard();
     }
 
@@ -70,9 +69,13 @@ public class SetupStage extends Stage {
     }
 
     private void drawGoals() {
-        for (GoalView goal : goalViews) {
-            draw(goal);
-            buildRelativeArea(goal.getRectangle());
+        String[] legends = new String[] {"Gaol (a)", "Gaol (b)"};
+        for (int i=0; i<goalViews.size(); i++) {
+            draw(goalViews.get(i));
+            fillRow(goalViews.get(i).getY(), goalViews.get(i).getX()+5, legends[i]);
+            buildRelativeArea(goalViews.get(i).getRectangle()
+                    .withRelativePosition(0,-1)
+                    .withRelativeSize(0,2));
         }
     }
 
@@ -109,17 +112,44 @@ public class SetupStage extends Stage {
         buildRelativeArea(2, 3, x+w, y);
     }
 
+    private void placeStarterCard(TerminalSize terminalSize) {
+        if (!isMininimalSize(terminalSize)) {
+            int w = starterCardView.getWidth(), h = starterCardView.getHeight();
+            starterCardView.setPosition((terminalSize.getColumns()-w)/2, (terminalSize.getRows()-h)/2-4);
+        } else
+            starterCardView.setPosition(0,0);
+    }
+
+    private void placeGoals(TerminalSize terminalSize) {
+        int goalWidth = goalViews.getFirst().getWidth(), goalHeight = goalViews.getFirst().getHeight();
+        if (!isMininimalSize(terminalSize)) {
+            int x = (terminalSize.getColumns()-2*goalWidth-goalHeight)/2;
+            int y = starterCardView.getY()-goalHeight-1;
+            for (GoalView goal : goalViews) {
+                goal.setPosition(x, y);
+                x += goalWidth+4;
+            }
+        } else {
+            goalViews.getFirst().setPosition(starterCardView.getXAndWidth()+4, 2);
+            goalViews.getLast().setPosition(goalViews.getFirst().getXAndWidth()+4, 2);
+        }
+    }
+
     private void placeHandHorizontal(TerminalSize terminalSize) {
         int width = handView.size()*(handView.getFirst().getWidth()-1);
         int height = handView.getFirst().getHeight();
         int x = (terminalSize.getColumns()-width)/2 -1;
-        int y = terminalSize.getRows()-height-6;
+        int y = isMininimalSize(terminalSize) ?
+                terminalSize.getRows()-height-6 : starterCardView.getYAndHeight()+1;
         for (PlayableCardView cardView: handView) {
             cardView.setPosition(x, y);
             x += cardView.getWidth()-1;
         }
-        System.out.printf("rect %dx%d contains (%d,%d)?\n", rectangle.getWidth(), rectangle.getHeight(),
-                handView.getLast().getXAndWidth(), handView.getLast().getYAndHeight());
+    }
+
+    private boolean isMininimalSize(TerminalSize terminalSize) {
+        int goalHeight = goalViews.getFirst().getHeight();
+        return terminalSize.getRows() < 2*starterCardView.getHeight()+goalHeight+2;
     }
 
 //    private void drawGoalPointer() {

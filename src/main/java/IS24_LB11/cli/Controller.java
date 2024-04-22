@@ -6,7 +6,6 @@ import IS24_LB11.cli.event.KeyboardEvent;
 import IS24_LB11.cli.event.ResizeEvent;
 import IS24_LB11.cli.listeners.InputListener;
 import IS24_LB11.cli.listeners.ResizeListener;
-import IS24_LB11.cli.view.BoardView;
 import IS24_LB11.cli.view.ViewHub;
 import IS24_LB11.game.Board;
 import IS24_LB11.game.components.GoldenCard;
@@ -82,20 +81,20 @@ public class Controller {
 
     private void start() throws IOException, SyntaxException {
         Board board = new Board();
-        BoardView boardView;
+        BoardStage boardStage;
         hub.setBoardStage(board);
         hub.addPopUp(LOREM, " 1/1 : LOREM ");
         popUpOn = true;
 
-        boardView = (BoardView) hub.getStage();
+        boardStage = (BoardStage) hub.getStage();
         board.start(new StarterCard("EPIE_F0I__FPIA"));
         board.placeCard(new NormalCard("IPK_IF0"), new Position(-1,-1));
         board.placeCard(new GoldenCard("_EEQFF1QFFA__"), new Position(1,1));
         board.placeCard(new GoldenCard("E_KEPF1KPPA__"), new Position(1,-1)); //GE_KEPF1KPPA__
-        boardView.setPointer(new Position(0,0));
-        boardView.loadCardViews();
-        boardView.build();
-        stage = boardView;
+        boardStage.setPointer(new Position(0,0));
+        boardStage.loadCardViews();
+        boardStage.build();
+        stage = boardStage;
 
         while (running) {
             Event event;

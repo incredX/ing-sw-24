@@ -220,6 +220,8 @@ public class CliBox implements CliFrame {
     public TerminalRectangle getRectangle() { return rectangle; }
     public int getHeight() { return rectangle.getHeight(); }
     public int getWidth() { return rectangle.getWidth(); }
+    public int getY() { return rectangle.getY(); }
+    public int getX() { return rectangle.getX(); }
     public int getYAndHeight() { return rectangle.getYAndHeight(); }
     public int getXAndWidth() { return rectangle.getXAndWidth(); }
 }

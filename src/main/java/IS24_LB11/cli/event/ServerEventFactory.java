@@ -1,5 +1,6 @@
 package IS24_LB11.cli.event;
 
+import IS24_LB11.game.PlayerSetup;
 import IS24_LB11.game.Result;
 import IS24_LB11.game.tools.JsonConverter;
 import IS24_LB11.game.tools.JsonException;
@@ -43,6 +44,16 @@ public class ServerEventFactory {
                     .andThen(message -> extractString(data, "from")
                             .andThen(from -> extractStringOrElse(data, "to", "")
                                     .map(to -> new ServerMessageEvent(message, from, to))));
+            case "SETUP" -> extractJsonObject(data, "setup")
+                    .andThen(jsonSetup -> {
+                        try {
+                            PlayerSetup setup = converter.JSONToSetupPlayer(jsonSetup.toString());
+                            return Ok(new ServerPlayerSetupEvent(setup));
+                        }
+                        catch (JsonException | SyntaxException e) {
+                            return Error("error parsing setup");
+                        }
+                    });
             default -> Error("unknown server event", "received <"+type+">");
         };
     }

@@ -29,23 +29,10 @@ public class ClientInSetup extends ClientState {
     }
 
     protected void processServerEvent(ServerEvent serverEvent) {
+        if (processCommonServerEvent(serverEvent)) return;
         switch (serverEvent) {
-            case ServerNotificationEvent notificationEvent -> {
-                popUpStack.addPopUp(Priority.LOW, "from server", notificationEvent.message());
-            }
-            case ServerMessageEvent messageEvent -> {
-                String text;
-                if (messageEvent.to().isEmpty())
-                    text = String.format("%s @ all : %s", messageEvent.from(), messageEvent.message());
-                else
-                    text = String.format("%s : %s", messageEvent.from(), messageEvent.message());
-                popUpStack.addPopUp(Priority.MEDIUM, text);
-            }
             case ServerUpdateEvent updateEvent -> {
                 popUpStack.addPopUp(Priority.LOW, "received updated players' state");
-            }
-            case ServerHeartBeatEvent heartBeatEvent -> {
-                sendToServer("heartbeat");
             }
             case ServerPlayerSetupEvent playerSetupEvent -> {
                 processResult(Result.Error("Invalid server event", "can't accept a new player setup"));
@@ -55,33 +42,30 @@ public class ClientInSetup extends ClientState {
     }
 
     protected void processCommand(String command) {
+        if (processCommonCommand(command)) return;
         String[] tokens = command.split(" ", 2);
-        if (tokens.length == 0) return;
-        //TODO: (inGame) command center set pointer in (0,0)
         switch (tokens[0].toUpperCase()) {
-            case "QUIT" -> quit();
-            case "SENDTO", "@" -> {
-                if (tokens.length == 2) processCommandSendto(tokens[1]);
-                else popUpStack.addUrgentPopUp("ERROR", "missing argument");
-            }
-            case "SENDTOALL", "@ALL" -> {
-                if (tokens.length == 2) processCommandSendtoall(tokens[1]);
-                else popUpStack.addUrgentPopUp("ERROR", "missing argument");
-            }
             case "GOAL", "G" -> {
-                try {
-                    int index = Integer.parseInt(tokens[1]);
+                if (tokens.length == 2) {
+                    popUpStack.addUrgentPopUp("ERROR", "missing argument");
+                    return;
+                }
+                int index = 'a' - tokens[1].charAt(0);
+                if (index < 0 || index > 1 || tokens[1].length() > 1)
+                    popUpStack.addUrgentPopUp("ERROR",
+                            "command \"GOAL\" expects 'a' or 'b' as argument, "+tokens[1]+"was given");
+                else
                     setChosenGoal(index);
-                }
-                catch (NumberFormatException e) {
-                    popUpStack.addUrgentPopUp("ERROR", "invalid index (expected an integer)");
-                }
             }
             case "READY" -> {
                 sendToServer("setup",
-                        new String[]{"startercard","goal"},
+                        new String[]{"startercard","chosengoal"},
                         new String[]{setup.starterCard().asString(), setup.chosenGoal().asString()});
-                //switch to CLientInGame & inform the server
+                try { setNextState(new ClientInGame(viewHub, setup)); }
+                catch (IOException e) {
+                    e.printStackTrace();
+                    quit();
+                }
             }
             default -> popUpStack.addUrgentPopUp("ERROR", tokens[0]+" is not a valid command");
         };
@@ -90,9 +74,9 @@ public class ClientInSetup extends ClientState {
     @Override
     protected void processKeyStroke(KeyStroke keyStroke) {
         if (keyStroke.isCtrlDown()) {
-            if (keyStroke.getKeyType() == KeyType.ArrowUp) {
+            if (keyStroke.getKeyType() == KeyType.ArrowLeft) {
                 setChosenGoal(0);
-            } else if (keyStroke.getKeyType() == KeyType.ArrowDown) {
+            } else if (keyStroke.getKeyType() == KeyType.ArrowRight) {
                 setChosenGoal(1);
             } else if (keyStroke.getKeyType() == KeyType.Character && keyStroke.getCharacter() == 'f') {
                 setup.starterCard().flip();

@@ -21,20 +21,10 @@ public class ClientInLobby extends ClientState {
     }
 
     protected void processServerEvent(ServerEvent serverEvent) {
+        if (processCommonServerEvent(serverEvent)) return;
         switch (serverEvent) {
             case ServerLoginEvent loginEvent -> {
                 username = loginEvent.username();
-            }
-            case ServerNotificationEvent notificationEvent -> {
-                popUpStack.addPopUp(Priority.LOW, "from server", notificationEvent.message());
-            }
-            case ServerMessageEvent messageEvent -> {
-                String text;
-                if (messageEvent.to().isEmpty())
-                    text = String.format("%s @ all : %s", messageEvent.from(), messageEvent.message());
-                else
-                    text = String.format("%s : %s", messageEvent.from(), messageEvent.message());
-                popUpStack.addPopUp(Priority.MEDIUM, text);
             }
             case ServerUpdateEvent updateEvent -> {
                 popUpStack.addPopUp(Priority.LOW, "received updated board of"+updateEvent.getUsername());
@@ -47,9 +37,6 @@ public class ClientInLobby extends ClientState {
                     quit();
                 }
             }
-            case ServerHeartBeatEvent heartBeatEvent -> {
-                sendToServer("heartbeat");
-            }
             default -> processResult(Result.Error("received unknown server event"));
         }
     }
@@ -57,7 +44,6 @@ public class ClientInLobby extends ClientState {
     protected void processCommand(String command) {
         String[] tokens = command.split(" ", 2);
         if (tokens.length == 0) return;
-        //TODO: (inGame) command center set pointer in (0,0)
         switch (tokens[0].toUpperCase()) {
             case "QUIT" -> quit();
             case "LOGIN" -> {
