@@ -33,11 +33,11 @@ public class PlayerSetup {
         return false;
     }
 
-    public void flipCard() {
+    public void flipStarterCard() {
         starterCard.flip();
     }
 
-    public StarterCard starterCard() {
+    public StarterCard getStarterCard() {
         return starterCard;
     }
 

@@ -34,7 +34,7 @@ public class Player {
 
     public void applySetup() {
         this.personalGoal = setup.chosenGoal().get();
-        this.board.start(setup.starterCard());
+        this.board.start(setup.getStarterCard());
     }
 
     public boolean placeCard(PlayableCard card, Position position) throws JsonException, SyntaxException {
