@@ -25,6 +25,7 @@ public class PlayerSetup implements JsonConvertable {
         this.color=color;
     }
 
+
     public boolean selectGoal(GoalCard goalCard) {
         if (goalCard.asString().compareTo(goals[0].asString())==0) {
             chosenGoalIndex = 0;
