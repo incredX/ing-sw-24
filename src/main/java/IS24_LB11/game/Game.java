@@ -64,8 +64,8 @@ public class Game {
         playerHand.add((PlayableCard) normalDeck.drawCard());
         playerHand.add((PlayableCard) normalDeck.drawCard());
         playerHand.add((PlayableCard) goldenDeck.drawCard());
-        PlayerSetup playerSetup = new PlayerSetup((StarterCard) starterDeck.drawCard(), goalCards, playerHand);
-        players.add(new Player(name, Color.fromInt(players.size()), playerSetup));
+        PlayerSetup playerSetup = new PlayerSetup((StarterCard) starterDeck.drawCard(), goalCards, playerHand, Color.fromInt(players.size()));
+        players.add(new Player(name, playerSetup));
     }
 
     public String setupGame(ArrayList<String> playerNames) throws DeckException {
@@ -157,7 +157,7 @@ public class Game {
         ranking.sort(Comparator.comparingInt(Player::getScore));
         return ranking;
     }
-    public boolean numberCharNotEqualInSamePosition(String s1, String s2){
+    private boolean numberCharNotEqualInSamePosition(String s1, String s2){
         return s1.regionMatches(0,s2,0,6) && s1.regionMatches(7,s2,7,7);
     }
     //ONLY FOR TESTS

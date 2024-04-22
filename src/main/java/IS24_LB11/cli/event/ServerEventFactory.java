@@ -1,5 +1,6 @@
 package IS24_LB11.cli.event;
 
+import IS24_LB11.game.PlayerSetup;
 import IS24_LB11.game.Result;
 import IS24_LB11.game.tools.JsonConverter;
 import IS24_LB11.game.tools.JsonException;
@@ -18,7 +19,7 @@ public class ServerEventFactory {
         return toResultJson(object).andThen( jsonValue -> {
             JsonObject value = jsonValue.getAsJsonObject();
             return extractString(value, "type").andThen(type -> {
-                return extractJsonObject(value, "data").andThen(data ->  createServerEvent(type, data));
+                return createServerEvent(type, jsonValue);
             });
         });
     }
@@ -27,8 +28,10 @@ public class ServerEventFactory {
         JsonConverter converter = new JsonConverter();
         return switch (type.toUpperCase()) {
             case "HEARTBEAT" -> Ok(new ServerHeartBeatEvent());
-            case "OK" -> extractStringOrElse(data, "message", "")
-                    .map(message -> new ServerOkEvent(message));
+            case "SETUSERNAME" -> extractString(data, "username")
+                    .map(username -> new ServerLoginEvent(username));
+            case "NOTIFICATION" -> extractString(data, "message")
+                    .map(message -> new ServerNotificationEvent(message));
             case "UPDATE" -> extractString(data, "player").andThen(name ->
                     extractJsonObject(data, "board").andThen(board -> {
                         try {
@@ -37,23 +40,31 @@ public class ServerEventFactory {
                             return Error("error parsing board");
                         }
                     }));
-            case "MESSAGE" -> extractString(data, "message").andThen(message ->
-                    extractString(data, "from").map(from -> new ServerMessageEvent(message, from)));
+            case "MESSAGE" -> extractString(data, "message")
+                    .andThen(message -> extractString(data, "from")
+                            .andThen(from -> extractStringOrElse(data, "to", "")
+                                    .map(to -> new ServerMessageEvent(message, from, to))));
+            case "SETUP" -> extractJsonObject(data, "setup")
+                    .andThen(jsonSetup -> {
+                        try {
+                            PlayerSetup setup = converter.JSONToSetupPlayer(jsonSetup.toString());
+                            return Ok(new ServerPlayerSetupEvent(setup));
+                        }
+                        catch (JsonException | SyntaxException e) {
+                            return Error("error parsing setup");
+                        }
+                    });
             default -> Error("unknown server event", "received <"+type+">");
         };
     }
 
-    private static Result<JsonElement> toResultJson(JsonObject object) {
+    private static Result<JsonObject> toResultJson(JsonObject object) {
         if (object.has("error")) {
             if (object.has("cause"))
                 return Error(object.get("error").getAsString(), object.get("cause").getAsString());
             else
                 return Error(object.get("error").getAsString());
-        } else if (object.has("value")) {
-            return Ok(object.get("value"));
-        } else {
-            return Error("result syntax error", "missing expected fields (error | value)");
-        }
+        } else return Ok(object);
     }
 
     private static Result<String> extractString(JsonObject object, String key) {

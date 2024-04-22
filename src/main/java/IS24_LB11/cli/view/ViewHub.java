@@ -1,9 +1,8 @@
 package IS24_LB11.cli.view;
 
-import IS24_LB11.cli.CommandLine;
-import IS24_LB11.cli.Stage;
+import IS24_LB11.cli.*;
 import IS24_LB11.game.Board;
-import com.googlecode.lanterna.TerminalPosition;
+import IS24_LB11.game.PlayerSetup;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import com.googlecode.lanterna.terminal.Terminal;
@@ -19,6 +18,7 @@ import java.util.function.Consumer;
 public class ViewHub implements Runnable {
     private final Terminal terminal;
     private Stage stage;
+    private CommandLineView commandLineView;
     private Optional<PopUpView> popUp;
 
     public ViewHub() throws IOException {
@@ -26,6 +26,7 @@ public class ViewHub implements Runnable {
         terminal = new DefaultTerminalFactory(System.out, System.in, charset).createTerminal();
         terminal.enterPrivateMode();
         stage = new Stage(terminal.getTerminalSize());
+        commandLineView = new CommandLineView(terminal.getTerminalSize());
         popUp = Optional.empty();
     }
 
@@ -42,6 +43,7 @@ public class ViewHub implements Runnable {
                         try { p.print(terminal); }
                         catch (IOException ignored) {}
                     });
+                    commandLineView.print(terminal);
                     terminal.flush();
                 }
                 catch (InterruptedException e) { break; }
@@ -57,10 +59,13 @@ public class ViewHub implements Runnable {
     public void resize(TerminalSize size, CommandLine commandLine) {
         stage.resize(size);
         stage.build();
-        stage.buildCommandLine(commandLine);
+        commandLineView.resize(size);
+        commandLineView.buildCommandLine(commandLine);
+        commandLineView.build();
         popUp.ifPresent(popUp -> {
-            int dx = popUp.getWidth()/2, dy = popUp.getHeight()/2;
-            popUp.setTerminalPosition(stage.getCenter().withRelative(-dx, -dy));
+            popUp.resize(size);
+            popUp.build();
+            popUp.setPosition(0, stage.getYAndHeight()-3);
         });
         synchronized (terminal) {
             try { terminal.clearScreen(); }
@@ -87,20 +92,28 @@ public class ViewHub implements Runnable {
     }
 
     public void updateCommandLine(CommandLine commandLine) {
-        update(s -> s.buildCommandLine(commandLine));
+        commandLineView.buildCommandLine(commandLine);
+        commandLineView.build();
     }
 
     public void addPopUp(String message, String title) {
-        TerminalSize size = new TerminalSize(stage.getWidth()/2, stage.getHeight()/2);
-        TerminalPosition position = stage.getCenter().withRelative(-size.getColumns()/2, -size.getRows()/2);
-        popUp = Optional.of(new PopUpView(size, position, message, title));
+        if (popUp.isPresent()) {
+            stage.buildArea(popUp.get().getRectangle());
+            popUp = Optional.empty();
+        }
+        popUp = Optional.of(new PopUpView(stage, title, message));
         popUp.get().build();
+    }
+
+    public void addPopUp(String message) {
+        addPopUp(message, "");
     }
 
     public void removePopUp() {
         if (popUp.isPresent()) {
             stage.buildArea(popUp.get().getRectangle());
             popUp = Optional.empty();
+            update();
         }
     }
 
@@ -109,9 +122,29 @@ public class ViewHub implements Runnable {
         update();
     }
 
-    public void setBoardStage(Board board) {
+    public BoardStage setBoardStage(Board board) {
         try {
-            stage = new BoardView(terminal.getTerminalSize(), board);
+            BoardStage boardStage = new BoardStage(terminal.getTerminalSize(), board);
+            stage = boardStage;
+            stage.build();
+            update();
+            return boardStage;
+        } catch (IOException ignored) { return null; }
+    }
+
+    public SetupStage setSetupStage(PlayerSetup setup) {
+        try {
+            SetupStage setupStage = new SetupStage(terminal.getTerminalSize(), setup);
+            stage = setupStage;
+            stage.build();
+            update();
+            return setupStage;
+        } catch (IOException ignored) { return null; }
+    }
+
+    public void setLobbyStage() {
+        try {
+            stage = new LobbyStage(terminal.getTerminalSize());
             stage.build();
             update();
         } catch (IOException ignored) { }

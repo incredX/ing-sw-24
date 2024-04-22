@@ -22,6 +22,18 @@ public class TerminalRectangle {
         return new TerminalRectangle(size, position.withRelative(delta));
     }
 
+    public TerminalRectangle withRelative(TerminalSize delta) {
+        return new TerminalRectangle(size.withRelative(delta), position);
+    }
+
+    public TerminalRectangle withRelativePosition(int deltaX, int deltaY) {
+        return new TerminalRectangle(size, position.withRelative(deltaX, deltaY));
+    }
+
+    public TerminalRectangle withRelativeSize(int deltaColumns, int deltaRows) {
+        return new TerminalRectangle(size.withRelative(deltaColumns, deltaRows), position);
+    }
+
     public boolean contains(TerminalPosition tPos) {
         return tPos.getColumn() >= position.getColumn() &&
                 tPos.getColumn() < endPoint.getColumn() &&
@@ -33,7 +45,7 @@ public class TerminalRectangle {
         endPoint = position.withRelative(size.getColumns(), size.getRows());
     }
 
-    public void reSize(int deltaWidth, int deltaHeight) {
+    public void resize(int deltaWidth, int deltaHeight) {
         size = size.withRelative(deltaWidth, deltaHeight);
         updateEndPoint();
     }
