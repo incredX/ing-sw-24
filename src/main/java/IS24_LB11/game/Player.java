@@ -1,8 +1,6 @@
 package IS24_LB11.game;
 
-import IS24_LB11.game.components.GoalCard;
-import IS24_LB11.game.components.JsonConvertable;
-import IS24_LB11.game.components.PlayableCard;
+import IS24_LB11.game.components.*;
 import IS24_LB11.game.tools.JsonConverter;
 import IS24_LB11.game.tools.JsonException;
 import IS24_LB11.game.utils.Color;
@@ -49,7 +47,12 @@ public class Player implements JsonConvertable {
             return false;
         }
     }
-
+    public void personalGoalScore(){
+        if (personalGoal.asString().length()==5)
+            incrementScore(board.countSymbols((GoalSymbol) personalGoal));
+        else
+            incrementScore(board.countPatterns((GoalPattern) personalGoal));
+    }
     public void incrementScoreLastCardPlaced() {
         score += board.calculateScoreOnLastPlacedCard();
     }

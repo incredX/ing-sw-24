@@ -29,7 +29,6 @@ public class Game {
     private String VALID_TURN = "Valid turn executed";
     private String VALID_TURN_AND_TRIGGERED_FINAL_TURN = "Valid turn executed and score of 20 exceeded";
     private String SETUP_COMPLETE = "Setup completed, the game is starting...";
-
     private boolean finalTurn;
     private int turn;
     private final int numPlayers;
@@ -138,6 +137,7 @@ public class Game {
             player.incrementScoreLastCardPlaced();
         }
         turn++;
+
         return VALID_TURN;
     }
     //remind to check if front or back
@@ -153,26 +153,9 @@ public class Game {
     public ArrayList<Player> finalGamePhase() throws SyntaxException {
         ArrayList<Player> ranking = players;
         for (Player player: ranking)
-            player.incrementScore(personalGoalScore(player));
-        ranking.stream()
-                .sorted(Comparator.comparingInt(Player::getScore))
-                .collect(Collectors.toList());
+            player.personalGoalScore();
+        ranking.sort(Comparator.comparingInt(Player::getScore));
         return ranking;
-    }
-    public int personalGoalScore (Player player) throws SyntaxException {
-        String cardString =player.getPersonalGoal().asString();
-        //Symbol goal
-        if (cardString.length()==5){
-            int symbolNumber= (int) (3 - cardString.chars().filter(c -> c=='_').count());
-            SymbolFactory symbolFactory = new SymbolFactory();
-            Symbol symbol = symbolFactory.fromCharacter(cardString.charAt(2));
-            return player.getBoard().getSymbolCounter().get(symbol)/symbolNumber;
-        }
-        //Pattern Goal
-        else {
-
-        }
-        return 0;
     }
     public boolean numberCharNotEqualInSamePosition(String s1, String s2){
         return s1.regionMatches(0,s2,0,6) && s1.regionMatches(7,s2,7,7);
