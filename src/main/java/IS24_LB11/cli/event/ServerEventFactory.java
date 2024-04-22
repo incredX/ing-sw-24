@@ -30,7 +30,7 @@ public class ServerEventFactory {
             case "SETUSERNAME" -> extractString(data, "username")
                     .map(username -> new ServerLoginEvent(username));
             case "NOTIFICATION" -> extractString(data, "message")
-                    .map(message -> new ServerLoginEvent(message));
+                    .map(message -> new ServerNotificationEvent(message));
             case "UPDATE" -> extractString(data, "player").andThen(name ->
                     extractJsonObject(data, "board").andThen(board -> {
                         try {
