@@ -33,7 +33,7 @@ public class Player {
     }
 
     public void applySetup() {
-        this.personalGoal = setup.chosenGoal().get();
+        this.personalGoal = setup.chosenGoal();
         this.board.start(setup.starterCard());
     }
 

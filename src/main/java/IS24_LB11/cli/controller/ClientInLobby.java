@@ -4,16 +4,14 @@ import IS24_LB11.cli.popup.Priority;
 import IS24_LB11.cli.view.ViewHub;
 import IS24_LB11.cli.event.*;
 import IS24_LB11.game.Result;
-import com.google.gson.JsonObject;
 
 import java.io.IOException;
 
 public class ClientInLobby extends ClientState {
-    private String name;
 
     public ClientInLobby(ViewHub hub) throws IOException {
         super(hub);
-        this.name = "";
+        this.username = "";
     }
 
     @Override
@@ -24,9 +22,11 @@ public class ClientInLobby extends ClientState {
 
     protected void processServerEvent(ServerEvent serverEvent) {
         switch (serverEvent) {
-            case ServerOkEvent okEvent -> {
-                if (!okEvent.message().isEmpty())
-                    popUpStack.addPopUp(Priority.LOW, okEvent.message());
+            case ServerLoginEvent loginEvent -> {
+                username = loginEvent.username();
+            }
+            case ServerNotificationEvent notificationEvent -> {
+                popUpStack.addPopUp(Priority.LOW, "from server", notificationEvent.message());
             }
             case ServerMessageEvent messageEvent -> {
                 String text;

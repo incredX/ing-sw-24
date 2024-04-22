@@ -1,7 +1,5 @@
 package IS24_LB11.cli;
 
-import IS24_LB11.cli.style.DashedBorderStyle;
-import IS24_LB11.cli.utils.CliBox;
 import IS24_LB11.cli.view.*;
 import IS24_LB11.game.PlayerSetup;
 import IS24_LB11.game.components.*;
@@ -9,8 +7,6 @@ import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.stream.Collectors;
 
 public class SetupStage extends Stage {
     private int chosenGoalIndex;
@@ -34,13 +30,14 @@ public class SetupStage extends Stage {
             case GoalSymbol symbol -> goalViews.add(new GoalSymbolView(symbol));
             default -> throw new IllegalStateException("Invalid goal: " + goal);
         }
+        for (PlayableCardView cardView: handView) cardView.setMargins(0);
         resize(terminalSize);
     }
 
     @Override
     public void build() {
         super.build();
-        drawStarteCard();
+        drawStarterCard();
         drawGoalPointer();
         drawGoals();
         drawHand();
@@ -49,14 +46,10 @@ public class SetupStage extends Stage {
     @Override
     public void resize(TerminalSize terminalSize) {
         super.resize(terminalSize);
-        starterCardView.setPosition(1,3);
+        starterCardView.setPosition(0,0);
         goalViews.getFirst().setPosition(starterCardView.getXAndWidth()+4, 2);
-        goalViews.getLast().setPosition(starterCardView.getXAndWidth()+4, goalViews.getFirst().getYAndHeight()+1);
-        TerminalPosition base = new TerminalPosition(1, starterCardView.getYAndHeight()+2);
-        for (int i = 0; i < handView.size(); i++) {
-            handView.get(i).setPosition(base);
-            base = base.withColumn(handView.get(i).getXAndWidth());
-        }
+        goalViews.getLast().setPosition(goalViews.getFirst().getXAndWidth()+4, 2);
+        placeHandHorizontal(terminalSize);
     }
 
     public void setChosenGoal(int index) {
@@ -68,10 +61,10 @@ public class SetupStage extends Stage {
     public void buildStarterCard(StarterCard starterCard) {
         starterCardView = new StarterCardView(starterCard);
         starterCardView.setPosition(1,3);
-        drawStarteCard();
+        drawStarterCard();
     }
 
-    private void drawStarteCard() {
+    private void drawStarterCard() {
         draw(starterCardView);
         buildRelativeArea(starterCardView.getRectangle());
     }
@@ -114,6 +107,19 @@ public class SetupStage extends Stage {
         fillColumn(x+w+1, y, "   ");
         buildRelativeArea(2, 3, x-1, y);
         buildRelativeArea(2, 3, x+w, y);
+    }
+
+    private void placeHandHorizontal(TerminalSize terminalSize) {
+        int width = handView.size()*(handView.getFirst().getWidth()-1);
+        int height = handView.getFirst().getHeight();
+        int x = (terminalSize.getColumns()-width)/2 -1;
+        int y = terminalSize.getRows()-height-6;
+        for (PlayableCardView cardView: handView) {
+            cardView.setPosition(x, y);
+            x += cardView.getWidth()-1;
+        }
+        System.out.printf("rect %dx%d contains (%d,%d)?\n", rectangle.getWidth(), rectangle.getHeight(),
+                handView.getLast().getXAndWidth(), handView.getLast().getYAndHeight());
     }
 
 //    private void drawGoalPointer() {

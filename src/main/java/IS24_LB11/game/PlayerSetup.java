@@ -18,7 +18,7 @@ public class PlayerSetup {
         this.starterCard = starterCard;
         this.goals = goals;
         this.hand = hand;
-        this.chosenGoalIndex = -1;
+        this.chosenGoalIndex = 0;
     }
 
     public boolean selectGoal(GoalCard goalCard) {
@@ -45,9 +45,8 @@ public class PlayerSetup {
         return starterCard;
     }
 
-    public Result<GoalCard> chosenGoal() {
-        if (chosenGoalIndex < 0) return Result.Error("no goal was chosen");
-        return Result.Ok(goals[chosenGoalIndex]);
+    public GoalCard chosenGoal() {
+        return goals[chosenGoalIndex];
     }
 
     public ArrayList<PlayableCard> hand() {
