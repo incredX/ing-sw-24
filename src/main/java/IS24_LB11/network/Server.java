@@ -4,6 +4,7 @@ import java.net.*;
 import java.io.*;
 import java.util.ArrayList;
 
+import IS24_LB11.game.Game;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
@@ -17,6 +18,9 @@ public class Server
     private ServerSocket server = null;
     private DataInputStream in	 = null;
     private ArrayList<ClientHandler> clientHandlers = new ArrayList<ClientHandler>();
+    public int maxPlayers = 1;
+
+    public Game game = null;
 
     //useful to convert json to string and viceversa
     private Gson gson = new Gson();
@@ -51,7 +55,7 @@ public class Server
             try {
                 Socket clientSocket = server.accept();
 
-                if(clientHandlers.size() < 4) {
+                if(clientHandlers.size() < maxPlayers) {
                     System.out.println("New client connected: " + clientSocket.getInetAddress().getHostName());
 
                     // Create client handler and start thread
@@ -105,7 +109,8 @@ public class Server
     public ArrayList<String> getAllUsernames(){
         ArrayList<String> list = new ArrayList<>();
         for(ClientHandler clientHandler : clientHandlers) {
-            list.add(clientHandler.getUserName());
+            if(clientHandler.getUserName() != null)
+                list.add(clientHandler.getUserName());
         }
         return list;
     }
@@ -123,9 +128,11 @@ public class Server
         clientHandlers.remove(clientHandler);
     }
 
+
     public static void main(String args[])
     {
         Server server = new Server(54321);
         server.start();
     }
+
 }

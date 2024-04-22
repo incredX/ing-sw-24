@@ -1,6 +1,7 @@
 package IS24_LB11.network.events;
 
 import IS24_LB11.network.ClientHandler;
+import IS24_LB11.network.phases.GameSetupPhase;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
@@ -32,12 +33,14 @@ public class ServerEventHandler {
             case "heartbeat":
                 handleHeartBeatEvent(event);
                 break;
+            case "numofplayers":
+                handleNumOfPlayers(event);
+                break;
             default:
                 JsonObject error = new JsonObject();
                 error.addProperty("error", "Unknown event");
-                clientHandler.sendMessage(error.toString());
+                clientHandler.sendMessage(error.getAsString());
                 break;
-
         }
     }
 
@@ -49,28 +52,60 @@ public class ServerEventHandler {
         JsonObject response = new JsonObject();
 
         // checks Syntax of json event and returns message
-        String messageEventSyntax = hasPropertiesInData(event, "username");
+        String messageEventSyntax = hasProperties(event, "username");
 
-        if(messageEventSyntax.equals("OK"))
-
-            username = event.getAsJsonObject("data").get("username").getAsString();
-        else {
-            response.addProperty("error", messageEventSyntax);
-            clientHandler.sendMessage(response.toString());
+        if(clientHandler.getUserName() != null){
+            response.addProperty("error", "You already logged in");
             return;
         }
 
+        if(!messageEventSyntax.equals("OK")) {
+            response.addProperty("error", messageEventSyntax);
+            clientHandler.sendMessage(response.getAsString());
+            return;
+        }
         if(clientHandler.getAllUsernames().contains(username)) {
             response.addProperty("error", "Username is already in use");
-            clientHandler.sendMessage(response.toString());
+            clientHandler.sendMessage(response.getAsString());
             return;
         }
+
+        username = event.get("username").getAsString();
 
         clientHandler.setUserName(username);
 
-        response.addProperty("value", "Welcome " + username);
+        // tell client the name they chose
+        response.addProperty("type", "setUsername");
+        response.addProperty("username", username);
         clientHandler.sendMessage(response.toString());
-        return;
+
+        // send welcome message to client
+        response = new JsonObject();
+        response.addProperty("type", "notification");
+        response.addProperty("message", "Welcome " + username + "!");
+        clientHandler.sendMessage(response.toString());
+
+        // notify first client to set max number of players
+        if(clientHandler.getAllUsernames().size() == 1) {
+            response = new JsonObject();
+            response.addProperty("type", "notification");
+            response.addProperty("message", "Please set max number of players");
+            clientHandler.sendMessage(response.toString());
+        }
+
+        // check if this is the last player, so the game can start
+        if(clientHandler.getAllUsernames().size() == clientHandler.getMaxPlayers()) {
+            response = new JsonObject();
+            response.addProperty("type", "notification");
+            response.addProperty("message", "Last player logged in successfully! GAME IS STARTING NOW");
+
+            clientHandler.broadcast(response.toString());
+            clientHandler.sendMessage(response.toString());
+
+            // start game setup game
+            GameSetupPhase.startPhase(clientHandler.getGame(), clientHandler.getMaxPlayers());
+
+        }
     }
 
     private static void handleHeartBeatEvent(JsonObject event) {
@@ -81,18 +116,28 @@ public class ServerEventHandler {
     private static void handleMessageEvent(JsonObject event) {
 
         // checks Syntax of json event and returns message
-        String messageEventSyntax = hasPropertiesInData(event, "message", "to", "from");
+        String messageEventSyntax = hasProperties(event, "message", "to", "from");
+
+        System.out.println(event.toString());
 
         if(messageEventSyntax.equals("OK")) {
-
-            JsonObject data = event.getAsJsonObject("data");
-            if(data.get("to").equals("")){
+            if(event.get("to").getAsString().equals("")){
                 clientHandler.broadcast(event.toString());
             }
             else {
-                ClientHandler destinationClientHandler = clientHandler.getClientHandlerWithUsername(data.get("to").toString());
+                ClientHandler destinationClientHandler = clientHandler.getClientHandlerWithUsername(event.get("to").getAsString());
+
                 if(destinationClientHandler != null) {
-                    clientHandler.sendMessage(event.toString());
+
+                    if(destinationClientHandler.getUserName().equals(clientHandler.getUserName())){
+                        JsonObject response = new JsonObject();
+                        response.addProperty("error", "If you want to send a message to yourself try saying it out loudly :)");
+                        clientHandler.sendMessage(response.toString());
+                    }
+
+                    else {
+                        destinationClientHandler.sendMessage(event.toString());
+                    }
                 }
                 else {
                     JsonObject response = new JsonObject();
@@ -101,6 +146,11 @@ public class ServerEventHandler {
                 }
             }
         }
+        else {
+            JsonObject response = new JsonObject();
+            response.addProperty("error", messageEventSyntax);
+            clientHandler.sendMessage(response.toString());
+        }
     }
 
 
@@ -108,27 +158,36 @@ public class ServerEventHandler {
     private static void handleQuitEvent(JsonObject event) {
         JsonObject response = new JsonObject();
         response.addProperty("type", "notification");
-        JsonObject data = new JsonObject();
-        data.addProperty("message", "Player " + clientHandler.getUserName() + " left the game");
-        response.addProperty("data", data.toString());
+        response.addProperty("message", "Player " + clientHandler.getUserName() + " left the game");
 
         clientHandler.broadcast(response.toString());
 
-        clientHandler.setConnectionClosed(true);
-
+        clientHandler.exit();
     }
 
-    private static String hasPropertiesInData(JsonObject event, String... properties) {
+    private static void handleNumOfPlayers(JsonObject event) {
+        JsonObject response = new JsonObject();
+        String hasProps = hasProperties(event, "numOfPlayers");
 
-        // Check if data object is null
-        if (event == null || !event.has("data")) {
-            return "Wrong request, property 'data' missing";
+        if(hasProps.equals("OK")) {
+            if(event.get("numOfPlayers").getAsInt() >= 2 && event.get("numOfPlayers").getAsInt() <= 4) {
+                clientHandler.setMaxPlayers(event.get("numOfPlayers").getAsInt());
+                response.addProperty("type", "notification");
+                response.addProperty("message", "Max number of players haas been set to " + event.get("numOfPlayers").getAsInt());
+            }
+            else {
+                response.addProperty("error", "Number of players has to be greater than 2 and lower than 4");
+            }
         }
-        JsonObject data = event.getAsJsonObject("data");
+        else{
+            response.addProperty("error", hasProps);
+        }
+    }
 
-        // Check if data object has all the specified properties
+    private static String hasProperties(JsonObject event, String... properties) {
+        // Check if event object has all the specified properties
         for (String property : properties) {
-            if (!data.has(property)) {
+            if (!event.has(property)) {
                 return "Wrong request, properties missing";
             }
         }

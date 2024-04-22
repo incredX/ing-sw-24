@@ -2,14 +2,13 @@ package IS24_LB11.game;
 
 import IS24_LB11.game.Result;
 import IS24_LB11.game.components.GoalCard;
-import IS24_LB11.game.components.JsonConvertable;
 import IS24_LB11.game.components.PlayableCard;
 import IS24_LB11.game.components.StarterCard;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class PlayerSetup implements JsonConvertable {
+public class PlayerSetup {
     private final StarterCard starterCard;
     private final GoalCard[] goals;
     private final ArrayList<PlayableCard> hand;
@@ -19,7 +18,7 @@ public class PlayerSetup implements JsonConvertable {
         this.starterCard = starterCard;
         this.goals = goals;
         this.hand = hand;
-        this.chosenGoalIndex = -1;
+        this.chosenGoalIndex = 0;
     }
 
     public boolean selectGoal(GoalCard goalCard) {
@@ -27,24 +26,27 @@ public class PlayerSetup implements JsonConvertable {
             chosenGoalIndex = 0;
             return true;
         }
-        if (goalCard.asString().compareTo(goals[1].asString())==0){
+        if (goalCard.asString().compareTo(goals[1].asString())==0) {
             chosenGoalIndex = 1;
             return true;
         }
         return false;
     }
 
-    public void flipStarterCard() {
+    public void choseGoal(int index) {
+        chosenGoalIndex = index&1;
+    }
+
+    public void flipCard() {
         starterCard.flip();
     }
 
-    public StarterCard getStarterCard() {
+    public StarterCard starterCard() {
         return starterCard;
     }
 
-    public Result<GoalCard> chosenGoal() {
-        if (chosenGoalIndex < 0) return Result.Error("no goal was chosen");
-        return Result.Ok(goals[chosenGoalIndex]);
+    public GoalCard chosenGoal() {
+        return goals[chosenGoalIndex];
     }
 
     public ArrayList<PlayableCard> hand() {
@@ -64,9 +66,5 @@ public class PlayerSetup implements JsonConvertable {
                 ", hand=" + hand.stream().map(x -> x.asString()).reduce("", (x, y) -> x + " " + y) +
                 ", chosenGoalIndex=" + chosenGoalIndex +
                 '}';
-    }
-
-    public int getChosenGoalIndex() {
-        return chosenGoalIndex;
     }
 }

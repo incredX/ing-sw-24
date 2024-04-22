@@ -3,12 +3,12 @@ package IS24_LB11.cli.controller;
 import IS24_LB11.cli.CommandLine;
 import IS24_LB11.cli.Stage;
 import IS24_LB11.cli.event.*;
-import IS24_LB11.cli.popup.PopUpQueue;
+import IS24_LB11.cli.popup.PopUpStack;
 import IS24_LB11.cli.view.ViewHub;
 import IS24_LB11.cli.KeyConsumer;
 import IS24_LB11.cli.listeners.ServerHandler;
-import IS24_LB11.game.Board;
 import IS24_LB11.game.Result;
+import com.google.gson.JsonObject;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.terminal.Terminal;
@@ -23,28 +23,28 @@ public abstract class ClientState {
 
     //private Chat chat;
     private ClientState nextState;
+    protected String username;
     protected final ArrayBlockingQueue<Event> queue;
     protected final PriorityQueue<KeyConsumer> keyConsumers;
-    protected final PopUpQueue popUpQueue;
-    protected final ViewHub hub;
+    protected final PopUpStack popUpStack;
+    protected final ViewHub viewHub;
     protected final CommandLine cmdLine;
     protected ServerHandler serverHandler;
-    protected Board board;
     protected Stage stage;
 
-    public ClientState(Board board, ViewHub hub) throws IOException {
+    public ClientState(ViewHub viewHub) throws IOException {
         this.nextState = null;
         this.queue = new ArrayBlockingQueue<>(QUEUE_CAPACITY);
-        this.popUpQueue = new PopUpQueue(hub, 0);
+        this.popUpStack = new PopUpStack(viewHub, 0);
         this.keyConsumers = new PriorityQueue<>((k1, k2) -> Integer.compare(k1.priority(), k2.priority()));
-        this.hub = hub;
-        this.cmdLine = new CommandLine(hub.getTerminal().getTerminalSize().getColumns());
-        this.stage = hub.getStage();
-        this.board = board;
+        this.viewHub = viewHub;
+        this.cmdLine = new CommandLine(viewHub.getTerminal().getTerminalSize().getColumns());
+        this.stage = viewHub.getStage();
+        viewHub.updateCommandLine(cmdLine);
     }
 
     public ClientState execute() {
-        keyConsumers.add(popUpQueue);
+        keyConsumers.add(popUpStack);
         synchronized (queue) {
             while (true) {
                 try { queue.wait(); }
@@ -68,13 +68,22 @@ public abstract class ClientState {
         };
     }
 
+    protected void quit() {
+        setNextState(null);
+        Thread.currentThread().interrupt();
+    }
+
+    protected abstract void processCommand(String command);
+
+    protected abstract void processServerEvent(ServerEvent event);
+
     protected void processResult(Result<ServerEvent> result) {
         if (result.isError()) {
             String text;
             text = result.getError();
             if (result.getCause() != null)
-                text += "\ncause:"+result.getCause();
-            popUpQueue.addUrgentPopUp("ERROR", text);
+                text += " : "+result.getCause();
+            popUpStack.addUrgentPopUp("ERROR", text);
             return;
         }
         processServerEvent(result.get());
@@ -82,14 +91,59 @@ public abstract class ClientState {
 
     protected void processResize(TerminalSize size) {
         cmdLine.setWidth(size.getColumns());
-        hub.resize(size, cmdLine);
+        viewHub.resize(size, cmdLine);
     }
 
-    protected abstract void processKeyStroke(KeyStroke keyStroke);
+    protected void processKeyStroke(KeyStroke keyStroke) {
+        for (KeyConsumer listener: keyConsumers) {
+            // if a listener use the keyStroke then no one with less priority will
+            if (listener.consumeKeyStroke(keyStroke)) return;
+        }
+        switch (keyStroke.getKeyType()) {
+            case Character:
+                cmdLine.insertChar(keyStroke.getCharacter());
+                break;
+            case Backspace:
+                cmdLine.deleteChar();
+                break;
+            case Enter:
+                tryQueueEvent(new CommandEvent(cmdLine.getFullLine()));
+                cmdLine.clearLine();
+                break;
+            case ArrowUp:
+                break;
+            case ArrowDown:
+                break;
+            case ArrowLeft:
+                cmdLine.moveCursor(-1);
+                break;
+            case ArrowRight:
+                cmdLine.moveCursor(1);
+                break;
+            case Escape:
+                quit();
+            default:
+                break;
+        }
+        viewHub.updateCommandLine(cmdLine);
+    }
 
-    protected abstract void processCommand(String command);
+    protected void processCommandSendto(String argument) {
+        String[] tokens = argument.split(" ", 2);
+        if (tokens.length == 2) {
+            String[] fields = new String[] {"from", "to", "message"};
+            String[] values = new String[] {username, tokens[0], tokens[1]};
+            sendToServer("message", fields, values);
+        } else {
+            popUpStack.addUrgentPopUp("ERROR", "syntax error in given commmand");
+        }
+    }
 
-    protected abstract void processServerEvent(ServerEvent event);
+    protected void processCommandSendtoall(String message) {
+        String[] fields = new String[] {"from", "to", "message"};
+        String[] values = new String[] {username, "", message};
+        sendToServer("message", fields, values);
+    }
 
     public void queueEvent(Event event) throws InterruptedException {
         synchronized (queue) {
@@ -104,6 +158,37 @@ public abstract class ClientState {
         }
     }
 
+    protected void sendToServer(String type, String field, String value) {
+        if (serverHandler == null) return;
+        JsonObject object = new JsonObject();
+        object.addProperty("type", type);
+        object.addProperty(field, value);
+        serverHandler.write(object);
+    }
+
+    protected void sendToServer(String type, String field, JsonObject value) {
+        if (serverHandler == null) return;
+        JsonObject object = new JsonObject();
+        object.addProperty("type", type);
+        object.add(field, value);
+        serverHandler.write(object);
+    }
+
+    protected void sendToServer(String type) {
+        if (serverHandler == null) return;
+        JsonObject object = new JsonObject();
+        object.addProperty("type", type);
+        serverHandler.write(object);
+    }
+
+    protected void sendToServer(String type, String[] dataFields, String[] values) {
+        JsonObject object = new JsonObject();
+        object.addProperty("type", type);
+        for (int i = 0; i < Integer.min(dataFields.length, values.length); i++)
+            object.addProperty(dataFields[i], values[i]);
+        serverHandler.write(object);
+    }
+
     protected void setNextState(ClientState nextState) {
         this.nextState = nextState;
     }
@@ -112,11 +197,7 @@ public abstract class ClientState {
         this.serverHandler = serverHandler;
     }
 
-    public Board getBoard() {
-        return board;
-    }
-
     public Terminal getTerminal() {
-        return hub.getTerminal();
+        return viewHub.getTerminal();
     }
 }

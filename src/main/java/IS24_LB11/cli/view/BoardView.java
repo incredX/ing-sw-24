@@ -37,7 +37,6 @@ public class BoardView extends Stage {
         drawGrid();
         drawCards();
         drawPointer();
-        drawCommandLine();
     }
 
     @Override
@@ -80,9 +79,9 @@ public class BoardView extends Stage {
     private void drawCards() {
         for (PlayableCardView cardView : cardviews) {
             TerminalSize size = cardView.getSize();
-            TerminalPosition terminalPosition = convertPosition(cardView.getPosition());
+            TerminalPosition terminalPosition = convertPosition(cardView.getBoardPosition());
             terminalPosition = terminalPosition.withRelative(-3, -1);
-            cardView.setTerminalPosition(terminalPosition);
+            cardView.setPosition(terminalPosition);
             draw(cardView);
             buildRelativeArea(size.withRelativeRows(1), terminalPosition.max(new TerminalPosition(0,0)));
         }
@@ -133,7 +132,7 @@ public class BoardView extends Stage {
     public void loadCardViews() {
         board.getPlacedCards().stream().skip(cardviews.size()).forEach(placedCard -> {
             cardviews.add(CardViewFactory.newPlayableCardView(placedCard.card()));
-            cardviews.getLast().setPosition(placedCard.position());
+            cardviews.getLast().setBoardPosition(placedCard.position());
         });
     }
 
