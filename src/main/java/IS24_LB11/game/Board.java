@@ -32,8 +32,8 @@ public class Board implements JsonConvertable {
     public void start(StarterCard starterCard) {
         Position start = new Position(0, 0);
         placedCards.add(new PlacedCard(starterCard, start));
-        for (Suit suit: Suit.values()) symbolCounter.put(suit, 0);
-        for (Item item: Item.values()) symbolCounter.put(item, 0);
+        for (Suit suit : Suit.values()) symbolCounter.put(suit, 0);
+        for (Item item : Item.values()) symbolCounter.put(item, 0);
         updateCounters(start);
         updateSpots(start);
     }
@@ -42,13 +42,13 @@ public class Board implements JsonConvertable {
      * place the specified card in the given position, if able.
      * To be placed, the card's position must belong to the available spots.
      *
-     * @param card <code>PlayableCard</code> to be placed
+     * @param card     <code>PlayableCard</code> to be placed
      * @param position where the card is to be placed
      * @return true if the card has been placed
      */
     public boolean placeCard(PlayableCard card, Position position) throws SyntaxException {
         if (!spotAvailable(position)) return false;
-        if (card.asString().charAt(0)=='G' && !placeGoldCardCheck(card) && card.asString().charAt(6)=='B') return false;
+        if (card.asString().charAt(0) == 'G' && !placeGoldCardCheck(card) && !card.isFaceDown()) return false;
         placedCards.add(new PlacedCard(card, position));
         updateCounters(position);
         updateSpots(position);
@@ -57,32 +57,32 @@ public class Board implements JsonConvertable {
 
     public boolean placeGoldCardCheck(PlayableCard card) throws SyntaxException {
         //creating hasmap to find gold card needed symbols
-        HashMap<Symbol, Integer> symbolCounterGoldenCard= new HashMap<>();
+        HashMap<Symbol, Integer> symbolCounterGoldenCard = new HashMap<>();
         String cardString = card.asString();
         for (int i = 9; i < 14; i++) {
-            Symbol symbol =Symbol.fromChar(cardString.charAt(i));
+            Symbol symbol = Symbol.fromChar(cardString.charAt(i));
             if (symbolCounterGoldenCard.containsKey(symbol))
-                symbolCounterGoldenCard.put(symbol,symbolCounterGoldenCard.get(symbol)+1);
+                symbolCounterGoldenCard.put(symbol, symbolCounterGoldenCard.get(symbol) + 1);
             else
-                symbolCounterGoldenCard.put(symbol,1);
+                symbolCounterGoldenCard.put(symbol, 1);
         }
         //Verifying if needed symbols are present
-        for (Symbol symbol:symbolCounterGoldenCard.keySet()){
+        for (Symbol symbol : symbolCounterGoldenCard.keySet()) {
             if (!symbolCounter.containsKey(symbol))
                 return false;
-            else
-                if (symbolCounter.get(symbol)<symbolCounterGoldenCard.get(symbol))
-                    return false;
+            else if (symbolCounter.get(symbol) < symbolCounterGoldenCard.get(symbol))
+                return false;
 
         }
         return true;
     }
+
     private void updateSpots(Position position) {
         availableSpots.removeIf(spot -> spot.equals(position));
         getPlayableCard(position).ifPresent(card ->
                 Direction.forEachDirection(corner -> {
                     Position diagonal = position.withRelative(corner.relativePosition());
-                    if (card.hasCorner(corner) && !(spotAvailable(diagonal) || spotTaken(diagonal))){
+                    if (card.hasCorner(corner) && !(spotAvailable(diagonal) || spotTaken(diagonal))) {
                         availableSpots.add(diagonal);
                     }
                 })
@@ -97,7 +97,7 @@ public class Board implements JsonConvertable {
             getPlayableCard(cornerPosition).ifPresent(card -> {
                 if (!card.isFaceDown() && card.hasCorner(corner.opposite())) {
                     Symbol symbol = card.getCorner(corner.opposite());
-                    symbolCounter.computeIfPresent(symbol, (s, count) -> count-1);
+                    symbolCounter.computeIfPresent(symbol, (s, count) -> count - 1);
                 }
             });
         });
@@ -107,7 +107,7 @@ public class Board implements JsonConvertable {
         ArrayList<Symbol> symbols = goal.getSymbols();
         Position[] steps = goal.getPatternSteps();
         Integer patternsFound = 0;
-        for(PlacedCard placedCard: placedCards.stream().skip(1).toList()) {
+        for (PlacedCard placedCard : placedCards.stream().skip(1).toList()) {
             Position position = placedCard.position();
             int matchedSteps = 1, counter = 1;
             if (placedCard.isVisited() || placedCard.card().getSuit() != symbols.getFirst()) continue;
@@ -127,10 +127,47 @@ public class Board implements JsonConvertable {
             }
         }
         if (patternsFound > 0) {
-            for (PlacedCard placedCard: placedCards.stream().skip(1).toList())
+            for (PlacedCard placedCard : placedCards.stream().skip(1).toList())
                 getPlacedCard(placedCard.position()).ifPresent(card -> card.setVisited(false));
         }
-        return  patternsFound * (goal.getPoints());
+        return patternsFound * (goal.getPoints());
+    }
+
+    public int calculateScoreOnLastPlacedCard() {
+        PlayableCard playableCard = placedCards.getLast().card();
+        int score = Integer.valueOf(playableCard.asString().charAt(7));
+        HashMap<Symbol, Integer> symbolCounter = getSymbolCounter();
+        if (playableCard.isFaceDown()) return 0;
+        switch (playableCard.asString().charAt(0)) {
+            case 'N':
+                return score;
+            case 'G':
+                switch (playableCard.asString().charAt(8)) {
+                    case 'A':
+                        return symbolCounter.get(Suit.ANIMAL);
+                    case 'I':
+                        return symbolCounter.get(Suit.INSECT);
+                    case 'F':
+                        return symbolCounter.get(Suit.MUSHROOM);
+                    case 'P':
+                        return symbolCounter.get(Suit.PLANT);
+                    case 'Q':
+                        return symbolCounter.get(Item.QUILL);
+                    case 'K':
+                        return symbolCounter.get(Item.INKWELL);
+                    case 'M':
+                        return symbolCounter.get(Item.MANUSCRIPT);
+                    case '_':
+                        return score;
+                    case 'E':
+                        Position positionLastCard = placedCards.getLast().position();
+                        return (int) (score * placedCards.stream().filter(card -> Math.abs(card.position().getY() - positionLastCard.getY())==1 || Math.abs(card.position().getX() - positionLastCard.getX())==1).count());
+                    default:
+                        return 0;
+                }
+            default:
+                return 0;
+        }
     }
 
     public boolean spotTaken(Position position) {
