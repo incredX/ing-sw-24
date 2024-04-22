@@ -34,12 +34,16 @@ public class GameTest {
         for (int i = 0; i < 4; i++)
             goalCardsChoosen.add(game.getPlayers().get(i).getSetup().getGoals()[i % 2]);
         ArrayList<StarterCard> starterCardsSideChoosen = new ArrayList<>();
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < 4; i++) {
+            if (i % 2 == 0)
+                game.getPlayers().get(i).getSetup().flipStarterCard();
             starterCardsSideChoosen.add(game.getPlayers().get(i).getSetup().getStarterCard());
+        }
+        for (Player player: game.getPlayers())
+            System.out.println(player.getSetup());
         game.chooseGoalPhase(goalCardsChoosen,starterCardsSideChoosen);
         for (Player player: game.getPlayers())
             System.out.println(player);
-
     }
 
     @Test
