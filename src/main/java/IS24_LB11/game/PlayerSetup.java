@@ -5,6 +5,7 @@ import IS24_LB11.game.components.GoalCard;
 import IS24_LB11.game.components.JsonConvertable;
 import IS24_LB11.game.components.PlayableCard;
 import IS24_LB11.game.components.StarterCard;
+import IS24_LB11.game.utils.Color;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,12 +15,14 @@ public class PlayerSetup implements JsonConvertable {
     private final GoalCard[] goals;
     private final ArrayList<PlayableCard> hand;
     private int chosenGoalIndex;
+    private Color color;
 
-    public PlayerSetup(StarterCard starterCard, GoalCard[] goals, ArrayList<PlayableCard> hand) {
+    public PlayerSetup(StarterCard starterCard, GoalCard[] goals, ArrayList<PlayableCard> hand, Color color) {
         this.starterCard = starterCard;
         this.goals = goals;
         this.hand = hand;
         this.chosenGoalIndex = -1;
+        this.color=color;
     }
 
     public boolean selectGoal(GoalCard goalCard) {
@@ -69,4 +72,6 @@ public class PlayerSetup implements JsonConvertable {
     public int getChosenGoalIndex() {
         return chosenGoalIndex;
     }
+
+    public Color getColor(){return color;}
 }

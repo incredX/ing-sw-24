@@ -21,9 +21,9 @@ public class Player implements JsonConvertable {
     private GoalCard personalGoal;
     private int score;
 
-    public Player(String name, Color color, PlayerSetup setup) {
+    public Player(String name, PlayerSetup setup) {
         this.name = name;
-        this.color = color;
+        this.color = setup.getColor();
         this.board = new Board();
         this.setup = setup;
         this.hand = setup.hand();

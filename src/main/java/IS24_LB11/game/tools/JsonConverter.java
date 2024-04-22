@@ -105,6 +105,7 @@ public class JsonConverter {
         String str = "\"PlayerSetup\":{";
         str = str + "\"StarterCard\":" + objectToJSON(playerSetup.getStarterCard()) + ",";
         str = str + "\"Goals\":[" + objectToJSON(playerSetup.getGoals()[0]) + "," + objectToJSON(playerSetup.getGoals()[1]) + "],";
+        str = str + "\"Color\":\"" + playerSetup.getColor() + "\",";
         str = str + "\"Hand\":[";
         for (PlayableCard playableCard : playerSetup.hand())
             str = str + objectToJSON(playableCard) + ",";
@@ -199,7 +200,7 @@ public class JsonConverter {
         System.out.println("{" + stringInput.substring(stringInput.indexOf("\"Board"),stringInput.length()-2));
         Board board = (Board) JSONToObject("{" + stringInput.substring(stringInput.indexOf("\"Board"),stringInput.length()-1));
         System.out.println(objectToJSON(board));
-        Player playerConverted = new Player(name,color,playerSetup);
+        Player playerConverted = new Player(name,playerSetup);
         playerConverted.applySetup();
         playerConverted.setBoard(board);
         return playerConverted;
@@ -215,6 +216,8 @@ public class JsonConverter {
             goals[i] = ((GoalCard) JSONToObject(auxString.substring(auxString.indexOf("{"), auxString.indexOf("}"))));
             auxString = (i != 1) ? auxString.substring(auxString.indexOf("}") + 2) : auxString;
         }
+        auxString = stringInput.substring(stringInput.indexOf("Color") + 8);
+        Color color = Color.fromChar(auxString.charAt(0));
         auxString = stringInput.substring(stringInput.indexOf("Hand") + 7);
         auxString = auxString.substring(0, auxString.indexOf("]"));
         ArrayList<PlayableCard> hand = new ArrayList<>();
@@ -224,7 +227,7 @@ public class JsonConverter {
         }
         auxString = stringInput.substring(stringInput.indexOf("chosenGoalIndex") + 18);
         int chosenGoalIndex = Integer.valueOf(auxString.substring(0, auxString.indexOf("\"")));
-        PlayerSetup playerSetupConverted = new PlayerSetup(starterCard,goals,hand);
+        PlayerSetup playerSetupConverted = new PlayerSetup(starterCard,goals,hand,color);
         playerSetupConverted.selectGoal(goals[chosenGoalIndex]);
         return playerSetupConverted;
     }
