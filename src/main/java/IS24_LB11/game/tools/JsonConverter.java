@@ -205,7 +205,7 @@ public class JsonConverter {
         return playerConverted;
     }
 
-    private JsonConvertable JSONToSetupPlayer(String stringInput) throws JsonException, SyntaxException {
+    public PlayerSetup JSONToSetupPlayer(String stringInput) throws JsonException, SyntaxException {
         String auxString = stringInput.substring(stringInput.indexOf("StarterCard") + 13);
         StarterCard starterCard = (StarterCard) JSONToCard(auxString.substring(0, auxString.indexOf(",")));
         auxString = stringInput.substring(stringInput.indexOf("Goals") + 8);

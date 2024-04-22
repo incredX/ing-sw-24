@@ -4,6 +4,7 @@ import IS24_LB11.cli.CommandLine;
 import IS24_LB11.cli.Stage;
 import IS24_LB11.cli.event.*;
 import IS24_LB11.cli.popup.PopUpStack;
+import IS24_LB11.cli.popup.Priority;
 import IS24_LB11.cli.view.ViewHub;
 import IS24_LB11.cli.KeyConsumer;
 import IS24_LB11.cli.listeners.ServerHandler;
@@ -73,9 +74,54 @@ public abstract class ClientState {
         Thread.currentThread().interrupt();
     }
 
+    protected abstract void processServerEvent(ServerEvent event);
+
     protected abstract void processCommand(String command);
 
-    protected abstract void processServerEvent(ServerEvent event);
+    protected boolean processCommonServerEvent(ServerEvent serverEvent) {
+        switch (serverEvent) {
+            case ServerNotificationEvent notificationEvent -> {
+                popUpStack.addPopUp(Priority.LOW, "from server", notificationEvent.message());
+            }
+            case ServerMessageEvent messageEvent -> {
+                String text;
+                if (messageEvent.to().isEmpty())
+                    text = String.format("%s @ all : %s", messageEvent.from(), messageEvent.message());
+                else
+                    text = String.format("%s : %s", messageEvent.from(), messageEvent.message());
+                popUpStack.addPopUp(Priority.MEDIUM, text);
+            }
+            case ServerHeartBeatEvent heartBeatEvent -> {
+                sendToServer("heartbeat");
+            }
+            default -> {
+                return false; //event not processed
+            }
+        }
+        return true; //event processed
+    }
+
+    protected boolean processCommonCommand(String command) {
+        String[] tokens = command.split(" ", 2);
+        if (tokens.length == 0) return true;
+        switch (tokens[0].toUpperCase()) {
+            case "QUIT" -> {
+                quit();
+                return true;
+            }
+            case "SENDTO", "@" -> {
+                if (tokens.length == 2) processCommandSendto(tokens[1]);
+                else popUpStack.addUrgentPopUp("ERROR", "missing argument");
+                return true;
+            }
+            case "SENDTOALL", "@ALL" -> {
+                if (tokens.length == 2) processCommandSendtoall(tokens[1]);
+                else popUpStack.addUrgentPopUp("ERROR", "missing argument");
+                return true;
+            }
+        };
+        return false;
+    }
 
     protected void processResult(Result<ServerEvent> result) {
         if (result.isError()) {

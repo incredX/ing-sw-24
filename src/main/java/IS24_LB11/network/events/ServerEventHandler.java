@@ -38,7 +38,7 @@ public class ServerEventHandler {
             default:
                 JsonObject error = new JsonObject();
                 error.addProperty("error", "Unknown event");
-                clientHandler.sendMessage(error.getAsString());
+                clientHandler.sendMessage(error.toString());
                 break;
         }
     }
