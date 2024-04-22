@@ -41,6 +41,8 @@ public class Game {
     private final Deck starterDeck;
     private final ArrayList<Player> players;
 
+    private ArrayList<Player> finalRanking;
+
     public Game(int numPlayers) throws SyntaxException, FileNotFoundException {
         JsonConverter jsonConverter = new JsonConverter();
         this.turn = 0;
@@ -133,6 +135,7 @@ public class Game {
     private String executeFinalTurn(Position position, PlayableCard playableCard) throws JsonException, SyntaxException {
         if (turn==lastTurn) {
             gameEnded=true;
+            finalRanking = finalGamePhase();
             return "GAME ENDED";
         }
         Player player = players.get(turn % players.size());
@@ -190,5 +193,11 @@ public class Game {
 
     public boolean hasGameEnded() {
         return gameEnded;
+    }
+
+    public ArrayList<Player> getFinalRanking(){
+        if (hasGameEnded())
+            return finalRanking;
+        return null;
     }
 }
