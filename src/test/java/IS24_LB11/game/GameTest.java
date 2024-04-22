@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Comparator;
 
 public class GameTest {
     @Test
@@ -120,6 +121,10 @@ public class GameTest {
                 break;
             }
         }
+        ArrayList<Player> ranking = new ArrayList<>();
+        ranking = game.finalGamePhase();
+        for (Player player: ranking)
+            System.out.println(player.name());
     }
 
     @Test
@@ -133,7 +138,12 @@ public class GameTest {
         System.out.println(game.numberCharNotEqualInSamePosition(s1,s2));
         System.out.println(game.numberCharNotEqualInSamePosition(s1,s3));
         System.out.println(game.numberCharNotEqualInSamePosition(s1,s4));
-
+        ArrayList<Integer> ranking = new ArrayList<>();
+        ranking.add(9);
+        ranking.add(3);
+        ranking.add(12);
+        ranking.stream().sorted(Comparator.comparingInt(x -> x));
+        System.out.println(ranking);
     }
 
     @Test
