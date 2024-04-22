@@ -161,7 +161,7 @@ public class Game {
                 }
         }
     }
-    public ArrayList<Player> finalGamePhase() throws SyntaxException {
+    private ArrayList<Player> finalGamePhase() throws SyntaxException {
         ArrayList<Player> ranking = players;
         for (Player player: ranking)
             player.personalGoalScore();
