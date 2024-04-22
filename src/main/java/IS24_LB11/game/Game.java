@@ -166,6 +166,7 @@ public class Game {
         for (Player player: ranking)
             player.personalGoalScore();
         ranking.sort(Comparator.comparingInt(Player::getScore));
+        ranking.reversed();
         return ranking;
     }
     private boolean numberCharNotEqualInSamePosition(String s1, String s2){
