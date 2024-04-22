@@ -62,10 +62,6 @@ public class Player implements JsonConvertable {
         return name;
     }
 
-    public PlayerSetup setup() {
-        return setup;
-    }
-
     public int getScore() {
         return score;
     }
