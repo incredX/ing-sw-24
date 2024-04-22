@@ -17,6 +17,7 @@ public class Server
     private ServerSocket server = null;
     private DataInputStream in	 = null;
     private ArrayList<ClientHandler> clientHandlers = new ArrayList<ClientHandler>();
+    private int maxPlayers = 1;
 
     //useful to convert json to string and viceversa
     private Gson gson = new Gson();
@@ -51,7 +52,7 @@ public class Server
             try {
                 Socket clientSocket = server.accept();
 
-                if(clientHandlers.size() < 4) {
+                if(clientHandlers.size() < maxPlayers) {
                     System.out.println("New client connected: " + clientSocket.getInetAddress().getHostName());
 
                     // Create client handler and start thread
@@ -105,7 +106,8 @@ public class Server
     public ArrayList<String> getAllUsernames(){
         ArrayList<String> list = new ArrayList<>();
         for(ClientHandler clientHandler : clientHandlers) {
-            list.add(clientHandler.getUserName());
+            if(clientHandler.getUserName() != null)
+                list.add(clientHandler.getUserName());
         }
         return list;
     }
@@ -121,6 +123,10 @@ public class Server
 
     public void removeClientHandler(ClientHandler clientHandler){
         clientHandlers.remove(clientHandler);
+    }
+
+    public void setMaxPlayers(int maxPlayers) {
+        this.maxPlayers = maxPlayers;
     }
 
     public static void main(String args[])

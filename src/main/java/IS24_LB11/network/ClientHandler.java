@@ -10,7 +10,7 @@ public class ClientHandler implements Runnable {
     private Socket clientSocket;
     private BufferedReader in;
     private PrintWriter out;
-    private String userName;
+    private String userName = null;
     private Server server;
     private boolean connectionClosed = false;
     private int HEARTBEAT_INTERVAL = 2000;
@@ -62,7 +62,6 @@ public class ClientHandler implements Runnable {
 
             String inputLine;
             while (!connectionClosed && (inputLine = in.readLine()) != null) {
-//                System.out.println("Received from client " + this.userName + ": " + inputLine);
 
                 // Handle the received JSON data
                 ServerEventHandler.handleEvent(this, inputLine);
@@ -81,7 +80,7 @@ public class ClientHandler implements Runnable {
 
     public void broadcast(String message) {
         for (ClientHandler clientHandler : server.getClientHandlers()){
-            if(!this.equals(clientHandler))
+            if(!this.equals(clientHandler) && clientHandler.getUserName() != null)
                 clientHandler.sendMessage(message);
         }
     }
@@ -132,6 +131,10 @@ public class ClientHandler implements Runnable {
         } catch (IOException e) {
 
         }
+    }
+
+    public void setMaxPlayers(int maxPlayers) {
+        server.setMaxPlayers(maxPlayers);
     }
 
 }

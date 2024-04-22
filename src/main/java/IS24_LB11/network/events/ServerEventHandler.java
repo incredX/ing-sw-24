@@ -32,12 +32,14 @@ public class ServerEventHandler {
             case "heartbeat":
                 handleHeartBeatEvent(event);
                 break;
+            case "numofplayers":
+                handleNumOfPlayers(event);
+                break;
             default:
                 JsonObject error = new JsonObject();
                 error.addProperty("error", "Unknown event");
                 clientHandler.sendMessage(error.getAsString());
                 break;
-
         }
     }
 
@@ -51,29 +53,39 @@ public class ServerEventHandler {
         // checks Syntax of json event and returns message
         String messageEventSyntax = hasProperties(event, "username");
 
-        if(messageEventSyntax.equals("OK"))
-            username = event.get("username").getAsString();
-        else {
+        if(!messageEventSyntax.equals("OK")) {
             response.addProperty("error", messageEventSyntax);
             clientHandler.sendMessage(response.getAsString());
             return;
         }
-
         if(clientHandler.getAllUsernames().contains(username)) {
             response.addProperty("error", "Username is already in use");
             clientHandler.sendMessage(response.getAsString());
             return;
         }
 
+        username = event.get("username").getAsString();
+
         clientHandler.setUserName(username);
 
-        response.addProperty("message", "Welcome " + username);
-        response.addProperty("username", clientHandler.getUserName());
-
-        response.addProperty("type", "OK");
-
+        // tell client what name they chose
+        response.addProperty("type", "setUsername");
+        response.addProperty("username", username);
         clientHandler.sendMessage(response.toString());
-        return;
+
+        // send welcome message to client
+        response = new JsonObject();
+        response.addProperty("type", "notification");
+        response.addProperty("message", "Welcome " + username + "!");
+        clientHandler.sendMessage(response.toString());
+
+        // notify first client to set max number of players
+        if(clientHandler.getAllUsernames().size() == 1) {
+            response = new JsonObject();
+            response.addProperty("type", "notification");
+            response.addProperty("message", "Please set max number of players");
+            clientHandler.sendMessage(response.toString());
+        }
     }
 
     private static void handleHeartBeatEvent(JsonObject event) {
@@ -89,16 +101,14 @@ public class ServerEventHandler {
         System.out.println(event.toString());
 
         if(messageEventSyntax.equals("OK")) {
-            event.addProperty("from", clientHandler.getUserName());
-
-            System.out.println(event.get("to").getAsString());
-
             if(event.get("to").getAsString().equals("")){
                 clientHandler.broadcast(event.toString());
             }
             else {
                 ClientHandler destinationClientHandler = clientHandler.getClientHandlerWithUsername(event.get("to").getAsString());
+
                 if(destinationClientHandler != null) {
+
                     if(destinationClientHandler.getUserName().equals(clientHandler.getUserName())){
                         JsonObject response = new JsonObject();
                         response.addProperty("error", "If you want to send a message to yourself try saying it out loudly :)");
@@ -134,6 +144,25 @@ public class ServerEventHandler {
 
         clientHandler.setConnectionClosed(true);
 
+    }
+
+    private static void handleNumOfPlayers(JsonObject event) {
+        JsonObject response = new JsonObject();
+        String hasProps = hasProperties(event, "numOfPlayers");
+
+        if(hasProps.equals("OK")) {
+            if(event.get("numOfPlayers").getAsInt() >= 2 && event.get("numOfPlayers").getAsInt() <= 4) {
+                clientHandler.setMaxPlayers(event.get("numOfPlayers").getAsInt());
+                response.addProperty("type", "notification");
+                response.addProperty("message", "Max number of players haas been set to " + event.get("numOfPlayers").getAsInt());
+            }
+            else {
+                response.addProperty("error", "Number of players has to be greater than 2 and lower than 4");
+            }
+        }
+        else{
+            response.addProperty("error", hasProps);
+        }
     }
 
     private static String hasProperties(JsonObject event, String... properties) {
