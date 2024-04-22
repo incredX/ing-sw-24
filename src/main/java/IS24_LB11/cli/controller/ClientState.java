@@ -157,27 +157,34 @@ public abstract class ClientState {
         }
     }
 
-    protected void sendToServer(String type, JsonObject data) {
+    protected void sendToServer(String type, String field, String value) {
         if (serverHandler == null) return;
         JsonObject object = new JsonObject();
         object.addProperty("type", type);
-        object.add("data", data);
+        object.addProperty(field, value);
         serverHandler.write(object);
     }
 
-    protected void sendToServer(String type, String field, String value) {
-        JsonObject data = new JsonObject();
-        data.addProperty(field, value);
-        sendToServer(type, data);
+    protected void sendToServer(String type, String field, JsonObject value) {
+        if (serverHandler == null) return;
+        JsonObject object = new JsonObject();
+        object.addProperty("type", type);
+        object.add(field, value);
+        serverHandler.write(object);
+    }
+
+    protected void sendToServer(String type) {
+        if (serverHandler == null) return;
+        JsonObject object = new JsonObject();
+        object.addProperty("type", type);
+        serverHandler.write(object);
     }
 
     protected void sendToServer(String type, String[] dataFields, String[] values) {
         JsonObject object = new JsonObject();
-        JsonObject data = new JsonObject();
         object.addProperty("type", type);
         for (int i = 0; i < Integer.min(dataFields.length, values.length); i++)
-            data.addProperty(dataFields[i], values[i]);
-        object.add("data", data);
+            object.addProperty(dataFields[i], values[i]);
         serverHandler.write(object);
     }
 

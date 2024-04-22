@@ -33,7 +33,7 @@ public class ServerHandler extends Listener implements Runnable {
         while (true) {
             if (socket.isClosed()) break;
             try {
-                synchronized (parser) { parser.wait(100); }
+                synchronized (parser) { parser.wait(10); }
                 if (parser.hasNext()) {
                     JsonObject event;
                     try {

@@ -18,7 +18,7 @@ public class ServerEventFactory {
         return toResultJson(object).andThen( jsonValue -> {
             JsonObject value = jsonValue.getAsJsonObject();
             return extractString(value, "type").andThen(type -> {
-                return extractJsonObject(value, "data").andThen(data ->  createServerEvent(type, data));
+                return createServerEvent(type, jsonValue);
             });
         });
     }
@@ -45,7 +45,7 @@ public class ServerEventFactory {
         };
     }
 
-    private static Result<JsonElement> toResultJson(JsonObject object) {
+    private static Result<JsonObject> toResultJson(JsonObject object) {
         if (object.has("error")) {
             if (object.has("cause"))
                 return Error(object.get("error").getAsString(), object.get("cause").getAsString());

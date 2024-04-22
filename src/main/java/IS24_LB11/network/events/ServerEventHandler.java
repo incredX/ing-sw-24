@@ -72,7 +72,7 @@ public class ServerEventHandler {
 
         response.addProperty("type", "OK");
 
-        clientHandler.sendMessage(response.getAsString());
+        clientHandler.sendMessage(response.toString());
         return;
     }
 
@@ -86,7 +86,7 @@ public class ServerEventHandler {
         // checks Syntax of json event and returns message
         String messageEventSyntax = hasProperties(event, "message", "to", "from");
 
-        System.out.println(event.getAsString());
+        System.out.println(event.toString());
 
         if(messageEventSyntax.equals("OK")) {
             event.addProperty("from", clientHandler.getUserName());
@@ -94,27 +94,27 @@ public class ServerEventHandler {
             System.out.println(event.get("to").getAsString());
 
             if(event.get("to").getAsString().equals("")){
-                clientHandler.broadcast(event.getAsString());
+                clientHandler.broadcast(event.toString());
             }
             else {
                 ClientHandler destinationClientHandler = clientHandler.getClientHandlerWithUsername(event.get("to").getAsString());
                 if(destinationClientHandler != null) {
-                    destinationClientHandler.sendMessage(event.getAsString());
+                    destinationClientHandler.sendMessage(event.toString());
                 } else if (destinationClientHandler.equals(clientHandler)) {
                     JsonObject response = new JsonObject();
                     response.addProperty("error", "If you want to send a message to yourself try saying it out loudly :)");
-                    clientHandler.sendMessage(response.getAsString());
+                    clientHandler.sendMessage(response.toString());
                 } else {
                     JsonObject response = new JsonObject();
                     response.addProperty("error", "Unknown username");
-                    clientHandler.sendMessage(response.getAsString());
+                    clientHandler.sendMessage(response.toString());
                 }
             }
         }
         else {
             JsonObject response = new JsonObject();
             response.addProperty("error", messageEventSyntax);
-            clientHandler.sendMessage(response.getAsString());
+            clientHandler.sendMessage(response.toString());
         }
     }
 
@@ -125,7 +125,7 @@ public class ServerEventHandler {
         response.addProperty("type", "notification");
         response.addProperty("message", "Player " + clientHandler.getUserName() + " left the game");
 
-        clientHandler.broadcast(response.getAsString());
+        clientHandler.broadcast(response.toString());
 
         clientHandler.setConnectionClosed(true);
 

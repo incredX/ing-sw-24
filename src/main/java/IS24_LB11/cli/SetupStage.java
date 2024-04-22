@@ -67,6 +67,7 @@ public class SetupStage extends Stage {
 
     public void buildStarterCard(StarterCard starterCard) {
         starterCardView = new StarterCardView(starterCard);
+        starterCardView.setPosition(1,3);
         drawStarteCard();
     }
 

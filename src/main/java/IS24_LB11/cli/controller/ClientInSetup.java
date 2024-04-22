@@ -46,9 +46,7 @@ public class ClientInSetup extends ClientState {
                 popUpStack.addPopUp(Priority.LOW, "received updated players' state");
             }
             case ServerHeartBeatEvent heartBeatEvent -> {
-                JsonObject response = new JsonObject();
-                response.addProperty("type", "heartbeat");
-                serverHandler.write(response);
+                sendToServer("heartbeat");
             }
             case ServerPlayerSetupEvent playerSetupEvent -> {
                 processResult(Result.Error("Invalid server event", "can't accept a new player setup"));
@@ -81,6 +79,8 @@ public class ClientInSetup extends ClientState {
                 }
             }
             case "READY" -> {
+//                sendToServer("setup", new String[]{"startercard","goal"},
+//                        new String[]{setup.starterCard().asString(), setup.chosenGoal()});
                 //switch to CLientInGame & inform the server
             }
             default -> popUpStack.addUrgentPopUp("ERROR", tokens[0]+" is not a valid command");
@@ -94,6 +94,9 @@ public class ClientInSetup extends ClientState {
                 setChosenGoal(0);
             } else if (keyStroke.getKeyType() == KeyType.ArrowDown) {
                 setChosenGoal(1);
+            } else if (keyStroke.getKeyType() == KeyType.Character && keyStroke.getCharacter() == 'f') {
+                setup.starterCard().flip();
+                stage.buildStarterCard(setup.starterCard());
             }
         } else {
             super.processKeyStroke(keyStroke);

@@ -48,9 +48,7 @@ public class ClientInLobby extends ClientState {
                 }
             }
             case ServerHeartBeatEvent heartBeatEvent -> {
-                JsonObject response = new JsonObject();
-                response.addProperty("type", "heartbeat");
-                serverHandler.write(response);
+                sendToServer("heartbeat");
             }
             default -> processResult(Result.Error("received unknown server event"));
         }
