@@ -1,7 +1,8 @@
-package IS24_LB11.cli.view;
+package IS24_LB11.cli;
 
-import IS24_LB11.cli.Stage;
 import IS24_LB11.cli.utils.Side;
+import IS24_LB11.cli.view.CardViewFactory;
+import IS24_LB11.cli.view.PlayableCardView;
 import IS24_LB11.game.Board;
 import IS24_LB11.game.utils.Position;
 import com.googlecode.lanterna.TerminalPosition;
@@ -10,7 +11,7 @@ import com.googlecode.lanterna.TextColor;
 
 import java.util.ArrayList;
 
-public class BoardView extends Stage {
+public class BoardStage extends Stage {
     private static final int OFFSET_X = 4;
     private static final int OFFSET_Y = 1;
     private static final int UNIT_X = PlayableCardView.WIDTH-7;
@@ -23,7 +24,7 @@ public class BoardView extends Stage {
     private Side lastVerticalShift;
     private Side lastHorizontalShift;
 
-    public BoardView(TerminalSize terminalSize, Board board) {
+    public BoardStage(TerminalSize terminalSize, Board board) {
         super(terminalSize);
         this.board = board;
         this.cardviews = new ArrayList<>();
@@ -37,7 +38,6 @@ public class BoardView extends Stage {
         drawGrid();
         drawCards();
         drawPointer();
-        drawCommandLine();
     }
 
     @Override
@@ -80,9 +80,9 @@ public class BoardView extends Stage {
     private void drawCards() {
         for (PlayableCardView cardView : cardviews) {
             TerminalSize size = cardView.getSize();
-            TerminalPosition terminalPosition = convertPosition(cardView.getPosition());
+            TerminalPosition terminalPosition = convertPosition(cardView.getBoardPosition());
             terminalPosition = terminalPosition.withRelative(-3, -1);
-            cardView.setTerminalPosition(terminalPosition);
+            cardView.setPosition(terminalPosition);
             draw(cardView);
             buildRelativeArea(size.withRelativeRows(1), terminalPosition.max(new TerminalPosition(0,0)));
         }
@@ -133,7 +133,7 @@ public class BoardView extends Stage {
     public void loadCardViews() {
         board.getPlacedCards().stream().skip(cardviews.size()).forEach(placedCard -> {
             cardviews.add(CardViewFactory.newPlayableCardView(placedCard.card()));
-            cardviews.getLast().setPosition(placedCard.position());
+            cardviews.getLast().setBoardPosition(placedCard.position());
         });
     }
 

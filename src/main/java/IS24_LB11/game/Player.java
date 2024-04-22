@@ -32,7 +32,7 @@ public class Player implements JsonConvertable {
     }
 
     public void applySetup() {
-        this.personalGoal = setup.chosenGoal().get();
+        this.personalGoal = setup.chosenGoal();
         this.board.start(setup.getStarterCard());
     }
 
@@ -49,9 +49,9 @@ public class Player implements JsonConvertable {
     }
     public void personalGoalScore(){
         if (personalGoal.asString().length()==5)
-            incrementScore(board.countSymbols((GoalSymbol) personalGoal));
+            incrementScore(board.countGoalSymbols((GoalSymbol) personalGoal));
         else
-            incrementScore(board.countPatterns((GoalPattern) personalGoal));
+            incrementScore(board.countGoalPatterns((GoalPattern) personalGoal));
     }
     public void incrementScoreLastCardPlaced() {
         score += board.calculateScoreOnLastPlacedCard();

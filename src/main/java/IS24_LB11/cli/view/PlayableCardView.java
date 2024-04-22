@@ -131,11 +131,11 @@ public class PlayableCardView extends CliBox {
         drawCell(pos.withRelative(2, 0), borderStyle.getVLine());
     }
 
-    public void setPosition(Position position) {
+    public void setBoardPosition(Position position) {
         this.position = position;
     }
 
-    public Position getPosition() {
+    public Position getBoardPosition() {
         return position;
     }
 }

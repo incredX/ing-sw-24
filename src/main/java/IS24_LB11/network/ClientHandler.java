@@ -3,6 +3,8 @@ import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
 
+import IS24_LB11.game.Game;
+import IS24_LB11.game.utils.SyntaxException;
 import IS24_LB11.network.events.ServerEventHandler;
 import com.google.gson.*;
 
@@ -10,10 +12,10 @@ public class ClientHandler implements Runnable {
     private Socket clientSocket;
     private BufferedReader in;
     private PrintWriter out;
-    private String userName;
+    private String userName = null;
     private Server server;
     private boolean connectionClosed = false;
-    private int HEARTBEAT_INTERVAL = 2;
+    private int HEARTBEAT_INTERVAL = 2000;
     private long lastHeartbeatTime;
 
     private ArrayList<Thread> allStartedThreads = new ArrayList<>();
@@ -39,21 +41,23 @@ public class ClientHandler implements Runnable {
                             Thread.sleep(HEARTBEAT_INTERVAL);
                             long currentTime = System.currentTimeMillis();
                             if (currentTime - lastHeartbeatTime > HEARTBEAT_INTERVAL * 2) {
+                                System.out.println("Heartbeat timed out for " + userName);
+
+                                JsonObject response = new JsonObject();
+                                response.addProperty("type", "notification");
+                                response.addProperty("message", "Player " + userName + " crashed");
+
+                                broadcast(response.toString());
+
                                 exit();
                                 break;
                             }
-                            JsonObject object = new JsonObject();
                             JsonObject heartbeat = new JsonObject();
                             heartbeat.addProperty("type", "heartbeat");
-                            heartbeat.add("data", new JsonObject());
-                            object.add("value", heartbeat);
-                            System.out.println(object.toString());
-                            out.println(object.toString());
+                            out.println(heartbeat.toString());
 
                         } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
+                            exit();
                         }
                     }
                 }
@@ -61,22 +65,16 @@ public class ClientHandler implements Runnable {
             heartbeatThread.start();
             addToStartedThreads(heartbeatThread);
 
+            // wait for inputs from client
             in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             out = new PrintWriter(clientSocket.getOutputStream(), true);
-
             String inputLine;
             while (!connectionClosed && (inputLine = in.readLine()) != null) {
-                System.out.println("Received from client " + clientSocket.getInetAddress().getHostName() + ": " + inputLine);
-
                 // Handle the received JSON data
                 ServerEventHandler.handleEvent(this, inputLine);
             }
 
-            heartbeatThread.interrupt();
-            in.close();
-            out.close();
-            clientSocket.close();
-            server.removeClientHandler(this);
+            exit();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -89,7 +87,7 @@ public class ClientHandler implements Runnable {
 
     public void broadcast(String message) {
         for (ClientHandler clientHandler : server.getClientHandlers()){
-            if(!this.equals(clientHandler))
+            if(!this.equals(clientHandler) && clientHandler.getUserName() != null)
                 clientHandler.sendMessage(message);
         }
     }
@@ -127,15 +125,30 @@ public class ClientHandler implements Runnable {
         this.lastHeartbeatTime = lastHeartbeatTime;
     }
 
-    private void exit() throws IOException {
-        connectionClosed = true;
-        in.close();
-        out.close();
-        clientSocket.close();
-        for (Thread thread : allStartedThreads){
-            thread.interrupt();
+    public void exit() {
+        try {
+            connectionClosed = true;
+            in.close();
+            out.close();
+            clientSocket.close();
+            for (Thread thread : allStartedThreads){
+                thread.interrupt();
+            }
+            server.removeClientHandler(this);
+        } catch (IOException e) {
+
         }
-        server.removeClientHandler(this);
     }
 
+    public void setMaxPlayers(int maxPlayers) {
+        server.maxPlayers = maxPlayers;
+    }
+
+    public int getMaxPlayers() {
+        return server.maxPlayers;
+    }
+
+    public Game getGame() {
+        return server.game;
+    }
 }

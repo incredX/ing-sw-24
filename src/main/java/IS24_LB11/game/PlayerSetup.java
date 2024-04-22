@@ -38,6 +38,10 @@ public class PlayerSetup implements JsonConvertable {
         return false;
     }
 
+    public void chooseGoal(int index) {
+        chosenGoalIndex = index&1;
+    }
+
     public void flipStarterCard() {
         starterCard.flip();
     }
@@ -46,9 +50,8 @@ public class PlayerSetup implements JsonConvertable {
         return starterCard;
     }
 
-    public Result<GoalCard> chosenGoal() {
-        if (chosenGoalIndex < 0) return Result.Error("no goal was chosen");
-        return Result.Ok(goals[chosenGoalIndex]);
+    public GoalCard chosenGoal() {
+        return goals[chosenGoalIndex];
     }
 
     public ArrayList<PlayableCard> hand() {

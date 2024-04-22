@@ -16,7 +16,7 @@ public class CardViewFactory {
     public static CliBox newGoalCardView(GoalCard card) {
         return switch (card) {
             case GoalPattern goalPattern -> new GoalPatternView(goalPattern);
-            case GoalSymbol goalSymbol -> new GoalSymbolView(goalSymbol);
+            case GoalSymbol goalSymbol -> new GoalView(goalSymbol);
             default -> null;
         };
     }
