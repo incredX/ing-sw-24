@@ -157,7 +157,7 @@ public class Game {
         ranking.sort(Comparator.comparingInt(Player::getScore));
         return ranking;
     }
-    public boolean numberCharNotEqualInSamePosition(String s1, String s2){
+    private boolean numberCharNotEqualInSamePosition(String s1, String s2){
         return s1.regionMatches(0,s2,0,6) && s1.regionMatches(7,s2,7,7);
     }
     //ONLY FOR TESTS

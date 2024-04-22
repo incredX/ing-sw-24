@@ -22,15 +22,16 @@ public class GameTest {
     @Test
     @DisplayName("Simulating game setup")
     public void gameStart() throws SyntaxException, FileNotFoundException, DeckException {
-        JsonConverter jsonConverter = new JsonConverter();
         int playersNumber = 4;
         Game game = new Game(playersNumber);
         //Receiving players name
         ArrayList<String> playerNames = new ArrayList<>(playersNumber);
         for (int i = 0; i < 4; i++)
             playerNames.add("Player " + (i + 1));
+
         game.setupGame(playerNames);
-        //Receiving players Goal
+
+        //Receiving players Goal and StartedCardFace
         ArrayList<GoalCard> goalCardsChoosen = new ArrayList<>();
         for (int i = 0; i < 4; i++)
             goalCardsChoosen.add(game.getPlayers().get(i).getSetup().getGoals()[i % 2]);
@@ -42,7 +43,9 @@ public class GameTest {
         }
         for (Player player: game.getPlayers())
             System.out.println(player.getSetup());
+
         game.chooseGoalPhase(goalCardsChoosen,starterCardsSideChoosen);
+
         for (Player player: game.getPlayers())
             System.out.println(player);
     }
@@ -125,24 +128,5 @@ public class GameTest {
         ranking = game.finalGamePhase();
         for (Player player: ranking)
             System.out.println(player.name());
-    }
-
-    @Test
-    public void stringComparison() throws SyntaxException, FileNotFoundException {
-        Game game = new Game(1);
-        String s1 = "SEPIE_F0I__FPIA";
-        String s2 = "SEPIE_B0I__FPIA";
-        String s3 = "SEPIEAF0I__FPIA";
-        String s4 = "SEPIE_B1I__FPIA";
-
-        System.out.println(game.numberCharNotEqualInSamePosition(s1,s2));
-        System.out.println(game.numberCharNotEqualInSamePosition(s1,s3));
-        System.out.println(game.numberCharNotEqualInSamePosition(s1,s4));
-        ArrayList<Integer> ranking = new ArrayList<>();
-        ranking.add(9);
-        ranking.add(3);
-        ranking.add(12);
-        ranking.stream().sorted(Comparator.comparingInt(x -> x));
-        System.out.println(ranking);
     }
 }
