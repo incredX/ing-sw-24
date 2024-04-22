@@ -35,6 +35,7 @@ public class Board implements JsonConvertable {
         updateSpots(start);
     }
 
+
     /**
      * place the specified card in the given position, if able.
      * To be placed, the card's position must belong to the available spots.
@@ -126,10 +127,6 @@ public class Board implements JsonConvertable {
                 .map(entry -> symbolCounter.get(entry.getKey())/entry.getValue())
                 .min(Integer::compareTo).get();
     }
-
-
-
-
 
     public int calculateScoreOnLastPlacedCard() {
         PlayableCard playableCard = placedCards.getLast().card();

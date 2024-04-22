@@ -1,7 +1,6 @@
 package IS24_LB11.game;
 
-import IS24_LB11.game.components.GoalCard;
-import IS24_LB11.game.components.PlayableCard;
+import IS24_LB11.game.components.*;
 import IS24_LB11.game.tools.JsonConverter;
 import IS24_LB11.game.tools.JsonException;
 import IS24_LB11.game.utils.Color;
@@ -13,10 +12,10 @@ java.awt.* (Abstract Window Toolkit)  allows us to use some intefaces that help 
  */
 import java.util.ArrayList;
 
-public class Player {
+public class Player implements JsonConvertable {
     private final String name;
     private final Color color;
-    private final Board board;
+    private Board board;
     private final PlayerSetup setup;
     private final ArrayList<PlayableCard> hand;
     private GoalCard personalGoal;
@@ -34,7 +33,7 @@ public class Player {
 
     public void applySetup() {
         this.personalGoal = setup.chosenGoal().get();
-        this.board.start(setup.starterCard());
+        this.board.start(setup.getStarterCard());
     }
 
     public boolean placeCard(PlayableCard card, Position position) throws JsonException, SyntaxException {
@@ -48,7 +47,12 @@ public class Player {
             return false;
         }
     }
-
+    public void personalGoalScore(){
+        if (personalGoal.asString().length()==5)
+            incrementScore(board.countGoalSymbols((GoalSymbol) personalGoal));
+        else
+            incrementScore(board.countGoalPatterns((GoalPattern) personalGoal));
+    }
     public void incrementScoreLastCardPlaced() {
         score += board.calculateScoreOnLastPlacedCard();
     }
@@ -59,10 +63,6 @@ public class Player {
 
     public String name() {
         return name;
-    }
-
-    public PlayerSetup setup() {
-        return setup;
     }
 
     public int getScore() {
@@ -106,5 +106,13 @@ public class Player {
         } catch (JsonException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public Color getColor() {
+        return color;
+    }
+
+    public void setBoard(Board board){
+        this.board=board;
     }
 }
