@@ -18,6 +18,8 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Comparator;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 public class GameTest {
     @Test
     @DisplayName("Simulating game setup")
@@ -188,16 +190,16 @@ public class GameTest {
         Board board2 = new Board();
         board2.start(game.getPlayers().getFirst().getSetup().getStarterCard());
         for (int i = 0; i < 5; i++) {
-            board1.placeCard(CardFactory.newPlayableCard("NIIE_IB0"), board1.getAvailableSpots().getFirst());
+            board2.placeCard(CardFactory.newPlayableCard("NIIE_IB0"), board2.getAvailableSpots().getFirst());
         }
         for (int i = 0; i < 5; i++) {
-            board1.placeCard(CardFactory.newPlayableCard("NIIE_AB0"), board1.getAvailableSpots().getFirst());
+            board2.placeCard(CardFactory.newPlayableCard("NIIE_AB0"), board2.getAvailableSpots().getFirst());
         }
         for (int i = 0; i < 5; i++) {
-            board1.placeCard(CardFactory.newPlayableCard("NIIE_FB0"), board1.getAvailableSpots().getFirst());
+            board2.placeCard(CardFactory.newPlayableCard("NIIE_FB0"), board2.getAvailableSpots().getFirst());
         }
         for (int i = 0; i < 5; i++) {
-            board1.placeCard(CardFactory.newPlayableCard("NIIE_PB0"), board1.getAvailableSpots().getFirst());
+            board2.placeCard(CardFactory.newPlayableCard("NIIE_PB0"), board2.getAvailableSpots().getFirst());
         }
         game.getPlayers().getLast().setBoard(board2);
 
@@ -206,22 +208,67 @@ public class GameTest {
                 System.out.println(player);
             for (Player player: game.getPlayers()){
                 if (player.getHand().getFirst().asString().charAt(0)=='G'){
-                    player.getHand().getFirst().flip();
-                    System.out.printf(game.executeTurn(player.name(),player.getBoard().getAvailableSpots().getFirst(),player.getHand().getFirst(),i>=10,1));
+                    System.out.printf(game.executeTurn(player.name(),player.getBoard().getAvailableSpots().getFirst(),player.getHand().getFirst(),i>=0,1));
                 }
                 else
-                    System.out.printf(game.executeTurn(player.name(),player.getBoard().getAvailableSpots().getFirst(), player.getHand().getFirst(),i>=10,1));
+                    System.out.printf(game.executeTurn(player.name(),player.getBoard().getAvailableSpots().getFirst(), player.getHand().getFirst(),i>=0,1));
                 System.out.println(" " + game.getTurn() + ") FinalTurn: " + game.getFinalTurn()+ " " + player.getBoard().getAvailableSpots().toString());
                 System.out.println(i+" "+game.getNormalDeck().isEmpty() +" "+game.getNormalDeck().size() +" "+game.getGoldenDeck().size() +" "+game.getGoldenDeck().isEmpty());
-
             }
             if (game.getFinalTurn()){
                 System.out.println("FINISHED");
                 break;
             }
         }
+        for(Player player: game.getPlayers()){
+            System.out.println(game.executeTurn(player.name(),player.getBoard().getAvailableSpots().getFirst(), player.getHand().getFirst(),true,1));
+            System.out.println(player);
+        }
+
+        System.out.println(game.finalGamePhase());
+        System.out.println(game.getPlayers());
+    }
 
 
+    @Test
+    void invalidExecution() throws SyntaxException, FileNotFoundException, DeckException, JsonException {
+        JsonConverter jsonConverter = new JsonConverter();
+        int playersNumber = 2;
+        Game game = new Game(playersNumber);
+        //Receiving players name
+        ArrayList<String> playerNames = new ArrayList<>(playersNumber);
+        for (int i = 0; i < 2; i++)
+            playerNames.add("Player " + (i + 1));
+        game.setupGame(playerNames);
+        System.out.println(playerNames);
+        //Receiving players Goal
+        ArrayList<GoalCard> goalCardsChoosen = new ArrayList<>();
+        for (int i = 0; i < 2; i++)
+            goalCardsChoosen.add(game.getPlayers().get(i).getSetup().getGoals()[i % 2]);
+        ArrayList<StarterCard> starterCardsSideChoosen = new ArrayList<>();
+        for (int i = 0; i < 2; i++)
+            starterCardsSideChoosen.add(game.getPlayers().get(i).getSetup().getStarterCard());
+        starterCardsSideChoosen.stream().forEach(x->x.flip());
+        game.chooseGoalPhase(goalCardsChoosen,starterCardsSideChoosen);
+
+        Player player = game.getPlayers().getFirst();
+
+        /*assertThrows(DeckException.class, () -> game.executeTurn(player.name(),player.getBoard().getAvailableSpots().getFirst(), player.getHand().getFirst(),true,5));
+        assertThrows(DeckException.class, () -> game.executeTurn(player.name(),player.getBoard().getAvailableSpots().getFirst(), player.getHand().getFirst(),true,7));
+        assertThrows(DeckException.class, () -> game.executeTurn(player.name(),player.getBoard().getAvailableSpots().getFirst(), player.getHand().getFirst(),true,8));*/
+
+        //assertThrows(DeckException.class, () -> game.executeTurn(player.name(),player.getBoard().getAvailableSpots().getFirst(), player.getHand().getFirst(),true,5));
+        //System.out.println(game.executeTurn(player.name(),player.getBoard().getAvailableSpots().getFirst(), player.getHand().getFirst(),true,2));
+        //System.out.println(game.executeTurn(player.name(),player.getBoard().getAvailableSpots().getFirst(), player.getHand().getFirst(),true,8));
+        System.out.println(player);
+        System.out.println(game.executeTurn(player.name(),player.getBoard().getAvailableSpots().getFirst(), player.getHand().getFirst(),true,8));
+        System.out.println(player);
+        System.out.println(game.executeTurn(player.name(),player.getBoard().getAvailableSpots().getFirst(), player.getHand().getFirst(),true,9));
+        System.out.println(player);
+        System.out.println(game.executeTurn(player.name(),player.getBoard().getAvailableSpots().getFirst(), player.getHand().getFirst(),true,7));
+        System.out.println(player);
+        System.out.println(game.executeTurn(player.name(),player.getBoard().getAvailableSpots().getFirst(), player.getHand().getFirst(),true,6));
+        System.out.println(player);
 
 
     }
