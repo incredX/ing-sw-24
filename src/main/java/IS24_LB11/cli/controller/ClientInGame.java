@@ -15,7 +15,7 @@ public class ClientInGame extends ClientState {
 
     public ClientInGame(ViewHub viewHub, PlayerSetup setup) throws IOException {
         super(viewHub);
-        this.player = new Player(username, Color.RED, setup);
+        this.player = new Player(username, setup);
     }
 
     @Override

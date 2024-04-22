@@ -17,7 +17,7 @@ public class SetupStage extends Stage {
     public SetupStage(TerminalSize terminalSize, PlayerSetup setup) {
         super(terminalSize);
         this.chosenGoalIndex = 0;
-        this.starterCardView = new StarterCardView(setup.starterCard());
+        this.starterCardView = new StarterCardView(setup.getStarterCard());
         this.handView = new ArrayList<>(3);
         this.goalViews = new ArrayList<>(2);
         for(PlayableCard card: setup.hand()) switch(card) {

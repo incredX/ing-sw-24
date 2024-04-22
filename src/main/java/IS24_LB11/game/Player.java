@@ -1,7 +1,6 @@
 package IS24_LB11.game;
 
-import IS24_LB11.game.components.GoalCard;
-import IS24_LB11.game.components.PlayableCard;
+import IS24_LB11.game.components.*;
 import IS24_LB11.game.tools.JsonConverter;
 import IS24_LB11.game.tools.JsonException;
 import IS24_LB11.game.utils.Color;
@@ -13,10 +12,10 @@ java.awt.* (Abstract Window Toolkit)  allows us to use some intefaces that help 
  */
 import java.util.ArrayList;
 
-public class Player {
+public class Player implements JsonConvertable {
     private final String name;
     private final Color color;
-    private final Board board;
+    private Board board;
     private final PlayerSetup setup;
     private final ArrayList<PlayableCard> hand;
     private GoalCard personalGoal;
@@ -34,13 +33,28 @@ public class Player {
 
     public void applySetup() {
         this.personalGoal = setup.chosenGoal();
-        this.board.start(setup.starterCard());
+        this.board.start(setup.getStarterCard());
     }
 
     public boolean placeCard(PlayableCard card, Position position) throws JsonException, SyntaxException {
-        if (hand.stream().mapToInt(x->x.asString().compareTo(card.asString())).findFirst()==null)
+        if (hand.stream().filter(x -> x.asString().compareTo(card.asString()) == 0).count() == 0) {
             return false;
-        return board.placeCard(card, position);
+        }
+        if (board.placeCard(card, position)) {
+            hand.removeIf(carhand -> carhand.asString().compareTo(card.asString()) == 0);
+            return true;
+        } else {
+            return false;
+        }
+    }
+    public void personalGoalScore(){
+        if (personalGoal.asString().length()==5)
+            incrementScore(board.countGoalSymbols((GoalSymbol) personalGoal));
+        else
+            incrementScore(board.countGoalPatterns((GoalPattern) personalGoal));
+    }
+    public void incrementScoreLastCardPlaced() {
+        score += board.calculateScoreOnLastPlacedCard();
     }
 
     public void incrementScore(int amount) {
@@ -63,12 +77,20 @@ public class Player {
         return board;
     }
 
-    public GoalCard getPersonalGoal(){
+    public GoalCard getPersonalGoal() {
         return personalGoal;
     }
 
     public PlayerSetup getSetup() {
         return setup;
+    }
+
+    public ArrayList<PlayableCard> getHand() {
+        return hand;
+    }
+
+    public void addCardToHand(PlayableCard playableCard) {
+        hand.add(playableCard);
     }
 
     @Override
@@ -78,14 +100,23 @@ public class Player {
             return "Player{" +
                     "name='" + name + '\'' +
                     ", color=" + color +
+                    ", ACTUALhand=" + hand.stream().map(x -> x.asString()).reduce("", (x, y) -> x + " " + y) +
                     ", board=" + jsonConverter.objectToJSON(board) +
                     ", setup=" + setup +
-                    ", hand=" + hand.stream().map(x -> x.asString()).reduce("",(x,y)->x+" "+y) +
                     ", personalGoal=" + personalGoal.asString() +
                     ", score=" + score +
+                    ", symbols= " + board.getSymbolCounter() +
                     '}';
         } catch (JsonException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public Color getColor() {
+        return color;
+    }
+
+    public void setBoard(Board board){
+        this.board=board;
     }
 }

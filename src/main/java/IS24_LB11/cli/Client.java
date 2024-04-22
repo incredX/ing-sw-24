@@ -10,6 +10,7 @@ import IS24_LB11.cli.view.ViewHub;
 import IS24_LB11.game.Board;
 import IS24_LB11.game.PlayerSetup;
 import IS24_LB11.game.components.*;
+import IS24_LB11.game.utils.Color;
 import IS24_LB11.game.utils.SyntaxException;
 
 import java.io.IOException;
@@ -36,7 +37,8 @@ public class Client {
                 };
                 PlayerSetup setup = new PlayerSetup(new StarterCard("EPIE_F0I__FPIA"),
                         new GoalCard[]{new GoalSymbol("2KK_"), new GoalPattern("3IPPL2")},
-                        new ArrayList<>(List.of(hand)));
+                        new ArrayList<>(List.of(hand)),
+                         Color.RED);
                 state = new ClientInSetup(viewHub, setup);
             } else {
                 state = new ClientInLobby(viewHub);
