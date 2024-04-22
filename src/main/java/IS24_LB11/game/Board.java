@@ -86,7 +86,7 @@ public class Board implements JsonConvertable {
         });
     }
 
-    public int countPatterns(GoalPattern goal) {
+    public int countGoalPatterns(GoalPattern goal) {
         ArrayList<Symbol> symbols = goal.getSymbols();
         Position[] steps = goal.getPatternSteps();
         Integer patternsFound = 0;
@@ -116,7 +116,7 @@ public class Board implements JsonConvertable {
         return patternsFound * (goal.getPoints());
     }
 
-    public int countSymbols(GoalSymbol goal) {
+    public int countGoalSymbols(GoalSymbol goal) {
         HashMap<Symbol, Integer> symbols = new HashMap<>();
         goal.getSymbols().stream().forEach(symbol -> {
             if (!symbols.containsKey(symbol)) symbols.put(symbol, 1);

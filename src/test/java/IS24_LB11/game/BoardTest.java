@@ -133,7 +133,7 @@ public class BoardTest {
         assert board.placeCard(CardFactory.newPlayableCard("NI_EEIF1"), new Position(5,5));
         assert board.placeCard(CardFactory.newPlayableCard("NIPK_IF0"), new Position(6,6));
 
-        assert ((board.countPatterns(goalD0)) == 6);
+        assert ((board.countGoalPatterns(goalD0)) == 6);
     }
     @Test
     void testCountD1Pattern() throws SyntaxException{
@@ -153,7 +153,7 @@ public class BoardTest {
         assert board.placeCard(CardFactory.newPlayableCard("NI_EEIB1"), new Position(5,-5));
         assert board.placeCard(CardFactory.newPlayableCard("NEE_IIB1"), new Position(6,-6));
 
-        assert ((board.countPatterns(goalD1)) == 6);
+        assert ((board.countGoalPatterns(goalD1)) == 6);
     }
 
 
@@ -177,7 +177,7 @@ public class BoardTest {
         assert board.placeCard(CardFactory.newPlayableCard("NMI_FIB0"), new Position(3,3));
         assert board.placeCard(CardFactory.newPlayableCard("GE_EEIB2EIIIF_"), new Position(2,4));
 
-        assertEquals(9, board.countPatterns(goalL0));
+        assertEquals(9, board.countGoalPatterns(goalL0));
     }
 
     @Test
@@ -200,7 +200,7 @@ public class BoardTest {
         assert board.placeCard(CardFactory.newPlayableCard("GE_QEAB1QAAF__"), new Position(-2,4));
         assert board.placeCard(CardFactory.newPlayableCard("GEE_EAB2EAAAI_"), new Position(-1,5));
 
-        assertEquals(12, board.countPatterns(goalL1));
+        assertEquals(12, board.countGoalPatterns(goalL1));
 
     }
 
@@ -225,7 +225,7 @@ public class BoardTest {
         assert board.placeCard(CardFactory.newPlayableCard("GK_E_IB3_III__"), new Position(-2,4));
         assert board.placeCard(CardFactory.newPlayableCard("G__QEIB3_III__"), new Position(-1,5));
 
-        assertEquals(12, board.countPatterns(goalL2));
+        assertEquals(12, board.countGoalPatterns(goalL2));
     }
 
     @Test
@@ -248,7 +248,7 @@ public class BoardTest {
         assert board.placeCard(CardFactory.newPlayableCard("GQEE_PB1QPPI__"), new Position(0,4));
         assert board.placeCard(CardFactory.newPlayableCard("GEM_EPB1MPPF__"), new Position(-1,5));
 
-        assertEquals(12, board.countPatterns(goalL2));
+        assertEquals(12, board.countGoalPatterns(goalL2));
     }
 
     @Test
@@ -272,9 +272,9 @@ public class BoardTest {
         assert board.placeCard(CardFactory.newPlayableCard("NMI_FIB0"), new Position(3,3));
         assert board.placeCard(CardFactory.newPlayableCard("GE_EEIB2EIIIF_"), new Position(2,4));
 
-        assertEquals(9, board.countPatterns(goalL0));
-        assertEquals(4, board.countPatterns(goalD0));
-        assertEquals(2, board.countPatterns(goalD1));
+        assertEquals(9, board.countGoalPatterns(goalL0));
+        assertEquals(4, board.countGoalPatterns(goalD0));
+        assertEquals(2, board.countGoalPatterns(goalD1));
 
     }
 
@@ -315,7 +315,7 @@ public class BoardTest {
         assert board.placeCard(CardFactory.newPlayableCard("NI_EEIF1"), new Position(5,5));
         assert board.placeCard(CardFactory.newPlayableCard("NIPK_IF0"), new Position(6,6));
 
-        assert ((board.countSymbols(goal)) == 4);
+        assert ((board.countGoalSymbols(goal)) == 4);
     }
 }
 
