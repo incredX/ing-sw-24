@@ -23,6 +23,7 @@ public abstract class ClientState {
 
     //private Chat chat;
     private ClientState nextState;
+    protected String username;
     protected final ArrayBlockingQueue<Event> queue;
     protected final PriorityQueue<KeyConsumer> keyConsumers;
     protected final PopUpStack popUpStack;
@@ -131,7 +132,7 @@ public abstract class ClientState {
         String[] tokens = argument.split(" ", 2);
         if (tokens.length == 2) {
             String[] fields = new String[] {"from", "to", "message"};
-            String[] values = new String[] {"", tokens[0], tokens[1]};
+            String[] values = new String[] {username, tokens[0], tokens[1]};
             sendToServer("message", fields, values);
         } else {
             popUpStack.addUrgentPopUp("ERROR", "syntax error in given commmand");
@@ -140,7 +141,7 @@ public abstract class ClientState {
 
     protected void processCommandSendtoall(String message) {
         String[] fields = new String[] {"from", "to", "message"};
-        String[] values = new String[] {"", "", message};
+        String[] values = new String[] {username, "", message};
         sendToServer("message", fields, values);
     }
 

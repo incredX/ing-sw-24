@@ -30,9 +30,8 @@ public class ClientInSetup extends ClientState {
 
     protected void processServerEvent(ServerEvent serverEvent) {
         switch (serverEvent) {
-            case ServerOkEvent okEvent -> {
-                if (!okEvent.message().isEmpty())
-                    popUpStack.addPopUp(Priority.LOW, okEvent.message());
+            case ServerNotificationEvent notificationEvent -> {
+                popUpStack.addPopUp(Priority.LOW, "from server", notificationEvent.message());
             }
             case ServerMessageEvent messageEvent -> {
                 String text;
@@ -79,8 +78,9 @@ public class ClientInSetup extends ClientState {
                 }
             }
             case "READY" -> {
-//                sendToServer("setup", new String[]{"startercard","goal"},
-//                        new String[]{setup.starterCard().asString(), setup.chosenGoal()});
+                sendToServer("setup",
+                        new String[]{"startercard","goal"},
+                        new String[]{setup.starterCard().asString(), setup.chosenGoal().asString()});
                 //switch to CLientInGame & inform the server
             }
             default -> popUpStack.addUrgentPopUp("ERROR", tokens[0]+" is not a valid command");

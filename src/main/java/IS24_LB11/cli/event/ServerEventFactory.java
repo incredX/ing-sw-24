@@ -27,8 +27,10 @@ public class ServerEventFactory {
         JsonConverter converter = new JsonConverter();
         return switch (type.toUpperCase()) {
             case "HEARTBEAT" -> Ok(new ServerHeartBeatEvent());
-            case "OK" -> extractStringOrElse(data, "message", "")
-                    .map(message -> new ServerOkEvent(message));
+            case "SETUSERNAME" -> extractString(data, "username")
+                    .map(username -> new ServerLoginEvent(username));
+            case "NOTIFICATION" -> extractString(data, "message")
+                    .map(message -> new ServerLoginEvent(message));
             case "UPDATE" -> extractString(data, "player").andThen(name ->
                     extractJsonObject(data, "board").andThen(board -> {
                         try {
