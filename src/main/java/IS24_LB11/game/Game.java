@@ -103,6 +103,7 @@ public class Game {
     //Check if is not player turn
     public String executeTurn(String playerName, Position position, PlayableCard playableCard, boolean deckType, int indexDeck) throws JsonException, DeckException, SyntaxException {
         if (playerName.compareTo(currentPlayer().name()) != 0) return NOT_PLAYER_TURN;
+        if (hasGameEnded()) return "CAN'T PLAY ANYMORE";
         return finalTurn ? executeFinalTurn(position,playableCard) : executeNormalTurn(position, playableCard, deckType, indexDeck);
     }
 
