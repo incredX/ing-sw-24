@@ -151,7 +151,7 @@ public class JsonConverterTest {
     @DisplayName("Converting JSON to player")
     public void jsonPlayerConversionTest() throws JsonException, SyntaxException {
         JsonConverter jsonConverter = new JsonConverter();
-        String str= "{\"Player\":{\"name\":\"Test\",\"Color\":\"GREEN\",\"Hand\":[{\"Card\":\"NFEF_FF0\"},{\"Card\":\"N_FEFFF0\"},{\"Card\":\"GEK_EFB1KFFP__\"}],\"PersonalGoal\":{\"Card\":\"O2PPP\"},\"Score\":\"0\",\"PlayerSetup\":{\"StarterCard\":{\"Card\":\"SEEEE_F0AI_PIAF\"},\"Goals\":[{\"Card\":\"O2FFF\"},{\"Card\":\"O2PPP\"}],\"Hand\":[{\"Card\":\"NFEF_FF0\"},{\"Card\":\"N_FEFFF0\"},{\"Card\":\"GEK_EFF1KFFP__\"}],\"chosenGoalIndex\":\"1\"},\"Board\":{\"placedCards\":[{\"Card\":\"SEEEE_F0AI_PIAF\",\"Position\":\"X0Y0\"}]}}}";
+        String str= "{\"Player\":{\"name\":\"Test\",\"Color\":\"GREEN\",\"Hand\":[{\"Card\":\"NFEF_FF0\"},{\"Card\":\"N_FEFFF0\"},{\"Card\":\"GEK_EFF1KFFP__\"}],\"PersonalGoal\":{\"Card\":\"O2PPP\"},\"Score\":\"0\",\"PlayerSetup\":{\"StarterCard\":{\"Card\":\"SEEEE_F0AI_PIAF\"},\"Goals\":[{\"Card\":\"O2FFF\"},{\"Card\":\"O2PPP\"}],\"Color\":\"GREEN\",\"Hand\":[{\"Card\":\"NFEF_FF0\"},{\"Card\":\"N_FEFFF0\"},{\"Card\":\"GEK_EFF1KFFP__\"}],\"chosenGoalIndex\":\"1\"},\"Board\":{\"placedCards\":[{\"Card\":\"SEEEE_F0AI_PIAF\",\"Position\":\"X0Y0\"}]}}}";
         Player player = (Player) jsonConverter.JSONToObject(str);
         System.out.println(str);
         System.out.println(jsonConverter.objectToJSON(player));
