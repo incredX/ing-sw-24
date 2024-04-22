@@ -53,13 +53,13 @@ public class JsonConverterTest {
     @Test
     @DisplayName("Converting object board to json")
     public void boardConversionTest() throws JsonException, SyntaxException{
-        String str = "{\"Board\":{\"placedCards\":[{\"Card\":\"SEEEE_F0AI_PIAF\",\"Position\":\"X0Y0\"},{\"Card\":\"NFEF_FF0\",\"Position\":\"X1Y1\"},{\"Card\":\"GEK_EFF1KFFP__\",\"Position\":\"X-1Y1\"}]}}";
+        String str = "{\"Board\":{\"placedCards\":[{\"Card\":\"SEEEE_F0AI_PIAF\",\"Position\":\"X0Y0\"},{\"Card\":\"NFEF_FF0\",\"Position\":\"X1Y1\"},{\"Card\":\"GEK_EFB1KFFP__\",\"Position\":\"X-1Y1\"}]}}";
         JsonConverter jsonConverter = new JsonConverter();
         Board board = new Board();
         CardFactory cardFactory = new CardFactory();
         StarterCard starterCard = (StarterCard) cardFactory.newSerialCard("SEEEE_F0AI_PIAF");
         NormalCard normalCard = (NormalCard) cardFactory.newSerialCard("NFEF_FF0");
-        GoldenCard goldenCard = (GoldenCard) cardFactory.newSerialCard("GEK_EFF1KFFP__");
+        GoldenCard goldenCard = (GoldenCard) cardFactory.newSerialCard("GEK_EFB1KFFP__");
         board.start(starterCard);
         board.placeCard(normalCard, new Position(1,1));
         board.placeCard(goldenCard, new Position(-1,1));
@@ -150,7 +150,7 @@ public class JsonConverterTest {
     @DisplayName("Converting JSON to player")
     public void jsonPlayerConversionTest() throws JsonException, SyntaxException {
         JsonConverter jsonConverter = new JsonConverter();
-        String str= "{\"Player\":{\"name\":\"Test\",\"Color\":\"GREEN\",\"Hand\":[{\"Card\":\"NFEF_FF0\"},{\"Card\":\"N_FEFFF0\"},{\"Card\":\"GEK_EFF1KFFP__\"}],\"PersonalGoal\":{\"Card\":\"O2PPP\"},\"Score\":\"0\",\"PlayerSetup\":{\"StarterCard\":{\"Card\":\"SEEEE_F0AI_PIAF\"},\"Goals\":[{\"Card\":\"O2FFF\"},{\"Card\":\"O2PPP\"}],\"Hand\":[{\"Card\":\"NFEF_FF0\"},{\"Card\":\"N_FEFFF0\"},{\"Card\":\"GEK_EFF1KFFP__\"}],\"chosenGoalIndex\":\"1\"},\"Board\":{\"placedCards\":[{\"Card\":\"SEEEE_F0AI_PIAF\",\"Position\":\"X0Y0\"}]}}}";
+        String str= "{\"Player\":{\"name\":\"Test\",\"Color\":\"GREEN\",\"Hand\":[{\"Card\":\"NFEF_FF0\"},{\"Card\":\"N_FEFFF0\"},{\"Card\":\"GEK_EFF1KFFP__\"}],\"PersonalGoal\":{\"Card\":\"O2PPP\"},\"Score\":\"0\",\"PlayerSetup\":{\"StarterCard\":{\"Card\":\"SEEEE_F0AI_PIAF\"},\"Goals\":[{\"Card\":\"O2FFF\"},{\"Card\":\"O2PPP\"}],\"Color\":\"GREEN\",\"Hand\":[{\"Card\":\"NFEF_FF0\"},{\"Card\":\"N_FEFFF0\"},{\"Card\":\"GEK_EFF1KFFP__\"}],\"chosenGoalIndex\":\"1\"},\"Board\":{\"placedCards\":[{\"Card\":\"SEEEE_F0AI_PIAF\",\"Position\":\"X0Y0\"}]}}}";
         Player player = (Player) jsonConverter.JSONToObject(str);
         System.out.println(str);
         System.out.println(jsonConverter.objectToJSON(player));
