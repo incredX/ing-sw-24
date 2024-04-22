@@ -61,8 +61,8 @@ public class GameTest {
 
         //symultae correct turn
         System.out.println("Before " + game.getPlayers().getFirst());
-        System.out.println("card to be playerd: " + game.getPlayers().get(0).getHand().getFirst().asString());
-        String mex2 = game.executeTurn(playerNames.get(0),new Position(1,1),game.getPlayers().get(0).getHand().getFirst(),true,2);
+        System.out.println("card to be playerd: " + game.getPlayers().getFirst().getHand().getFirst().asString());
+        String mex2 = game.executeTurn(playerNames.getFirst(),new Position(1,1),game.getPlayers().getFirst().getHand().getFirst(),true,2);
         System.out.println("After " + game.getPlayers().getFirst());
         System.out.println("mex2 " + mex2+ "\n");
 
@@ -103,7 +103,7 @@ public class GameTest {
 
             }
             if (game.getFinalTurn()){
-                System.out.println("FINITO");
+                System.out.println("FINISHED");
                 break;
             }
         }

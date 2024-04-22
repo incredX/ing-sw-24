@@ -4,6 +4,7 @@ import IS24_LB11.game.symbol.Symbol;
 import IS24_LB11.game.utils.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Objects;
 import java.util.stream.Collectors;
 

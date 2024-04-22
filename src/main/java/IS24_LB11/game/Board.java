@@ -116,6 +116,21 @@ public class Board implements JsonConvertable {
         return patternsFound * (goal.getPoints());
     }
 
+    public int countSymbols(GoalSymbol goal) {
+        HashMap<Symbol, Integer> symbols = new HashMap<>();
+        goal.getSymbols().stream().forEach(symbol -> {
+            if (!symbols.containsKey(symbol)) symbols.put(symbol, 1);
+            else symbols.put(symbol, symbols.get(symbol)+1);
+        });
+        return goal.getPoints() * symbols.entrySet().stream()
+                .map(entry -> symbolCounter.get(entry.getKey())/entry.getValue())
+                .min(Integer::compareTo).get();
+    }
+
+
+
+
+
     public int calculateScoreOnLastPlacedCard() {
         PlayableCard playableCard = placedCards.getLast().card();
         int score = playableCard.asString().charAt(7)-48;
@@ -144,7 +159,7 @@ public class Board implements JsonConvertable {
                         return score;
                     case 'E':
                         Position positionLastCard = placedCards.getLast().position();
-                        return (int) (score * placedCards.stream().filter(card -> Math.abs(card.position().getY() - positionLastCard.getY())==1 || Math.abs(card.position().getX() - positionLastCard.getX())==1).count());
+                        return (int) (score * placedCards.stream().filter(card -> Math.abs(card.position().getY() - positionLastCard.getY())==1 && Math.abs(card.position().getX() - positionLastCard.getX())==1).count());
                     default:
                         return 0;
                 }

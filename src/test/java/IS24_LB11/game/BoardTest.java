@@ -282,23 +282,41 @@ public class BoardTest {
     void testCalculateScoreOnLastPlacedCard() throws SyntaxException {
         Board board = new Board();
         HashMap<Symbol, Integer> symbolCounterCard = new HashMap<>();
-
         board.start((StarterCard)CardFactory.newPlayableCard("SEEEE_F0PF_IAFP"));
 
+        assert board.placeCard(CardFactory.newPlayableCard("N_IKAAB0"), new Position(1,1));
+        assert board.placeCard(CardFactory.newPlayableCard("NIPK_IB0"), new Position(-1,1));
+        assert board.placeCard(CardFactory.newPlayableCard("NKF_AFB0"), new Position(-1,-1));
+        assert board.placeCard(CardFactory.newPlayableCard("NFP_KPB0"), new Position(1,-1));
+        assert board.placeCard(CardFactory.newPlayableCard("NIPK_IF0"), new Position(2,2));
+        assert board.placeCard(CardFactory.newPlayableCard("NFP_KPF0"), new Position(3,1));
+        assert board.placeCard(CardFactory.newPlayableCard("NFP_KPB0"), new Position(4,0));
+        assert board.placeCard(CardFactory.newPlayableCard("NFP_KPB0"), new Position(3,-1));
+        assert board.placeCard(CardFactory.newPlayableCard("GE_EEPF2EPPPF_"), new Position(2,0));
 
-        assert board.placeCard(CardFactory.newPlayableCard("N_IKAAF0"), new Position(1,1));
-        assert board.placeCard(CardFactory.newPlayableCard("NIPK_IF0"), new Position(-1,1));
-        assert board.placeCard(CardFactory.newPlayableCard("NKF_AFF0"), new Position(-1,-1));
-        assert board.placeCard(CardFactory.newPlayableCard("NFP_KPF0"), new Position(1,-1));
-        assert board.placeCard(CardFactory.newPlayableCard("GEK_EFF1KFFP__"), new Position(2,2));
-
-
-        System.out.println(board.getSymbolCounter());
-
-
-
+        assertEquals(8, board.calculateScoreOnLastPlacedCard());
     }
 
+
+    @Test
+    void testCountSymbols() throws SyntaxException{
+        GoalSymbol goal = (GoalSymbol) CardFactory.newSerialCard("O2III");
+
+        Board board = new Board();
+        board.start((StarterCard)CardFactory.newPlayableCard("SEEEE_F0PF_IAFP"));
+
+        assert board.placeCard(CardFactory.newPlayableCard("NIIE_IF0"), new Position(-1,-1));
+        assert board.placeCard(CardFactory.newPlayableCard("NI_IEIF0"), new Position(-2,-2));
+        assert board.placeCard(CardFactory.newPlayableCard("N_EIIIF0"), new Position(-3,-3));
+        assert board.placeCard(CardFactory.newPlayableCard("NEI_IIF0"), new Position(1,1));
+        assert board.placeCard(CardFactory.newPlayableCard("N_QAIIF0"), new Position(2,2));
+        assert board.placeCard(CardFactory.newPlayableCard("NMI_FIF0"), new Position(3,3));
+        assert board.placeCard(CardFactory.newPlayableCard("NEE_IIF1"), new Position(4,4));
+        assert board.placeCard(CardFactory.newPlayableCard("NI_EEIF1"), new Position(5,5));
+        assert board.placeCard(CardFactory.newPlayableCard("NIPK_IF0"), new Position(6,6));
+
+        assert ((board.countSymbols(goal)) == 4);
+    }
 }
 
 record Placement(
