@@ -1,6 +1,7 @@
 package IS24_LB11.network.events;
 
 import IS24_LB11.network.ClientHandler;
+import IS24_LB11.network.phases.GameSetupPhase;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
@@ -53,6 +54,11 @@ public class ServerEventHandler {
         // checks Syntax of json event and returns message
         String messageEventSyntax = hasProperties(event, "username");
 
+        if(clientHandler.getUserName() != null){
+            response.addProperty("error", "You already logged in");
+            return;
+        }
+
         if(!messageEventSyntax.equals("OK")) {
             response.addProperty("error", messageEventSyntax);
             clientHandler.sendMessage(response.getAsString());
@@ -68,7 +74,7 @@ public class ServerEventHandler {
 
         clientHandler.setUserName(username);
 
-        // tell client what name they chose
+        // tell client the name they chose
         response.addProperty("type", "setUsername");
         response.addProperty("username", username);
         clientHandler.sendMessage(response.toString());
@@ -85,6 +91,20 @@ public class ServerEventHandler {
             response.addProperty("type", "notification");
             response.addProperty("message", "Please set max number of players");
             clientHandler.sendMessage(response.toString());
+        }
+
+        // check if this is the last player, so the game can start
+        if(clientHandler.getAllUsernames().size() == clientHandler.getMaxPlayers()) {
+            response = new JsonObject();
+            response.addProperty("type", "notification");
+            response.addProperty("message", "Last player logged in successfully! GAME IS STARTING NOW");
+
+            clientHandler.broadcast(response.toString());
+            clientHandler.sendMessage(response.toString());
+
+            // start game setup game
+            GameSetupPhase.startPhase(clientHandler.getGame(), clientHandler.getMaxPlayers());
+
         }
     }
 
@@ -142,8 +162,7 @@ public class ServerEventHandler {
 
         clientHandler.broadcast(response.toString());
 
-        clientHandler.setConnectionClosed(true);
-
+        clientHandler.exit();
     }
 
     private static void handleNumOfPlayers(JsonObject event) {

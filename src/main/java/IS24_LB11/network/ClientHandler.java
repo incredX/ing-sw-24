@@ -3,6 +3,8 @@ import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
 
+import IS24_LB11.game.Game;
+import IS24_LB11.game.utils.SyntaxException;
 import IS24_LB11.network.events.ServerEventHandler;
 import com.google.gson.*;
 
@@ -21,10 +23,9 @@ public class ClientHandler implements Runnable {
     //useful to convert json to string and viceversa
     private Gson gson = new Gson();
 
-    public ClientHandler(Server server, Socket socket, String userName) {
+    public ClientHandler(Server server, Socket socket) {
         this.clientSocket = socket;
         this.server = server;
-        this.userName = userName;
         this.lastHeartbeatTime = System.currentTimeMillis();
     }
 
@@ -41,6 +42,13 @@ public class ClientHandler implements Runnable {
                             long currentTime = System.currentTimeMillis();
                             if (currentTime - lastHeartbeatTime > HEARTBEAT_INTERVAL * 2) {
                                 System.out.println("Heartbeat timed out for " + userName);
+
+                                JsonObject response = new JsonObject();
+                                response.addProperty("type", "notification");
+                                response.addProperty("message", "Player " + userName + " crashed");
+
+                                broadcast(response.toString());
+
                                 exit();
                                 break;
                             }
@@ -57,12 +65,11 @@ public class ClientHandler implements Runnable {
             heartbeatThread.start();
             addToStartedThreads(heartbeatThread);
 
+            // wait for inputs from client
             in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             out = new PrintWriter(clientSocket.getOutputStream(), true);
-
             String inputLine;
             while (!connectionClosed && (inputLine = in.readLine()) != null) {
-
                 // Handle the received JSON data
                 ServerEventHandler.handleEvent(this, inputLine);
             }
@@ -118,7 +125,7 @@ public class ClientHandler implements Runnable {
         this.lastHeartbeatTime = lastHeartbeatTime;
     }
 
-    private void exit() {
+    public void exit() {
         try {
             connectionClosed = true;
             in.close();
@@ -134,7 +141,14 @@ public class ClientHandler implements Runnable {
     }
 
     public void setMaxPlayers(int maxPlayers) {
-        server.setMaxPlayers(maxPlayers);
+        server.maxPlayers = maxPlayers;
     }
 
+    public int getMaxPlayers() {
+        return server.maxPlayers;
+    }
+
+    public Game getGame() {
+        return server.game;
+    }
 }
