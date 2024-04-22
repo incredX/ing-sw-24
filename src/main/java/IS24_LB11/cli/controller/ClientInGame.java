@@ -1,7 +1,7 @@
 package IS24_LB11.cli.controller;
 
 import IS24_LB11.cli.BoardKeyConsumer;
-import IS24_LB11.cli.BoardStage;
+import IS24_LB11.cli.GameStage;
 import IS24_LB11.cli.event.ServerEvent;
 import IS24_LB11.cli.ViewHub;
 import IS24_LB11.game.Player;
@@ -12,7 +12,7 @@ import java.io.IOException;
 
 public class ClientInGame extends ClientState {
     private final Player player;
-    private BoardStage boardStage;
+    private GameStage gameStage;
 
     public ClientInGame(ViewHub viewHub, PlayerSetup setup) throws IOException {
         super(viewHub);
@@ -21,9 +21,9 @@ public class ClientInGame extends ClientState {
 
     @Override
     public ClientState execute() {
-        boardStage = viewHub.setBoardStage(player.getBoard());
-        keyConsumers.add(new BoardKeyConsumer(boardStage, 2));
-        viewHub.update();
+        player.getBoard().start(player.setup().getStarterCard());
+        gameStage = viewHub.setGameStage(player);
+        keyConsumers.add(new BoardKeyConsumer(gameStage, 2));
         return super.execute();
     }
 
@@ -35,10 +35,17 @@ public class ClientInGame extends ClientState {
     @Override
     protected void processCommand(String command) {
         if (processCommandIfCommon(command)) return;
+        System.out.println(command);
         String[] tokens = command.split(" ", 2);
-        switch (tokens[0].toLowerCase()) {
+        switch (tokens[0].toUpperCase()) {
             case "HAND" -> {}
-            case "CENTER" -> boardStage.setPointer(new Position(0,0));
+            case "HOME" -> {
+                gameStage.setPointer(new Position(0, 0));
+                gameStage.centerGridBase();
+                gameStage.rebuild();
+                viewHub.update();
+            }
+            default -> popUpStack.addUrgentPopUp("ERROR", tokens[0]+" is not a valid command");
         }
     }
 }

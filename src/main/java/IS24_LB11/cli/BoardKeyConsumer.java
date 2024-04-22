@@ -5,10 +5,10 @@ import com.googlecode.lanterna.input.KeyStroke;
 
 public class BoardKeyConsumer implements KeyConsumer {
     private final int priority;
-    private final BoardStage boardView;
+    private final GameStage boardView;
 
-    public BoardKeyConsumer(BoardStage boardStage, int priority) {
-        this.boardView = boardStage;
+    public BoardKeyConsumer(GameStage gameStage, int priority) {
+        this.boardView = gameStage;
         this.priority = priority;
     }
 

@@ -1,5 +1,6 @@
 package IS24_LB11.cli;
 
+import IS24_LB11.cli.controller.ClientInGame;
 import IS24_LB11.cli.controller.ClientInLobby;
 import IS24_LB11.cli.controller.ClientInSetup;
 import IS24_LB11.cli.controller.ClientState;
@@ -25,18 +26,20 @@ public class Client {
         ResizeListener resizeListener;
         ServerHandler serverHandler;
         HashMap<String, Thread> threadMap = new HashMap<>();
+        PlayableCard[] hand = new PlayableCard[] {
+                new GoldenCard("_EEQFF1QFFA__"), new NormalCard("FEF_FF0"), new NormalCard("EA_AAF0")
+        };
+        PlayerSetup setup = new PlayerSetup(new StarterCard("EPIE_F0I__FPIA"),
+                new GoalCard[]{new GoalSymbol("2KK_"), new GoalPattern("3IPPL2")},
+                new ArrayList<>(List.of(hand)),
+                Color.RED);
 
         try {
             viewHub = new ViewHub();
             if (args.length == 1 && args[0].equals("setup")) {
-                PlayableCard[] hand = new PlayableCard[] {
-                        new GoldenCard("_EEQFF1QFFA__"), new NormalCard("FEF_FF0"), new NormalCard("EA_AAF0")
-                };
-                PlayerSetup setup = new PlayerSetup(new StarterCard("EPIE_F0I__FPIA"),
-                        new GoalCard[]{new GoalSymbol("2KK_"), new GoalPattern("3IPPL2")},
-                        new ArrayList<>(List.of(hand)),
-                         Color.RED);
                 state = new ClientInSetup(viewHub, setup);
+            } else if (args.length == 1 && args[0].equals("game")) {
+                state = new ClientInGame(viewHub, setup);
             } else {
                 state = new ClientInLobby(viewHub);
             }

@@ -9,6 +9,7 @@ import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.terminal.Terminal;
 
 import java.io.IOException;
+import java.util.function.Consumer;
 
 public class CliBox implements CliFrame {
     protected TerminalRectangle rectangle;
@@ -82,7 +83,7 @@ public class CliBox implements CliFrame {
         }
     }
 
-    protected void draw(CliBox box) {
+    public void draw(CliBox box) {
         for (int r=0; r<box.rectangle.getHeight(); r++) {
             for (int c=0; c<box.rectangle.getWidth(); c++) {
                 int x = firstColumn() + box.rectangle.getX() + c;

@@ -22,7 +22,6 @@ import java.util.concurrent.TimeUnit;
 public abstract class ClientState {
     private static final int QUEUE_CAPACITY = 64;
 
-    //private Chat chat;
     private ClientState nextState;
     protected String username;
     protected final ArrayBlockingQueue<Event> queue;
@@ -49,7 +48,10 @@ public abstract class ClientState {
         synchronized (queue) {
             while (true) {
                 try { queue.wait(); }
-                catch (InterruptedException e) { break; }
+                catch (InterruptedException e) {
+                    System.err.println("caught exception: "+e.getMessage());
+                    break;
+                }
                 while(!queue.isEmpty()) {
                     handleEvent(queue.poll());
                     if (nextState != null) { return nextState; }

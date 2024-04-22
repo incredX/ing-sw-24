@@ -13,7 +13,7 @@ import java.io.IOException;
 
 public class ClientInSetup extends ClientState {
     private final PlayerSetup setup;
-    private SetupStage stage;
+    private SetupStage setupStage;
 
     public ClientInSetup(ViewHub viewHub, PlayerSetup setup) throws IOException {
         super(viewHub);
@@ -22,7 +22,7 @@ public class ClientInSetup extends ClientState {
 
     @Override
     public ClientState execute() {
-        stage = viewHub.setSetupStage(setup);
+        setupStage = viewHub.setSetupStage(setup);
         return super.execute();
     }
 
@@ -56,9 +56,11 @@ public class ClientInSetup extends ClientState {
                     setChosenGoal(index);
             }
             case "READY" -> {
-                sendToServer("setup",
-                        new String[]{"startercard","chosengoal"},
-                        new String[]{setup.getStarterCard().asString(), setup.chosenGoal().asString()});
+                //TODO: use JsonConverter
+//                sendToServer("peek",
+//                        new String[]{"startercard","goalcard"},
+//                        new String[]{setup.getStarterCard().asString(), setup.chosenGoal().asString()});
+                stage.clear();
                 try { setNextState(new ClientInGame(viewHub, setup)); } // wait server response to switch to InGame
                 catch (IOException e) {
                     e.printStackTrace();
@@ -78,7 +80,7 @@ public class ClientInSetup extends ClientState {
                 setChosenGoal(1);
             } else if (keyStroke.getKeyType() == KeyType.Character && keyStroke.getCharacter() == 'f') {
                 setup.getStarterCard().flip();
-                stage.buildStarterCard(setup.getStarterCard());
+                setupStage.buildStarterCard(setup.getStarterCard());
             }
         } else {
             super.processKeyStroke(keyStroke);
@@ -87,7 +89,7 @@ public class ClientInSetup extends ClientState {
 
     private void setChosenGoal(int index) {
         setup.chooseGoal(index);
-        stage.setChosenGoal(index);
+        setupStage.setChosenGoal(index);
         viewHub.update();
     }
 }

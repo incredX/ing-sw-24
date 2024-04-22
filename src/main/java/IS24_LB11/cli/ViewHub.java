@@ -3,7 +3,9 @@ package IS24_LB11.cli;
 import IS24_LB11.cli.view.CommandLineView;
 import IS24_LB11.cli.view.PopUpView;
 import IS24_LB11.game.Board;
+import IS24_LB11.game.Player;
 import IS24_LB11.game.PlayerSetup;
+import IS24_LB11.game.utils.Position;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import com.googlecode.lanterna.terminal.Terminal;
@@ -42,18 +44,24 @@ public class ViewHub implements Runnable {
                     stage.print(terminal);
                     popUp.ifPresent(p -> {
                         try { p.print(terminal); }
-                        catch (IOException ignored) {}
+                        catch (IOException e) {
+                            System.err.println("caught exception: "+e.getMessage());
+                        }
                     });
                     commandLineView.print(terminal);
                     terminal.flush();
                 }
                 catch (InterruptedException e) { break; }
-                catch (IOException ignored) { }
+                catch (IOException e) {
+                    System.err.println("caught exception: "+e.getMessage());
+                }
             }
         }
         try {
             terminal.exitPrivateMode();
-        } catch (IOException ignored) { }
+        } catch (IOException e) {
+            System.err.println("caught exception: "+e.getMessage());
+        }
         System.out.println(Thread.currentThread().getName() + " offline");
     }
 
@@ -70,7 +78,9 @@ public class ViewHub implements Runnable {
         });
         synchronized (terminal) {
             try { terminal.clearScreen(); }
-            catch (IOException ignored) {}
+            catch (IOException e) {
+                System.err.println("caught exception: "+e.getMessage());
+            }
             terminal.notify();
         }
     }
@@ -123,14 +133,19 @@ public class ViewHub implements Runnable {
         update();
     }
 
-    public BoardStage setBoardStage(Board board) {
+    public GameStage setGameStage(Player player) {
         try {
-            BoardStage boardStage = new BoardStage(terminal.getTerminalSize(), board);
-            stage = boardStage;
+            GameStage gameStage = new GameStage(terminal.getTerminalSize(), player);
+            gameStage.loadCardViews();
+            gameStage.setPointer(new Position(0,0));
+            stage = gameStage;
             stage.build();
             update();
-            return boardStage;
-        } catch (IOException ignored) { return null; }
+            return gameStage;
+        } catch (IOException e) {
+            System.err.println("caught exception: "+e.getMessage());
+            return null;
+        }
     }
 
     public SetupStage setSetupStage(PlayerSetup setup) {
@@ -140,7 +155,10 @@ public class ViewHub implements Runnable {
             stage.build();
             update();
             return setupStage;
-        } catch (IOException ignored) { return null; }
+        } catch (IOException e) {
+            System.err.println("caught exception: "+e.getMessage());
+            return null;
+        }
     }
 
     public void setLobbyStage() {
@@ -148,7 +166,9 @@ public class ViewHub implements Runnable {
             stage = new LobbyStage(terminal.getTerminalSize());
             stage.build();
             update();
-        } catch (IOException ignored) { }
+        } catch (IOException e) {
+            System.err.println("caught exception: "+e.getMessage());
+        }
     }
 
     public Terminal getTerminal() { return terminal; }

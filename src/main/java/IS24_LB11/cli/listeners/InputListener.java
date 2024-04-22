@@ -36,6 +36,8 @@ public class InputListener extends Listener implements Runnable {
 
     public void shutdown() {
         try { System.in.close(); } // <- to close gracefuly the input listener
-        catch (IOException ignored) { }
+        catch (IOException e) {
+            System.err.println("caught exception: "+e.getMessage());
+        }
     }
 }

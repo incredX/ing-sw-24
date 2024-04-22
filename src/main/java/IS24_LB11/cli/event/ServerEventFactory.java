@@ -47,7 +47,7 @@ public class ServerEventFactory {
             case "SETUP" -> extractJsonObject(data, "setup")
                     .andThen(jsonSetup -> {
                         try {
-                            PlayerSetup setup = converter.JSONToSetupPlayer(jsonSetup.toString());
+                            PlayerSetup setup = (PlayerSetup) converter.JSONToObject(jsonSetup.toString());
                             return Ok(new ServerPlayerSetupEvent(setup));
                         }
                         catch (JsonException | SyntaxException e) {
