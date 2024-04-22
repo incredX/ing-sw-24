@@ -98,13 +98,18 @@ public class ServerEventHandler {
             }
             else {
                 ClientHandler destinationClientHandler = clientHandler.getClientHandlerWithUsername(event.get("to").getAsString());
-                if(destinationClientHandler != null && !(destinationClientHandler.getUserName().equals(clientHandler.getUserName()))) {
-                    destinationClientHandler.sendMessage(event.toString());
-                } else if (destinationClientHandler != null) {
-                    JsonObject response = new JsonObject();
-                    response.addProperty("error", "If you want to send a message to yourself try saying it out loudly :)");
-                    clientHandler.sendMessage(response.toString());
-                } else {
+                if(destinationClientHandler != null) {
+                    if(destinationClientHandler.getUserName().equals(clientHandler.getUserName())){
+                        JsonObject response = new JsonObject();
+                        response.addProperty("error", "If you want to send a message to yourself try saying it out loudly :)");
+                        clientHandler.sendMessage(response.toString());
+                    }
+
+                    else {
+                        destinationClientHandler.sendMessage(event.toString());
+                    }
+                }
+                else {
                     JsonObject response = new JsonObject();
                     response.addProperty("error", "Unknown username");
                     clientHandler.sendMessage(response.toString());
