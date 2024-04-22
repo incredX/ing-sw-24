@@ -60,7 +60,7 @@ public class ClientInSetup extends ClientState {
             case "READY" -> {
                 sendToServer("setup",
                         new String[]{"startercard","chosengoal"},
-                        new String[]{setup.starterCard().asString(), setup.chosenGoal().asString()});
+                        new String[]{setup.getStarterCard().asString(), setup.chosenGoal().asString()});
                 try { setNextState(new ClientInGame(viewHub, setup)); }
                 catch (IOException e) {
                     e.printStackTrace();
@@ -79,8 +79,8 @@ public class ClientInSetup extends ClientState {
             } else if (keyStroke.getKeyType() == KeyType.ArrowRight) {
                 setChosenGoal(1);
             } else if (keyStroke.getKeyType() == KeyType.Character && keyStroke.getCharacter() == 'f') {
-                setup.starterCard().flip();
-                stage.buildStarterCard(setup.starterCard());
+                setup.getStarterCard().flip();
+                stage.buildStarterCard(setup.getStarterCard());
             }
         } else {
             super.processKeyStroke(keyStroke);
@@ -88,7 +88,7 @@ public class ClientInSetup extends ClientState {
     }
 
     private void setChosenGoal(int index) {
-        setup.choseGoal(index);
+        setup.chooseGoal(index);
         stage.setChosenGoal(index);
         viewHub.update();
     }
