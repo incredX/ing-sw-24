@@ -35,7 +35,7 @@ public class Player implements JsonConvertable {
 
     public void applySetup() {
         this.personalGoal = setup.chosenGoal().get();
-        this.board.start(setup.starterCard());
+        this.board.start(setup.getStarterCard());
     }
 
     public boolean placeCard(PlayableCard card, Position position) throws JsonException, SyntaxException {
@@ -111,10 +111,6 @@ public class Player implements JsonConvertable {
 
     public Color getColor() {
         return color;
-    }
-
-    public ArrayList<PlayableCard> getHand() {
-        return hand;
     }
 
     public void setBoard(Board board){

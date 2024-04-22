@@ -34,11 +34,11 @@ public class PlayerSetup implements JsonConvertable {
         return false;
     }
 
-    public void flipCard() {
+    public void flipStarterCard() {
         starterCard.flip();
     }
 
-    public StarterCard starterCard() {
+    public StarterCard getStarterCard() {
         return starterCard;
     }
 

@@ -33,10 +33,17 @@ public class GameTest {
         ArrayList<GoalCard> goalCardsChoosen = new ArrayList<>();
         for (int i = 0; i < 4; i++)
             goalCardsChoosen.add(game.getPlayers().get(i).getSetup().getGoals()[i % 2]);
-        game.chooseGoalPhase(goalCardsChoosen);
+        ArrayList<StarterCard> starterCardsSideChoosen = new ArrayList<>();
+        for (int i = 0; i < 4; i++) {
+            if (i % 2 == 0)
+                game.getPlayers().get(i).getSetup().flipStarterCard();
+            starterCardsSideChoosen.add(game.getPlayers().get(i).getSetup().getStarterCard());
+        }
+        for (Player player: game.getPlayers())
+            System.out.println(player.getSetup());
+        game.chooseGoalPhase(goalCardsChoosen,starterCardsSideChoosen);
         for (Player player: game.getPlayers())
             System.out.println(player);
-
     }
 
     @Test
@@ -54,7 +61,10 @@ public class GameTest {
         ArrayList<GoalCard> goalCardsChoosen = new ArrayList<>();
         for (int i = 0; i < 4; i++)
             goalCardsChoosen.add(game.getPlayers().get(i).getSetup().getGoals()[i % 2]);
-        game.chooseGoalPhase(goalCardsChoosen);
+        ArrayList<StarterCard> starterCardsSideChoosen = new ArrayList<>();
+        for (int i = 0; i < 4; i++)
+            starterCardsSideChoosen.add(game.getPlayers().get(i).getSetup().getStarterCard());
+        game.chooseGoalPhase(goalCardsChoosen,starterCardsSideChoosen);
         //symulate receiving error beacuse it's not player turn
         String mex1=game.executeTurn(playerNames.get(1),new Position(1,1),(PlayableCard) CardFactory.newSerialCard("NEA_AAF0"),false,2);
         System.out.println("mex1 " + mex1+ "\n");
@@ -85,7 +95,10 @@ public class GameTest {
         ArrayList<GoalCard> goalCardsChoosen = new ArrayList<>();
         for (int i = 0; i < 4; i++)
             goalCardsChoosen.add(game.getPlayers().get(i).getSetup().getGoals()[i % 2]);
-        game.chooseGoalPhase(goalCardsChoosen);
+        ArrayList<StarterCard> starterCardsSideChoosen = new ArrayList<>();
+        for (int i = 0; i < 4; i++)
+            starterCardsSideChoosen.add(game.getPlayers().get(i).getSetup().getStarterCard());
+        game.chooseGoalPhase(goalCardsChoosen,starterCardsSideChoosen);
         //symulate receiving error beacuse it's not player turn
 
         for (int i = 0; i < 20; i++) {
@@ -107,5 +120,19 @@ public class GameTest {
                 break;
             }
         }
+    }
+
+    @Test
+    public void stringComparison() throws SyntaxException, FileNotFoundException {
+        Game game = new Game(1);
+        String s1 = "SEPIE_F0I__FPIA";
+        String s2 = "SEPIE_B0I__FPIA";
+        String s3 = "SEPIEAF0I__FPIA";
+        String s4 = "SEPIE_B1I__FPIA";
+
+        System.out.println(game.numberCharNotEqualInSamePosition(s1,s2));
+        System.out.println(game.numberCharNotEqualInSamePosition(s1,s3));
+        System.out.println(game.numberCharNotEqualInSamePosition(s1,s4));
+
     }
 }

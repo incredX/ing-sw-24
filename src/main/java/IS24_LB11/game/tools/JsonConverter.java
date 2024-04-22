@@ -103,7 +103,7 @@ public class JsonConverter {
 
     public String objectToJSON(PlayerSetup playerSetup) throws JsonException {
         String str = "\"PlayerSetup\":{";
-        str = str + "\"StarterCard\":" + objectToJSON(playerSetup.starterCard()) + ",";
+        str = str + "\"StarterCard\":" + objectToJSON(playerSetup.getStarterCard()) + ",";
         str = str + "\"Goals\":[" + objectToJSON(playerSetup.getGoals()[0]) + "," + objectToJSON(playerSetup.getGoals()[1]) + "],";
         str = str + "\"Hand\":[";
         for (PlayableCard playableCard : playerSetup.hand())
