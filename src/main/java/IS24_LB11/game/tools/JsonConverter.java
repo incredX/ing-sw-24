@@ -1,11 +1,10 @@
 package IS24_LB11.game.tools;
 
-import IS24_LB11.game.Board;
-import IS24_LB11.game.Deck;
-import IS24_LB11.game.PlacedCard;
-import IS24_LB11.game.Player;
+import IS24_LB11.game.*;
 import IS24_LB11.game.components.*;
 import IS24_LB11.game.utils.*;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -52,7 +51,7 @@ public class JsonConverter {
         checkNullObject(card);
         String cardString = card.asString();
         Character c = cardString.charAt(0);
-        if (c == 'O' ||c == 'N' ||c == 'G' ||c == 'S')
+        if (c == 'O' || c == 'N' || c == 'G' || c == 'S')
             return wrapTextBrackets("\"Card\":\"" + card.asString() + "\"");
         else
             throw new JsonException(String.format(INVALID_INPUT, cardString));
@@ -68,7 +67,6 @@ public class JsonConverter {
     public String objectToJSON(Board board) throws JsonException {
         checkNullObject(board);
         String str = "\"Board\":{";
-
         str += "\"placedCards\":[";
         for (PlacedCard placedCard : board.getPlacedCards()) {
             str += objectToJSON(placedCard.card());
@@ -87,7 +85,32 @@ public class JsonConverter {
      * @throws JsonException if the provided player object is null
      */
     public String objectToJSON(Player player) throws JsonException {
-        return null;
+        checkNullObject(player);
+        String str = "\"Player\":{";
+        str = str + "\"name\":\"" + player.name() + "\",";
+        str = str + "\"Color\":\"" + player.getColor() + "\",";
+        str = str + "\"Hand\":[";
+        for (PlayableCard playableCard : player.getHand())
+            str = str + objectToJSON(playableCard) + ",";
+        str = str.substring(0, str.length() - 1) + "],";
+        str = str + "\"PersonalGoal\":" + objectToJSON(player.getPersonalGoal()) + ",";
+        str = str + "\"Score\":\"" + player.getScore() + "\",";
+        str = str + objectToJSON(player.getSetup()).substring(1);
+        str = str.substring(0, str.length() - 1) + ",";
+        str = str + objectToJSON(player.getBoard()).substring(1);
+        return wrapTextBrackets(str);
+    }
+
+    public String objectToJSON(PlayerSetup playerSetup) throws JsonException {
+        String str = "\"PlayerSetup\":{";
+        str = str + "\"StarterCard\":" + objectToJSON(playerSetup.starterCard()) + ",";
+        str = str + "\"Goals\":[" + objectToJSON(playerSetup.getGoals()[0]) + "," + objectToJSON(playerSetup.getGoals()[1]) + "],";
+        str = str + "\"Hand\":[";
+        for (PlayableCard playableCard : playerSetup.hand())
+            str = str + objectToJSON(playableCard) + ",";
+        str = str.substring(0, str.length() - 1) + "],";
+        str = str + "\"chosenGoalIndex\":\"" + playerSetup.getChosenGoalIndex() + "\"}";
+        return wrapTextBrackets(str);
     }
 
     /**
@@ -128,7 +151,7 @@ public class JsonConverter {
      *
      * @param stringInput the JSON string representing the board.
      * @return the Board object created from the JSON input.
-     * @throws JsonException if there is an issue parsing the JSON input.
+     * @throws JsonException   if there is an issue parsing the JSON input.
      * @throws SyntaxException if there is a syntax error in the JSON input.
      */
     public Board JSONToBoard(String stringInput) throws JsonException, SyntaxException {
@@ -149,8 +172,61 @@ public class JsonConverter {
         return convertedBoard;
     }
 
-    private Player JSONToPlayer(String stringInput) throws JsonException {
-        return null;
+    private JsonConvertable JSONToPlayer(String stringInput) throws JsonException, SyntaxException {
+        System.out.println(stringInput);
+        String auxString = stringInput.substring(stringInput.indexOf("name") + 7);
+        System.out.println(auxString);
+        String name = auxString.substring(0, auxString.indexOf("\""));
+        System.out.println(name);
+        Character character = auxString.charAt(auxString.indexOf("Color") + 8);
+        Color color = Color.fromChar(character);
+        System.out.println(color);
+        auxString = auxString.substring(auxString.indexOf("Hand") + 7, auxString.indexOf("]"));
+        ArrayList<PlayableCard> hand = new ArrayList<>();
+        for (int i = 0; i < 3; i++) {
+            System.out.println(auxString);
+            hand.add((PlayableCard) JSONToObject(auxString.substring(auxString.indexOf("{"), auxString.indexOf("}"))));
+            auxString = (i != 2) ? auxString.substring(auxString.indexOf("}") + 2) : auxString;
+        }
+        for (PlayableCard playableCard : hand)
+            System.out.println(playableCard.asString());
+        //personalGoal non serve
+        auxString = stringInput.substring(stringInput.indexOf("Score") + 8);
+        auxString = auxString.substring(0, auxString.indexOf("\""));
+        int score = Integer.valueOf(auxString);
+
+        PlayerSetup playerSetup = (PlayerSetup) JSONToSetupPlayer(stringInput.substring(stringInput.indexOf("PlayerSetup"), stringInput.length() - 2));
+        System.out.println("{" + stringInput.substring(stringInput.indexOf("\"Board"),stringInput.length()-2));
+        Board board = (Board) JSONToObject("{" + stringInput.substring(stringInput.indexOf("\"Board"),stringInput.length()-1));
+        System.out.println(objectToJSON(board));
+        Player playerConverted = new Player(name,color,playerSetup);
+        playerConverted.applySetup();
+        playerConverted.setBoard(board);
+        return playerConverted;
+    }
+
+    private JsonConvertable JSONToSetupPlayer(String stringInput) throws JsonException, SyntaxException {
+        String auxString = stringInput.substring(stringInput.indexOf("StarterCard") + 13);
+        StarterCard starterCard = (StarterCard) JSONToCard(auxString.substring(0, auxString.indexOf(",")));
+        auxString = stringInput.substring(stringInput.indexOf("Goals") + 8);
+        auxString = auxString.substring(0, auxString.indexOf("]"));
+        GoalCard[] goals = new GoalCard[2];
+        for (int i = 0; i < 2; i++) {
+            goals[i] = ((GoalCard) JSONToObject(auxString.substring(auxString.indexOf("{"), auxString.indexOf("}"))));
+            auxString = (i != 1) ? auxString.substring(auxString.indexOf("}") + 2) : auxString;
+        }
+        auxString = stringInput.substring(stringInput.indexOf("Hand") + 7);
+        auxString = auxString.substring(0, auxString.indexOf("]"));
+        ArrayList<PlayableCard> hand = new ArrayList<>();
+        for (int i = 0; i < 3; i++) {
+            hand.add((PlayableCard) JSONToObject(auxString.substring(auxString.indexOf("{"), auxString.indexOf("}"))));
+            auxString = (i != 2) ? auxString.substring(auxString.indexOf("}") + 2) : auxString;
+        }
+        auxString = stringInput.substring(stringInput.indexOf("chosenGoalIndex") + 18);
+        int chosenGoalIndex = Integer.valueOf(auxString.substring(0, auxString.indexOf("\"")));
+        PlayerSetup playerSetupConverted = new PlayerSetup(starterCard,goals,hand);
+        playerSetupConverted.selectGoal(goals[chosenGoalIndex]);
+        return playerSetupConverted;
     }
 
     /**
@@ -158,7 +234,7 @@ public class JsonConverter {
      *
      * @param stringInput the JSON string representing the object.
      * @return the JsonConvertable object created from the JSON input.
-     * @throws JsonException if there is an issue parsing the JSON input.
+     * @throws JsonException   if there is an issue parsing the JSON input.
      * @throws SyntaxException if there is a syntax error in the JSON input.
      */
     public JsonConvertable JSONToObject(String stringInput) throws JsonException, SyntaxException {
@@ -169,10 +245,12 @@ public class JsonConverter {
                 if (stringInput.contains("placedCards"))
                     return JSONToBoard(stringInput.substring(stringInput.indexOf("["), stringInput.indexOf("]") + 1));
                 throw new JsonException(String.format(PLACEDCARDS_NOT_FOUND, stringInput));
-            case "Player":
-                return null;//JSONToPlayer(stringInput)
             case "Card":
                 return JSONToCard(stringInput);
+            case "Player":
+                return JSONToPlayer(stringInput);
+            case "PlayerSetup":
+                return JSONToSetupPlayer(stringInput);
             default:
                 throw new JsonException(String.format(INVALID_INPUT, stringInput));
         }
@@ -181,7 +259,7 @@ public class JsonConverter {
     /**
      * Converts a JSON representation of a deck into a Deck object for a specific character.
      *
-     * @param text the JSON string representing the deck.
+     * @param text      the JSON string representing the deck.
      * @param character the character associated with the deck.
      * @return the Deck object created from the JSON input.
      * @throws SyntaxException if there is a syntax error in the JSON input.
@@ -196,9 +274,9 @@ public class JsonConverter {
         Scanner sc = new Scanner(text);
         while (sc.hasNext()) {
             String word = sc.next();
-            word = word.endsWith(",")?word.substring(0,word.length()-1):word;
-            if (word.startsWith("\"" + character) && word.length()>5) {
-                deckCards.add(cardFactory.newSerialCard(word.substring(1, word.length()-1)));
+            word = word.endsWith(",") ? word.substring(0, word.length() - 1) : word;
+            if (word.startsWith("\"" + character) && word.length() > 5) {
+                deckCards.add(cardFactory.newSerialCard(word.substring(1, word.length() - 1)));
             }
         }
         return new Deck(deckCards);

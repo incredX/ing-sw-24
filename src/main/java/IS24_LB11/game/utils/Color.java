@@ -23,6 +23,16 @@ public enum Color {
             default -> null;
         };
     }
+    public static Color fromChar(Character initialChar) {
+        return switch (initialChar) {
+            case 'R' -> RED;
+            case 'G' -> GREEN;
+            case 'B' -> BLUE;
+            case 'Y' -> YELLOW;
+            default -> null;
+        };
+    }
+
 
 }
 

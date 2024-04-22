@@ -1,6 +1,7 @@
 package IS24_LB11.game;
 
 import IS24_LB11.game.components.GoalCard;
+import IS24_LB11.game.components.JsonConvertable;
 import IS24_LB11.game.components.PlayableCard;
 import IS24_LB11.game.tools.JsonConverter;
 import IS24_LB11.game.tools.JsonException;
@@ -13,10 +14,10 @@ java.awt.* (Abstract Window Toolkit)  allows us to use some intefaces that help 
  */
 import java.util.ArrayList;
 
-public class Player {
+public class Player implements JsonConvertable {
     private final String name;
     private final Color color;
-    private final Board board;
+    private Board board;
     private final PlayerSetup setup;
     private final ArrayList<PlayableCard> hand;
     private GoalCard personalGoal;
@@ -106,5 +107,17 @@ public class Player {
         } catch (JsonException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public Color getColor() {
+        return color;
+    }
+
+    public ArrayList<PlayableCard> getHand() {
+        return hand;
+    }
+
+    public void setBoard(Board board){
+        this.board=board;
     }
 }
