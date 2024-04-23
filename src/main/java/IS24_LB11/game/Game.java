@@ -40,10 +40,10 @@ public class Game {
     private final Deck normalDeck;
     private final Deck starterDeck;
     private final ArrayList<Player> players;
-
     private ArrayList<Player> finalRanking;
+    private ArrayList<GoalCard> publicGoals;
 
-    public Game(int numPlayers) throws SyntaxException, FileNotFoundException {
+    public Game(int numPlayers) throws SyntaxException, FileNotFoundException, DeckException {
         JsonConverter jsonConverter = new JsonConverter();
         this.turn = 0;
         this.numPlayers = numPlayers;
@@ -51,6 +51,9 @@ public class Game {
         this.goldenDeck = jsonConverter.JSONToDeck('G'); // <- here we load deck from json
         this.normalDeck = jsonConverter.JSONToDeck('N'); // <- here we load deck from json
         this.starterDeck = jsonConverter.JSONToDeck('S'); // <- here we load deck from json
+        publicGoals = new ArrayList<>();
+        publicGoals.add((GoalCard) goalDeck.drawCard());
+        publicGoals.add((GoalCard)goalDeck.drawCard());
         this.players = new ArrayList<>(numPlayers);
         this.finalTurn = false;
     }
@@ -163,8 +166,10 @@ public class Game {
     }
     private ArrayList<Player> finalGamePhase() throws SyntaxException {
         ArrayList<Player> ranking = players;
-        for (Player player: ranking)
+        for (Player player: ranking) {
             player.personalGoalScore();
+            player.publicGoalScore(publicGoals);
+        }
         ranking.sort(Comparator.comparingInt(Player::getScore));
         ranking.reversed();
         return ranking;
@@ -201,5 +206,9 @@ public class Game {
         if (hasGameEnded())
             return finalRanking;
         return null;
+    }
+
+    public ArrayList<GoalCard> getPublicGoals() {
+        return publicGoals;
     }
 }

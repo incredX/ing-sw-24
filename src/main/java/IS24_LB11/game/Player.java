@@ -53,6 +53,15 @@ public class Player implements JsonConvertable {
         else
             incrementScore(board.countGoalPatterns((GoalPattern) personalGoal));
     }
+
+    public void publicGoalScore(ArrayList<GoalCard> publicGoals){
+        for (GoalCard goalCard: publicGoals){
+            if (goalCard.asString().length()==5)
+                incrementScore(board.countGoalSymbols((GoalSymbol) goalCard));
+            else
+                incrementScore(board.countGoalPatterns((GoalPattern) goalCard));
+        }
+    }
     public void incrementScoreLastCardPlaced() {
         score += board.calculateScoreOnLastPlacedCard();
     }
