@@ -44,6 +44,7 @@ public class Game {
         this.normalDeck = jsonConverter.JSONToDeck('N'); // <- here we load deck from json
         this.starterDeck = jsonConverter.JSONToDeck('S'); // <- here we load deck from json
         publicGoals = new ArrayList<>();
+        goalDeck.shuffle();
         publicGoals.add((GoalCard) goalDeck.drawCard());
         publicGoals.add((GoalCard)goalDeck.drawCard());
         this.players = new ArrayList<>(numPlayers);
@@ -97,6 +98,7 @@ public class Game {
 
     //Check if is not player turn
     public String executeTurn(String playerName, Position position, PlayableCard playableCard, boolean deckType, int indexDeck) throws JsonException, DeckException, SyntaxException {
+        System.out.println(turn + "-----------------------------------" + lastTurn + "  Game ended: " + hasGameEnded());
         if (playerName.compareTo(currentPlayer().name()) != 0) return NOT_PLAYER_TURN;
         if (hasGameEnded()) return "CAN'T PLAY ANYMORE";
         return finalTurn ? executeFinalTurn(position,playableCard) : executeNormalTurn(position, playableCard, deckType, indexDeck);
@@ -129,7 +131,7 @@ public class Game {
     }
 
     private String executeFinalTurn(Position position, PlayableCard playableCard) throws JsonException, SyntaxException {
-        if (turn==lastTurn) {
+        if (turn==lastTurn-1) {
             gameEnded=true;
             finalRanking = finalGamePhase();
             return "GAME ENDED";
@@ -141,7 +143,6 @@ public class Game {
             player.incrementScoreLastCardPlaced();
         }
         turn++;
-
         return VALID_TURN;
     }
     //remind to check if front or back
