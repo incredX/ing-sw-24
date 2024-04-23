@@ -1,8 +1,11 @@
-package IS24_LB11.cli.view;
+package IS24_LB11.cli;
 
-import IS24_LB11.cli.*;
+import IS24_LB11.cli.view.CommandLineView;
+import IS24_LB11.cli.view.PopUpView;
 import IS24_LB11.game.Board;
+import IS24_LB11.game.Player;
 import IS24_LB11.game.PlayerSetup;
+import IS24_LB11.game.utils.Position;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import com.googlecode.lanterna.terminal.Terminal;
@@ -25,7 +28,7 @@ public class ViewHub implements Runnable {
         Charset charset = StandardCharsets.UTF_8;
         terminal = new DefaultTerminalFactory(System.out, System.in, charset).createTerminal();
         terminal.enterPrivateMode();
-        stage = new Stage(terminal.getTerminalSize());
+        stage = new Stage(this, terminal.getTerminalSize());
         commandLineView = new CommandLineView(terminal.getTerminalSize());
         popUp = Optional.empty();
     }
@@ -37,40 +40,45 @@ public class ViewHub implements Runnable {
         while (true) {
             synchronized (terminal) {
                 try {
-                    terminal.wait(20);
+                    terminal.wait(50);
                     stage.print(terminal);
                     popUp.ifPresent(p -> {
                         try { p.print(terminal); }
-                        catch (IOException ignored) {}
+                        catch (IOException e) {
+                            System.err.println("caught exception: "+e.getMessage());
+                        }
                     });
                     commandLineView.print(terminal);
                     terminal.flush();
                 }
                 catch (InterruptedException e) { break; }
-                catch (IOException ignored) { }
+                catch (IOException e) {
+                    System.err.println("caught exception: "+e.getMessage());
+                }
             }
         }
         try {
             terminal.exitPrivateMode();
-        } catch (IOException ignored) { }
+        } catch (IOException e) {
+            System.err.println("caught exception: "+e.getMessage());
+        }
         System.out.println(Thread.currentThread().getName() + " offline");
     }
 
     public void resize(TerminalSize size, CommandLine commandLine) {
-        stage.resize(size);
-        stage.build();
-        commandLineView.resize(size);
-        commandLineView.buildCommandLine(commandLine);
-        commandLineView.build();
-        popUp.ifPresent(popUp -> {
-            popUp.resize(size);
-            popUp.build();
-            popUp.setPosition(0, stage.getYAndHeight()-3);
-        });
         synchronized (terminal) {
             try { terminal.clearScreen(); }
-            catch (IOException ignored) {}
-            terminal.notify();
+            catch (IOException ignored) { }
+            commandLineView.resize(size);
+            commandLineView.buildCommandLine(commandLine);
+            commandLineView.build();
+            popUp.ifPresent(popUp -> {
+                popUp.resize(size);
+                popUp.build();
+                popUp.setPosition(0, stage.getYAndHeight()-3);
+            });
+            stage.resize(size);
+            stage.rebuild();
         }
     }
 
@@ -80,20 +88,11 @@ public class ViewHub implements Runnable {
         }
     }
 
-    public void update(Consumer<Stage> consumer) {
-        synchronized (terminal) {
-            consumer.accept(stage);
-            terminal.notify();
-        }
-    }
-
-    public void updateStage(TerminalRectangle rectangle) {
-        update(s -> s.buildRelativeArea(rectangle));
-    }
-
     public void updateCommandLine(CommandLine commandLine) {
-        commandLineView.buildCommandLine(commandLine);
-        commandLineView.build();
+        synchronized (terminal) {
+            commandLineView.buildCommandLine(commandLine);
+            commandLineView.build();
+            terminal.notify(); }
     }
 
     public void addPopUp(String message, String title) {
@@ -117,37 +116,43 @@ public class ViewHub implements Runnable {
         }
     }
 
-    public void setStage(Stage stage) {
-        this.stage = stage;
-        update();
-    }
-
-    public BoardStage setBoardStage(Board board) {
+    public GameStage setGameStage(Player player) {
         try {
-            BoardStage boardStage = new BoardStage(terminal.getTerminalSize(), board);
-            stage = boardStage;
+            GameStage gameStage = new GameStage(this, terminal.getTerminalSize(), player);
+            gameStage.loadCardViews();
+            gameStage.setPointer(new Position(0,0));
+            stage = gameStage;
             stage.build();
             update();
-            return boardStage;
-        } catch (IOException ignored) { return null; }
+            return gameStage;
+        } catch (IOException e) {
+            System.err.println("caught exception: "+e.getMessage());
+            return null;
+        }
     }
 
     public SetupStage setSetupStage(PlayerSetup setup) {
         try {
-            SetupStage setupStage = new SetupStage(terminal.getTerminalSize(), setup);
+            SetupStage setupStage = new SetupStage(this, terminal.getTerminalSize(), setup);
             stage = setupStage;
             stage.build();
-            update();
             return setupStage;
-        } catch (IOException ignored) { return null; }
+        } catch (IOException e) {
+            System.err.println("caught exception: "+e.getMessage());
+            return null;
+        }
     }
 
-    public void setLobbyStage() {
+    public LobbyStage setLobbyStage() {
         try {
-            stage = new LobbyStage(terminal.getTerminalSize());
+            LobbyStage lobbyStage = new LobbyStage(this, terminal.getTerminalSize());
+            stage = lobbyStage;
             stage.build();
-            update();
-        } catch (IOException ignored) { }
+            return lobbyStage;
+        } catch (IOException e) {
+            System.err.println("caught exception: "+e.getMessage());
+            return null;
+        }
     }
 
     public Terminal getTerminal() { return terminal; }

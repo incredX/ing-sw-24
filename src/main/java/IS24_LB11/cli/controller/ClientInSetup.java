@@ -3,19 +3,17 @@ package IS24_LB11.cli.controller;
 import IS24_LB11.cli.SetupStage;
 import IS24_LB11.cli.event.*;
 import IS24_LB11.cli.popup.Priority;
-import IS24_LB11.cli.view.ViewHub;
+import IS24_LB11.cli.ViewHub;
 import IS24_LB11.game.PlayerSetup;
 import IS24_LB11.game.Result;
-import com.google.gson.JsonObject;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 
-import java.awt.event.KeyEvent;
 import java.io.IOException;
 
 public class ClientInSetup extends ClientState {
     private final PlayerSetup setup;
-    private SetupStage stage;
+    private SetupStage setupStage;
 
     public ClientInSetup(ViewHub viewHub, PlayerSetup setup) throws IOException {
         super(viewHub);
@@ -24,12 +22,12 @@ public class ClientInSetup extends ClientState {
 
     @Override
     public ClientState execute() {
-        stage = viewHub.setSetupStage(setup);
+        setupStage = viewHub.setSetupStage(setup);
         return super.execute();
     }
 
     protected void processServerEvent(ServerEvent serverEvent) {
-        if (processCommonServerEvent(serverEvent)) return;
+        if (processServerEventIfCommon(serverEvent)) return;
         switch (serverEvent) {
             case ServerUpdateEvent updateEvent -> {
                 popUpStack.addPopUp(Priority.LOW, "received updated players' state");
@@ -42,7 +40,7 @@ public class ClientInSetup extends ClientState {
     }
 
     protected void processCommand(String command) {
-        if (processCommonCommand(command)) return;
+        if (processCommandIfCommon(command)) return;
         String[] tokens = command.split(" ", 2);
         switch (tokens[0].toUpperCase()) {
             case "GOAL", "G" -> {
@@ -58,10 +56,12 @@ public class ClientInSetup extends ClientState {
                     setChosenGoal(index);
             }
             case "READY" -> {
-                sendToServer("setup",
-                        new String[]{"startercard","chosengoal"},
-                        new String[]{setup.getStarterCard().asString(), setup.chosenGoal().asString()});
-                try { setNextState(new ClientInGame(viewHub, setup)); }
+                //TODO: use JsonConverter
+//                sendToServer("peek",
+//                        new String[]{"startercard","goalcard"},
+//                        new String[]{setup.getStarterCard().asString(), setup.chosenGoal().asString()});
+                stage.clear();
+                try { setNextState(new ClientInGame(viewHub, setup)); } // wait server response to switch to InGame
                 catch (IOException e) {
                     e.printStackTrace();
                     quit();
@@ -73,6 +73,7 @@ public class ClientInSetup extends ClientState {
 
     @Override
     protected void processKeyStroke(KeyStroke keyStroke) {
+        if (popUpStack.consumeKeyStroke(keyStroke)) return;
         if (keyStroke.isCtrlDown()) {
             if (keyStroke.getKeyType() == KeyType.ArrowLeft) {
                 setChosenGoal(0);
@@ -80,16 +81,16 @@ public class ClientInSetup extends ClientState {
                 setChosenGoal(1);
             } else if (keyStroke.getKeyType() == KeyType.Character && keyStroke.getCharacter() == 'f') {
                 setup.getStarterCard().flip();
-                stage.buildStarterCard(setup.getStarterCard());
+                setupStage.buildStarterCard(setup.getStarterCard());
             }
         } else {
-            super.processKeyStroke(keyStroke);
+            super.processCommonKeyStrokes(keyStroke);
         }
     }
 
     private void setChosenGoal(int index) {
         setup.chooseGoal(index);
-        stage.setChosenGoal(index);
+        setupStage.setChosenGoal(index);
         viewHub.update();
     }
 }

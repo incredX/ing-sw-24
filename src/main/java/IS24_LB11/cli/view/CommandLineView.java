@@ -65,8 +65,6 @@ public class CommandLineView extends CliBox {
     public void resize(TerminalSize newSize) {
         rectangle.setPosition(0, newSize.getRows()-3);
         setSize(newSize.withRows(3));
-        updateInnerArea();
-        resetImage();
     }
 
     public void setCursorPosition(int cursor) {

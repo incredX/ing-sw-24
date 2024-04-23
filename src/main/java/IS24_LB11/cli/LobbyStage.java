@@ -19,14 +19,21 @@ public class LobbyStage extends Stage {
                     "   \"888.      :\"      'Y\"       `\"888*\"\"    \"88888%   ` \"Y   Y\"    \n" +
                     "     `\"\"***~\"`                     \"\"         \"YP' ";
 
-    public LobbyStage(TerminalSize terminalSize) {
-        super(terminalSize);
+    public LobbyStage(ViewHub viewHub, TerminalSize terminalSize) {
+        super(viewHub, terminalSize);
     }
 
     @Override
     public void build() {
         drawBorders();
         drawWallpaper();
+        updateViewHub();
+    }
+
+    @Override
+    public void resize(TerminalSize terminalSize) {
+        super.resize(terminalSize);
+        updateViewHub();
     }
 
     public void drawWallpaper() {
