@@ -1,15 +1,8 @@
 package IS24_LB11.cli;
 
-import IS24_LB11.cli.style.SingleBorderStyle;
-import IS24_LB11.cli.utils.CliBox;
 import IS24_LB11.cli.utils.Side;
-import IS24_LB11.cli.view.CardViewFactory;
-import IS24_LB11.cli.view.GoldenCardView;
-import IS24_LB11.cli.view.NormalCardView;
-import IS24_LB11.cli.view.PlayableCardView;
+import IS24_LB11.cli.view.*;
 import IS24_LB11.game.Player;
-import IS24_LB11.game.components.GoldenCard;
-import IS24_LB11.game.components.NormalCard;
 import IS24_LB11.game.components.PlayableCard;
 import IS24_LB11.game.utils.Position;
 import com.googlecode.lanterna.TerminalPosition;
@@ -18,7 +11,6 @@ import com.googlecode.lanterna.TextColor;
 
 import java.util.ArrayList;
 
-import static IS24_LB11.cli.view.PlayableCardView.HEIGHT;
 import static IS24_LB11.cli.view.PlayableCardView.WIDTH;
 
 public class GameStage extends Stage {
@@ -29,37 +21,21 @@ public class GameStage extends Stage {
 
     private final Player player;
     private final ArrayList<PlayableCardView> cardviews;
-    private final CliBox handBox;
-    private final ArrayList<PlayableCardView> handView;
+    private final HandBox handBox;
     private Position pointer;
     private TerminalPosition gridBase;
-    private Side lastVerticalShift;
-    private Side lastHorizontalShift;
     private boolean visibleHand;
 
-    public GameStage(TerminalSize terminalSize, Player player) {
-        super(terminalSize);
+    public GameStage(ViewHub viewHub, TerminalSize terminalSize, Player player) {
+        super(viewHub, terminalSize);
         this.player = player;
         this.cardviews = new ArrayList<>();
-        this.handBox = new CliBox(WIDTH+3, 3*HEIGHT+2, 0, 0, new SingleBorderStyle());
-        this.handView = new ArrayList<>(3);
+        this.handBox = new HandBox(player.getHand());
         this.pointer = null;
-        this.visibleHand = false;
-
+        this.visibleHand = true;
+        this.handBox.build();
         centerGridBase();
-        handBox.setMargins(0);
-        handBox.build();
-        int x = 0, y = 0;
-        for(PlayableCard card: player.getHand()) {
-            switch (card) {
-                case GoldenCard goldenCard -> handView.add(new GoldenCardView(goldenCard));
-                case NormalCard normalCard -> handView.add(new NormalCardView(normalCard));
-                default -> throw new IllegalArgumentException("Invalid card: " + card.asString());
-            }
-            handView.getLast().setPosition(x, y);
-            handView.getLast().build();
-            y += HEIGHT;
-        }
+        resize(terminalSize);
     }
 
     @Override
@@ -69,6 +45,7 @@ public class GameStage extends Stage {
         drawPlacedCards();
         drawPointer();
         drawHand();
+        updateViewHub();
     }
 
     @Override
@@ -77,35 +54,32 @@ public class GameStage extends Stage {
         centerGridBase();
         setPointer(new Position(0,0));
         placeHand(terminalSize);
+        updateViewHub();
     }
 
     @Override
     public void shift(Side side) {
         if (pointer == null) return;
-        if (lastVerticalShift == null)
-            lastVerticalShift = (side.isVertical()) ? side : Side.fromInt(side.ordinal()+1);
-        if (lastHorizontalShift == null)
-            lastHorizontalShift = (!side.isVertical()) ? side : Side.fromInt(side.ordinal()+1);
 
         clearPointer();
-        Side lastShift = side.isVertical() ? lastHorizontalShift : lastVerticalShift;
-        pointer = pointer.withRelative(side.asRelativePosition())
-                .withRelative(lastShift.asRelativePosition());
+        pointer = pointer.withRelative(side.asRelativePosition());
         TerminalPosition shiftedPosition = convertPosition(pointer);
         if (shiftedPosition.getColumn()+UNIT_X >= innerWidth() ||
                 shiftedPosition.getRow()+UNIT_Y >= innerHeight() ||
                 shiftedPosition.getColumn() < OFFSET_X ||
                 shiftedPosition.getRow() < OFFSET_Y) {
             shiftGridBase(side.opposite());
-            shiftGridBase(lastShift.opposite());
             rebuild();
         } else {
             drawPointer();
             drawHand();
         }
-        System.out.printf("V[%s] H[%s] %s\n", lastVerticalShift, lastHorizontalShift, side);
-        if (side.isVertical()) lastVerticalShift = side;
-        else lastHorizontalShift = side;
+    }
+
+    public void buildHandCard(PlayableCard card) {
+        handBox.buildSelectedCard(card);
+        handBox.build();
+        drawHand();
     }
 
     public void placeHand(TerminalSize terminalSize) {
@@ -137,13 +111,10 @@ public class GameStage extends Stage {
     }
 
     public void drawHand() {
-        if (isMininimalSize()) return;
-        draw(handBox);
-        for (PlayableCardView cardView : handView)
-            handBox.draw(cardView);
-        drawCell(new TerminalPosition(borderArea.getWidth(), handBox.getY()+1), borderStyle.getSeparator(Side.EAST));
-        drawCell(new TerminalPosition(borderArea.getWidth(), handBox.getYAndHeight()), borderStyle.getSeparator(Side.EAST));
-        buildRelativeArea(handBox.getRectangle());
+        if (visibleHand && !isMininimalSize()) {
+            draw(handBox);
+            buildRelativeArea(handBox.getRectangle());
+        }
     }
 
     public void clearPointer() {
@@ -158,16 +129,17 @@ public class GameStage extends Stage {
 
     private void drawPointer(char c, TextColor color) {
         if (pointer == null) return;
-        int baseX = pointer.getX()*UNIT_X+gridBase.getColumn()+2;
+        int offsetX = 4;
+        int baseX = pointer.getX()*UNIT_X+gridBase.getColumn()+1+offsetX;
         int baseY = pointer.getY()*UNIT_Y+gridBase.getRow()+UNIT_Y/2+1;
-        for (int i=0; i<3; i++) {
+        for (int i=0; i<2; i++) {
             if (baseY+i < lastRow()-1) {
                 drawCell(new TerminalPosition(baseX+2*i, baseY+i), c, color);
-                drawCell(new TerminalPosition(baseX+UNIT_X-2*(i+1), baseY+i), c, color);
+                drawCell(new TerminalPosition(baseX+UNIT_X-2*(i+offsetX), baseY+i), c, color);
             }
             if (i>0) {
                 drawCell(new TerminalPosition(baseX+2*i, baseY-i), c, color);
-                drawCell(new TerminalPosition(baseX+UNIT_X-2*(i+1), baseY-i), c, color);
+                drawCell(new TerminalPosition(baseX+UNIT_X-2*(i+offsetX), baseY-i), c, color);
             }
         }
         buildRelativeArea(UNIT_X-1, UNIT_Y, baseX, baseY-UNIT_Y/2);
@@ -192,6 +164,22 @@ public class GameStage extends Stage {
             cardviews.add(CardViewFactory.newPlayableCardView(placedCard.card()));
             cardviews.getLast().setBoardPosition(placedCard.position());
         });
+    }
+
+    public void setSelectedCard(int selectedCard) {
+        handBox.setSelectedCard(selectedCard);
+        handBox.build();
+        drawHand();
+    }
+
+    public void showHand() {
+        visibleHand = true;
+        drawHand();
+    }
+
+    public void hideHand() {
+        visibleHand = false;
+        rebuild();
     }
 
     private boolean isMininimalSize() {

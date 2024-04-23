@@ -4,6 +4,7 @@ import IS24_LB11.cli.popup.Priority;
 import IS24_LB11.cli.ViewHub;
 import IS24_LB11.cli.event.*;
 import IS24_LB11.game.Result;
+import com.googlecode.lanterna.input.KeyStroke;
 
 import java.io.IOException;
 
@@ -55,6 +56,12 @@ public class ClientInLobby extends ClientState {
             }
             default -> popUpStack.addUrgentPopUp("ERROR", tokens[0]+" is not a valid command");
         };
+    }
+
+    @Override
+    protected void processKeyStroke(KeyStroke keyStroke) {
+        if (popUpStack.consumeKeyStroke(keyStroke)) return;
+        super.processCommonKeyStrokes(keyStroke);
     }
 
     private void processCommandLogin(String username) {

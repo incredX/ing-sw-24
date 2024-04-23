@@ -14,8 +14,8 @@ public class SetupStage extends Stage {
     private final ArrayList<PlayableCardView> handView;
     private final ArrayList<GoalView> goalViews;
 
-    public SetupStage(TerminalSize terminalSize, PlayerSetup setup) {
-        super(terminalSize);
+    public SetupStage(ViewHub viewHub, TerminalSize terminalSize, PlayerSetup setup) {
+        super(viewHub, terminalSize);
         this.chosenGoalIndex = 0;
         this.starterCardView = new StarterCardView(setup.getStarterCard());
         this.handView = new ArrayList<>(3);
@@ -36,11 +36,12 @@ public class SetupStage extends Stage {
 
     @Override
     public void build() {
-        super.build();
+        drawBorders();
         drawStarterCard();
         drawGoalPointer();
         drawGoals();
         drawHand();
+        updateViewHub();
     }
 
     @Override
@@ -49,6 +50,7 @@ public class SetupStage extends Stage {
         placeStarterCard(terminalSize);
         placeGoals(terminalSize);
         placeHandHorizontal(terminalSize);
+        updateViewHub();
     }
 
     public void setChosenGoal(int index) {

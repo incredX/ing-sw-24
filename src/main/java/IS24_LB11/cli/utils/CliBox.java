@@ -83,7 +83,7 @@ public class CliBox implements CliFrame {
         }
     }
 
-    public void draw(CliBox box) {
+    protected void draw(CliBox box) {
         for (int r=0; r<box.rectangle.getHeight(); r++) {
             for (int c=0; c<box.rectangle.getWidth(); c++) {
                 int x = firstColumn() + box.rectangle.getX() + c;
@@ -136,12 +136,16 @@ public class CliBox implements CliFrame {
         fillRow(row, offset, c, TextColor.ANSI.DEFAULT);
     }
 
-    protected void fillRow(int row, int offset, String line) {
+    protected void fillRow(int row, int offset, String line, TextColor color) {
         for (int i=firstColumn()+offset,j=0; i<=lastColumn(); i++) {
             if (j >= line.length()) break;
-            drawCell(new TerminalPosition(i, row), line.charAt(j));
+            drawCell(new TerminalPosition(i, row), line.charAt(j), color);
             j++;
         }
+    }
+
+    protected void fillRow(int row, int offset, String line) {
+        fillRow(row, offset, line, TextColor.ANSI.DEFAULT);
     }
 
     protected void fillRow(int row, String line) {

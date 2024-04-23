@@ -13,15 +13,17 @@ import java.util.ArrayDeque;
 
 
 public class Stage extends CliBox {
+    private final ViewHub viewHub;
     private final ArrayDeque<TerminalRectangle> builtAreas;
 
-    public Stage(TerminalSize terminalSize) {
+    public Stage(ViewHub viewHub, TerminalSize terminalSize) {
         super(terminalSize.withRelative(0, -4),
                 new TerminalPosition(0, 2),
                 new SingleBorderStyle());
+        this.viewHub = viewHub;
+        this.builtAreas = new ArrayDeque<>();
         setMargins(0);
         updateInnerArea();
-        builtAreas = new ArrayDeque<>();
     }
 
     @Override
@@ -73,12 +75,9 @@ public class Stage extends CliBox {
         }
         terminal.setCursorPosition(originalPosition);
     }
-
-//    private void drawBottomDiv() {
-//        fillRow(lastRow()-1, borderStyle.getHLine(), TextColor.ANSI.DEFAULT);
-//        drawCell(new TerminalPosition(borderArea.side(WEST), lastRow()-1), borderStyle.getSeparator(WEST));
-//        drawCell(new TerminalPosition(borderArea.side(EAST), lastRow()-1), borderStyle.getSeparator(EAST));
-//    }
+    protected void updateViewHub() {
+        viewHub.update();
+    }
 
     @Override
     protected void drawBorders() {

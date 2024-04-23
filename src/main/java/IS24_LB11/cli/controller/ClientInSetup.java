@@ -73,6 +73,7 @@ public class ClientInSetup extends ClientState {
 
     @Override
     protected void processKeyStroke(KeyStroke keyStroke) {
+        if (popUpStack.consumeKeyStroke(keyStroke)) return;
         if (keyStroke.isCtrlDown()) {
             if (keyStroke.getKeyType() == KeyType.ArrowLeft) {
                 setChosenGoal(0);
@@ -83,7 +84,7 @@ public class ClientInSetup extends ClientState {
                 setupStage.buildStarterCard(setup.getStarterCard());
             }
         } else {
-            super.processKeyStroke(keyStroke);
+            super.processCommonKeyStrokes(keyStroke);
         }
     }
 
