@@ -8,6 +8,7 @@ import IS24_LB11.game.components.GoldenCard;
 import IS24_LB11.game.components.NormalCard;
 import IS24_LB11.game.components.PlayableCard;
 import IS24_LB11.game.utils.Direction;
+import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
 
 import java.awt.*;
@@ -47,15 +48,26 @@ public class HandBox extends CliBox {
         drawPointer();
     }
 
-    public void buildSelectedCard(PlayableCard card) {
-        PlayableCardView cardView = cardViews.get(selectedCard);
-        switch (card) {
-            case GoldenCard goldenCard -> cardView = new GoldenCardView(goldenCard);
-            case NormalCard normalCard -> cardView = new NormalCardView(normalCard);
-            default -> throw new IllegalArgumentException("Invalid card: " + card.asString());
-        };
-        cardView.setPosition(0, selectedCard*HEIGHT);
-        cardView.build();
+    public void buildCards(ArrayList<PlayableCard> hand) {
+        int y = 0;
+        cardViews.clear();
+        for(PlayableCard card: hand) {
+            switch (card) {
+                case GoldenCard goldenCard -> cardViews.add(new GoldenCardView(goldenCard));
+                case NormalCard normalCard -> cardViews.add(new NormalCardView(normalCard));
+                default -> throw new IllegalArgumentException("Invalid card: " + card.asString());
+            }
+            cardViews.getLast().setPosition(0, y);
+            cardViews.getLast().build();
+            y += HEIGHT;
+        }
+        build();
+    }
+
+    public void removeSelectedCard() {
+        cardViews.remove(selectedCard);
+        selectedCard = selectedCard % cardViews.size();
+        setSize(new TerminalSize(WIDTH+3, HEIGHT*cardViews.size()+2));
     }
 
     @Override
@@ -75,8 +87,8 @@ public class HandBox extends CliBox {
         PlayableCardView cardView = cardViews.get(selectedCard);
         int baseX = firstColumn()+cardView.getX();
         int baseY = firstRow()+cardView.getY()+HEIGHT/2;
-        fillRow(baseY, baseX+3, "> > >", TextColor.ANSI.YELLOW);
-        fillRow(baseY, baseX+WIDTH-10, "< < <", TextColor.ANSI.YELLOW);
+        fillRow(baseY, baseX+3, "> > >", TextColor.ANSI.YELLOW_BRIGHT);
+        fillRow(baseY, baseX+WIDTH-10, "< < <", TextColor.ANSI.YELLOW_BRIGHT);
     }
 
     public void setSelectedCard(int selectedCard) {

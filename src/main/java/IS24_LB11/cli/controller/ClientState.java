@@ -3,10 +3,9 @@ package IS24_LB11.cli.controller;
 import IS24_LB11.cli.CommandLine;
 import IS24_LB11.cli.Stage;
 import IS24_LB11.cli.event.*;
-import IS24_LB11.cli.popup.PopUpStack;
-import IS24_LB11.cli.popup.Priority;
+import IS24_LB11.cli.notification.NotificationStack;
+import IS24_LB11.cli.notification.Priority;
 import IS24_LB11.cli.ViewHub;
-import IS24_LB11.cli.KeyConsumer;
 import IS24_LB11.cli.listeners.ServerHandler;
 import IS24_LB11.game.Result;
 import com.google.gson.JsonObject;
@@ -15,7 +14,6 @@ import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.terminal.Terminal;
 
 import java.io.IOException;
-import java.util.PriorityQueue;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
@@ -25,7 +23,7 @@ public abstract class ClientState {
     private ClientState nextState;
     protected String username;
     protected final ArrayBlockingQueue<Event> queue;
-    protected final PopUpStack popUpStack;
+    protected final NotificationStack notificationStack;
     protected final ViewHub viewHub;
     protected final CommandLine cmdLine;
     protected ServerHandler serverHandler;
@@ -34,7 +32,7 @@ public abstract class ClientState {
     public ClientState(ViewHub viewHub) throws IOException {
         this.nextState = null;
         this.queue = new ArrayBlockingQueue<>(QUEUE_CAPACITY);
-        this.popUpStack = new PopUpStack(viewHub, 0);
+        this.notificationStack = new NotificationStack(viewHub, 0);
         this.viewHub = viewHub;
         this.cmdLine = new CommandLine(viewHub.getTerminal().getTerminalSize().getColumns());
         this.stage = viewHub.getStage();
@@ -85,7 +83,7 @@ public abstract class ClientState {
             text = result.getError();
             if (result.getCause() != null)
                 text += " : "+result.getCause();
-            popUpStack.addUrgentPopUp("ERROR", text);
+            notificationStack.addUrgentPopUp("ERROR", text);
             return;
         }
         processServerEvent(result.get());
@@ -99,7 +97,7 @@ public abstract class ClientState {
     protected boolean processServerEventIfCommon(ServerEvent serverEvent) {
         switch (serverEvent) {
             case ServerNotificationEvent notificationEvent -> {
-                popUpStack.addPopUp(Priority.LOW, "from server", notificationEvent.message());
+                notificationStack.addPopUp(Priority.LOW, "from server", notificationEvent.message());
             }
             case ServerMessageEvent messageEvent -> {
                 String text;
@@ -107,7 +105,7 @@ public abstract class ClientState {
                     text = String.format("%s @ all : %s", messageEvent.from(), messageEvent.message());
                 else
                     text = String.format("%s : %s", messageEvent.from(), messageEvent.message());
-                popUpStack.addPopUp(Priority.MEDIUM, text);
+                notificationStack.addPopUp(Priority.MEDIUM, text);
             }
             case ServerHeartBeatEvent heartBeatEvent -> {
                 sendToServer("heartbeat");
@@ -129,12 +127,12 @@ public abstract class ClientState {
             }
             case "SENDTO", "@" -> {
                 if (tokens.length == 2) processCommandSendto(tokens[1]);
-                else popUpStack.addUrgentPopUp("ERROR", "missing argument");
+                else notificationStack.addUrgentPopUp("ERROR", "missing argument");
                 return true;
             }
             case "SENDTOALL", "@ALL" -> {
                 if (tokens.length == 2) processCommandSendtoall(tokens[1]);
-                else popUpStack.addUrgentPopUp("ERROR", "missing argument");
+                else notificationStack.addUrgentPopUp("ERROR", "missing argument");
                 return true;
             }
         };
@@ -178,7 +176,7 @@ public abstract class ClientState {
             String[] values = new String[] {username, tokens[0], tokens[1]};
             sendToServer("message", fields, values);
         } else {
-            popUpStack.addUrgentPopUp("ERROR", "syntax error in given commmand");
+            notificationStack.addUrgentPopUp("ERROR", "syntax error in given commmand");
         }
     }
 

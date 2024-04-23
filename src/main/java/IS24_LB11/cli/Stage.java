@@ -75,8 +75,11 @@ public class Stage extends CliBox {
         }
         terminal.setCursorPosition(originalPosition);
     }
-    protected void updateViewHub() {
-        viewHub.update();
+
+    @Override
+    public void draw(CliBox cliBox) {
+        super.draw(cliBox);
+        buildArea(cliBox.getRectangle());
     }
 
     @Override
@@ -91,6 +94,10 @@ public class Stage extends CliBox {
     @Override
     public void resize(TerminalSize terminalSize) {
         super.resize(terminalSize.withRelative(0, -4));
+    }
+
+    protected void updateViewHub() {
+        viewHub.update();
     }
 
     public void shift(Side side) {

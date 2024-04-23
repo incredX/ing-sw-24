@@ -1,6 +1,6 @@
 package IS24_LB11.cli.controller;
 
-import IS24_LB11.cli.popup.Priority;
+import IS24_LB11.cli.notification.Priority;
 import IS24_LB11.cli.ViewHub;
 import IS24_LB11.cli.event.*;
 import IS24_LB11.game.Result;
@@ -28,10 +28,10 @@ public class ClientInLobby extends ClientState {
                 username = loginEvent.username();
             }
             case ServerUpdateEvent updateEvent -> {
-                popUpStack.addPopUp(Priority.LOW, "received updated board of"+updateEvent.getUsername());
+                notificationStack.addPopUp(Priority.LOW, "received updated board of"+updateEvent.getUsername());
             }
             case ServerPlayerSetupEvent setupEvent -> {
-                popUpStack.addPopUp(Priority.LOW, "received player setup");
+                notificationStack.addPopUp(Priority.LOW, "received player setup");
                 try { setNextState(new ClientInSetup(viewHub, setupEvent.getPlayerSetup())); }
                 catch (IOException e) {
                     e.printStackTrace();
@@ -48,19 +48,19 @@ public class ClientInLobby extends ClientState {
         switch (tokens[0].toUpperCase()) {
             case "LOGIN" -> {
                 if (tokens.length == 2) processCommandLogin(tokens[1]);
-                else popUpStack.addUrgentPopUp("ERROR", "missing argument");
+                else notificationStack.addUrgentPopUp("ERROR", "missing argument");
             }
             case "POPUP" -> {
                 if (tokens.length == 2) processCommandPopup(tokens[1]);
-                else popUpStack.addUrgentPopUp("ERROR", "missing argument");
+                else notificationStack.addUrgentPopUp("ERROR", "missing argument");
             }
-            default -> popUpStack.addUrgentPopUp("ERROR", tokens[0]+" is not a valid command");
+            default -> notificationStack.addUrgentPopUp("ERROR", tokens[0]+" is not a valid command");
         };
     }
 
     @Override
     protected void processKeyStroke(KeyStroke keyStroke) {
-        if (popUpStack.consumeKeyStroke(keyStroke)) return;
+        if (notificationStack.consumeKeyStroke(keyStroke)) return;
         super.processCommonKeyStrokes(keyStroke);
     }
 
@@ -76,14 +76,14 @@ public class ClientInLobby extends ClientState {
         Priority priority;
         try { priority = Priority.valueOf(tokens[0].toUpperCase()); }
         catch (IllegalArgumentException e) {
-            popUpStack.addUrgentPopUp("ERROR", tokens[0]+" is not a valid priority");
+            notificationStack.addUrgentPopUp("ERROR", tokens[0]+" is not a valid priority");
             return;
         }
         if (tokens.length >= 3) {
-            popUpStack.addPopUp(priority, tokens[1], tokens[2]);
+            notificationStack.addPopUp(priority, tokens[1], tokens[2]);
             System.out.println("added popup.");
         } else if (tokens.length == 2) {
-            popUpStack.addPopUp(priority, tokens[1]);
+            notificationStack.addPopUp(priority, tokens[1]);
             System.out.println("added popup.");
         }
     }

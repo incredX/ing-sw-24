@@ -6,14 +6,17 @@ import IS24_LB11.cli.ViewHub;
 import IS24_LB11.cli.utils.Side;
 import IS24_LB11.game.Player;
 import IS24_LB11.game.PlayerSetup;
+import IS24_LB11.game.components.PlayableCard;
 import IS24_LB11.game.utils.Position;
 import com.googlecode.lanterna.input.KeyStroke;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class ClientInGame extends ClientState {
     private final Player player;
     private GameStage gameStage;
+    private Position pointer;
     private int selectedCard;
 
     public ClientInGame(ViewHub viewHub, PlayerSetup setup) throws IOException {
@@ -47,13 +50,13 @@ public class ClientInGame extends ClientState {
                 gameStage.centerGridBase();
                 gameStage.rebuild();
             }
-            default -> popUpStack.addUrgentPopUp("ERROR", tokens[0]+" is not a valid command");
+            default -> notificationStack.addUrgentPopUp("ERROR", tokens[0]+" is not a valid command");
         }
     }
 
     @Override
     protected void processKeyStroke(KeyStroke keyStroke) {
-        if (popUpStack.consumeKeyStroke(keyStroke)) return;
+        if (notificationStack.consumeKeyStroke(keyStroke)) return;
 
         if (keyStroke.isShiftDown()) {
             switch (keyStroke.getKeyType()) {
@@ -67,18 +70,27 @@ public class ClientInGame extends ClientState {
             switch (keyStroke.getKeyType()) {
                 case ArrowUp -> {
                     selectPreviousCard();
-                    gameStage.setSelectedCard(selectedCard);
+                    gameStage.setSelectedCardInHand(selectedCard);
                     return;
                 }
                 case ArrowDown -> {
                     selectNextCard();
-                    gameStage.setSelectedCard(selectedCard);
+                    gameStage.setSelectedCardInHand(selectedCard);
+                    return;
+                }
+                case Enter -> {
+                    //TODO: export here stage.pointer
+                    ArrayList<PlayableCard> hand = player.getHand();
+                    if (hand.size() == 3 && player.placeCard(hand.get(selectedCard), gameStage.getPointer())) {
+                        gameStage.placeSelectedCard();
+                        gameStage.rebuild();
+                    }
                     return;
                 }
                 case Character -> {
                     if (keyStroke.getCharacter() == 'f') {
                         player.getHand().get(selectedCard).flip();
-                        gameStage.buildHandCard(player.getHand().get(selectedCard));
+                        gameStage.buildHandCard();
                         return;
                     }
                 }

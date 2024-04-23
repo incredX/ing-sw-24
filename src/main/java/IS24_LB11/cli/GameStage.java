@@ -2,8 +2,10 @@ package IS24_LB11.cli;
 
 import IS24_LB11.cli.utils.Side;
 import IS24_LB11.cli.view.*;
+import IS24_LB11.game.Deck;
 import IS24_LB11.game.Player;
-import IS24_LB11.game.components.PlayableCard;
+import IS24_LB11.game.components.GoldenCard;
+import IS24_LB11.game.components.NormalCard;
 import IS24_LB11.game.utils.Position;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
@@ -22,17 +24,23 @@ public class GameStage extends Stage {
     private final Player player;
     private final ArrayList<PlayableCardView> cardviews;
     private final HandBox handBox;
+    private final DecksBox decksBox;
+    private TextColor pointerColor;
     private Position pointer;
     private TerminalPosition gridBase;
     private boolean visibleHand;
+    private boolean visibleDecks;
 
     public GameStage(ViewHub viewHub, TerminalSize terminalSize, Player player) {
         super(viewHub, terminalSize);
         this.player = player;
         this.cardviews = new ArrayList<>();
         this.handBox = new HandBox(player.getHand());
+        this.decksBox = new DecksBox(rectangle.getSize(), new ArrayList<>(), new ArrayList<>());
+        this.pointerColor = TextColor.ANSI.RED_BRIGHT;
         this.pointer = null;
         this.visibleHand = true;
+        this.visibleDecks = false;
         this.handBox.build();
         centerGridBase();
         resize(terminalSize);
@@ -45,6 +53,7 @@ public class GameStage extends Stage {
         drawPlacedCards();
         drawPointer();
         drawHand();
+        drawDecks();
         updateViewHub();
     }
 
@@ -53,7 +62,8 @@ public class GameStage extends Stage {
         super.resize(terminalSize);
         centerGridBase();
         setPointer(new Position(0,0));
-        placeHand(terminalSize);
+        placeHand(rectangle.getSize());
+        placeDecksBox(rectangle.getSize());
         updateViewHub();
     }
 
@@ -63,6 +73,13 @@ public class GameStage extends Stage {
 
         clearPointer();
         pointer = pointer.withRelative(side.asRelativePosition());
+        if (player.getHand().size() <= 2) {
+            pointerColor = TextColor.ANSI.BLACK_BRIGHT;
+        } else if (player.getBoard().spotAvailable(pointer)) {
+            pointerColor = TextColor.ANSI.GREEN_BRIGHT;
+        } else {
+            pointerColor = TextColor.ANSI.RED_BRIGHT;
+        }
         TerminalPosition shiftedPosition = convertPosition(pointer);
         if (shiftedPosition.getColumn()+UNIT_X >= innerWidth() ||
                 shiftedPosition.getRow()+UNIT_Y >= innerHeight() ||
@@ -76,16 +93,35 @@ public class GameStage extends Stage {
         }
     }
 
-    public void buildHandCard(PlayableCard card) {
-        handBox.buildSelectedCard(card);
-        handBox.build();
+    public void buildHandCard() {
+        handBox.buildCards(player.getHand());
         drawHand();
+    }
+
+    public void buildDecks(ArrayList<NormalCard> normalCards, ArrayList<GoldenCard> goldenCards) {
+        decksBox.loadNormalDeck(normalCards);
+        decksBox.loadGoldenDeck(goldenCards);
+        drawDecks();
+    }
+
+    public void placeSelectedCard() {
+        handBox.removeSelectedCard();
+        handBox.buildCards(player.getHand());
+        pointerColor = TextColor.ANSI.BLACK_BRIGHT;
+        placeHand(rectangle.getSize());
+        loadCardViews();
     }
 
     public void placeHand(TerminalSize terminalSize) {
         int x = terminalSize.getColumns()-handBox.getWidth();
-        int y = (terminalSize.getRows()-handBox.getHeight())/2-2;
+        int y = (terminalSize.getRows()-handBox.getHeight())/2;
         handBox.setPosition(x, y);
+    }
+
+    public void placeDecksBox(TerminalSize terminalSize) {
+        int x = (terminalSize.getColumns()-decksBox.getWidth())/2;
+        int y = (terminalSize.getRows()-decksBox.getHeight())/2;
+        decksBox.setPosition(x, y);
     }
 
     public void centerGridBase() {
@@ -117,14 +153,20 @@ public class GameStage extends Stage {
         }
     }
 
+    public void drawDecks() {
+        if (visibleDecks && !isMininimalSize()) {
+            draw(decksBox);
+            buildRelativeArea(decksBox.getRectangle());
+        }
+    }
+
     public void clearPointer() {
         drawPointer(' ', TextColor.ANSI.DEFAULT);
     }
 
     private void drawPointer() {
         if (pointer == null) return;
-        TextColor color = (player.getBoard().spotAvailable(pointer) ? TextColor.ANSI.GREEN_BRIGHT : TextColor.ANSI.RED_BRIGHT);
-        drawPointer('#', color);
+        drawPointer('#', pointerColor);
     }
 
     private void drawPointer(char c, TextColor color) {
@@ -166,7 +208,7 @@ public class GameStage extends Stage {
         });
     }
 
-    public void setSelectedCard(int selectedCard) {
+    public void setSelectedCardInHand(int selectedCard) {
         handBox.setSelectedCard(selectedCard);
         handBox.build();
         drawHand();
@@ -198,5 +240,9 @@ public class GameStage extends Stage {
         int x = position.getX()*UNIT_X+gridBase.getColumn();
         int y = position.getY()*UNIT_Y+gridBase.getRow();
         return new TerminalPosition(x, y);
+    }
+
+    public Position getPointer() {
+        return pointer;
     }
 }

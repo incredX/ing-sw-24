@@ -2,7 +2,7 @@ package IS24_LB11.cli.controller;
 
 import IS24_LB11.cli.SetupStage;
 import IS24_LB11.cli.event.*;
-import IS24_LB11.cli.popup.Priority;
+import IS24_LB11.cli.notification.Priority;
 import IS24_LB11.cli.ViewHub;
 import IS24_LB11.game.PlayerSetup;
 import IS24_LB11.game.Result;
@@ -30,7 +30,7 @@ public class ClientInSetup extends ClientState {
         if (processServerEventIfCommon(serverEvent)) return;
         switch (serverEvent) {
             case ServerUpdateEvent updateEvent -> {
-                popUpStack.addPopUp(Priority.LOW, "received updated players' state");
+                notificationStack.addPopUp(Priority.LOW, "received updated players' state");
             }
             case ServerPlayerSetupEvent playerSetupEvent -> {
                 processResult(Result.Error("Invalid server event", "can't accept a new player setup"));
@@ -45,12 +45,12 @@ public class ClientInSetup extends ClientState {
         switch (tokens[0].toUpperCase()) {
             case "GOAL", "G" -> {
                 if (tokens.length == 2) {
-                    popUpStack.addUrgentPopUp("ERROR", "missing argument");
+                    notificationStack.addUrgentPopUp("ERROR", "missing argument");
                     return;
                 }
                 int index = 'a' - tokens[1].charAt(0);
                 if (index < 0 || index > 1 || tokens[1].length() > 1)
-                    popUpStack.addUrgentPopUp("ERROR",
+                    notificationStack.addUrgentPopUp("ERROR",
                             "command \"GOAL\" expects 'a' or 'b' as argument, "+tokens[1]+"was given");
                 else
                     setChosenGoal(index);
@@ -67,13 +67,13 @@ public class ClientInSetup extends ClientState {
                     quit();
                 }
             }
-            default -> popUpStack.addUrgentPopUp("ERROR", tokens[0]+" is not a valid command");
+            default -> notificationStack.addUrgentPopUp("ERROR", tokens[0]+" is not a valid command");
         };
     }
 
     @Override
     protected void processKeyStroke(KeyStroke keyStroke) {
-        if (popUpStack.consumeKeyStroke(keyStroke)) return;
+        if (notificationStack.consumeKeyStroke(keyStroke)) return;
         if (keyStroke.isCtrlDown()) {
             if (keyStroke.getKeyType() == KeyType.ArrowLeft) {
                 setChosenGoal(0);

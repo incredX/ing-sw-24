@@ -1,8 +1,7 @@
 package IS24_LB11.cli;
 
 import IS24_LB11.cli.view.CommandLineView;
-import IS24_LB11.cli.view.PopUpView;
-import IS24_LB11.game.Board;
+import IS24_LB11.cli.view.NotificationView;
 import IS24_LB11.game.Player;
 import IS24_LB11.game.PlayerSetup;
 import IS24_LB11.game.utils.Position;
@@ -10,19 +9,16 @@ import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import com.googlecode.lanterna.terminal.Terminal;
 
-import IS24_LB11.cli.utils.TerminalRectangle;
-
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
-import java.util.function.Consumer;
 
 public class ViewHub implements Runnable {
     private final Terminal terminal;
     private Stage stage;
     private CommandLineView commandLineView;
-    private Optional<PopUpView> popUp;
+    private Optional<NotificationView> popUp;
 
     public ViewHub() throws IOException {
         Charset charset = StandardCharsets.UTF_8;
@@ -100,7 +96,7 @@ public class ViewHub implements Runnable {
             stage.buildArea(popUp.get().getRectangle());
             popUp = Optional.empty();
         }
-        popUp = Optional.of(new PopUpView(stage, title, message));
+        popUp = Optional.of(new NotificationView(stage, title, message));
         popUp.get().build();
     }
 
