@@ -114,6 +114,10 @@ public class CliBox implements CliFrame {
         image[pos.getRow()][pos.getColumn()] = new Cell(c, color);
     }
 
+    protected void drawCell(int col, int row, char c, TextColor color) {
+        image[row][col] = new Cell(c, color);
+    }
+
     protected void drawCell(TerminalPosition pos, Cell cell) {
         image[pos.getRow()][pos.getColumn()] = cell;
     }
@@ -158,12 +162,16 @@ public class CliBox implements CliFrame {
         }
     }
 
-    protected void fillColumn(int col, int offset, String line) {
+    protected void fillColumn(int col, int offset, String line, TextColor color) {
         for (int i=firstRow()+offset,j=0; i<=lastRow(); i++) {
             if (j >= line.length()) break;
-            drawCell(new TerminalPosition(col, i), line.charAt(j));
+            drawCell(new TerminalPosition(col, i), line.charAt(j), color);
             j++;
         }
+    }
+
+    protected void fillColumn(int col, int offset, String line) {
+        fillColumn(col, offset, line, TextColor.ANSI.DEFAULT);
     }
 
     protected void fillColumn(int col, String line) {

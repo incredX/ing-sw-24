@@ -26,43 +26,43 @@ public class NotificationStack implements KeyConsumer {
     @Override
     public boolean consumeKeyStroke(KeyStroke keyStroke) {
         if (isEmpty()) return false;
-        Notification popup = topPopUp();
+        Notification popup = topNotification();
         boolean keyConsumed = popup.consumeKeyStroke(keyStroke);
         if (popup.isClosed()) {
-            removeTopPopUp();
-            setNextPopUp();
+            removeTopNotification();
+            setNextNotification();
         }
         return keyConsumed;
     }
 
-    public void addPopUp(Priority priority, String title, String text) {
+    public void add(Priority priority, String title, String text) {
         popUps.get(priority).add(new Notification(0, title, text));
         numPopUps++;
-        setNextPopUp();
+        setNextNotification();
     }
 
-    public void addPopUp(Priority priority, String text) {
+    public void add(Priority priority, String text) {
         popUps.get(priority).add(new Notification(0, text));
         numPopUps++;
-        setNextPopUp();
+        setNextNotification();
     }
 
-    public void addUrgentPopUp(String title, String text) {
-        addPopUp(HIGH, title, text);
+    public void addUrgent(String title, String text) {
+        add(HIGH, title, text);
     }
 
-    private void setNextPopUp() {
+    private void setNextNotification() {
         if (!isEmpty()) {
-            Notification notification = topPopUp();
+            Notification notification = topNotification();
             if (notification.getTitle().isEmpty())
-                viewHub.addPopUp(notification.getText(), String.format(" [%d]", numPopUps));
+                viewHub.addNotification(notification.getText(), String.format(" [%d]", numPopUps));
             else
-                viewHub.addPopUp(notification.getText(), String.format("[%d] %s", numPopUps, notification.getTitle()));
-        } else viewHub.removePopUp();
+                viewHub.addNotification(notification.getText(), String.format("[%d] %s", numPopUps, notification.getTitle()));
+        } else viewHub.removeNotification();
         viewHub.update();
     }
 
-    private Notification topPopUp() {
+    private Notification topNotification() {
         for (Priority p: Priority.values()) {
             if (popUps.get(p).isEmpty()) continue;
             return popUps.get(p).getLast();
@@ -70,7 +70,7 @@ public class NotificationStack implements KeyConsumer {
         return null;
     }
 
-    private void removeTopPopUp() {
+    private void removeTopNotification() {
         for (Priority p: Priority.values()) {
             if (!popUps.get(p).isEmpty()) {
                 popUps.get(p).removeLast();

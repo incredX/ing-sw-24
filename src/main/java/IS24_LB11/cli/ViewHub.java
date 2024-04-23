@@ -1,5 +1,6 @@
 package IS24_LB11.cli;
 
+import IS24_LB11.cli.popup.Popup;
 import IS24_LB11.cli.view.CommandLineView;
 import IS24_LB11.cli.view.NotificationView;
 import IS24_LB11.game.Player;
@@ -12,13 +13,16 @@ import com.googlecode.lanterna.terminal.Terminal;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Optional;
+import java.util.PriorityQueue;
 
 public class ViewHub implements Runnable {
     private final Terminal terminal;
     private Stage stage;
     private CommandLineView commandLineView;
-    private Optional<NotificationView> popUp;
+    private final ArrayList<Popup> popups;
+    private Optional<NotificationView> notification;
 
     public ViewHub() throws IOException {
         Charset charset = StandardCharsets.UTF_8;
@@ -26,7 +30,8 @@ public class ViewHub implements Runnable {
         terminal.enterPrivateMode();
         stage = new Stage(this, terminal.getTerminalSize());
         commandLineView = new CommandLineView(terminal.getTerminalSize());
-        popUp = Optional.empty();
+        popups = new ArrayList<>(4);
+        notification = Optional.empty();
     }
 
     @Override
@@ -38,7 +43,7 @@ public class ViewHub implements Runnable {
                 try {
                     terminal.wait(50);
                     stage.print(terminal);
-                    popUp.ifPresent(p -> {
+                    notification.ifPresent(p -> {
                         try { p.print(terminal); }
                         catch (IOException e) {
                             System.err.println("caught exception: "+e.getMessage());
@@ -68,13 +73,17 @@ public class ViewHub implements Runnable {
             commandLineView.resize(size);
             commandLineView.buildCommandLine(commandLine);
             commandLineView.build();
-            popUp.ifPresent(popUp -> {
+            notification.ifPresent(popUp -> {
                 popUp.resize(size);
                 popUp.build();
                 popUp.setPosition(0, stage.getYAndHeight()-3);
             });
             stage.resize(size);
             stage.rebuild();
+            for (Popup popup : popups) {
+                popup.resize();
+                popup.drawViewInStage();
+            }
         }
     }
 
@@ -91,25 +100,33 @@ public class ViewHub implements Runnable {
             terminal.notify(); }
     }
 
-    public void addPopUp(String message, String title) {
-        if (popUp.isPresent()) {
-            stage.buildArea(popUp.get().getRectangle());
-            popUp = Optional.empty();
+    public void addNotification(String message, String title) {
+        if (notification.isPresent()) {
+            stage.buildArea(notification.get().getRectangle());
+            notification = Optional.empty();
         }
-        popUp = Optional.of(new NotificationView(stage, title, message));
-        popUp.get().build();
+        notification = Optional.of(new NotificationView(stage, title, message));
+        notification.get().build();
     }
 
-    public void addPopUp(String message) {
-        addPopUp(message, "");
+    public void addNotification(String message) {
+        addNotification(message, "");
     }
 
-    public void removePopUp() {
-        if (popUp.isPresent()) {
-            stage.buildArea(popUp.get().getRectangle());
-            popUp = Optional.empty();
+    public void removeNotification() {
+        if (notification.isPresent()) {
+            stage.buildArea(notification.get().getRectangle());
+            notification = Optional.empty();
             update();
         }
+    }
+
+    public void addPopup(Popup popup) {
+        popups.add(popup);
+    }
+
+    public void clearPopups() {
+        popups.clear();
     }
 
     public GameStage setGameStage(Player player) {

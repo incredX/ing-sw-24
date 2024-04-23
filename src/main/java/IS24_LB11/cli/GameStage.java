@@ -1,5 +1,6 @@
 package IS24_LB11.cli;
 
+import IS24_LB11.cli.popup.Popup;
 import IS24_LB11.cli.utils.Side;
 import IS24_LB11.cli.view.*;
 import IS24_LB11.game.Deck;
@@ -23,8 +24,6 @@ public class GameStage extends Stage {
 
     private final Player player;
     private final ArrayList<PlayableCardView> cardviews;
-    private final HandBox handBox;
-    private final DecksBox decksBox;
     private TextColor pointerColor;
     private Position pointer;
     private TerminalPosition gridBase;
@@ -35,13 +34,10 @@ public class GameStage extends Stage {
         super(viewHub, terminalSize);
         this.player = player;
         this.cardviews = new ArrayList<>();
-        this.handBox = new HandBox(player.getHand());
-        this.decksBox = new DecksBox(rectangle.getSize(), new ArrayList<>(), new ArrayList<>());
         this.pointerColor = TextColor.ANSI.RED_BRIGHT;
         this.pointer = null;
         this.visibleHand = true;
         this.visibleDecks = false;
-        this.handBox.build();
         centerGridBase();
         resize(terminalSize);
     }
@@ -52,8 +48,6 @@ public class GameStage extends Stage {
         drawGrid();
         drawPlacedCards();
         drawPointer();
-        drawHand();
-        drawDecks();
         updateViewHub();
     }
 
@@ -62,8 +56,6 @@ public class GameStage extends Stage {
         super.resize(terminalSize);
         centerGridBase();
         setPointer(new Position(0,0));
-        placeHand(rectangle.getSize());
-        placeDecksBox(rectangle.getSize());
         updateViewHub();
     }
 
@@ -89,39 +81,12 @@ public class GameStage extends Stage {
             rebuild();
         } else {
             drawPointer();
-            drawHand();
         }
     }
 
-    public void buildHandCard() {
-        handBox.buildCards(player.getHand());
-        drawHand();
-    }
-
-    public void buildDecks(ArrayList<NormalCard> normalCards, ArrayList<GoldenCard> goldenCards) {
-        decksBox.loadNormalDeck(normalCards);
-        decksBox.loadGoldenDeck(goldenCards);
-        drawDecks();
-    }
-
-    public void placeSelectedCard() {
-        handBox.removeSelectedCard();
-        handBox.buildCards(player.getHand());
+    public void updateBoard() {
         pointerColor = TextColor.ANSI.BLACK_BRIGHT;
-        placeHand(rectangle.getSize());
         loadCardViews();
-    }
-
-    public void placeHand(TerminalSize terminalSize) {
-        int x = terminalSize.getColumns()-handBox.getWidth();
-        int y = (terminalSize.getRows()-handBox.getHeight())/2;
-        handBox.setPosition(x, y);
-    }
-
-    public void placeDecksBox(TerminalSize terminalSize) {
-        int x = (terminalSize.getColumns()-decksBox.getWidth())/2;
-        int y = (terminalSize.getRows()-decksBox.getHeight())/2;
-        decksBox.setPosition(x, y);
     }
 
     public void centerGridBase() {
@@ -143,20 +108,6 @@ public class GameStage extends Stage {
             cardView.setPosition(terminalPosition);
             draw(cardView);
             buildRelativeArea(size.withRelativeRows(1), terminalPosition.max(new TerminalPosition(0,0)));
-        }
-    }
-
-    public void drawHand() {
-        if (visibleHand && !isMininimalSize()) {
-            draw(handBox);
-            buildRelativeArea(handBox.getRectangle());
-        }
-    }
-
-    public void drawDecks() {
-        if (visibleDecks && !isMininimalSize()) {
-            draw(decksBox);
-            buildRelativeArea(decksBox.getRectangle());
         }
     }
 
@@ -206,26 +157,6 @@ public class GameStage extends Stage {
             cardviews.add(CardViewFactory.newPlayableCardView(placedCard.card()));
             cardviews.getLast().setBoardPosition(placedCard.position());
         });
-    }
-
-    public void setSelectedCardInHand(int selectedCard) {
-        handBox.setSelectedCard(selectedCard);
-        handBox.build();
-        drawHand();
-    }
-
-    public void showHand() {
-        visibleHand = true;
-        drawHand();
-    }
-
-    public void hideHand() {
-        visibleHand = false;
-        rebuild();
-    }
-
-    private boolean isMininimalSize() {
-        return innerHeight() < handBox.getHeight();
     }
 
     public void setPointer(Position pointer) {

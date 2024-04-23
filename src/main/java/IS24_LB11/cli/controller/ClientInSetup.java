@@ -30,7 +30,7 @@ public class ClientInSetup extends ClientState {
         if (processServerEventIfCommon(serverEvent)) return;
         switch (serverEvent) {
             case ServerUpdateEvent updateEvent -> {
-                notificationStack.addPopUp(Priority.LOW, "received updated players' state");
+                notificationStack.add(Priority.LOW, "received updated players' state");
             }
             case ServerPlayerSetupEvent playerSetupEvent -> {
                 processResult(Result.Error("Invalid server event", "can't accept a new player setup"));
@@ -45,12 +45,12 @@ public class ClientInSetup extends ClientState {
         switch (tokens[0].toUpperCase()) {
             case "GOAL", "G" -> {
                 if (tokens.length == 2) {
-                    notificationStack.addUrgentPopUp("ERROR", "missing argument");
+                    notificationStack.addUrgent("ERROR", MISSING_ARG.apply("goal"));
                     return;
                 }
                 int index = 'a' - tokens[1].charAt(0);
                 if (index < 0 || index > 1 || tokens[1].length() > 1)
-                    notificationStack.addUrgentPopUp("ERROR",
+                    notificationStack.addUrgent("ERROR",
                             "command \"GOAL\" expects 'a' or 'b' as argument, "+tokens[1]+"was given");
                 else
                     setChosenGoal(index);
@@ -67,7 +67,7 @@ public class ClientInSetup extends ClientState {
                     quit();
                 }
             }
-            default -> notificationStack.addUrgentPopUp("ERROR", tokens[0]+" is not a valid command");
+            default -> notificationStack.addUrgent("ERROR", tokens[0]+" is not a valid command");
         };
     }
 

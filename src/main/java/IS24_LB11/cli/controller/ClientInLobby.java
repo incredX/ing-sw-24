@@ -28,10 +28,10 @@ public class ClientInLobby extends ClientState {
                 username = loginEvent.username();
             }
             case ServerUpdateEvent updateEvent -> {
-                notificationStack.addPopUp(Priority.LOW, "received updated board of"+updateEvent.getUsername());
+                notificationStack.add(Priority.LOW, "received updated board of"+updateEvent.getUsername());
             }
             case ServerPlayerSetupEvent setupEvent -> {
-                notificationStack.addPopUp(Priority.LOW, "received player setup");
+                notificationStack.add(Priority.LOW, "received player setup");
                 try { setNextState(new ClientInSetup(viewHub, setupEvent.getPlayerSetup())); }
                 catch (IOException e) {
                     e.printStackTrace();
@@ -48,13 +48,13 @@ public class ClientInLobby extends ClientState {
         switch (tokens[0].toUpperCase()) {
             case "LOGIN" -> {
                 if (tokens.length == 2) processCommandLogin(tokens[1]);
-                else notificationStack.addUrgentPopUp("ERROR", "missing argument");
+                else notificationStack.addUrgent("ERROR", MISSING_ARG.apply("login"));
             }
             case "POPUP" -> {
                 if (tokens.length == 2) processCommandPopup(tokens[1]);
-                else notificationStack.addUrgentPopUp("ERROR", "missing argument");
+                else notificationStack.addUrgent("ERROR", "missing argument");
             }
-            default -> notificationStack.addUrgentPopUp("ERROR", tokens[0]+" is not a valid command");
+            default -> notificationStack.addUrgent("ERROR", tokens[0]+" is not a valid command");
         };
     }
 
@@ -76,15 +76,17 @@ public class ClientInLobby extends ClientState {
         Priority priority;
         try { priority = Priority.valueOf(tokens[0].toUpperCase()); }
         catch (IllegalArgumentException e) {
-            notificationStack.addUrgentPopUp("ERROR", tokens[0]+" is not a valid priority");
+            notificationStack.addUrgent("ERROR", tokens[0]+" is not a valid priority");
             return;
         }
         if (tokens.length >= 3) {
-            notificationStack.addPopUp(priority, tokens[1], tokens[2]);
+            notificationStack.add(priority, tokens[1], tokens[2]);
             System.out.println("added popup.");
         } else if (tokens.length == 2) {
-            notificationStack.addPopUp(priority, tokens[1]);
+            notificationStack.add(priority, tokens[1]);
             System.out.println("added popup.");
+        } else {
+            notificationStack.addUrgent("ERROR", MISSING_ARG.apply("popup"));
         }
     }
 }

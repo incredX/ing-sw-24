@@ -16,8 +16,15 @@ import com.googlecode.lanterna.terminal.Terminal;
 import java.io.IOException;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.TimeUnit;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 public abstract class ClientState {
+    protected static final Function<String, String> MISSING_ARG =
+            (cmd) -> String.format("missing argument for command \"%s\"", cmd);
+    protected static final BiFunction<String, String, String> INVALID_ARG =
+            (arg, cmd) -> String.format("%s is not a valid argument for command \"%s\"", arg, cmd);
+
     private static final int QUEUE_CAPACITY = 64;
 
     private ClientState nextState;
@@ -83,7 +90,7 @@ public abstract class ClientState {
             text = result.getError();
             if (result.getCause() != null)
                 text += " : "+result.getCause();
-            notificationStack.addUrgentPopUp("ERROR", text);
+            notificationStack.addUrgent("ERROR", text);
             return;
         }
         processServerEvent(result.get());
@@ -97,7 +104,7 @@ public abstract class ClientState {
     protected boolean processServerEventIfCommon(ServerEvent serverEvent) {
         switch (serverEvent) {
             case ServerNotificationEvent notificationEvent -> {
-                notificationStack.addPopUp(Priority.LOW, "from server", notificationEvent.message());
+                notificationStack.add(Priority.LOW, "from server", notificationEvent.message());
             }
             case ServerMessageEvent messageEvent -> {
                 String text;
@@ -105,7 +112,7 @@ public abstract class ClientState {
                     text = String.format("%s @ all : %s", messageEvent.from(), messageEvent.message());
                 else
                     text = String.format("%s : %s", messageEvent.from(), messageEvent.message());
-                notificationStack.addPopUp(Priority.MEDIUM, text);
+                notificationStack.add(Priority.MEDIUM, text);
             }
             case ServerHeartBeatEvent heartBeatEvent -> {
                 sendToServer("heartbeat");
@@ -127,12 +134,12 @@ public abstract class ClientState {
             }
             case "SENDTO", "@" -> {
                 if (tokens.length == 2) processCommandSendto(tokens[1]);
-                else notificationStack.addUrgentPopUp("ERROR", "missing argument");
+                else notificationStack.addUrgent("ERROR", MISSING_ARG.apply("sendto"));
                 return true;
             }
             case "SENDTOALL", "@ALL" -> {
                 if (tokens.length == 2) processCommandSendtoall(tokens[1]);
-                else notificationStack.addUrgentPopUp("ERROR", "missing argument");
+                else notificationStack.addUrgent("ERROR", MISSING_ARG.apply("sendtoall"));
                 return true;
             }
         };
@@ -176,7 +183,7 @@ public abstract class ClientState {
             String[] values = new String[] {username, tokens[0], tokens[1]};
             sendToServer("message", fields, values);
         } else {
-            notificationStack.addUrgentPopUp("ERROR", "syntax error in given commmand");
+            notificationStack.addUrgent("ERROR", "syntax error in given commmand");
         }
     }
 
