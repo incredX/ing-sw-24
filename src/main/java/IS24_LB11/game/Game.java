@@ -22,7 +22,6 @@ import static IS24_LB11.game.GameMessages.*;
 
 public class Game {
     private boolean finalTurn;
-
     private boolean gameEnded;
     private int turn;
     private int lastTurn;
