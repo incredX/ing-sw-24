@@ -1,9 +1,6 @@
 package IS24_LB11.tools;
 
-import IS24_LB11.game.Board;
-import IS24_LB11.game.Deck;
-import IS24_LB11.game.Player;
-import IS24_LB11.game.PlayerSetup;
+import IS24_LB11.game.*;
 import IS24_LB11.game.components.*;
 import IS24_LB11.game.tools.JsonConverter;
 import IS24_LB11.game.tools.JsonException;
@@ -51,9 +48,24 @@ public class JsonConverterTest {
     }
 
     @Test
+    @DisplayName("Converting placedCard to JSON")
+    public void placedCardConversionTest() throws SyntaxException, JsonException {
+        PlacedCard placedCard = new PlacedCard(CardFactory.newPlayableCard("NFEF_FF0"),new Position(1,1));
+        String str = new JsonConverter().objectToJSON(placedCard);
+        System.out.println(str);
+    }
+    @Test
+    @DisplayName("Converting json to PlacedCar")
+    public  void jsonPlacedCardConversion() throws JsonException, SyntaxException {
+        String str="{\"PlacedCard\":{\"normalCard\":\"NFEF_FF0\",\"Position\":\"X1Y1\"}}";
+        PlacedCard placedCard= (PlacedCard) new JsonConverter().JSONToObject(str);
+        System.out.println(new JsonConverter().objectToJSON(placedCard));
+    }
+
+    @Test
     @DisplayName("Converting object board to json")
     public void boardConversionTest() throws JsonException, SyntaxException{
-        String str = "{\"Board\":{\"placedCards\":[{\"starterCard\":\"SEEEE_F0AI_PIAF\",\"Position\":\"X0Y0\"},{\"normalCard\":\"NFEF_FF0\",\"Position\":\"X1Y1\"},{\"goldenCard\":\"GEK_EFB1KFFP__\",\"Position\":\"X-1Y1\"}]}}";
+        String str = "{\"Board\":{\"placedCards\":[{\"PlacedCard\":{\"starterCard\":\"SEEEE_F0AI_PIAF\",\"Position\":\"X0Y0\"}},{\"PlacedCard\":{\"normalCard\":\"NFEF_FF0\",\"Position\":\"X1Y1\"}},{\"PlacedCard\":{\"goldenCard\":\"GEK_EFB1KFFP__\",\"Position\":\"X-1Y1\"}}]}}";
         JsonConverter jsonConverter = new JsonConverter();
         Board board = new Board();
         CardFactory cardFactory = new CardFactory();
@@ -139,7 +151,7 @@ public class JsonConverterTest {
     @DisplayName("Converting JSON to Board")
     public void jsonBoardConversionTest() throws JsonException,SyntaxException {
         JsonConverter jsonConverter = new JsonConverter();
-        String str = "{\"Board\":{\"placedCards\":[{\"starterCard\":\"SEEEE_F0AI_PIAF\",\"Position\":\"X0Y0\"},{\"normalCard\":\"NFEF_FF0\",\"Position\":\"X1Y1\"},{\"goldenCard\":\"GEK_EFB1KFFP__\",\"Position\":\"X-1Y1\"}]}}";
+        String str = "{\"Board\":{\"placedCards\":[{\"PlacedCard\":{\"starterCard\":\"SEEEE_F0AI_PIAF\",\"Position\":\"X0Y0\"}},{\"PlacedCard\":{\"normalCard\":\"NFEF_FF0\",\"Position\":\"X1Y1\"}},{\"PlacedCard\":{\"goldenCard\":\"GEK_EFB1KFFP__\",\"Position\":\"X-1Y1\"}}]}}";
         Board board = (Board) jsonConverter.JSONToObject(str);
         System.out.println(str);
         System.out.println(jsonConverter.objectToJSON(board));
@@ -150,7 +162,7 @@ public class JsonConverterTest {
     @DisplayName("Converting JSON to player")
     public void jsonPlayerConversionTest() throws JsonException, SyntaxException {
         JsonConverter jsonConverter = new JsonConverter();
-        String str= "{\"Player\":{\"name\":\"Test\",\"Color\":\"GREEN\",\"Hand\":[{\"normalCard\":\"NFEF_FF0\"},{\"normalCard\":\"N_FEFFF0\"},{\"goldenCard\":\"GEK_EFB1KFFP__\"}],\"PersonalGoal\":{\"goalCard\":\"O2PPP\"},\"Score\":\"0\",\"PlayerSetup\":{\"StarterCard\":{\"starterCard\":\"SEEEE_F0AI_PIAF\"},\"Goals\":[{\"goalCard\":\"O2FFF\"},{\"goalCard\":\"O2PPP\"}],\"Color\":\"GREEN\",\"Hand\":[{\"normalCard\":\"NFEF_FF0\"},{\"normalCard\":\"N_FEFFF0\"},{\"goldenCard\":\"GEK_EFB1KFFP__\"}],\"chosenGoalIndex\":\"1\"},\"Board\":{\"placedCards\":[{\"starterCard\":\"SEEEE_F0AI_PIAF\",\"Position\":\"X0Y0\"}]}}}";
+        String str= "{\"Player\":{\"name\":\"Test\",\"Color\":\"GREEN\",\"Hand\":[{\"normalCard\":\"NFEF_FF0\"},{\"normalCard\":\"N_FEFFF0\"},{\"goldenCard\":\"GEK_EFB1KFFP__\"}],\"PersonalGoal\":{\"goalCard\":\"O2PPP\"},\"Score\":\"0\",\"PlayerSetup\":{\"StarterCard\":{\"starterCard\":\"SEEEE_F0AI_PIAF\"},\"Goals\":[{\"goalCard\":\"O2FFF\"},{\"goalCard\":\"O2PPP\"}],\"Color\":\"GREEN\",\"Hand\":[{\"normalCard\":\"NFEF_FF0\"},{\"normalCard\":\"N_FEFFF0\"},{\"goldenCard\":\"GEK_EFB1KFFP__\"}],\"chosenGoalIndex\":\"1\"},\"Board\":{\"placedCards\":[{\"PlacedCard\":{\"starterCard\":\"SEEEE_F0AI_PIAF\",\"Position\":\"X0Y0\"}}]}}}";
         Player player = (Player) jsonConverter.JSONToObject(str);
         System.out.println(str);
         System.out.println(jsonConverter.objectToJSON(player));

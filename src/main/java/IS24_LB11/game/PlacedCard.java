@@ -1,9 +1,10 @@
 package IS24_LB11.game;
 
+import IS24_LB11.game.components.JsonConvertable;
 import IS24_LB11.game.components.PlayableCard;
 import IS24_LB11.game.utils.Position;
 
-public class PlacedCard {
+public class PlacedCard implements JsonConvertable {
     private final PlayableCard card;
     private final Position position;
     private boolean visited;

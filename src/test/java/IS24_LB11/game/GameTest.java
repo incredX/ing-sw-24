@@ -126,7 +126,7 @@ public class GameTest {
             }
         }
         ArrayList<Player> ranking = new ArrayList<>();
-        ranking = game.finalGamePhase();
+        //ranking = game.finalGamePhase();
         for (Player player: ranking)
             System.out.println(player.name());
     }
@@ -208,7 +208,7 @@ public class GameTest {
             System.out.println(player);
         }
 
-        System.out.println(game.finalGamePhase());
+        //System.out.println(game.finalGamePhase());
         System.out.println(game.getPlayers());
     }
 
