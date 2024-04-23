@@ -18,17 +18,9 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.stream.Collectors;
 
+import static IS24_LB11.game.GameMessages.*;
+
 public class Game {
-    private String NOT_NORMAL_TURN = "Not normal turn";
-    private String NOT_FINAL_TURN = "Not final turn";
-    private String CANT_DRAW_FROM_NORMAL_DECK_IS_EMPTY = "Normal Deck is empty";
-    private String CANT_DRAW_FROM_GOLDEN_DECK_IS_EMPTY = "Golden Deck is empty";
-    private String INDEX_DECK_WRONG = "Index not available";
-    private String NOT_PLAYER_TURN = "Not this player turn";
-    private String INVALID_POSITION_CARD_OR_NOT_IN_HAND = "Invalid placement of card or card is not in player's hand";
-    private String VALID_TURN = "Valid turn executed";
-    private String VALID_TURN_AND_TRIGGERED_FINAL_TURN = "Valid turn executed and score of 20 exceeded";
-    private String SETUP_COMPLETE = "Setup completed, the game is starting...";
     private boolean finalTurn;
 
     private boolean gameEnded;
@@ -84,7 +76,7 @@ public class Game {
         starterDeck.shuffle();
         for (String name : playerNames)
             setupPlayer(name);
-        return SETUP_COMPLETE;
+        return GameMessages.SETUP_COMPLETE;
     }
 
     public String chooseGoalPhase(ArrayList<GoalCard> playersGoalCardChoosen, ArrayList<StarterCard> starterCardFacePosition) {
