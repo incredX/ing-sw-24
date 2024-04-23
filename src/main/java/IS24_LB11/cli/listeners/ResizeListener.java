@@ -32,11 +32,17 @@ public class ResizeListener extends Listener implements Runnable {
                     TerminalSize size = listener.getLastKnownSize();
                     try {
                         state.queueEvent(new ResizeEvent(size));
-                    } catch (InterruptedException e) { break; }
+                    } catch (InterruptedException e) {
+                        System.err.println("caught exception: "+e.getMessage());
+                        break;
+                    }
                 }
             } else {
                 try { synchronized (this) { this.wait(millis); } }
-                catch (InterruptedException e) { break; }
+                catch (InterruptedException e) {
+                    System.err.println("caught exception: "+e.getMessage());
+                    break;
+                }
                 counter += millis;
             }
         }

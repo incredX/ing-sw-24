@@ -14,8 +14,8 @@ public class SetupStage extends Stage {
     private final ArrayList<PlayableCardView> handView;
     private final ArrayList<GoalView> goalViews;
 
-    public SetupStage(TerminalSize terminalSize, PlayerSetup setup) {
-        super(terminalSize);
+    public SetupStage(ViewHub viewHub, TerminalSize terminalSize, PlayerSetup setup) {
+        super(viewHub, terminalSize);
         this.chosenGoalIndex = 0;
         this.starterCardView = new StarterCardView(setup.getStarterCard());
         this.handView = new ArrayList<>(3);
@@ -23,7 +23,7 @@ public class SetupStage extends Stage {
         for(PlayableCard card: setup.hand()) switch(card) {
             case GoldenCard goldenCard -> handView.add(new GoldenCardView(goldenCard));
             case NormalCard normalCard -> handView.add(new NormalCardView(normalCard));
-            default -> throw new IllegalArgumentException("Invalid card: " + card);
+            default -> throw new IllegalArgumentException("Invalid card: " + card.asString());
         }
         for(GoalCard goal: setup.getGoals()) switch(goal) {
             case GoalPattern pattern -> goalViews.add(new GoalPatternView(pattern));
@@ -36,11 +36,12 @@ public class SetupStage extends Stage {
 
     @Override
     public void build() {
-        super.build();
+        drawBorders();
         drawStarterCard();
         drawGoalPointer();
         drawGoals();
         drawHand();
+        updateViewHub();
     }
 
     @Override
@@ -49,6 +50,7 @@ public class SetupStage extends Stage {
         placeStarterCard(terminalSize);
         placeGoals(terminalSize);
         placeHandHorizontal(terminalSize);
+        updateViewHub();
     }
 
     public void setChosenGoal(int index) {
@@ -151,15 +153,4 @@ public class SetupStage extends Stage {
         int goalHeight = goalViews.getFirst().getHeight();
         return terminalSize.getRows() < 2*starterCardView.getHeight()+goalHeight+2;
     }
-
-//    private void drawGoalPointer() {
-//        GoalView goalView = goalViews.get(chosenGoalIndex&2);
-//        int x = goalView.getPosition().getColumn()-3, y = goalView.getPosition().getRow()-1;
-//        int w = goalView.getWidth()+6, h = goalView.getHeight()+2;
-//        CliBox box = new CliBox(w, h, x, y, new DashedBorderStyle());
-//        box.build();
-//        draw(box);
-//        buildRelativeArea(box.getRectangle());
-//    }
-
 }

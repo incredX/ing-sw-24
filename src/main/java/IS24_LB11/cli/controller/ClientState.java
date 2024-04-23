@@ -5,7 +5,7 @@ import IS24_LB11.cli.Stage;
 import IS24_LB11.cli.event.*;
 import IS24_LB11.cli.popup.PopUpStack;
 import IS24_LB11.cli.popup.Priority;
-import IS24_LB11.cli.view.ViewHub;
+import IS24_LB11.cli.ViewHub;
 import IS24_LB11.cli.KeyConsumer;
 import IS24_LB11.cli.listeners.ServerHandler;
 import IS24_LB11.game.Result;
@@ -22,11 +22,9 @@ import java.util.concurrent.TimeUnit;
 public abstract class ClientState {
     private static final int QUEUE_CAPACITY = 64;
 
-    //private Chat chat;
     private ClientState nextState;
     protected String username;
     protected final ArrayBlockingQueue<Event> queue;
-    protected final PriorityQueue<KeyConsumer> keyConsumers;
     protected final PopUpStack popUpStack;
     protected final ViewHub viewHub;
     protected final CommandLine cmdLine;
@@ -37,7 +35,6 @@ public abstract class ClientState {
         this.nextState = null;
         this.queue = new ArrayBlockingQueue<>(QUEUE_CAPACITY);
         this.popUpStack = new PopUpStack(viewHub, 0);
-        this.keyConsumers = new PriorityQueue<>((k1, k2) -> Integer.compare(k1.priority(), k2.priority()));
         this.viewHub = viewHub;
         this.cmdLine = new CommandLine(viewHub.getTerminal().getTerminalSize().getColumns());
         this.stage = viewHub.getStage();
@@ -45,11 +42,13 @@ public abstract class ClientState {
     }
 
     public ClientState execute() {
-        keyConsumers.add(popUpStack);
         synchronized (queue) {
             while (true) {
                 try { queue.wait(); }
-                catch (InterruptedException e) { break; }
+                catch (InterruptedException e) {
+                    System.err.println("caught exception: "+e.getMessage());
+                    break;
+                }
                 while(!queue.isEmpty()) {
                     handleEvent(queue.poll());
                     if (nextState != null) { return nextState; }
@@ -78,7 +77,26 @@ public abstract class ClientState {
 
     protected abstract void processCommand(String command);
 
-    protected boolean processCommonServerEvent(ServerEvent serverEvent) {
+    protected abstract void processKeyStroke(KeyStroke keyStroke);
+
+    protected void processResult(Result<ServerEvent> result) {
+        if (result.isError()) {
+            String text;
+            text = result.getError();
+            if (result.getCause() != null)
+                text += " : "+result.getCause();
+            popUpStack.addUrgentPopUp("ERROR", text);
+            return;
+        }
+        processServerEvent(result.get());
+    }
+
+    protected void processResize(TerminalSize size) {
+        cmdLine.setWidth(size.getColumns());
+        viewHub.resize(size, cmdLine);
+    }
+
+    protected boolean processServerEventIfCommon(ServerEvent serverEvent) {
         switch (serverEvent) {
             case ServerNotificationEvent notificationEvent -> {
                 popUpStack.addPopUp(Priority.LOW, "from server", notificationEvent.message());
@@ -101,7 +119,7 @@ public abstract class ClientState {
         return true; //event processed
     }
 
-    protected boolean processCommonCommand(String command) {
+    protected boolean processCommandIfCommon(String command) {
         String[] tokens = command.split(" ", 2);
         if (tokens.length == 0) return true;
         switch (tokens[0].toUpperCase()) {
@@ -123,28 +141,7 @@ public abstract class ClientState {
         return false;
     }
 
-    protected void processResult(Result<ServerEvent> result) {
-        if (result.isError()) {
-            String text;
-            text = result.getError();
-            if (result.getCause() != null)
-                text += " : "+result.getCause();
-            popUpStack.addUrgentPopUp("ERROR", text);
-            return;
-        }
-        processServerEvent(result.get());
-    }
-
-    protected void processResize(TerminalSize size) {
-        cmdLine.setWidth(size.getColumns());
-        viewHub.resize(size, cmdLine);
-    }
-
-    protected void processKeyStroke(KeyStroke keyStroke) {
-        for (KeyConsumer listener: keyConsumers) {
-            // if a listener use the keyStroke then no one with less priority will
-            if (listener.consumeKeyStroke(keyStroke)) return;
-        }
+    protected void processCommonKeyStrokes(KeyStroke keyStroke) {
         switch (keyStroke.getKeyType()) {
             case Character:
                 cmdLine.insertChar(keyStroke.getCharacter());

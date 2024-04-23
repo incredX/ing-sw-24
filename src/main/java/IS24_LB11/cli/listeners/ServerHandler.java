@@ -43,7 +43,7 @@ public class ServerHandler extends Listener implements Runnable {
                         state.queueEvent(new ResultServerEvent(Error("Bad request", "json syntax error")));
                         continue;
                     }
-                    System.out.println(event.toString());
+                    //System.out.println(event.toString());
                     state.queueEvent(new ResultServerEvent(ServerEventFactory.createServerEvent(event)));
                 }
             }
@@ -71,6 +71,8 @@ public class ServerHandler extends Listener implements Runnable {
     public void shutdown() {
         try {
             if (!socket.isClosed()) socket.close();
-        } catch (IOException ignored) {}
+        } catch (IOException e) {
+            System.err.println("caught exception: "+e.getMessage());
+        }
     }
 }
