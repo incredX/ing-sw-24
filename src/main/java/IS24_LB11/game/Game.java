@@ -18,19 +18,10 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.stream.Collectors;
 
-public class Game {
-    private String NOT_NORMAL_TURN = "Not normal turn";
-    private String NOT_FINAL_TURN = "Not final turn";
-    private String CANT_DRAW_FROM_NORMAL_DECK_IS_EMPTY = "Normal Deck is empty";
-    private String CANT_DRAW_FROM_GOLDEN_DECK_IS_EMPTY = "Golden Deck is empty";
-    private String INDEX_DECK_WRONG = "Index not available";
-    private String NOT_PLAYER_TURN = "Not this player turn";
-    private String INVALID_POSITION_CARD_OR_NOT_IN_HAND = "Invalid placement of card or card is not in player's hand";
-    private String VALID_TURN = "Valid turn executed";
-    private String VALID_TURN_AND_TRIGGERED_FINAL_TURN = "Valid turn executed and score of 20 exceeded";
-    private String SETUP_COMPLETE = "Setup completed, the game is starting...";
-    private boolean finalTurn;
+import static IS24_LB11.game.GameMessages.*;
 
+public class Game {
+    private boolean finalTurn;
     private boolean gameEnded;
     private int turn;
     private int lastTurn;
@@ -40,10 +31,10 @@ public class Game {
     private final Deck normalDeck;
     private final Deck starterDeck;
     private final ArrayList<Player> players;
-
     private ArrayList<Player> finalRanking;
+    private ArrayList<GoalCard> publicGoals;
 
-    public Game(int numPlayers) throws SyntaxException, FileNotFoundException {
+    public Game(int numPlayers) throws SyntaxException, FileNotFoundException, DeckException {
         JsonConverter jsonConverter = new JsonConverter();
         this.turn = 0;
         this.numPlayers = numPlayers;
@@ -51,6 +42,10 @@ public class Game {
         this.goldenDeck = jsonConverter.JSONToDeck('G'); // <- here we load deck from json
         this.normalDeck = jsonConverter.JSONToDeck('N'); // <- here we load deck from json
         this.starterDeck = jsonConverter.JSONToDeck('S'); // <- here we load deck from json
+        publicGoals = new ArrayList<>();
+        goalDeck.shuffle();
+        publicGoals.add((GoalCard) goalDeck.drawCard());
+        publicGoals.add((GoalCard)goalDeck.drawCard());
         this.players = new ArrayList<>(numPlayers);
         this.finalTurn = false;
     }
@@ -81,7 +76,7 @@ public class Game {
         starterDeck.shuffle();
         for (String name : playerNames)
             setupPlayer(name);
-        return SETUP_COMPLETE;
+        return GameMessages.SETUP_COMPLETE;
     }
 
     public String chooseGoalPhase(ArrayList<GoalCard> playersGoalCardChoosen, ArrayList<StarterCard> starterCardFacePosition) {
@@ -102,6 +97,7 @@ public class Game {
 
     //Check if is not player turn
     public String executeTurn(String playerName, Position position, PlayableCard playableCard, boolean deckType, int indexDeck) throws JsonException, DeckException, SyntaxException {
+        System.out.println(turn + "-----------------------------------" + lastTurn + "  Game ended: " + hasGameEnded());
         if (playerName.compareTo(currentPlayer().name()) != 0) return NOT_PLAYER_TURN;
         if (hasGameEnded()) return "CAN'T PLAY ANYMORE";
         return finalTurn ? executeFinalTurn(position,playableCard) : executeNormalTurn(position, playableCard, deckType, indexDeck);
@@ -134,7 +130,7 @@ public class Game {
     }
 
     private String executeFinalTurn(Position position, PlayableCard playableCard) throws JsonException, SyntaxException {
-        if (turn==lastTurn) {
+        if (turn==lastTurn-1) {
             gameEnded=true;
             finalRanking = finalGamePhase();
             return "GAME ENDED";
@@ -146,7 +142,6 @@ public class Game {
             player.incrementScoreLastCardPlaced();
         }
         turn++;
-
         return VALID_TURN;
     }
     //remind to check if front or back
@@ -163,8 +158,10 @@ public class Game {
     }
     private ArrayList<Player> finalGamePhase() throws SyntaxException {
         ArrayList<Player> ranking = players;
-        for (Player player: ranking)
+        for (Player player: ranking) {
             player.personalGoalScore();
+            player.publicGoalScore(publicGoals);
+        }
         ranking.sort(Comparator.comparingInt(Player::getScore));
         ranking.reversed();
         return ranking;
@@ -201,5 +198,9 @@ public class Game {
         if (hasGameEnded())
             return finalRanking;
         return null;
+    }
+
+    public ArrayList<GoalCard> getPublicGoals() {
+        return publicGoals;
     }
 }
