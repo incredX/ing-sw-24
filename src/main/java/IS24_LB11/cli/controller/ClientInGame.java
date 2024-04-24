@@ -24,10 +24,10 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 //TODO : manage pointers color here
-//TODO : move consumers inside popups + add new method to switch focus
-//       es: focusedConsumer = handPopup.enableConsumer()
 //TODO : move pointer to clientState
 //TODO : send action to server
+//TODO : move consumers inside popups + add new method to switch focus
+//       es: focusedConsumer = handPopup.enableConsumer()
 //TODO : close everything if the input listener is closed
 
 public class ClientInGame extends ClientState {

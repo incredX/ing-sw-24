@@ -17,8 +17,8 @@ public class Stage extends CliBox {
     private final ArrayDeque<TerminalRectangle> builtAreas;
 
     public Stage(ViewHub viewHub, TerminalSize terminalSize) {
-        super(terminalSize.withRelative(0, -4),
-                new TerminalPosition(0, 2),
+        super(terminalSize.withRelative(0, -2),
+                new TerminalPosition(0, 0),
                 new SingleBorderStyle());
         this.viewHub = viewHub;
         this.builtAreas = new ArrayDeque<>();
@@ -100,7 +100,7 @@ public class Stage extends CliBox {
 
     @Override
     public void resize(TerminalSize terminalSize) {
-        super.resize(terminalSize.withRelative(0, -4));
+        super.resize(terminalSize.withRelative(0, -2));
     }
 
     protected void updateViewHub() {

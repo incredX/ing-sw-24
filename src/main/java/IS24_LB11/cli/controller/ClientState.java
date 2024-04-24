@@ -23,7 +23,9 @@ public abstract class ClientState {
     protected static final Function<String, String> MISSING_ARG =
             (cmd) -> String.format("missing argument for command \"%s\"", cmd);
     protected static final BiFunction<String, String, String> INVALID_ARG =
-            (arg, cmd) -> String.format("%s is not a valid argument for command \"%s\"", arg, cmd);
+            (arg, cmd) -> String.format("\"%s\" is not a valid argument for command \"%s\"", arg, cmd);
+    protected static final Function<String, String> EXPECTED_INT =
+            key -> String.format("\"%s\" expected an integer", key);
 
     private static final int QUEUE_CAPACITY = 64;
 
@@ -36,14 +38,18 @@ public abstract class ClientState {
     protected ServerHandler serverHandler;
     protected Stage stage;
 
-    public ClientState(ViewHub viewHub) {
+    public ClientState(ViewHub viewHub, NotificationStack notificationStack) {
         this.nextState = null;
         this.queue = new ArrayBlockingQueue<>(QUEUE_CAPACITY);
-        this.notificationStack = new NotificationStack(viewHub, 0);
+        this.notificationStack = notificationStack;
         this.viewHub = viewHub;
         this.cmdLine = new CommandLine(viewHub.getScreenSize().getColumns());
         this.stage = viewHub.getStage();
         viewHub.updateCommandLine(cmdLine);
+    }
+
+    public ClientState(ViewHub viewHub) {
+        this(viewHub, new NotificationStack(viewHub, 0));
     }
 
     public ClientState execute() {
@@ -56,8 +62,8 @@ public abstract class ClientState {
                 }
                 while(!queue.isEmpty()) {
                     handleEvent(queue.poll());
-                    if (nextState != null) { return nextState; }
                 }
+                if (nextState != null) { return nextState; }
             }
         }
         return null;
@@ -207,6 +213,14 @@ public abstract class ClientState {
     }
 
     protected void sendToServer(String type, String field, String value) {
+        if (serverHandler == null) return;
+        JsonObject object = new JsonObject();
+        object.addProperty("type", type);
+        object.addProperty(field, value);
+        serverHandler.write(object);
+    }
+
+    protected void sendToServer(String type, String field, int value) {
         if (serverHandler == null) return;
         JsonObject object = new JsonObject();
         object.addProperty("type", type);

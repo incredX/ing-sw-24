@@ -33,12 +33,9 @@ public class ClientInLobby extends ClientState {
             case ServerLoginEvent loginEvent -> {
                 username = loginEvent.username();
             }
-            case ServerUpdateEvent updateEvent -> {
-                notificationStack.add(Priority.LOW, "received updated board of"+updateEvent.getUsername());
-            }
             case ServerPlayerSetupEvent setupEvent -> {
                 notificationStack.add(Priority.LOW, "received player setup");
-                try { setNextState(new ClientInSetup(viewHub, setupEvent.getPlayerSetup())); }
+                try { setNextState(new ClientInSetup(viewHub, notificationStack, setupEvent.getPlayerSetup())); }
                 catch (IOException e) {
                     e.printStackTrace();
                     quit();
@@ -56,17 +53,20 @@ public class ClientInLobby extends ClientState {
                 if (tokens.length == 2) processCommandLogin(tokens[1]);
                 else notificationStack.addUrgent("ERROR", MISSING_ARG.apply("login"));
             }
-            case "POPUP" -> {
-                if (tokens.length == 2) processCommandPopup(tokens[1]);
-                else notificationStack.addUrgent("ERROR", "missing argument");
+            case "SET" -> {
+                if (tokens.length == 2) setProperty(tokens[1]);
+                else notificationStack.addUrgent("ERROR", MISSING_ARG.apply("set"));
             }
             case "SETUP" -> {
-                stage.clear();
-                try { setNextState(new ClientInSetup(viewHub, getDefaultSetup())); } // wait server response to switch
+                try { setNextState(new ClientInSetup(viewHub, notificationStack, getDefaultSetup())); } // wait server response to switch
                 catch (IOException e) {
                     e.printStackTrace();
                     quit();
                 }
+            }
+            case "POPUP" -> {
+                if (tokens.length == 2) processCommandPopup(tokens[1]);
+                else notificationStack.addUrgent("ERROR", "missing argument");
             }
             default -> notificationStack.addUrgent("ERROR", tokens[0]+" is not a valid command");
         };
@@ -76,6 +76,24 @@ public class ClientInLobby extends ClientState {
     protected void processKeyStroke(KeyStroke keyStroke) {
         if (notificationStack.consumeKeyStroke(keyStroke)) return;
         super.processCommonKeyStrokes(keyStroke);
+    }
+
+    private void setProperty(String property) {
+        String[] tokens = property.split(" *={1} *", 2);
+        if (tokens.length < 2) {
+            notificationStack.addUrgent("ERROR", MISSING_ARG.apply(tokens[0]));
+            return;
+        }
+        switch (tokens[0].toUpperCase()) {
+            case "PLAYERS" -> {
+                try {
+                    int numPlayers = Integer.parseInt(tokens[1]);
+                    sendToServer("numOfPlayers", "numOfPlayers", numPlayers);
+                } catch (NumberFormatException e) {
+                    notificationStack.addUrgent("ERROR", EXPECTED_INT.apply("players"));
+                }
+            }
+        }
     }
 
     private void processCommandLogin(String username) {

@@ -2,10 +2,12 @@ package IS24_LB11.cli.controller;
 
 import IS24_LB11.cli.SetupStage;
 import IS24_LB11.cli.event.*;
+import IS24_LB11.cli.notification.NotificationStack;
 import IS24_LB11.cli.notification.Priority;
 import IS24_LB11.cli.ViewHub;
 import IS24_LB11.game.PlayerSetup;
 import IS24_LB11.game.Result;
+import IS24_LB11.game.tools.JsonConverter;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 
@@ -14,6 +16,11 @@ import java.io.IOException;
 public class ClientInSetup extends ClientState {
     private final PlayerSetup setup;
     private SetupStage setupStage;
+
+    public ClientInSetup(ViewHub viewHub, NotificationStack stack, PlayerSetup setup) throws IOException {
+        super(viewHub, stack);
+        this.setup = setup;
+    }
 
     public ClientInSetup(ViewHub viewHub, PlayerSetup setup) throws IOException {
         super(viewHub);
@@ -57,10 +64,9 @@ public class ClientInSetup extends ClientState {
                     setChosenGoal(index);
             }
             case "READY" -> {
-                //TODO: use JsonConverter
-//                sendToServer("peek",
-//                        new String[]{"startercard","goalcard"},
-//                        new String[]{setup.getStarterCard().asString(), setup.chosenGoal().asString()});
+                sendToServer("setup",
+                        new String[]{"starterCard","goalCard"},
+                        new String[]{setup.getStarterCard().asString(), setup.chosenGoal().asString()});
                 stage.clear();
                 try { setNextState(new ClientInGame(viewHub, setup)); } // wait server response to switch to InGame
                 catch (IOException e) {

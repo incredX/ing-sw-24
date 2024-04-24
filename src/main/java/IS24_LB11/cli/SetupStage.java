@@ -117,7 +117,7 @@ public class SetupStage extends Stage {
     private void placeStarterCard(TerminalSize terminalSize) {
         if (!isMininimalSize(terminalSize)) {
             int w = starterCardView.getWidth(), h = starterCardView.getHeight();
-            starterCardView.setPosition((terminalSize.getColumns()-w)/2, (terminalSize.getRows()-h)/2-4);
+            starterCardView.setPosition((terminalSize.getColumns()-w)/2, (terminalSize.getRows()-h)/2-2);
         } else
             starterCardView.setPosition(0,0);
     }

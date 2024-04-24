@@ -68,6 +68,7 @@ public class Client {
                 inputListener.setState(state);
                 resizeListener.setState(state);
                 serverHandler.setState(state);
+                state.setServerHandler(serverHandler);
             }
         }
 
