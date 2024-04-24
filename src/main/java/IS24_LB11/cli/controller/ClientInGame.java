@@ -1,6 +1,7 @@
 package IS24_LB11.cli.controller;
 
 import IS24_LB11.cli.GameStage;
+import IS24_LB11.cli.event.ResizeEvent;
 import IS24_LB11.cli.event.ServerEvent;
 import IS24_LB11.cli.ViewHub;
 import IS24_LB11.cli.popup.DecksPopup;
@@ -14,6 +15,7 @@ import IS24_LB11.game.components.NormalCard;
 import IS24_LB11.game.components.PlayableCard;
 import IS24_LB11.game.utils.Position;
 import IS24_LB11.game.utils.SyntaxException;
+import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.input.KeyStroke;
 
 import java.io.IOException;
@@ -53,8 +55,6 @@ public class ClientInGame extends ClientState {
         gameStage = viewHub.setGameStage(player);
         loadDecks(normalCards, goldenCards);
         loadHand(player.getHand());
-        viewHub.addPopup(handPopup);
-        viewHub.addPopup(decksPopup);
         return super.execute();
     }
 
@@ -106,6 +106,15 @@ public class ClientInGame extends ClientState {
         super.processCommonKeyStrokes(keyStroke);
     }
 
+    @Override
+    protected void processResize(TerminalSize size) {
+        super.processResize(size);
+        handPopup.resize();
+        decksPopup.resize();
+        if (gameStage.getWidth() < 4 * PlayableCardView.WIDTH && decksPopup.isVisible())
+            decksPopup.hide();
+    }
+
     private void drawCardFromDeck() {
         PlayableCard card = decksPopup.getSelectedCard();
         decksPopup.hide();
@@ -119,7 +128,8 @@ public class ClientInGame extends ClientState {
                     decksPopup.hide();
                 else {
                     decksPopup.disable();
-                    decksPopup.drawViewInStage();
+                    viewHub.update();
+                    //decksPopup.drawViewInStage();
                 }
                 handPopup.show();
             }
@@ -128,7 +138,8 @@ public class ClientInGame extends ClientState {
                     handPopup.hide();
                 else {
                     handPopup.disable();
-                    handPopup.drawViewInStage();
+                    viewHub.update();
+                    //handPopup.drawViewInStage();
                 }
                 decksPopup.show();
             }
@@ -138,15 +149,21 @@ public class ClientInGame extends ClientState {
 
     private void hidePopup(String token) {
         switch (token.toUpperCase()) {
-            case "HAND" -> handPopup.hide();
-            case "DECK" -> decksPopup.hide();
+            case "HAND" -> {
+                handPopup.hide();
+                if (decksPopup.isVisible()) decksPopup.enable();
+            }
+            case "DECK" -> {
+                decksPopup.hide();
+                if (handPopup.isVisible()) handPopup.enable();
+            }
             default -> notificationStack.addUrgent("ERROR", INVALID_ARG.apply(token, "hide"));
         }
     }
 
     private void loadDecks(ArrayList<NormalCard> normalCards, ArrayList<GoldenCard> goldenCards) {
         if (decksPopup == null) {
-            decksPopup = new DecksPopup(gameStage, normalCards, goldenCards);
+            decksPopup = new DecksPopup(viewHub, normalCards, goldenCards);
         } else {
             decksPopup.loadDecks(normalCards, goldenCards);
         }
@@ -154,7 +171,7 @@ public class ClientInGame extends ClientState {
 
     private void loadHand(ArrayList<PlayableCard> hand) {
         if (handPopup == null) {
-            handPopup = new HandPopup(gameStage, hand);
+            handPopup = new HandPopup(viewHub, hand);
         } else {
             handPopup.loadHand(hand);
         }

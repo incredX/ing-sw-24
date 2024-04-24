@@ -1,8 +1,7 @@
 package IS24_LB11.cli.popup;
 
-import IS24_LB11.cli.GameStage;
+import IS24_LB11.cli.ViewHub;
 import IS24_LB11.cli.utils.Side;
-import IS24_LB11.cli.view.DecksView;
 import IS24_LB11.game.components.GoldenCard;
 import IS24_LB11.game.components.NormalCard;
 import IS24_LB11.game.components.PlayableCard;
@@ -19,8 +18,8 @@ public class DecksPopup extends Popup {
     private boolean deckIsGolden;
     private int cardIndex;
 
-    public DecksPopup(GameStage gameStage, ArrayList<NormalCard> normalCards, ArrayList<GoldenCard> goldenCards) {
-        super(gameStage, new DecksView(gameStage.getSize(), normalCards, goldenCards));
+    public DecksPopup(ViewHub viewHub, ArrayList<NormalCard> normalCards, ArrayList<GoldenCard> goldenCards) {
+        super(viewHub, new DecksView(viewHub.getScreenSize(), normalCards, goldenCards));
         this.normalCards = normalCards;
         this.goldenCards = goldenCards;
         this.deckIsGolden = true; //true = golden, false = normal
@@ -54,7 +53,7 @@ public class DecksPopup extends Popup {
                     return false;
                 }
             }
-            if (visible) buildView();
+            if (visible) update();
             return true;
         }
         return false;
@@ -75,7 +74,7 @@ public class DecksPopup extends Popup {
             decksView.updatePointerPosition(deckIsGolden, cardIndex);
             decksView.build();
         });
-        drawViewInStage();
+        //drawViewInStage();
     }
 
     @Override
@@ -92,19 +91,24 @@ public class DecksPopup extends Popup {
 
     @Override
     public void enable() {
-        manageView(decksView -> decksView.updatePointerPosition(deckIsGolden, cardIndex));
+        manageView(decksView -> {
+            decksView.updatePointerPosition(deckIsGolden, cardIndex);
+            decksView.build();
+        });
         super.enable();
     }
 
     @Override
     public void disable() {
-        manageView(decksView -> decksView.hidePointer());
-        buildView();
+        manageView(decksView -> {
+            decksView.hidePointer();
+            decksView.build();
+        });
         super.disable();
     }
 
     protected void manageView(Consumer<DecksView> consumer) {
-        consumer.accept((DecksView)view);
+        consumer.accept((DecksView) popView);
     }
 
     private int getSelectedDeckSize() {

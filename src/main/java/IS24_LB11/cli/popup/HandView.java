@@ -1,5 +1,8 @@
-package IS24_LB11.cli.view;
+package IS24_LB11.cli.popup;
 
+import IS24_LB11.cli.view.GoldenCardView;
+import IS24_LB11.cli.view.NormalCardView;
+import IS24_LB11.cli.view.PlayableCardView;
 import IS24_LB11.game.components.GoldenCard;
 import IS24_LB11.game.components.NormalCard;
 import IS24_LB11.game.components.PlayableCard;
@@ -15,7 +18,7 @@ import static IS24_LB11.game.utils.Direction.DOWN_RIGHT;
 import static IS24_LB11.game.utils.Direction.UP_RIGHT;
 
 public class HandView extends CardsBoxView {
-    private static final int DEFAULT_WIDTH = WIDTH+3;
+    private static final int DEFAULT_WIDTH = WIDTH+2;
     private static final int DEFAULT_HEIGHT = 3*HEIGHT+2;
 
     private final ArrayList<PlayableCardView> cardViews;
@@ -39,7 +42,7 @@ public class HandView extends CardsBoxView {
 
     @Override
     public void resize(TerminalSize terminalSize) {
-        int x = terminalSize.getColumns()-getWidth();
+        int x = terminalSize.getColumns()-DEFAULT_WIDTH;
         int y = (terminalSize.getRows()-getHeight())/2;
         setPosition(new TerminalPosition(x, y));
     }

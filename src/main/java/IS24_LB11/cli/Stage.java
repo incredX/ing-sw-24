@@ -15,7 +15,6 @@ import java.util.ArrayDeque;
 public class Stage extends CliBox {
     private final ViewHub viewHub;
     private final ArrayDeque<TerminalRectangle> builtAreas;
-    private final ArrayDeque<TerminalRectangle> shadows;
 
     public Stage(ViewHub viewHub, TerminalSize terminalSize) {
         super(terminalSize.withRelative(0, -4),
@@ -23,7 +22,6 @@ public class Stage extends CliBox {
                 new SingleBorderStyle());
         this.viewHub = viewHub;
         this.builtAreas = new ArrayDeque<>();
-        this.shadows = new ArrayDeque<>();
         setMargins(0);
         updateInnerArea();
     }
@@ -82,6 +80,11 @@ public class Stage extends CliBox {
     public void draw(CliBox cliBox) {
         super.draw(cliBox);
         buildRelativeArea(cliBox.getRectangle());
+    }
+
+    @Override
+    public void setCover(CliBox box, boolean covered) {
+        super.setCover(box, covered);
     }
 
     @Override

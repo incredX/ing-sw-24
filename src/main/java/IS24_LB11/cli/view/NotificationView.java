@@ -51,8 +51,4 @@ public class NotificationView extends CliBox {
     private void drawText() {
         fillRow(lastRow(), title + " | " + message);
     }
-
-    public TerminalRectangle getRectangle() {
-        return new TerminalRectangle(rectangle.getSize(), rectangle.getPosition());
-    }
 }

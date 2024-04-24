@@ -1,8 +1,7 @@
 package IS24_LB11.cli.popup;
 
-import IS24_LB11.cli.GameStage;
+import IS24_LB11.cli.ViewHub;
 import IS24_LB11.cli.utils.Side;
-import IS24_LB11.cli.view.HandView;
 import IS24_LB11.game.components.PlayableCard;
 import com.googlecode.lanterna.input.KeyStroke;
 
@@ -15,8 +14,8 @@ public class HandPopup extends Popup {
     private ArrayList<PlayableCard> hand;
     private int selectedCard;
 
-    public HandPopup(GameStage gameStage, ArrayList<PlayableCard> hand) {
-        super(gameStage, new HandView(gameStage.getSize(), hand));
+    public HandPopup(ViewHub viewHub, ArrayList<PlayableCard> hand) {
+        super(viewHub, new HandView(viewHub.getScreenSize(), hand));
         this.hand = hand;
         selectedCard = 0;
     }
@@ -43,7 +42,7 @@ public class HandPopup extends Popup {
                     return false;
                 }
             }
-            if (visible) buildView();
+            if (visible) update();
             return true;
         }
         return false;
@@ -58,7 +57,7 @@ public class HandPopup extends Popup {
             decksView.updatePointerPosition(selectedCard);
             decksView.build();
         });
-        drawViewInStage();
+        //drawViewInStage();
     }
 
     public void show() {
@@ -74,8 +73,20 @@ public class HandPopup extends Popup {
 
     @Override
     public void enable() {
-        manageView(decksView -> decksView.updatePointerPosition(selectedCard));
+        manageView(handView -> {
+            handView.updatePointerPosition(selectedCard);
+            handView.build();
+        });
         super.enable();
+    }
+
+    @Override
+    public void disable() {
+        manageView(handView -> {
+            handView.hidePointer();
+            handView.build();
+        });
+        super.disable();
     }
 
     public PlayableCard getSelectedCard() {
@@ -83,6 +94,6 @@ public class HandPopup extends Popup {
     }
 
     protected void manageView(Consumer<HandView> consumer) {
-        consumer.accept((HandView)view);
+        consumer.accept((HandView) popView);
     }
 }

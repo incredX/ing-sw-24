@@ -1,50 +1,52 @@
 package IS24_LB11.cli.popup;
 
-import IS24_LB11.cli.Stage;
-import IS24_LB11.cli.utils.CliBox;
+import IS24_LB11.cli.ViewHub;
 import com.googlecode.lanterna.input.KeyStroke;
-import com.googlecode.lanterna.terminal.Terminal;
 
-public class Popup<S extends Stage, T extends CliBox> {
-    protected final S stage;
-    protected final T view;
+public class Popup<T extends PopupView> {
+    protected final ViewHub viewHub;
+    protected final T popView;
     protected boolean visible;
     protected boolean enabled;
 
-    public Popup(S stage, T view) {
-        this.stage = stage;
-        this.view = view;
+    public Popup(ViewHub viewHub, T popView) {
+        this.viewHub = viewHub;
+        this.popView = popView;
         this.visible = false;
         this.enabled = false;
+        //viewHub.addPopup(popView);
     }
 
-    public void resize() {
-        view.resize(stage.getSize());
-    }
-
-    public void buildView() {
-        view.build();
-    }
-
-    public void drawViewInStage() {
-        if (visible && viewInsideStage()) stage.draw(view);
+    public void update() {
+        popView.build();
+        viewHub.update();
     }
 
     public boolean consumeKeyStroke(KeyStroke keyStroke) {
         return false;
     }
 
+    public void resize() {
+        popView.resize(viewHub.getScreenSize());
+    }
+
     public void show() {
-        visible = true;
         if (viewInsideStage()) {
-            buildView();
-            drawViewInStage();
+            System.out.println("showing popup");
+            if (!visible) {
+                viewHub.addPopup(popView);
+                update();
+            }
         }
+        visible = true;
     }
 
     public void hide() {
+        if (visible) {
+            viewHub.removePopup(popView.getId());
+            update();
+        }
         visible = false;
-        stage.rebuild();
     }
 
     public void enable() {
@@ -64,8 +66,9 @@ public class Popup<S extends Stage, T extends CliBox> {
     }
 
     private boolean viewInsideStage() {
-        return stage.getWidth() > view.getWidth() &&
-                stage.getHeight() > view.getHeight() &&
-                view.getX() >= 0 && view.getY() >= 0;
+        System.out.printf("%s vs %s in %s\n", viewHub.getStage().getSize(), popView.getSize(), popView.getPosition());
+        return viewHub.getStage().getWidth() > popView.getWidth() &&
+                viewHub.getStage().getHeight() > popView.getHeight() &&
+                popView.getX() >= 0 && popView.getY() >= 0;
     }
 }

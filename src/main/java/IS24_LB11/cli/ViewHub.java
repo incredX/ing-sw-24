@@ -1,6 +1,6 @@
 package IS24_LB11.cli;
 
-import IS24_LB11.cli.popup.Popup;
+import IS24_LB11.cli.popup.PopupView;
 import IS24_LB11.cli.view.CommandLineView;
 import IS24_LB11.cli.view.NotificationView;
 import IS24_LB11.game.Player;
@@ -15,23 +15,26 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Optional;
-import java.util.PriorityQueue;
 
 public class ViewHub implements Runnable {
     private final Terminal terminal;
+    private final CommandLineView commandLineView;
+    private final ArrayList<PopupView> popups;
     private Stage stage;
-    private CommandLineView commandLineView;
-    private final ArrayList<Popup> popups;
+    private TerminalSize screenSize;
     private Optional<NotificationView> notification;
+    private int nextPopupId;
 
     public ViewHub() throws IOException {
         Charset charset = StandardCharsets.UTF_8;
         terminal = new DefaultTerminalFactory(System.out, System.in, charset).createTerminal();
         terminal.enterPrivateMode();
-        stage = new Stage(this, terminal.getTerminalSize());
-        commandLineView = new CommandLineView(terminal.getTerminalSize());
+        screenSize = terminal.getTerminalSize();
+        stage = new Stage(this, screenSize);
+        commandLineView = new CommandLineView(screenSize);
         popups = new ArrayList<>(4);
         notification = Optional.empty();
+        nextPopupId = 0;
     }
 
     @Override
@@ -43,6 +46,7 @@ public class ViewHub implements Runnable {
                 try {
                     terminal.wait(50);
                     stage.print(terminal);
+                    for (PopupView popup : popups) popup.print(terminal);
                     notification.ifPresent(p -> {
                         try { p.print(terminal); }
                         catch (IOException e) {
@@ -67,6 +71,7 @@ public class ViewHub implements Runnable {
     }
 
     public void resize(TerminalSize size, CommandLine commandLine) {
+        screenSize = size;
         synchronized (terminal) {
             try { terminal.clearScreen(); }
             catch (IOException ignored) { }
@@ -79,11 +84,12 @@ public class ViewHub implements Runnable {
                 popUp.setPosition(0, stage.getYAndHeight()-3);
             });
             stage.resize(size);
-            stage.rebuild();
-            for (Popup popup : popups) {
-                popup.resize();
-                popup.drawViewInStage();
+            for (PopupView popupView : popups) {
+                popupView.resize(screenSize);
+                popupView.build();
+                stage.setCover(popupView, true);
             }
+            stage.rebuild();
         }
     }
 
@@ -121,12 +127,33 @@ public class ViewHub implements Runnable {
         }
     }
 
-    public void addPopup(Popup popup) {
-        popups.add(popup);
+    public void addPopup(PopupView popup) {
+        synchronized (terminal) {
+            popups.add(popup);
+            stage.setCover(popups.getLast(), true);
+        }
+        popups.getLast().setId(nextPopupId);
+        System.out.printf("new popup (%d) in %s, %s\n", nextPopupId, popup.getPosition(), popup.getSize());
+        nextPopupId++;
+    }
+
+    public void removePopup(int id) {
+        synchronized (terminal) {
+            for(int i=0; i<popups.size(); i++) {
+                if (popups.get(i).getId() != id) continue;
+                stage.setCover(popups.get(i), false);
+                stage.buildArea(popups.remove(i).getRectangle());
+                System.out.printf("popup %d removed\n", nextPopupId);
+                return;
+            }
+        }
     }
 
     public void clearPopups() {
-        popups.clear();
+        synchronized (terminal) {
+            popups.clear();
+        }
+        nextPopupId = 0;
     }
 
     public GameStage setGameStage(Player player) {
@@ -169,6 +196,8 @@ public class ViewHub implements Runnable {
     }
 
     public Terminal getTerminal() { return terminal; }
+
+    public TerminalSize getScreenSize() { return screenSize; }
 
     public Stage getStage() {
         return stage;

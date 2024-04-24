@@ -1,17 +1,13 @@
-package IS24_LB11.cli.view;
+package IS24_LB11.cli.popup;
 
-import IS24_LB11.cli.style.SingleBorderStyle;
-import IS24_LB11.cli.utils.CliBox;
-import IS24_LB11.cli.utils.Side;
+import IS24_LB11.cli.view.GoldenCardView;
+import IS24_LB11.cli.view.NormalCardView;
 import IS24_LB11.game.components.GoldenCard;
 import IS24_LB11.game.components.NormalCard;
-import IS24_LB11.game.utils.Position;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
-import com.googlecode.lanterna.TextColor;
 
 import java.util.ArrayList;
-import java.util.stream.Collectors;
 
 import static IS24_LB11.cli.view.PlayableCardView.HEIGHT;
 import static IS24_LB11.cli.view.PlayableCardView.WIDTH;
@@ -38,6 +34,13 @@ public class DecksView extends CardsBoxView {
         drawGoldenDeck();
         drawDashedLine();
         drawPointer();
+    }
+
+    @Override
+    public void resize(TerminalSize terminalSize) {
+        int x = (terminalSize.getColumns()-getWidth())/2;
+        int y = (terminalSize.getRows()-getHeight())/2;
+        setPosition(new TerminalPosition(x, y));
     }
 
     public void loadNormalDeck(ArrayList<NormalCard> normalCards) {

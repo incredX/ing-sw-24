@@ -36,12 +36,12 @@ public abstract class ClientState {
     protected ServerHandler serverHandler;
     protected Stage stage;
 
-    public ClientState(ViewHub viewHub) throws IOException {
+    public ClientState(ViewHub viewHub) {
         this.nextState = null;
         this.queue = new ArrayBlockingQueue<>(QUEUE_CAPACITY);
         this.notificationStack = new NotificationStack(viewHub, 0);
         this.viewHub = viewHub;
-        this.cmdLine = new CommandLine(viewHub.getTerminal().getTerminalSize().getColumns());
+        this.cmdLine = new CommandLine(viewHub.getScreenSize().getColumns());
         this.stage = viewHub.getStage();
         viewHub.updateCommandLine(cmdLine);
     }
