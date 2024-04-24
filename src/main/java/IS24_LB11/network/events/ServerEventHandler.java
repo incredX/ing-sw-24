@@ -116,7 +116,8 @@ public class ServerEventHandler {
         }
 
         // check if this is the last player, so the game can start
-        if(clientHandler.getAllUsernames().size() == clientHandler.getMaxPlayers()) {
+        if(clientHandler.getAllUsernames().size() > 1 &&
+                clientHandler.getAllUsernames().size() == clientHandler.getMaxPlayers()) {
             response = new JsonObject();
             response.addProperty("type", "notification");
             response.addProperty("message", "Last player logged in successfully! GAME IS STARTING NOW");
