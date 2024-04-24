@@ -17,7 +17,7 @@ public class Server
     private Socket socket = null;
     private ServerSocket server = null;
     private DataInputStream in	 = null;
-    private ArrayList<ClientHandler> clientHandlers = new ArrayList<ClientHandler>();
+    public ArrayList<ClientHandler> clientHandlers = new ArrayList<ClientHandler>();
     public int maxPlayers = 1;
 
     public Game game = null;
@@ -113,15 +113,6 @@ public class Server
                 list.add(clientHandler.getUserName());
         }
         return list;
-    }
-
-    /**
-     * Retrieves the list of active client handlers.
-     *
-     * @return the list of active client handlers.
-     */
-    public ArrayList<ClientHandler> getClientHandlers(){
-        return clientHandlers;
     }
 
     public void removeClientHandler(ClientHandler clientHandler){

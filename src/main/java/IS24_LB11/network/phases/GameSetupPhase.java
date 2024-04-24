@@ -1,5 +1,6 @@
 package IS24_LB11.network.phases;
 
+import IS24_LB11.game.DeckException;
 import IS24_LB11.game.Game;
 import IS24_LB11.game.utils.SyntaxException;
 import IS24_LB11.network.ClientHandler;
@@ -13,10 +14,14 @@ public class GameSetupPhase {
         try {
             game = new Game(players);
 
-            PickPhase.startPhase(clientHandler, game);
+            game.setupGame(clientHandler.getAllUsernames());
+
+            PickPhase.startPhase(clientHandler, clientHandler.getGame());
         } catch (SyntaxException e) {
             throw new RuntimeException(e);
         } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (DeckException e) {
             throw new RuntimeException(e);
         }
     }

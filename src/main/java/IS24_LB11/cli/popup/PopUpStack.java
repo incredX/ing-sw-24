@@ -1,7 +1,7 @@
 package IS24_LB11.cli.popup;
 
 import IS24_LB11.cli.KeyConsumer;
-import IS24_LB11.cli.view.ViewHub;
+import IS24_LB11.cli.ViewHub;
 import com.googlecode.lanterna.input.KeyStroke;
 
 import java.util.ArrayList;

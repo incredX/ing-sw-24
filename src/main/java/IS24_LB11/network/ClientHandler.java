@@ -86,7 +86,7 @@ public class ClientHandler implements Runnable {
     }
 
     public void broadcast(String message) {
-        for (ClientHandler clientHandler : server.getClientHandlers()){
+        for (ClientHandler clientHandler : getClientHandlers()){
             if(!this.equals(clientHandler) && clientHandler.getUserName() != null)
                 clientHandler.sendMessage(message);
         }
@@ -109,7 +109,7 @@ public class ClientHandler implements Runnable {
     }
 
     public ClientHandler getClientHandlerWithUsername(String username) {
-        for (ClientHandler clientHandler : server.getClientHandlers()){
+        for (ClientHandler clientHandler : getClientHandlers()){
             if(clientHandler.getUserName().equals(username)){
                 return clientHandler;
             }
@@ -150,5 +150,9 @@ public class ClientHandler implements Runnable {
 
     public Game getGame() {
         return server.game;
+    }
+
+    public ArrayList<ClientHandler> getClientHandlers(){
+        return server.clientHandlers;
     }
 }
