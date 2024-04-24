@@ -69,7 +69,7 @@ public class Game {
     }
 
     public String setupGame(ArrayList<String> playerNames) throws DeckException {
-        if (playerNames.size() != numPlayers) return "ERROR_TOO_MUCH_NAMES";
+        if (playerNames.size() != numPlayers) return NAMES_OUT_OF_BOUND;
         goalDeck.shuffle();
         goldenDeck.shuffle();
         normalDeck.shuffle();
@@ -92,14 +92,14 @@ public class Game {
                         player.getSetup().flipStarterCard();
             player.applySetup();
         }
-        return "CHOOSE GOAL PHASE COMPLETED, READY TO GO";
+        return GOAL_PHASE_COMPLETED;
     }
 
     //Check if is not player turn
     public String executeTurn(String playerName, Position position, PlayableCard playableCard, boolean deckType, int indexDeck) throws JsonException, DeckException, SyntaxException {
         System.out.println(turn + "-----------------------------------" + lastTurn + "  Game ended: " + hasGameEnded());
         if (playerName.compareTo(currentPlayer().name()) != 0) return NOT_PLAYER_TURN;
-        if (hasGameEnded()) return "CAN'T PLAY ANYMORE";
+        if (hasGameEnded()) return GAME_ENDED;
         return finalTurn ? executeFinalTurn(position,playableCard) : executeNormalTurn(position, playableCard, deckType, indexDeck);
     }
 
@@ -133,7 +133,7 @@ public class Game {
         if (turn==lastTurn-1) {
             gameEnded=true;
             finalRanking = finalGamePhase();
-            return "GAME ENDED";
+            return GAME_ENDED;
         }
         Player player = players.get(turn % players.size());
         if (player.placeCard(playableCard, position) == false)
