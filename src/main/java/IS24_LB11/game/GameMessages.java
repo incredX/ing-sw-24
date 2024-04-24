@@ -9,6 +9,7 @@ public class GameMessages {
     public static final String NOT_PLAYER_TURN = "Not this player turn";
     public static final String INVALID_POSITION_CARD_OR_NOT_IN_HAND = "Invalid placement of card or card is not in player's hand";
     public static final String VALID_TURN = "Valid turn executed";
+    public static final String VALID_LAST_TURN = "Valid last turn executed";
     public static final String VALID_TURN_AND_TRIGGERED_FINAL_TURN = "Valid turn executed and score of 20 exceeded";
     public static final String SETUP_COMPLETE = "Setup completed, the game is starting...";
     public static final String NAMES_OUT_OF_BOUND = "Error too much names";

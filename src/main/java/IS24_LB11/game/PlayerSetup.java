@@ -21,7 +21,7 @@ public class PlayerSetup implements JsonConvertable {
         this.starterCard = starterCard;
         this.goals = goals;
         this.hand = hand;
-        this.chosenGoalIndex = 0;
+        this.chosenGoalIndex = -1;
         this.color=color;
     }
 
@@ -37,6 +37,7 @@ public class PlayerSetup implements JsonConvertable {
         }
         return false;
     }
+    //da discutere riguardo la return
 
     public void chooseGoal(int index) {
         chosenGoalIndex = index&1;

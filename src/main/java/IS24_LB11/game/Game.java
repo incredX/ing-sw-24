@@ -97,7 +97,6 @@ public class Game {
 
     //Check if is not player turn
     public String executeTurn(String playerName, Position position, PlayableCard playableCard, boolean deckType, int indexDeck) throws JsonException, DeckException, SyntaxException {
-        System.out.println(turn + "-----------------------------------" + lastTurn + "  Game ended: " + hasGameEnded());
         if (playerName.compareTo(currentPlayer().name()) != 0) return NOT_PLAYER_TURN;
         if (hasGameEnded()) return GAME_ENDED;
         return finalTurn ? executeFinalTurn(position,playableCard) : executeNormalTurn(position, playableCard, deckType, indexDeck);
@@ -130,9 +129,7 @@ public class Game {
     }
 
     private String executeFinalTurn(Position position, PlayableCard playableCard) throws JsonException, SyntaxException {
-        if (turn==lastTurn-1) {
-            gameEnded=true;
-            finalRanking = finalGamePhase();
+        if ((turn+1) > lastTurn) {
             return GAME_ENDED;
         }
         Player player = players.get(turn % players.size());
@@ -141,14 +138,23 @@ public class Game {
         else {
             player.incrementScoreLastCardPlaced();
         }
+
         turn++;
-        return VALID_TURN;
+
+        if(turn == lastTurn) {
+            gameEnded=true;
+            finalRanking = finalGamePhase();
+        }
+
+        return VALID_LAST_TURN;
     }
     //remind to check if front or back
     private void isFinalTurn() {
         if (turn % players.size() == 0 && finalTurn == false) {
-            if (normalDeck.isEmpty() && goldenDeck.isEmpty())
+            if (normalDeck.isEmpty() && goldenDeck.isEmpty()){
                 finalTurn = true;
+            lastTurn = turn + players.size();
+            }
             for (Player player : players)
                 if (player.getScore() >= 20) {
                     finalTurn = true;
@@ -162,8 +168,7 @@ public class Game {
             player.personalGoalScore();
             player.publicGoalScore(publicGoals);
         }
-        ranking.sort(Comparator.comparingInt(Player::getScore));
-        ranking.reversed();
+        ranking.sort((a,b)->Integer.compare(b.getScore(), a.getScore()));
         return ranking;
     }
     private boolean numberCharNotEqualInSamePosition(String s1, String s2){
