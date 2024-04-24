@@ -3,6 +3,7 @@ package IS24_LB11.cli.popup;
 import IS24_LB11.cli.ViewHub;
 import IS24_LB11.cli.controller.ClientInGame;
 import IS24_LB11.cli.utils.Side;
+import IS24_LB11.cli.view.DecksView;
 import IS24_LB11.game.components.GoldenCard;
 import IS24_LB11.game.components.NormalCard;
 import IS24_LB11.game.components.PlayableCard;
@@ -113,5 +114,13 @@ public class DecksPopup extends Popup {
                 game.setStrokeConsumed(true);
             }
         };
+    }
+
+    public boolean selectedNormalDeck() {
+        return deckIsNormal;
+    }
+
+    public int getCardIndex() {
+        return cardIndex;
     }
 }

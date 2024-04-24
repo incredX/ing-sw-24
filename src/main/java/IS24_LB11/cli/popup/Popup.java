@@ -1,6 +1,7 @@
 package IS24_LB11.cli.popup;
 
 import IS24_LB11.cli.ViewHub;
+import IS24_LB11.cli.view.PopupView;
 import com.googlecode.lanterna.input.KeyStroke;
 
 public class Popup<T extends PopupView> {

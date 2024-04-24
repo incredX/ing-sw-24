@@ -1,20 +1,25 @@
 package IS24_LB11.cli.controller;
 
-import IS24_LB11.cli.GameStage;
-import IS24_LB11.cli.event.ServerEvent;
+import IS24_LB11.cli.view.stage.GameStage;
+import IS24_LB11.cli.event.server.ServerEvent;
 import IS24_LB11.cli.ViewHub;
 import IS24_LB11.cli.popup.DecksPopup;
 import IS24_LB11.cli.popup.HandPopup;
 import IS24_LB11.cli.utils.Side;
-import IS24_LB11.cli.view.PlayableCardView;
+import IS24_LB11.cli.view.game.PlayableCardView;
+import IS24_LB11.game.PlacedCard;
 import IS24_LB11.game.Player;
 import IS24_LB11.game.PlayerSetup;
 import IS24_LB11.game.components.GoldenCard;
 import IS24_LB11.game.components.NormalCard;
 import IS24_LB11.game.components.PlayableCard;
+import IS24_LB11.game.tools.JsonConverter;
+import IS24_LB11.game.tools.JsonException;
 import IS24_LB11.game.utils.Position;
 import IS24_LB11.game.utils.SyntaxException;
+import com.google.gson.*;
 import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.input.KeyStroke;
 
 import java.io.IOException;
@@ -25,9 +30,9 @@ import java.util.stream.Collectors;
 
 //TODO : manage pointers color here
 //TODO : move pointer to clientState
-//TODO : send action to server
 //TODO : move consumers inside popups + add new method to switch focus
 //       es: focusedConsumer = handPopup.enableConsumer()
+//TODO : reforme the interface keyconsumer (?)
 //TODO : close everything if the input listener is closed
 
 public class ClientInGame extends ClientState {
@@ -35,7 +40,8 @@ public class ClientInGame extends ClientState {
     private GameStage gameStage;
     private DecksPopup decksPopup;
     private HandPopup handPopup;
-    private Position pointer;
+    private Position boardPointer;
+    private PlacedCard placedCard;
     private Consumer<KeyStroke> boardStrokeConsumer;
     private Consumer<KeyStroke> decksStrokeConsumer;
     private Consumer<KeyStroke> handStrokeConsumer;
@@ -43,36 +49,30 @@ public class ClientInGame extends ClientState {
     private boolean strokeConsumed;
     private boolean cardPlaced;
     private boolean cardPicked;
+    private boolean readOnly;
 
     public ClientInGame(ViewHub viewHub, PlayerSetup setup) throws IOException {
         super(viewHub);
         this.player = new Player(username, setup);
+        this.boardPointer = new Position(0, 0);
+        this.placedCard = null;
         this.decksPopup = null;
         this.handPopup = null;
         this.cardPlaced = false;
         this.cardPicked = false;
+        this.readOnly = false;
     }
 
     @Override
     public ClientState execute() {
-        ArrayList<NormalCard> normalCards;
-        ArrayList<GoldenCard> goldenCards;
-        try {
-            normalCards = (ArrayList<NormalCard>) Arrays.stream(new NormalCard[] {
-                    new NormalCard("Q_AFAF0"), new NormalCard("F_EEFF1"), new NormalCard("FP_KPF0")
-            }).collect(Collectors.toList());
-            goldenCards = (ArrayList<GoldenCard>) Arrays.stream(new GoldenCard[] {
-                    new GoldenCard("_EEKIF1KIIF__"), new GoldenCard("EE_EIF2EIIIA_"), new GoldenCard("EEE_PF2EPPPA_")
-            }).collect(Collectors.toList());
-        } catch (SyntaxException e) { return null; }
         player.applySetup();
-        gameStage = viewHub.setGameStage(player);
-        loadDecks(normalCards, goldenCards);
+        gameStage = viewHub.setGameStage(this);
+        loadDecks(defaultNormalDeck(), defaultGoldenDeck());
         loadHand(player.getHand());
         defineBoardConsumer();
         defineDecksConsumer();
         defineHandConsumer();
-        viewHub.resize(viewHub.getScreenSize(), cmdLine);
+        processResize(viewHub.getScreenSize());
         return super.execute();
     }
 
@@ -100,9 +100,9 @@ public class ClientInGame extends ClientState {
                 else notificationStack.addUrgent("ERROR", MISSING_ARG.apply("hide"));
             }
             case "HOME" -> {
-                gameStage.setPointer(new Position(0, 0));
-                gameStage.centerGridBase();
-                gameStage.rebuild();
+                centerBoardPointer();
+                gameStage.centerBoard();
+                gameStage.updateBoard();
             }
             case "HAND", "DECK", "DECKS" -> showPopup(tokens[0]);
             default -> notificationStack.addUrgent("ERROR", tokens[0]+" is not a valid command");
@@ -120,7 +120,10 @@ public class ClientInGame extends ClientState {
 
     @Override
     protected void processResize(TerminalSize size) {
-        super.processResize(size);
+        centerBoardPointer();
+        cmdLine.setWidth(size.getColumns());
+        viewHub.resize(size, cmdLine);
+        gameStage.resize();
         handPopup.resize();
         decksPopup.resize();
         if (gameStage.getWidth() < 4 * PlayableCardView.WIDTH && decksPopup.isVisible() && handPopup.isVisible())
@@ -129,6 +132,7 @@ public class ClientInGame extends ClientState {
     }
 
     public void drawCardFromDeck() {
+        JsonConverter converter = new JsonConverter();
         if (!cardPicked && cardPlaced) {
             player.addCardToHand(decksPopup.getSelectedCard());
             handPopup.loadHand();
@@ -138,17 +142,48 @@ public class ClientInGame extends ClientState {
                 focusedStrokeConsumer = handStrokeConsumer;
             };
             cardPicked = true;
+            try {
+                JsonObject jsonPlacedCard = (JsonObject) new JsonParser().parse(converter.objectToJSON(placedCard));
+                JsonElement jsonDeckType = new JsonPrimitive(!decksPopup.selectedNormalDeck());
+                JsonElement jsonCardIndex = new JsonPrimitive(decksPopup.getCardIndex()+1);
+                sendToServer("actions", new String[]{"placedCard", "deckType", "indexVisibleCards"},
+                        new JsonElement[]{jsonPlacedCard, jsonDeckType, jsonCardIndex});
+            } catch (JsonException e) {
+                e.printStackTrace();
+            }
         }
     }
 
     public void placeCardFromHand() {
-        if (!cardPlaced && player.placeCard(handPopup.getSelectedCard(), gameStage.getPointer())) {
+        if (!cardPlaced && player.placeCard(handPopup.getSelectedCard(), boardPointer)) {
+            placedCard = new PlacedCard(handPopup.getSelectedCard(), boardPointer);
+            updateBoardPointerImage();
             gameStage.updateBoard();
             handPopup.removeSelectedCard();
             handPopup.update();
             cardPlaced = true;
         }
         else notificationStack.addUrgent("WARNING", "cannot place card");
+    }
+
+    private void centerBoardPointer() {
+        boardPointer = new Position(0,0);
+        updateBoardPointerImage();
+    }
+
+    private void shiftBoardPointer(Side side) {
+        gameStage.clearPointer();
+        boardPointer = boardPointer.withRelative(side.asRelativePosition());
+        updateBoardPointerImage();
+        gameStage.updatePointer();
+    }
+
+    private void updateBoardPointerImage() {
+        if (cardPlaced)
+            gameStage.setPointerColor(TextColor.ANSI.BLACK_BRIGHT);
+        else if (player.getBoard().spotAvailable(boardPointer))
+            gameStage.setPointerColor(TextColor.ANSI.GREEN_BRIGHT);
+        else gameStage.setPointerColor(TextColor.ANSI.RED_BRIGHT);
     }
 
     private void showPopup(String token) {
@@ -221,10 +256,10 @@ public class ClientInGame extends ClientState {
         boardStrokeConsumer = (keyStroke) -> {
             if (keyStroke.isShiftDown()) {
                 switch (keyStroke.getKeyType()) {
-                    case ArrowUp -> { gameStage.shift(Side.NORD); return; }
-                    case ArrowDown -> { gameStage.shift(Side.SUD); return; }
-                    case ArrowLeft -> { gameStage.shift(Side.WEST); return; }
-                    case ArrowRight -> { gameStage.shift(Side.EAST); return; }
+                    case ArrowUp -> shiftBoardPointer(Side.NORD);
+                    case ArrowDown -> shiftBoardPointer(Side.SUD);
+                    case ArrowLeft -> shiftBoardPointer(Side.WEST);
+                    case ArrowRight -> shiftBoardPointer(Side.EAST);
                 }
             }
         };
@@ -240,5 +275,43 @@ public class ClientInGame extends ClientState {
 
     public void setStrokeConsumed(boolean consumed) {
         strokeConsumed = consumed;
+    }
+
+    public boolean pointerInValidSpot() {
+        return player.getBoard().spotAvailable(boardPointer);
+    }
+
+    public boolean boardValidSpot(Position position) {
+        return player.getBoard().spotAvailable(position);
+    }
+
+    public ArrayList<PlayableCard> getPlayerHand() {
+        return player.getHand();
+    }
+
+    public ArrayList<PlacedCard> getPlacedCardsInBoard() {
+        return player.getBoard().getPlacedCards();
+    }
+
+    public Position getBoardPointer() {
+        return boardPointer;
+    }
+
+
+    private static ArrayList<NormalCard> defaultNormalDeck() {
+        try {
+            return (ArrayList<NormalCard>) Arrays.stream(new NormalCard[] {
+                    new NormalCard("Q_AFAF0"), new NormalCard("F_EEFF1"), new NormalCard("FP_KPF0")
+            }).collect(Collectors.toList());
+        } catch (SyntaxException e) { return null; }
+    }
+
+    private static ArrayList<GoldenCard> defaultGoldenDeck() {
+        ArrayList<GoldenCard> goldenCards;
+        try {
+            return  (ArrayList<GoldenCard>) Arrays.stream(new GoldenCard[] {
+                    new GoldenCard("_EEKIF1KIIF__"), new GoldenCard("EE_EIF2EIIIA_"), new GoldenCard("EEE_PF2EPPPA_")
+            }).collect(Collectors.toList());
+        } catch (SyntaxException e) { return null; }
     }
 }

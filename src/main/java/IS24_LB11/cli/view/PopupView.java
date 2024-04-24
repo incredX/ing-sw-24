@@ -1,8 +1,7 @@
-package IS24_LB11.cli.popup;
+package IS24_LB11.cli.view;
 
 import IS24_LB11.cli.style.SingleBorderStyle;
 import IS24_LB11.cli.utils.CliBox;
-import com.googlecode.lanterna.terminal.Terminal;
 
 public class PopupView extends CliBox {
     protected Integer id;

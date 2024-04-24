@@ -1,7 +1,7 @@
-package IS24_LB11.cli.popup;
+package IS24_LB11.cli.view;
 
-import IS24_LB11.cli.view.GoldenCardView;
-import IS24_LB11.cli.view.NormalCardView;
+import IS24_LB11.cli.view.game.GoldenCardView;
+import IS24_LB11.cli.view.game.NormalCardView;
 import IS24_LB11.game.components.GoldenCard;
 import IS24_LB11.game.components.NormalCard;
 import com.googlecode.lanterna.TerminalPosition;
@@ -9,8 +9,8 @@ import com.googlecode.lanterna.TerminalSize;
 
 import java.util.ArrayList;
 
-import static IS24_LB11.cli.view.PlayableCardView.HEIGHT;
-import static IS24_LB11.cli.view.PlayableCardView.WIDTH;
+import static IS24_LB11.cli.view.game.PlayableCardView.HEIGHT;
+import static IS24_LB11.cli.view.game.PlayableCardView.WIDTH;
 
 public class DecksView extends CardsBoxView {
     private static final int DEFAULT_WIDTH = 2*WIDTH+4;

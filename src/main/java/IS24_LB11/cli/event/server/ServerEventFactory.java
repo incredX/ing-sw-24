@@ -1,13 +1,11 @@
-package IS24_LB11.cli.event;
+package IS24_LB11.cli.event.server;
 
 import IS24_LB11.game.PlayerSetup;
 import IS24_LB11.game.Result;
 import IS24_LB11.game.tools.JsonConverter;
 import IS24_LB11.game.tools.JsonException;
 import IS24_LB11.game.utils.SyntaxException;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonSyntaxException;
 
 import static IS24_LB11.game.Result.Error;
 import static IS24_LB11.game.Result.Ok;

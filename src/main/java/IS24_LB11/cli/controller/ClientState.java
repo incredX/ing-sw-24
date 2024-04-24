@@ -1,19 +1,23 @@
 package IS24_LB11.cli.controller;
 
 import IS24_LB11.cli.CommandLine;
-import IS24_LB11.cli.Stage;
+import IS24_LB11.cli.event.server.ServerEvent;
+import IS24_LB11.cli.event.server.ServerHeartBeatEvent;
+import IS24_LB11.cli.event.server.ServerMessageEvent;
+import IS24_LB11.cli.event.server.ServerNotificationEvent;
+import IS24_LB11.cli.view.stage.Stage;
 import IS24_LB11.cli.event.*;
 import IS24_LB11.cli.notification.NotificationStack;
 import IS24_LB11.cli.notification.Priority;
 import IS24_LB11.cli.ViewHub;
 import IS24_LB11.cli.listeners.ServerHandler;
 import IS24_LB11.game.Result;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.terminal.Terminal;
 
-import java.io.IOException;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
@@ -88,6 +92,8 @@ public abstract class ClientState {
 
     protected abstract void processCommand(String command);
 
+    protected abstract void processResize(TerminalSize size);
+
     protected abstract void processKeyStroke(KeyStroke keyStroke);
 
     protected void processResult(Result<ServerEvent> result) {
@@ -100,11 +106,6 @@ public abstract class ClientState {
             return;
         }
         processServerEvent(result.get());
-    }
-
-    protected void processResize(TerminalSize size) {
-        cmdLine.setWidth(size.getColumns());
-        viewHub.resize(size, cmdLine);
     }
 
     protected boolean processServerEventIfCommon(ServerEvent serverEvent) {
@@ -248,6 +249,14 @@ public abstract class ClientState {
         object.addProperty("type", type);
         for (int i = 0; i < Integer.min(dataFields.length, values.length); i++)
             object.addProperty(dataFields[i], values[i]);
+        serverHandler.write(object);
+    }
+
+    protected void sendToServer(String type, String[] dataFields, JsonElement[] values) {
+        JsonObject object = new JsonObject();
+        object.addProperty("type", type);
+        for (int i = 0; i < Integer.min(dataFields.length, values.length); i++)
+            object.add(dataFields[i], values[i]);
         serverHandler.write(object);
     }
 

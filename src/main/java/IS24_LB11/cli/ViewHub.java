@@ -1,11 +1,14 @@
 package IS24_LB11.cli;
 
-import IS24_LB11.cli.popup.PopupView;
+import IS24_LB11.cli.controller.ClientInGame;
+import IS24_LB11.cli.view.PopupView;
 import IS24_LB11.cli.view.CommandLineView;
 import IS24_LB11.cli.view.NotificationView;
-import IS24_LB11.game.Player;
+import IS24_LB11.cli.view.stage.GameStage;
+import IS24_LB11.cli.view.stage.LobbyStage;
+import IS24_LB11.cli.view.stage.SetupStage;
+import IS24_LB11.cli.view.stage.Stage;
 import IS24_LB11.game.PlayerSetup;
-import IS24_LB11.game.utils.Position;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import com.googlecode.lanterna.terminal.Terminal;
@@ -14,16 +17,15 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Optional;
 
 public class ViewHub implements Runnable {
     private final Object lock = new Object();
     private final Terminal terminal;
     private final CommandLineView commandLineView;
     private final ArrayList<PopupView> popups;
+    private NotificationView notificationView;
     private Stage stage;
     private TerminalSize screenSize;
-    private Optional<NotificationView> notification;
     private int nextPopupId;
 
     public ViewHub() throws IOException {
@@ -31,10 +33,10 @@ public class ViewHub implements Runnable {
         terminal = new DefaultTerminalFactory(System.out, System.in, charset).createTerminal();
         terminal.enterPrivateMode();
         screenSize = terminal.getTerminalSize();
-        stage = new Stage(this, screenSize);
         commandLineView = new CommandLineView(screenSize);
+        stage = new Stage(this);
         popups = new ArrayList<>(4);
-        notification = Optional.empty();
+        notificationView = null;
         nextPopupId = 0;
     }
 
@@ -48,12 +50,7 @@ public class ViewHub implements Runnable {
                     lock.wait(10);
                     stage.print(terminal);
                     for (PopupView popup : popups) popup.print(terminal);
-                    notification.ifPresent(p -> {
-                        try { p.print(terminal); }
-                        catch (IOException e) {
-                            System.err.println("caught exception: "+e.getMessage());
-                        }
-                    });
+                    if (notificationView != null) notificationView.print(terminal);
                     commandLineView.print(terminal);
                     terminal.flush();
                 }
@@ -79,18 +76,10 @@ public class ViewHub implements Runnable {
             commandLineView.resize(size);
             commandLineView.buildCommandLine(commandLine);
             commandLineView.build();
-            stage.resize(size);
-            stage.rebuild();
-            notification.ifPresent(notificationView -> {
+            if (notificationView != null) {
                 notificationView.resize(size);
                 notificationView.build();
-                notificationView.setPosition(0, stage.getYAndHeight()-3);
-            });
-//            for (PopupView popupView : popups) {
-//                popupView.resize(size);
-//                //popupView.build();
-//                stage.setCover(popupView, true);
-//            }
+            }
         }
     }
 
@@ -115,12 +104,10 @@ public class ViewHub implements Runnable {
     }
 
     public void addNotification(String message, String title) {
-        if (notification.isPresent()) {
-            stage.buildArea(notification.get().getRectangle());
-            notification = Optional.empty();
-        }
-        notification = Optional.of(new NotificationView(stage, title, message));
-        notification.get().build();
+        notificationView = new NotificationView(screenSize, title, message);
+        notificationView.build();
+        stage.setCover(notificationView, true);
+        update();
     }
 
     public void addNotification(String message) {
@@ -128,9 +115,10 @@ public class ViewHub implements Runnable {
     }
 
     public void removeNotification() {
-        if (notification.isPresent()) {
-            stage.buildArea(notification.get().getRectangle());
-            notification = Optional.empty();
+        if (notificationView != null) {
+            stage.setCover(notificationView, false);
+            stage.buildArea(notificationView.getRectangle());
+            notificationView = null;
             update();
         }
     }
@@ -152,55 +140,33 @@ public class ViewHub implements Runnable {
                 stage.setCover(popups.get(i), false);
                 stage.buildArea(popups.remove(i).getRectangle());
                 System.out.printf("popup %d removed\n", nextPopupId);
-                return;
+                break;
             }
+            if (popups.isEmpty()) nextPopupId = 0;
         }
     }
 
-    public void clearPopups() {
-        synchronized (terminal) {
-            popups.clear();
-            nextPopupId = 0;
-        }
-    }
-
-    public GameStage setGameStage(Player player) {
-        try {
-            GameStage gameStage = new GameStage(this, terminal.getTerminalSize(), player);
-            gameStage.loadCardViews();
-            gameStage.setPointer(new Position(0,0));
-            stage = gameStage;
-            stage.build();
-            update();
-            return gameStage;
-        } catch (IOException e) {
-            System.err.println("caught exception: "+e.getMessage());
-            return null;
-        }
+    public GameStage setGameStage(ClientInGame state) {
+        GameStage gameStage = new GameStage(state, this);
+        gameStage.loadCardViews();
+        stage = gameStage;
+        stage.build();
+        update();
+        return gameStage;
     }
 
     public SetupStage setSetupStage(PlayerSetup setup) {
-        try {
-            SetupStage setupStage = new SetupStage(this, terminal.getTerminalSize(), setup);
-            stage = setupStage;
-            stage.build();
-            return setupStage;
-        } catch (IOException e) {
-            System.err.println("caught exception: "+e.getMessage());
-            return null;
-        }
+        SetupStage setupStage = new SetupStage(this, setup);
+        stage = setupStage;
+        stage.build();
+        return setupStage;
     }
 
     public LobbyStage setLobbyStage() {
-        try {
-            LobbyStage lobbyStage = new LobbyStage(this, terminal.getTerminalSize());
-            stage = lobbyStage;
-            stage.build();
-            return lobbyStage;
-        } catch (IOException e) {
-            System.err.println("caught exception: "+e.getMessage());
-            return null;
-        }
+        LobbyStage lobbyStage = new LobbyStage(this);
+        stage = lobbyStage;
+        stage.build();
+        return lobbyStage;
     }
 
     public Terminal getTerminal() { return terminal; }

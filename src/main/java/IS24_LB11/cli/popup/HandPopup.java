@@ -3,6 +3,7 @@ package IS24_LB11.cli.popup;
 import IS24_LB11.cli.ViewHub;
 import IS24_LB11.cli.controller.ClientInGame;
 import IS24_LB11.cli.utils.Side;
+import IS24_LB11.cli.view.HandView;
 import IS24_LB11.game.components.PlayableCard;
 import com.googlecode.lanterna.input.KeyStroke;
 

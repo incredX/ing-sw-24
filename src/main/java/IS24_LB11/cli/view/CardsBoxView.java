@@ -1,8 +1,7 @@
-package IS24_LB11.cli.popup;
+package IS24_LB11.cli.view;
 
 import IS24_LB11.cli.utils.Side;
 import com.googlecode.lanterna.TerminalPosition;
-import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
 
 public class CardsBoxView extends PopupView {

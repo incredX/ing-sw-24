@@ -1,6 +1,6 @@
-package IS24_LB11.cli;
+package IS24_LB11.cli.view.stage;
 
-import com.googlecode.lanterna.TerminalSize;
+import IS24_LB11.cli.ViewHub;
 
 import java.util.Arrays;
 
@@ -19,8 +19,8 @@ public class LobbyStage extends Stage {
                     "   \"888.      :\"      'Y\"       `\"888*\"\"    \"88888%   ` \"Y   Y\"    \n" +
                     "     `\"\"***~\"`                     \"\"         \"YP' ";
 
-    public LobbyStage(ViewHub viewHub, TerminalSize terminalSize) {
-        super(viewHub, terminalSize);
+    public LobbyStage(ViewHub viewHub) {
+        super(viewHub);
     }
 
     @Override
@@ -31,8 +31,8 @@ public class LobbyStage extends Stage {
     }
 
     @Override
-    public void resize(TerminalSize terminalSize) {
-        super.resize(terminalSize);
+    public void resize() {
+        super.resize();
         updateViewHub();
     }
 

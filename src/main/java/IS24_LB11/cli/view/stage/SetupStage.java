@@ -1,6 +1,7 @@
-package IS24_LB11.cli;
+package IS24_LB11.cli.view.stage;
 
-import IS24_LB11.cli.view.*;
+import IS24_LB11.cli.ViewHub;
+import IS24_LB11.cli.view.game.*;
 import IS24_LB11.game.PlayerSetup;
 import IS24_LB11.game.components.*;
 import com.googlecode.lanterna.TerminalPosition;
@@ -14,8 +15,8 @@ public class SetupStage extends Stage {
     private final ArrayList<PlayableCardView> handView;
     private final ArrayList<GoalView> goalViews;
 
-    public SetupStage(ViewHub viewHub, TerminalSize terminalSize, PlayerSetup setup) {
-        super(viewHub, terminalSize);
+    public SetupStage(ViewHub viewHub, PlayerSetup setup) {
+        super(viewHub);
         this.chosenGoalIndex = 0;
         this.starterCardView = new StarterCardView(setup.getStarterCard());
         this.handView = new ArrayList<>(3);
@@ -31,7 +32,7 @@ public class SetupStage extends Stage {
             default -> throw new IllegalStateException("Invalid goal: " + goal);
         }
         for (PlayableCardView cardView: handView) cardView.setMargins(0);
-        resize(terminalSize);
+        resize();
     }
 
     @Override
@@ -45,11 +46,11 @@ public class SetupStage extends Stage {
     }
 
     @Override
-    public void resize(TerminalSize terminalSize) {
-        super.resize(terminalSize);
-        placeStarterCard(terminalSize);
-        placeGoals(terminalSize);
-        placeHandHorizontal(terminalSize);
+    public void resize() {
+        super.resize();
+        placeStarterCard(getScreenSize());
+        placeGoals(getScreenSize());
+        placeHandHorizontal(getScreenSize());
         updateViewHub();
     }
 

@@ -1,12 +1,10 @@
-package IS24_LB11.cli;
+package IS24_LB11.cli.view.stage;
 
-import IS24_LB11.cli.popup.Popup;
+import IS24_LB11.cli.ViewHub;
+import IS24_LB11.cli.controller.ClientInGame;
 import IS24_LB11.cli.utils.Side;
-import IS24_LB11.cli.view.*;
-import IS24_LB11.game.Deck;
-import IS24_LB11.game.Player;
-import IS24_LB11.game.components.GoldenCard;
-import IS24_LB11.game.components.NormalCard;
+import IS24_LB11.cli.view.game.CardViewFactory;
+import IS24_LB11.cli.view.game.PlayableCardView;
 import IS24_LB11.game.utils.Position;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
@@ -14,7 +12,7 @@ import com.googlecode.lanterna.TextColor;
 
 import java.util.ArrayList;
 
-import static IS24_LB11.cli.view.PlayableCardView.WIDTH;
+import static IS24_LB11.cli.view.game.PlayableCardView.WIDTH;
 
 public class GameStage extends Stage {
     private static final int OFFSET_X = 4;
@@ -22,24 +20,18 @@ public class GameStage extends Stage {
     private static final int UNIT_X = WIDTH-7;
     private static final int UNIT_Y = PlayableCardView.HEIGHT-3;
 
-    private final Player player;
+    private final ClientInGame state;
     private final ArrayList<PlayableCardView> cardviews;
     private TextColor pointerColor;
-    private Position pointer;
     private TerminalPosition gridBase;
-    private boolean visibleHand;
-    private boolean visibleDecks;
 
-    public GameStage(ViewHub viewHub, TerminalSize terminalSize, Player player) {
-        super(viewHub, terminalSize);
-        this.player = player;
+    public GameStage(ClientInGame state, ViewHub viewHub) {
+        super(viewHub);
+        this.state = state;
         this.cardviews = new ArrayList<>();
         this.pointerColor = TextColor.ANSI.RED_BRIGHT;
-        this.pointer = null;
-        this.visibleHand = true;
-        this.visibleDecks = false;
-        centerGridBase();
-        resize(terminalSize);
+        centerBoard();
+        resize();
     }
 
     @Override
@@ -52,45 +44,33 @@ public class GameStage extends Stage {
     }
 
     @Override
-    public void resize(TerminalSize terminalSize) {
-        super.resize(terminalSize);
-        centerGridBase();
-        setPointer(new Position(0,0));
-        updateViewHub();
+    public void resize() {
+        super.resize(getScreenSize());
+        centerBoard();
+        updateBoard();
     }
 
-    @Override
-    public void shift(Side side) {
-        if (pointer == null) return;
+    public void updatePointer() {
+        Side gridShiftSide = null;
 
-        clearPointer();
-        pointer = pointer.withRelative(side.asRelativePosition());
-        if (player.getHand().size() <= 2) {
-            pointerColor = TextColor.ANSI.BLACK_BRIGHT;
-        } else if (player.getBoard().spotAvailable(pointer)) {
-            pointerColor = TextColor.ANSI.GREEN_BRIGHT;
-        } else {
-            pointerColor = TextColor.ANSI.RED_BRIGHT;
-        }
-        TerminalPosition shiftedPosition = convertPosition(pointer);
-        if (shiftedPosition.getColumn()+UNIT_X >= innerWidth() ||
-                shiftedPosition.getRow()+UNIT_Y >= innerHeight() ||
-                shiftedPosition.getColumn() < OFFSET_X ||
-                shiftedPosition.getRow() < OFFSET_Y) {
-            shiftGridBase(side.opposite());
+        TerminalPosition shiftedPosition = convertPosition(state.getBoardPointer());
+        if (shiftedPosition.getColumn()+UNIT_X-OFFSET_X > innerWidth()) gridShiftSide = Side.WEST;
+        else if (shiftedPosition.getRow()+UNIT_Y-OFFSET_Y > innerHeight()) gridShiftSide = Side.NORD;
+        else if (shiftedPosition.getColumn() < OFFSET_X) gridShiftSide = Side.EAST;
+        else if (shiftedPosition.getRow() < OFFSET_Y) gridShiftSide = Side.SUD;
+
+        if (gridShiftSide != null) {
+            shiftGridBase(gridShiftSide);
             rebuild();
-        } else {
-            drawPointer();
-        }
+        }else drawPointer();
     }
 
     public void updateBoard() {
-        pointerColor = TextColor.ANSI.BLACK_BRIGHT;
         loadCardViews();
-        build();
+        rebuild();
     }
 
-    public void centerGridBase() {
+    public void centerBoard() {
         int x = (innerArea.getWidth()/2-OFFSET_X) / UNIT_X;
         int y = (innerArea.getHeight()/2-OFFSET_Y) / UNIT_Y;
         setGridBase(x, y);
@@ -113,30 +93,26 @@ public class GameStage extends Stage {
     }
 
     public void clearPointer() {
-        drawPointer(' ', TextColor.ANSI.DEFAULT);
+        drawPointer(' ', ' ', TextColor.ANSI.DEFAULT);
     }
 
     private void drawPointer() {
-        if (pointer == null) return;
-        drawPointer('#', pointerColor);
+        drawPointer('+', '#', pointerColor);
     }
 
-    private void drawPointer(char c, TextColor color) {
-        if (pointer == null) return;
+    private void drawPointer(char base, char axis, TextColor pointerColor) {
+        Position pointer = state.getBoardPointer();
+        String verticalAxis = axis+" "+axis;
+        String horizontalAxis = axis+" "+base, reversedAxis = base+" "+axis;
         int offsetX = 4;
-        int baseX = pointer.getX()*UNIT_X+gridBase.getColumn()+1+offsetX;
+        int baseX1 = pointer.getX()*UNIT_X+gridBase.getColumn()+offsetX;
+        int baseX2 = baseX1+UNIT_X-2*offsetX-2;
         int baseY = pointer.getY()*UNIT_Y+gridBase.getRow()+UNIT_Y/2+1;
-        for (int i=0; i<2; i++) {
-            if (baseY+i < lastRow()-1) {
-                drawCell(new TerminalPosition(baseX+2*i, baseY+i), c, color);
-                drawCell(new TerminalPosition(baseX+UNIT_X-2*(i+offsetX), baseY+i), c, color);
-            }
-            if (i>0) {
-                drawCell(new TerminalPosition(baseX+2*i, baseY-i), c, color);
-                drawCell(new TerminalPosition(baseX+UNIT_X-2*(i+offsetX), baseY-i), c, color);
-            }
-        }
-        buildRelativeArea(UNIT_X-1, UNIT_Y, baseX, baseY-UNIT_Y/2);
+        fillColumn(baseX1+3, baseY-2, verticalAxis, pointerColor);
+        fillRow(baseY, baseX1, horizontalAxis, pointerColor);
+        fillColumn(baseX2+1, baseY-2, verticalAxis, pointerColor);
+        fillRow(baseY, baseX2, reversedAxis, pointerColor);
+        buildRelativeArea(UNIT_X-1, UNIT_Y, baseX1, baseY-UNIT_Y/2);
     }
 
     private void drawGrid() {
@@ -154,14 +130,14 @@ public class GameStage extends Stage {
     }
 
     public void loadCardViews() {
-        player.getBoard().getPlacedCards().stream().skip(cardviews.size()).forEach(placedCard -> {
+        state.getPlacedCardsInBoard().stream().skip(cardviews.size()).forEach(placedCard -> {
             cardviews.add(CardViewFactory.newPlayableCardView(placedCard.card()));
             cardviews.getLast().setBoardPosition(placedCard.position());
         });
     }
 
-    public void setPointer(Position pointer) {
-        this.pointer = pointer;
+    public void setPointerColor(TextColor color) {
+        pointerColor = color;
     }
 
     private void setGridBase(int x, int y) {
@@ -172,9 +148,5 @@ public class GameStage extends Stage {
         int x = position.getX()*UNIT_X+gridBase.getColumn();
         int y = position.getY()*UNIT_Y+gridBase.getRow();
         return new TerminalPosition(x, y);
-    }
-
-    public Position getPointer() {
-        return pointer;
     }
 }

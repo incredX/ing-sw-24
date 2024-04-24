@@ -1,8 +1,8 @@
-package IS24_LB11.cli.popup;
+package IS24_LB11.cli.view;
 
-import IS24_LB11.cli.view.GoldenCardView;
-import IS24_LB11.cli.view.NormalCardView;
-import IS24_LB11.cli.view.PlayableCardView;
+import IS24_LB11.cli.view.game.GoldenCardView;
+import IS24_LB11.cli.view.game.NormalCardView;
+import IS24_LB11.cli.view.game.PlayableCardView;
 import IS24_LB11.game.components.GoldenCard;
 import IS24_LB11.game.components.NormalCard;
 import IS24_LB11.game.components.PlayableCard;
@@ -12,8 +12,8 @@ import com.googlecode.lanterna.TerminalSize;
 import java.util.ArrayList;
 
 import static IS24_LB11.cli.utils.Side.EAST;
-import static IS24_LB11.cli.view.PlayableCardView.HEIGHT;
-import static IS24_LB11.cli.view.PlayableCardView.WIDTH;
+import static IS24_LB11.cli.view.game.PlayableCardView.HEIGHT;
+import static IS24_LB11.cli.view.game.PlayableCardView.WIDTH;
 import static IS24_LB11.game.utils.Direction.DOWN_RIGHT;
 import static IS24_LB11.game.utils.Direction.UP_RIGHT;
 

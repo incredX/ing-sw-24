@@ -1,6 +1,5 @@
 package IS24_LB11.cli.view;
 
-import IS24_LB11.cli.Stage;
 import IS24_LB11.cli.style.SingleBorderStyle;
 import IS24_LB11.cli.utils.*;
 import com.googlecode.lanterna.TerminalPosition;
@@ -18,9 +17,9 @@ public class NotificationView extends CliBox {
     private final String title;
     private final String message;
 
-    public NotificationView(Stage stage, String title, String message) {
-        super(stage.getSize().withRows(3),
-                new TerminalPosition(0, stage.getYAndHeight()-3),
+    public NotificationView(TerminalSize screenSize, String title, String message) {
+        super(screenSize.withRows(3),
+                new TerminalPosition(0, screenSize.getRows()-5),
                 new SingleBorderStyle());
         this.title = title;
         this.message = message;
@@ -34,8 +33,9 @@ public class NotificationView extends CliBox {
     }
 
     @Override
-    public void resize(TerminalSize stageSize) {
-        setSize(stageSize.withRows(3));
+    public void resize(TerminalSize screenSize) {
+        setSize(screenSize.withRows(3));
+        setPosition(0, screenSize.getRows()-5);
     }
 
     @Override

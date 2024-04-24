@@ -3,7 +3,7 @@ package IS24_LB11.cli.listeners;
 import IS24_LB11.cli.controller.ClientState;
 import IS24_LB11.cli.event.ResultServerEvent;
 
-import IS24_LB11.cli.event.ServerEventFactory;
+import IS24_LB11.cli.event.server.ServerEventFactory;
 import com.google.gson.*;
 
 import java.io.IOException;

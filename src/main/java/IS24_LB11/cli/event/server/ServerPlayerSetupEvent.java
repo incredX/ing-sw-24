@@ -1,4 +1,4 @@
-package IS24_LB11.cli.event;
+package IS24_LB11.cli.event.server;
 
 import IS24_LB11.game.PlayerSetup;
 

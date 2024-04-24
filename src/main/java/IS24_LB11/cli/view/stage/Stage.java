@@ -1,5 +1,6 @@
-package IS24_LB11.cli;
+package IS24_LB11.cli.view.stage;
 
+import IS24_LB11.cli.ViewHub;
 import IS24_LB11.cli.style.SingleBorderStyle;
 import IS24_LB11.cli.utils.Side;
 import com.googlecode.lanterna.TerminalPosition;
@@ -16,8 +17,8 @@ public class Stage extends CliBox {
     private final ViewHub viewHub;
     private final ArrayDeque<TerminalRectangle> builtAreas;
 
-    public Stage(ViewHub viewHub, TerminalSize terminalSize) {
-        super(terminalSize.withRelative(0, -2),
+    public Stage(ViewHub viewHub) {
+        super(viewHub.getScreenSize().withRelative(0, -2),
                 new TerminalPosition(0, 0),
                 new SingleBorderStyle());
         this.viewHub = viewHub;
@@ -98,9 +99,8 @@ public class Stage extends CliBox {
         buildRelativeArea(1, rectangle.getHeight(), borderArea.getXAndWidth(), 0);
     }
 
-    @Override
-    public void resize(TerminalSize terminalSize) {
-        super.resize(terminalSize.withRelative(0, -2));
+    public void resize() {
+        super.resize(viewHub.getScreenSize().withRelative(0, -2));
     }
 
     protected void updateViewHub() {
@@ -117,5 +117,9 @@ public class Stage extends CliBox {
 
     public TerminalPosition getCenter() {
         return getPosition().withRelative(getWidth()/2, getHeight()/2);
+    }
+
+    public TerminalSize getScreenSize() {
+        return viewHub.getScreenSize();
     }
 }

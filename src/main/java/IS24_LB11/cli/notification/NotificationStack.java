@@ -59,7 +59,6 @@ public class NotificationStack implements KeyConsumer {
             else
                 viewHub.addNotification(notification.getText(), String.format("[%d] %s", numPopUps, notification.getTitle()));
         } else viewHub.removeNotification();
-        viewHub.update();
     }
 
     private Notification topNotification() {
