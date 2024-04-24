@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 public class ViewHub implements Runnable {
+    private final Object lock = new Object();
     private final Terminal terminal;
     private final CommandLineView commandLineView;
     private final ArrayList<PopupView> popups;
@@ -42,9 +43,9 @@ public class ViewHub implements Runnable {
         Thread.currentThread().setName("thread-view-hub");
         stage.build();
         while (true) {
-            synchronized (terminal) {
+            synchronized (lock) {
                 try {
-                    terminal.wait(50);
+                    lock.wait(50);
                     stage.print(terminal);
                     for (PopupView popup : popups) popup.print(terminal);
                     notification.ifPresent(p -> {
@@ -72,7 +73,7 @@ public class ViewHub implements Runnable {
 
     public void resize(TerminalSize size, CommandLine commandLine) {
         screenSize = size;
-        synchronized (terminal) {
+        synchronized (lock) {
             try { terminal.clearScreen(); }
             catch (IOException ignored) { }
             commandLineView.resize(size);
@@ -84,26 +85,26 @@ public class ViewHub implements Runnable {
                 popUp.setPosition(0, stage.getYAndHeight()-3);
             });
             stage.resize(size);
-            for (PopupView popupView : popups) {
-                popupView.resize(screenSize);
-                popupView.build();
-                stage.setCover(popupView, true);
-            }
             stage.rebuild();
+//            for (PopupView popupView : popups) {
+//                popupView.resize(size);
+//                //popupView.build();
+//                stage.setCover(popupView, true);
+//            }
         }
     }
 
     public void update() {
-        synchronized (terminal) {
-            terminal.notify();
+        synchronized (lock) {
+            lock.notify();
         }
     }
 
     public void updateCommandLine(CommandLine commandLine) {
-        synchronized (terminal) {
+        synchronized (lock) {
             commandLineView.buildCommandLine(commandLine);
             commandLineView.build();
-            terminal.notify(); }
+            lock.notify(); }
     }
 
     public void addNotification(String message, String title) {
@@ -128,7 +129,7 @@ public class ViewHub implements Runnable {
     }
 
     public void addPopup(PopupView popup) {
-        synchronized (terminal) {
+        synchronized (lock) {
             popups.add(popup);
             stage.setCover(popups.getLast(), true);
         }
@@ -138,7 +139,7 @@ public class ViewHub implements Runnable {
     }
 
     public void removePopup(int id) {
-        synchronized (terminal) {
+        synchronized (lock) {
             for(int i=0; i<popups.size(); i++) {
                 if (popups.get(i).getId() != id) continue;
                 stage.setCover(popups.get(i), false);

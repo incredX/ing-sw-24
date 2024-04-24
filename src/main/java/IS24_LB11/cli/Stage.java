@@ -67,9 +67,11 @@ public class Stage extends CliBox {
             for (int r=0; r<=area.getHeight(); r++) {
                 relative = base.withRelativeRow(r).minus(this.getPosition());
                 terminal.setCursorPosition(base.withRelativeRow(r));
+                int relCol = relative.getColumn(), relRow = relative.getRow();
                 for (int c=0; c<=area.getWidth(); c++) {
-                    if (relative.getRow() < rectangle.getHeight() && relative.getColumn()+c < rectangle.getWidth())
-                        image[relative.getRow()][relative.getColumn()+c].print(terminal);
+                    if (relRow < rectangle.getHeight() && relCol < rectangle.getWidth() && relRow >= 0 && relCol >= 0)
+                        image[relRow][relCol].print(terminal);
+                    relCol++;
                 }
             }
         }

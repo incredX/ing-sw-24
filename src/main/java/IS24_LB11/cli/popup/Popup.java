@@ -28,6 +28,10 @@ public class Popup<T extends PopupView> {
 
     public void resize() {
         popView.resize(viewHub.getScreenSize());
+        if (visible) {
+            if (!viewInsideStage()) hide();
+            else viewHub.getStage().setCover(popView, true);
+        }
     }
 
     public void show() {
@@ -37,16 +41,16 @@ public class Popup<T extends PopupView> {
                 viewHub.addPopup(popView);
                 update();
             }
+            visible = true;
         }
-        visible = true;
     }
 
     public void hide() {
         if (visible) {
             viewHub.removePopup(popView.getId());
             update();
+            visible = false;
         }
-        visible = false;
     }
 
     public void enable() {

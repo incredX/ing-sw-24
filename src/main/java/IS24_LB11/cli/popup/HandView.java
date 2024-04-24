@@ -49,12 +49,13 @@ public class HandView extends CardsBoxView {
 
     public void removeCard(int cardIndex) {
         cardViews.remove(cardIndex);
-        setSize(new TerminalSize(DEFAULT_WIDTH, getHeight()-HEIGHT));
+        //setSize(new TerminalSize(DEFAULT_WIDTH, getHeight()-HEIGHT));
     }
 
     public void loadCards(ArrayList<PlayableCard> cards) {
         cardViews.clear();
-        int y = 0;
+        int offset_factor = 0;
+        int y = offset_factor * (HEIGHT/2-1);
         for (PlayableCard card : cards)  {
             switch (card) {
                 case GoldenCard goldenCard -> cardViews.add(new GoldenCardView(goldenCard));

@@ -1,6 +1,7 @@
 package IS24_LB11.cli.popup;
 
 import IS24_LB11.cli.ViewHub;
+import IS24_LB11.cli.controller.ClientInGame;
 import IS24_LB11.cli.utils.Side;
 import IS24_LB11.game.components.GoldenCard;
 import IS24_LB11.game.components.NormalCard;
@@ -15,14 +16,14 @@ import static IS24_LB11.cli.utils.Side.*;
 public class DecksPopup extends Popup {
     private ArrayList<NormalCard> normalCards;
     private ArrayList<GoldenCard> goldenCards;
-    private boolean deckIsGolden;
+    private boolean deckIsNormal;
     private int cardIndex;
 
     public DecksPopup(ViewHub viewHub, ArrayList<NormalCard> normalCards, ArrayList<GoldenCard> goldenCards) {
         super(viewHub, new DecksView(viewHub.getScreenSize(), normalCards, goldenCards));
         this.normalCards = normalCards;
         this.goldenCards = goldenCards;
-        this.deckIsGolden = true; //true = golden, false = normal
+        this.deckIsNormal = true; //true = golden, false = normal
         this.cardIndex = 0;
     }
 
@@ -36,32 +37,9 @@ public class DecksPopup extends Popup {
         });
     }
 
-    @Override
-    public boolean consumeKeyStroke(KeyStroke keyStroke) {
-        if (!enabled) return false; // pointer is not here
-        if (keyStroke.isCtrlDown()) {
-            switch (keyStroke.getKeyType()) {
-                case ArrowUp -> shiftPointer(NORD);
-                case ArrowDown -> shiftPointer(SUD);
-                case ArrowLeft -> shiftPointer(WEST);
-                case ArrowRight -> shiftPointer(EAST);
-                case Enter -> {
-                    hide();
-                    //TODO: save somewhere card to draw
-                }
-                default -> {
-                    return false;
-                }
-            }
-            if (visible) update();
-            return true;
-        }
-        return false;
-    }
-
     public PlayableCard getSelectedCard() {
-        if (deckIsGolden) return goldenCards.get(cardIndex);
-        else return normalCards.get(cardIndex);
+        if (deckIsNormal) return normalCards.get(cardIndex);
+        else return goldenCards.get(cardIndex);
     }
 
     public void shiftPointer(Side side) {
@@ -69,9 +47,9 @@ public class DecksPopup extends Popup {
         if (side.isVertical()) {
             if (side == SUD) cardIndex = (cardIndex+1) % size;
             else cardIndex = cardIndex == 0 ? size - 1 : cardIndex - 1;
-        } else deckIsGolden = !deckIsGolden;
+        } else deckIsNormal = !deckIsNormal;
         manageView(decksView -> {
-            decksView.updatePointerPosition(deckIsGolden, cardIndex);
+            decksView.updatePointerPosition(deckIsNormal, cardIndex);
             decksView.build();
         });
         //drawViewInStage();
@@ -92,7 +70,7 @@ public class DecksPopup extends Popup {
     @Override
     public void enable() {
         manageView(decksView -> {
-            decksView.updatePointerPosition(deckIsGolden, cardIndex);
+            decksView.updatePointerPosition(deckIsNormal, cardIndex);
             decksView.build();
         });
         super.enable();
@@ -112,7 +90,27 @@ public class DecksPopup extends Popup {
     }
 
     private int getSelectedDeckSize() {
-        if (deckIsGolden == false) return normalCards.size();
+        if (deckIsNormal) return normalCards.size();
         else return goldenCards.size();
+    }
+
+    public Consumer<KeyStroke> keyStrokeConsumer(ClientInGame game) {
+        return (keyStroke) -> {
+            if (!enabled) return; // pointer is not here
+            if (keyStroke.isCtrlDown()) {
+                switch (keyStroke.getKeyType()) {
+                    case ArrowUp -> shiftPointer(NORD);
+                    case ArrowDown -> shiftPointer(SUD);
+                    case ArrowLeft -> shiftPointer(WEST);
+                    case ArrowRight -> shiftPointer(EAST);
+                    case Enter -> game.drawCardFromDeck();
+                    default -> {
+                        return;
+                    }
+                }
+                if (visible) update();
+                game.setStrokeConsumed(true);
+            }
+        };
     }
 }

@@ -87,6 +87,7 @@ public class GameStage extends Stage {
     public void updateBoard() {
         pointerColor = TextColor.ANSI.BLACK_BRIGHT;
         loadCardViews();
+        build();
     }
 
     public void centerGridBase() {
