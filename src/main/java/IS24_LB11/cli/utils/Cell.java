@@ -42,7 +42,10 @@ public final class Cell {
     }
 
     public void print(Terminal terminal) throws IOException {
-        if (covered) return;
+        if (covered) {
+            terminal.setCursorPosition(terminal.getCursorPosition().withRelativeColumn(value.length()));
+            return;
+        }
         if (color != TextColor.ANSI.DEFAULT) {
             terminal.setForegroundColor(color);
             terminal.putString(value);

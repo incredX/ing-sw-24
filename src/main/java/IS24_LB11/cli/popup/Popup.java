@@ -30,11 +30,15 @@ public class Popup<T extends PopupView> {
         popView.resize(viewHub.getScreenSize());
         if (visible) {
             if (!viewInsideStage()) hide();
-            else viewHub.getStage().setCover(popView, true);
+            else {
+                System.out.println("covering"+popView.getSize()+" in "+popView.getPosition());
+                viewHub.getStage().setCover(popView, true);
+            }
         }
     }
 
     public void show() {
+        resize();
         if (viewInsideStage()) {
             System.out.println("showing popup");
             if (!visible) {
@@ -70,7 +74,7 @@ public class Popup<T extends PopupView> {
     }
 
     private boolean viewInsideStage() {
-        System.out.printf("%s vs %s in %s\n", viewHub.getStage().getSize(), popView.getSize(), popView.getPosition());
+        //System.out.printf("%s vs %s in %s\n", viewHub.getStage().getSize(), popView.getSize(), popView.getPosition());
         return viewHub.getStage().getWidth() > popView.getWidth() &&
                 viewHub.getStage().getHeight() > popView.getHeight() &&
                 popView.getX() >= 0 && popView.getY() >= 0;

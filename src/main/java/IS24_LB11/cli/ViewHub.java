@@ -45,7 +45,7 @@ public class ViewHub implements Runnable {
         while (true) {
             synchronized (lock) {
                 try {
-                    lock.wait(50);
+                    lock.wait(500);
                     stage.print(terminal);
                     for (PopupView popup : popups) popup.print(terminal);
                     notification.ifPresent(p -> {
@@ -79,13 +79,13 @@ public class ViewHub implements Runnable {
             commandLineView.resize(size);
             commandLineView.buildCommandLine(commandLine);
             commandLineView.build();
-            notification.ifPresent(popUp -> {
-                popUp.resize(size);
-                popUp.build();
-                popUp.setPosition(0, stage.getYAndHeight()-3);
-            });
             stage.resize(size);
             stage.rebuild();
+            notification.ifPresent(notificationView -> {
+                notificationView.resize(size);
+                notificationView.build();
+                notificationView.setPosition(0, stage.getYAndHeight()-3);
+            });
 //            for (PopupView popupView : popups) {
 //                popupView.resize(size);
 //                //popupView.build();
@@ -96,6 +96,13 @@ public class ViewHub implements Runnable {
 
     public void update() {
         synchronized (lock) {
+            lock.notify();
+        }
+    }
+
+    public void updateStage() {
+        synchronized (lock) {
+            stage.build();
             lock.notify();
         }
     }
@@ -153,8 +160,8 @@ public class ViewHub implements Runnable {
     public void clearPopups() {
         synchronized (terminal) {
             popups.clear();
+            nextPopupId = 0;
         }
-        nextPopupId = 0;
     }
 
     public GameStage setGameStage(Player player) {

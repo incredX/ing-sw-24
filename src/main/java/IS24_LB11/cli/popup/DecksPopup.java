@@ -21,15 +21,17 @@ public class DecksPopup extends Popup {
 
     public DecksPopup(ViewHub viewHub, ArrayList<NormalCard> normalCards, ArrayList<GoldenCard> goldenCards) {
         super(viewHub, new DecksView(viewHub.getScreenSize(), normalCards, goldenCards));
-        this.normalCards = normalCards;
-        this.goldenCards = goldenCards;
-        this.deckIsNormal = true; //true = golden, false = normal
+        this.deckIsNormal = true; //true = normal, false = golden
         this.cardIndex = 0;
+        loadDecks(normalCards, goldenCards);
     }
 
     public void loadDecks(ArrayList<NormalCard> normalCards, ArrayList<GoldenCard> goldenCards) {
         this.normalCards = normalCards;
         this.goldenCards = goldenCards;
+        if (!goldenCards.getLast().isFaceDown()) goldenCards.getLast().flip();
+        if (!normalCards.getLast().isFaceDown()) normalCards.getLast().flip();
+        System.out.println(normalCards.getLast().asString());
         manageView(decksView -> {
             decksView.loadGoldenDeck(goldenCards);
             decksView.loadNormalDeck(normalCards);
@@ -57,14 +59,14 @@ public class DecksPopup extends Popup {
 
     @Override
     public void show() {
-        enable(); // at start, when shown, the popup is enabled
         super.show();
+        enable(); // at start, when shown, the popup is enabled
     }
 
     @Override
     public void hide() {
-        disable(); // an invisible popup is also disabled (invisible => disabled)
         super.hide();
+        disable(); // an invisible popup is also disabled (invisible => disabled)
     }
 
     @Override

@@ -26,8 +26,9 @@ import java.util.stream.Collectors;
 //TODO : manage pointers color here
 //TODO : move consumers inside popups + add new method to switch focus
 //       es: focusedConsumer = handPopup.enableConsumer()
-//TODO : fix board's pointer (bugged when deckPopup is visible) + move pointer to clientState
+//TODO : move pointer to clientState
 //TODO : send action to server
+//TODO : close everything if the input listener is closed
 
 public class ClientInGame extends ClientState {
     private final Player player;
@@ -121,8 +122,9 @@ public class ClientInGame extends ClientState {
         super.processResize(size);
         handPopup.resize();
         decksPopup.resize();
-        if (gameStage.getWidth() < 4 * PlayableCardView.WIDTH && decksPopup.isVisible())
+        if (gameStage.getWidth() < 4 * PlayableCardView.WIDTH && decksPopup.isVisible() && handPopup.isVisible())
             decksPopup.hide();
+        viewHub.updateStage();
     }
 
     public void drawCardFromDeck() {
