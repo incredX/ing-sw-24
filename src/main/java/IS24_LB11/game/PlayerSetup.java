@@ -21,7 +21,7 @@ public class PlayerSetup implements JsonConvertable {
         this.starterCard = starterCard;
         this.goals = goals;
         this.hand = hand;
-        this.chosenGoalIndex = 0;
+        this.chosenGoalIndex = -1;
         this.color=color;
     }
 
