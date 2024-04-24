@@ -149,7 +149,7 @@ public class GameTest {
         printArray(sortedScore, Player -> Player.name() + ": " + Player.getScore());
 
         ArrayList<Player> ranking = new ArrayList<>();
-        ranking = game.finalGamePhase();
+        //ranking = game.finalGamePhase();
         printArray(ranking, Player -> Player.name() + ": " + Player.getScore());
 
         assertEquals(sortedScore, ranking);
@@ -237,9 +237,11 @@ public class GameTest {
             System.out.println(game.executeTurn(player.name(),player.getBoard().getAvailableSpots().getFirst(), player.getHand().getFirst(),true,1));
             System.out.println(player);
         }
+        System.out.println(game.getPublicGoals().getFirst().asString());
+        System.out.println(game.getPublicGoals().getLast().asString());
 
-        System.out.println(game.finalGamePhase());
-        System.out.println(game.getPlayers());
+        for (Player player:game.getPlayers())
+            System.out.println(player);
     }
 
     @Test
@@ -354,6 +356,52 @@ public class GameTest {
         System.out.println(game.getGoldenDeck().getCards().stream().map(card -> card.asString()).collect(Collectors.toList()));
         System.out.println(game.getNormalDeck().size());
         System.out.println(game.getGoldenDeck().size());
+    }
+    @Test
+    @DisplayName("Testing point calculation")
+    public void pointsOnePlayer() throws SyntaxException, FileNotFoundException, DeckException, JsonException {
+        int goldCounter = 0;
+        int playersNumber = 1;
+        Game game = new Game(playersNumber);
+        //Receiving players name
+        ArrayList<String> playerNames = new ArrayList<>(playersNumber);
+        for (int i = 0; i < 1; i++)
+            playerNames.add("Player " + (i + 1));
+        game.setupGame(playerNames);
+        //Receiving players Goal
+        ArrayList<GoalCard> goalCardsChoosen = new ArrayList<>();
+        for (int i = 0; i < 1; i++)
+            goalCardsChoosen.add(game.getPlayers().getFirst().getSetup().getGoals()[i % 2]);
+        ArrayList<StarterCard> starterCardsSideChoosen = new ArrayList<>();
+        for (int i = 0; i < 1; i++)
+            starterCardsSideChoosen.add(game.getPlayers().get(i).getSetup().getStarterCard());
+        starterCardsSideChoosen.stream().forEach(x->x.flip());
+        game.chooseGoalPhase(goalCardsChoosen,starterCardsSideChoosen);
+        Board board1 = new Board();
+        board1.start(game.getPlayers().getFirst().getSetup().getStarterCard());
+        for (int i = 0; i < 5; i++) {
+            board1.placeCard(CardFactory.newPlayableCard("NIIE_IB0"), board1.getAvailableSpots().getFirst());
+        }
+        for (int i = 0; i < 5; i++) {
+            board1.placeCard(CardFactory.newPlayableCard("NIIE_AB0"), board1.getAvailableSpots().getFirst());
+        }
+        for (int i = 0; i < 5; i++) {
+            board1.placeCard(CardFactory.newPlayableCard("NIIE_FB0"), board1.getAvailableSpots().getFirst());
+        }
+        for (int i = 0; i < 5; i++) {
+            board1.placeCard(CardFactory.newPlayableCard("NIIE_PB0"), board1.getAvailableSpots().getFirst());
+        }
+        game.getPlayers().getFirst().setBoard(board1);
+        for (int k = 0; k < 40; k++) {
+            String str=(game.executeTurn(game.getPlayers().getFirst().name(),game.getPlayers().getFirst().getBoard().getAvailableSpots().getFirst(), game.getPlayers().getFirst().getHand().getFirst(),true,1));
+            System.out.println(str);
+            if (str.equals("GAME ENDED"))
+                break;
+            System.out.println(game.getPlayers().getFirst());
+        }
+        System.out.println(game.getPublicGoals().getFirst().asString());
+        System.out.println(game.getPublicGoals().getLast().asString());
+        System.out.println(game.getPlayers());
 
     }
 }
