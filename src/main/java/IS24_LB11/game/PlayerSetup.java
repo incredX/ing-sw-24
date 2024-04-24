@@ -37,6 +37,7 @@ public class PlayerSetup implements JsonConvertable {
         }
         return false;
     }
+    //da discutere riguardo la return
 
     public void chooseGoal(int index) {
         chosenGoalIndex = index&1;
