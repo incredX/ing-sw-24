@@ -3,10 +3,16 @@ package IS24_LB11.cli.controller;
 import IS24_LB11.cli.notification.Priority;
 import IS24_LB11.cli.ViewHub;
 import IS24_LB11.cli.event.*;
+import IS24_LB11.game.PlayerSetup;
 import IS24_LB11.game.Result;
+import IS24_LB11.game.components.*;
+import IS24_LB11.game.utils.Color;
+import IS24_LB11.game.utils.SyntaxException;
 import com.googlecode.lanterna.input.KeyStroke;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ClientInLobby extends ClientState {
 
@@ -54,6 +60,14 @@ public class ClientInLobby extends ClientState {
                 if (tokens.length == 2) processCommandPopup(tokens[1]);
                 else notificationStack.addUrgent("ERROR", "missing argument");
             }
+            case "SETUP" -> {
+                stage.clear();
+                try { setNextState(new ClientInSetup(viewHub, getDefaultSetup())); } // wait server response to switch
+                catch (IOException e) {
+                    e.printStackTrace();
+                    quit();
+                }
+            }
             default -> notificationStack.addUrgent("ERROR", tokens[0]+" is not a valid command");
         };
     }
@@ -88,5 +102,17 @@ public class ClientInLobby extends ClientState {
         } else {
             notificationStack.addUrgent("ERROR", MISSING_ARG.apply("popup"));
         }
+    }
+
+    private static PlayerSetup getDefaultSetup() {
+        try {
+            PlayableCard[] hand = new PlayableCard[] {
+                    new GoldenCard("_EEQFF1QFFA__"), new NormalCard("FEF_FF0"), new NormalCard("EA_AAF0")
+            };
+            return new PlayerSetup(new StarterCard("EPIE_F0I__FPIA"),
+                    new GoalCard[]{new GoalSymbol("2KK_"), new GoalPattern("3IPPL2")},
+                    new ArrayList<>(List.of(hand)),
+                    Color.RED);
+        } catch (SyntaxException e) { return null; }
     }
 }

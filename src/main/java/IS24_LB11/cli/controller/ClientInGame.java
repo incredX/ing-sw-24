@@ -72,6 +72,7 @@ public class ClientInGame extends ClientState {
         defineBoardConsumer();
         defineDecksConsumer();
         defineHandConsumer();
+        viewHub.resize(viewHub.getScreenSize(), cmdLine);
         return super.execute();
     }
 

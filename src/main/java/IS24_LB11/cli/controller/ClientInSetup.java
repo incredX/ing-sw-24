@@ -23,6 +23,7 @@ public class ClientInSetup extends ClientState {
     @Override
     public ClientState execute() {
         setupStage = viewHub.setSetupStage(setup);
+        viewHub.resize(viewHub.getScreenSize(), cmdLine);
         return super.execute();
     }
 

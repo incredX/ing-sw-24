@@ -63,7 +63,12 @@ public class Client {
         while (true) {
             ClientState nextState = state.execute();
             if (nextState == null) break;
-            else state = nextState;
+            else {
+                state = nextState;
+                inputListener.setState(state);
+                resizeListener.setState(state);
+                serverHandler.setState(state);
+            }
         }
 
         dbg.printMessage("closing client.");

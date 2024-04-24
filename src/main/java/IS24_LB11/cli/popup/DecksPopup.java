@@ -31,7 +31,6 @@ public class DecksPopup extends Popup {
         this.goldenCards = goldenCards;
         if (!goldenCards.getLast().isFaceDown()) goldenCards.getLast().flip();
         if (!normalCards.getLast().isFaceDown()) normalCards.getLast().flip();
-        System.out.println(normalCards.getLast().asString());
         manageView(decksView -> {
             decksView.loadGoldenDeck(goldenCards);
             decksView.loadNormalDeck(normalCards);

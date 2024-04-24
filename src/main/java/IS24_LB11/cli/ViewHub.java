@@ -45,7 +45,7 @@ public class ViewHub implements Runnable {
         while (true) {
             synchronized (lock) {
                 try {
-                    lock.wait(500);
+                    lock.wait(10);
                     stage.print(terminal);
                     for (PopupView popup : popups) popup.print(terminal);
                     notification.ifPresent(p -> {
