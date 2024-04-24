@@ -1,9 +1,6 @@
 package IS24_LB11.game;
 
-import IS24_LB11.game.components.CardFactory;
-import IS24_LB11.game.components.GoalCard;
-import IS24_LB11.game.components.PlayableCard;
-import IS24_LB11.game.components.StarterCard;
+import IS24_LB11.game.components.*;
 import IS24_LB11.game.tools.JsonConverter;
 import IS24_LB11.game.tools.JsonException;
 import IS24_LB11.game.utils.Color;
@@ -17,8 +14,12 @@ import org.junit.jupiter.api.Test;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static IS24_LB11.game.GameMessages.*;
+import static junit.framework.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class GameTest {
@@ -32,6 +33,9 @@ public class GameTest {
         for (int i = 0; i < 4; i++)
             playerNames.add("Player " + (i + 1));
         game.setupGame(playerNames);
+        long numNormalCard = game.getPlayers().getFirst().getHand().stream().filter(card -> card.asString().startsWith("N")).count();
+
+        long numGoldenCard = game.getPlayers().getFirst().getHand().stream().filter(card -> card.asString().startsWith("G")).count();
 
         //Receiving players Goal and StartedCardFace
         ArrayList<GoalCard> goalCardsChoosen = new ArrayList<>();
@@ -43,18 +47,24 @@ public class GameTest {
                 game.getPlayers().get(i).getSetup().flipStarterCard();
             starterCardsSideChoosen.add(game.getPlayers().get(i).getSetup().getStarterCard());
         }
-        for (Player player: game.getPlayers())
-            System.out.println(player.getSetup());
-        game.chooseGoalPhase(goalCardsChoosen,starterCardsSideChoosen);
-        for (Player player: game.getPlayers())
-            System.out.println(player);
+        for (Player player: game.getPlayers()){
+            assertEquals(3, player.getHand().size());
+            assertEquals(0, player.getScore());
+            assertEquals(-1, player.getSetup().getChosenGoalIndex());
+            assertEquals(2, player.setup().getGoals().length);
+            assertEquals(2, numNormalCard);
+            assertEquals(1, numGoldenCard);
+        }
     }
 
     @Test
     @DisplayName("Simulating normal turn")
+
     public void normalTurnSample() throws SyntaxException, FileNotFoundException, DeckException, JsonException {
         JsonConverter jsonConverter = new JsonConverter();
         int playersNumber = 4;
+        long numNormalCard;
+        long numGoldenCard;
         Game game = new Game(playersNumber);
         //Receiving players name
         ArrayList<String> playerNames = new ArrayList<>(playersNumber);
@@ -71,18 +81,31 @@ public class GameTest {
         game.chooseGoalPhase(goalCardsChoosen,starterCardsSideChoosen);
         //symulate receiving error beacuse it's not player turn
         String mex1=game.executeTurn(playerNames.get(1),new Position(1,1),(PlayableCard) CardFactory.newSerialCard("NEA_AAF0"),false,2);
-        System.out.println("mex1 " + mex1+ "\n");
+        assertEquals(NOT_PLAYER_TURN, mex1);
+        //symulate correct turn
 
-        //symultae correct turn
-        System.out.println("Before " + game.getPlayers().getFirst());
-        System.out.println("card to be playerd: " + game.getPlayers().getFirst().getHand().getFirst().asString());
-        String mex2 = game.executeTurn(playerNames.getFirst(),new Position(1,1),game.getPlayers().getFirst().getHand().getFirst(),true,2);
-        System.out.println("After " + game.getPlayers().getFirst());
-        System.out.println("mex2 " + mex2+ "\n");
+        ArrayList<String> originalHand = (ArrayList<String>) game.getPlayers().getFirst().getHand()
+                .stream().map(card -> card.asString()).collect(Collectors.toList());
 
-        String mex3 = game.executeTurn(playerNames.get(1),new Position(1,-1),(PlayableCard) CardFactory.newSerialCard("NEA_AAF1"),false,2);
-        System.out.println(game.getPlayers().get(1));
-        System.out.println("mex3 " + mex3);
+        String mex2 = game.executeTurn(game.getPlayers().getFirst().name(), game.getPlayers().getFirst().getBoard().getAvailableSpots().getFirst(), game.getPlayers().getFirst().getHand().getFirst(), true, 1);
+
+        assertEquals(VALID_TURN, mex2);
+
+        numNormalCard = game.getPlayers().getFirst().getHand().stream().filter(card -> card.asString().startsWith("N")).count();
+
+        numGoldenCard = game.getPlayers().getFirst().getHand().stream().filter(card -> card.asString().startsWith("G")).count();
+
+        ArrayList<String> nextHand = (ArrayList<String>) game.getPlayers().getFirst().getHand()
+                .stream().map(card -> card.asString()).collect(Collectors.toList());
+
+        assertNotEquals(nextHand,originalHand);
+
+        assertEquals(1, numNormalCard);
+        assertEquals(2, numGoldenCard);
+
+        String mex3 = game.executeTurn(game.getPlayers().getFirst().name(), game.getPlayers().getFirst().getBoard().getAvailableSpots().getFirst(), game.getPlayers().getFirst().getHand().getFirst(), true, 1);
+
+        assertEquals(NOT_PLAYER_TURN, mex3);
     }
 
     @Test
@@ -107,28 +130,34 @@ public class GameTest {
         //symulate receiving error beacuse it's not player turn
 
         for (int i = 0; i < 20; i++) {
-            for (Player player: game.getPlayers())
-                System.out.println(player);
             for (Player player: game.getPlayers()){
-                if (player.getHand().getFirst().asString().charAt(0)=='G'){
-                    player.getHand().getFirst().flip();
-                    System.out.printf(game.executeTurn(player.name(),player.getBoard().getAvailableSpots().getFirst(),player.getHand().getFirst(),i>=10,1));
+                if (game.getNormalDeck().isEmpty()) {
+                    break;
                 }
-                else
-                    System.out.printf(game.executeTurn(player.name(),player.getBoard().getAvailableSpots().getFirst(), player.getHand().getFirst(),i>=10,1));
-                System.out.println(" " + game.getTurn() + ") FinalTurn: " + game.getFinalTurn()+ " " + player.getBoard().getAvailableSpots().toString());
-                System.out.println(i+" "+game.getNormalDeck().isEmpty() +" "+game.getNormalDeck().size() +" "+game.getGoldenDeck().size() +" "+game.getGoldenDeck().isEmpty());
-
+                else if (player.getHand().getFirst().asString().charAt(0)=='G'){
+                    player.getHand().getFirst().flip();
+                    assertEquals(VALID_TURN,game.executeTurn(player.name(),player.getBoard().getAvailableSpots().getFirst(),player.getHand().getFirst(),i>=10,1));
+                } else
+                    assertEquals(VALID_TURN, game.executeTurn(player.name(),player.getBoard().getAvailableSpots().getFirst(), player.getHand().getFirst(),i>=10,1));
             }
             if (game.getFinalTurn()){
-                System.out.println("FINISHED");
                 break;
             }
         }
+
+//        ArrayList<Player> sortedScore = (ArrayList<Player>) game.getPlayers().clone();
+//        sortedScore.sort((a,b)->Integer.compare(b.getScore(), a.getScore()));
+//        //printArray(sortedScore, Player -> Player.name() + ": " + Player.getScore());
+
         ArrayList<Player> ranking = new ArrayList<>();
-        //ranking = game.finalGamePhase();
-        for (Player player: ranking)
-            System.out.println(player.name());
+        ranking = game.getFinalRanking();
+        assertEquals(null, ranking);
+    }
+
+    private <T> void printArray(ArrayList<T> array, Function<T, String> function) {
+        System.out.print("{ ");
+        for(T ele: array) System.out.print(function.apply(ele)+", ");
+        System.out.print(" }\n");
     }
 
     @Test
@@ -187,29 +216,30 @@ public class GameTest {
         game.getPlayers().getLast().setBoard(board2);
 
         for (int i = 0; i < 20; i++) {
-            for (Player player: game.getPlayers())
-                System.out.println(player);
             for (Player player: game.getPlayers()){
                 if (player.getHand().getFirst().asString().charAt(0)=='G'){
-                    System.out.printf(game.executeTurn(player.name(),player.getBoard().getAvailableSpots().getFirst(),player.getHand().getFirst(),i>=0,1));
+                    assertEquals(VALID_TURN, game.executeTurn(player.name(),player.getBoard().getAvailableSpots().getFirst(),player.getHand().getFirst(),i>=10,1));
                 }
                 else
-                    System.out.printf(game.executeTurn(player.name(),player.getBoard().getAvailableSpots().getFirst(), player.getHand().getFirst(),i>=0,1));
-                System.out.println(" " + game.getTurn() + ") FinalTurn: " + game.getFinalTurn()+ " " + player.getBoard().getAvailableSpots().toString());
-                System.out.println(i+" "+game.getNormalDeck().isEmpty() +" "+game.getNormalDeck().size() +" "+game.getGoldenDeck().size() +" "+game.getGoldenDeck().isEmpty());
+                    assertEquals(VALID_TURN, game.executeTurn(player.name(),player.getBoard().getAvailableSpots().getFirst(), player.getHand().getFirst(),i>=0,1));
             }
             if (game.getFinalTurn()){
-                System.out.println("FINISHED");
                 break;
             }
         }
         for(Player player: game.getPlayers()){
-            System.out.println(game.executeTurn(player.name(),player.getBoard().getAvailableSpots().getFirst(), player.getHand().getFirst(),true,1));
-            System.out.println(player);
+            assertEquals(VALID_LAST_TURN, game.executeTurn(player.name(),player.getBoard().getAvailableSpots().getFirst(), player.getHand().getFirst(),true,1));
         }
 
-        //System.out.println(game.finalGamePhase());
-        System.out.println(game.getPlayers());
+        assertEquals(GAME_ENDED, game.executeTurn(game.getPlayers().getFirst().name(),game.getPlayers().getFirst().getBoard().getAvailableSpots().getFirst(), game.getPlayers().getFirst().getHand().getFirst(),true,1));
+
+        ArrayList<Player> sortedScore = (ArrayList<Player>) game.getPlayers().clone();
+        sortedScore.sort((a,b)->Integer.compare(b.getScore(), a.getScore()));
+
+        ArrayList<Player> ranking = new ArrayList<>();
+        ranking = game.getFinalRanking();
+
+        assertEquals(sortedScore, ranking);
     }
 
     @Test
@@ -222,7 +252,6 @@ public class GameTest {
         for (int i = 0; i < 2; i++)
             playerNames.add("Player " + (i + 1));
         game.setupGame(playerNames);
-        System.out.println(playerNames);
         //Receiving players Goal
         ArrayList<GoalCard> goalCardsChoosen = new ArrayList<>();
         for (int i = 0; i < 2; i++)
@@ -235,15 +264,10 @@ public class GameTest {
 
         Player player = game.getPlayers().getFirst();
 
-        System.out.println(game.executeTurn(player.name(),player.getBoard().getAvailableSpots().getFirst(), player.getHand().getFirst(),true,2));
-
-        System.out.println(game.executeTurn(player.name(),player.getBoard().getAvailableSpots().getFirst(), player.getHand().getFirst(),true,8));
-
-        System.out.println(game.executeTurn(player.name(),player.getBoard().getAvailableSpots().getFirst(), player.getHand().getFirst(),true,9));
-
-        System.out.println(game.executeTurn(player.name(),player.getBoard().getAvailableSpots().getFirst(), player.getHand().getFirst(),true,7));
-
-        System.out.println(game.executeTurn(player.name(),player.getBoard().getAvailableSpots().getFirst(), player.getHand().getFirst(),true,6));
+        assertEquals(INDEX_DECK_WRONG, game.executeTurn(player.name(),player.getBoard().getAvailableSpots().getFirst(), player.getHand().getFirst(),true,9));
+        assertEquals(INDEX_DECK_WRONG, game.executeTurn(player.name(),player.getBoard().getAvailableSpots().getFirst(), player.getHand().getFirst(),true,8));
+        assertEquals(INDEX_DECK_WRONG, game.executeTurn(player.name(),player.getBoard().getAvailableSpots().getFirst(), player.getHand().getFirst(),true,7));
+        assertEquals(INDEX_DECK_WRONG, game.executeTurn(player.name(),player.getBoard().getAvailableSpots().getFirst(), player.getHand().getFirst(),true,6));
     }
 
     @Test
@@ -303,32 +327,70 @@ public class GameTest {
 
         for (int i = 0; i < 40; i++) {
             for (Player player: game.getPlayers()){
-                if (player.getHand().getFirst().asString().charAt(0)=='G' && i<=32){
+                if (player.getHand().getFirst().asString().charAt(0)=='G' && i<=30){
                     player.getHand().getFirst().flip();
-                    System.out.printf(game.executeTurn(player.name(),player.getBoard().getAvailableSpots().getFirst(),player.getHand().getFirst(),i>=20,1));
-                    System.out.println(" " + game.getTurn() + ") FinalTurn: " + game.getFinalTurn());
-                    System.out.println(i + " " + game.getNormalDeck().isEmpty() + " " + game.getNormalDeck().size() + " " + game.getGoldenDeck().size() + " " + game.getGoldenDeck().isEmpty());
-                }
+                    assertEquals(VALID_TURN,game.executeTurn(player.name(),player.getBoard().getAvailableSpots().getFirst(),player.getHand().getFirst(),game.getNormalDeck().size()==0,1));
+                    }
                 else {
-                    System.out.printf(game.executeTurn(player.name(), player.getBoard().getAvailableSpots().getFirst(), player.getHand().getFirst(), i >= 20, 1));
-                    System.out.println(" " + game.getTurn() + ") FinalTurn: " + game.getFinalTurn());
-                    System.out.println(i + " " + game.getNormalDeck().isEmpty() + " " + game.getNormalDeck().size() + " " + game.getGoldenDeck().size() + " " + game.getGoldenDeck().isEmpty());
-                }
+                    assertEquals(VALID_TURN,game.executeTurn(player.name(), player.getBoard().getAvailableSpots().getFirst(), player.getHand().getFirst(), game.getNormalDeck().size()==0, 1));
+                    }
             }
             if (game.getFinalTurn()){
-                System.out.println("FINISHED");
+                Player player = game.getPlayers().getFirst().getScore() >= game.getPlayers().get(1).getScore() ? game.getPlayers().getFirst() : game.getPlayers().get(1);
+                assert(player.getScore() >= 20);
                 break;
             }
         }
+
         for(Player player: game.getPlayers()){
-            System.out.println(game.executeTurn(player.name(),player.getBoard().getAvailableSpots().getFirst(), player.getHand().getFirst(),true,1));
-            System.out.println(" " + game.getTurn() + ") FinalTurn: " + game.getFinalTurn());
-            System.out.println(player);
+            assertEquals(VALID_LAST_TURN, game.executeTurn(player.name(),player.getBoard().getAvailableSpots().getFirst(), player.getHand().getFirst(),true,1));
         }
-        System.out.println(game.getNormalDeck().getCards().stream().map(card -> card.asString()).collect(Collectors.toList()));
-        System.out.println(game.getGoldenDeck().getCards().stream().map(card -> card.asString()).collect(Collectors.toList()));
-        System.out.println(game.getNormalDeck().size());
-        System.out.println(game.getGoldenDeck().size());
+    }
+    @Test
+    @DisplayName("Print player in order to understand the course of the game")
+    public void pointsOnePlayer() throws SyntaxException, FileNotFoundException, DeckException, JsonException {
+        int goldCounter = 0;
+        int playersNumber = 1;
+        Game game = new Game(playersNumber);
+        //Receiving players name
+        ArrayList<String> playerNames = new ArrayList<>(playersNumber);
+        for (int i = 0; i < 1; i++)
+            playerNames.add("Player " + (i + 1));
+        game.setupGame(playerNames);
+        //Receiving players Goal
+        ArrayList<GoalCard> goalCardsChoosen = new ArrayList<>();
+        for (int i = 0; i < 1; i++)
+            goalCardsChoosen.add(game.getPlayers().getFirst().getSetup().getGoals()[i % 2]);
+        ArrayList<StarterCard> starterCardsSideChoosen = new ArrayList<>();
+        for (int i = 0; i < 1; i++)
+            starterCardsSideChoosen.add(game.getPlayers().get(i).getSetup().getStarterCard());
+        starterCardsSideChoosen.stream().forEach(x->x.flip());
+        game.chooseGoalPhase(goalCardsChoosen,starterCardsSideChoosen);
+        Board board1 = new Board();
+        board1.start(game.getPlayers().getFirst().getSetup().getStarterCard());
+        for (int i = 0; i < 5; i++) {
+            board1.placeCard(CardFactory.newPlayableCard("NIIE_IB0"), board1.getAvailableSpots().getFirst());
+        }
+        for (int i = 0; i < 5; i++) {
+            board1.placeCard(CardFactory.newPlayableCard("NIIE_AB0"), board1.getAvailableSpots().getFirst());
+        }
+        for (int i = 0; i < 5; i++) {
+            board1.placeCard(CardFactory.newPlayableCard("NIIE_FB0"), board1.getAvailableSpots().getFirst());
+        }
+        for (int i = 0; i < 5; i++) {
+            board1.placeCard(CardFactory.newPlayableCard("NIIE_PB0"), board1.getAvailableSpots().getFirst());
+        }
+        game.getPlayers().getFirst().setBoard(board1);
+        for (int k = 0; k < 40; k++) {
+            String str=(game.executeTurn(game.getPlayers().getFirst().name(),game.getPlayers().getFirst().getBoard().getAvailableSpots().getFirst(), game.getPlayers().getFirst().getHand().getFirst(),true,1));
+            System.out.println(str);
+            if (str.equals("GAME ENDED"))
+                break;
+            System.out.println(game.getPlayers().getFirst());
+        }
+        System.out.println(game.getPublicGoals().getFirst().asString());
+        System.out.println(game.getPublicGoals().getLast().asString());
+        System.out.println(game.getPlayers());
 
     }
 }
