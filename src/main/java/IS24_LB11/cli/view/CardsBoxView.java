@@ -6,12 +6,12 @@ import com.googlecode.lanterna.TextColor;
 
 public class CardsBoxView extends PopupView {
     protected TerminalPosition pointerPosition;
-    protected final String title;
+    protected final String label;
 
-    public CardsBoxView(String title, int width, int height, int x, int y) {
+    public CardsBoxView(String label, int width, int height, int x, int y) {
         super(width, height, x, y);
         this.pointerPosition = null;
-        this.title = title;
+        this.label = label;
     }
 
     @Override
@@ -22,7 +22,7 @@ public class CardsBoxView extends PopupView {
     }
 
     protected void drawTitle() {
-        fillRow(borderArea.side(Side.NORD), firstColumn(), String.format("[%s]", title));
+        fillRow(borderArea.side(Side.NORD), firstColumn(), String.format("[%s]", label));
     }
 
     protected void drawPointer() {

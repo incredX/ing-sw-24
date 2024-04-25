@@ -25,6 +25,8 @@ import java.util.function.Function;
 public abstract class ClientState {
     protected static final Function<String, String> MISSING_ARG =
             (cmd) -> String.format("missing argument for command \"%s\"", cmd);
+    protected static final BiFunction<String, String, String> INVALID_CMD =
+            (key, state) -> String.format("\"%s\" is not a command in %s", key, state);
     protected static final BiFunction<String, String, String> INVALID_ARG =
             (arg, cmd) -> String.format("\"%s\" is not a valid argument for command \"%s\"", arg, cmd);
     protected static final Function<String, String> EXPECTED_INT =

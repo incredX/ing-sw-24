@@ -1,12 +1,13 @@
 package IS24_LB11.cli.controller;
 
+import IS24_LB11.cli.popup.Popup;
+import IS24_LB11.cli.popup.PopupManager;
 import IS24_LB11.cli.view.stage.GameStage;
 import IS24_LB11.cli.event.server.ServerEvent;
 import IS24_LB11.cli.ViewHub;
 import IS24_LB11.cli.popup.DecksPopup;
 import IS24_LB11.cli.popup.HandPopup;
 import IS24_LB11.cli.utils.Side;
-import IS24_LB11.cli.view.game.PlayableCardView;
 import IS24_LB11.game.PlacedCard;
 import IS24_LB11.game.Player;
 import IS24_LB11.game.PlayerSetup;
@@ -28,34 +29,29 @@ import java.util.Arrays;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-//TODO : move consumers inside popups + add new method to switch focus
-//       es: focusedConsumer = handPopup.enableConsumer()
 //TODO : reforme the interface keyconsumer (?)
 //TODO : close everything if the input listener is closed
 
-public class ClientInGame extends ClientState {
+public class GameState extends ClientState {
     private final Player player;
     private GameStage gameStage;
-    private DecksPopup decksPopup;
-    private HandPopup handPopup;
+    private PopupManager popManager;
     private Position boardPointer;
     private PlacedCard placedCard;
-    private Consumer<KeyStroke> boardStrokeConsumer;
-    private Consumer<KeyStroke> decksStrokeConsumer;
-    private Consumer<KeyStroke> handStrokeConsumer;
     private Consumer<KeyStroke> focusedStrokeConsumer;
     private boolean strokeConsumed;
     private boolean cardPlaced;
     private boolean cardPicked;
     private boolean readOnly;
 
-    public ClientInGame(ViewHub viewHub, PlayerSetup setup) throws IOException {
+    public GameState(ViewHub viewHub, PlayerSetup setup) throws IOException {
         super(viewHub);
         this.player = new Player(username, setup);
+        this.popManager = new PopupManager(new Popup[]{
+                new HandPopup(viewHub, getPlayerHand()),
+                new DecksPopup(viewHub, defaultNormalDeck(), defaultGoldenDeck())});
         this.boardPointer = new Position(0, 0);
         this.placedCard = null;
-        this.decksPopup = null;
-        this.handPopup = null;
         this.cardPlaced = false;
         this.cardPicked = false;
         this.readOnly = false;
@@ -65,11 +61,6 @@ public class ClientInGame extends ClientState {
     public ClientState execute() {
         player.applySetup();
         gameStage = viewHub.setGameStage(this);
-        loadDecks(defaultNormalDeck(), defaultGoldenDeck());
-        loadHand(player.getHand());
-        defineBoardConsumer();
-        defineDecksConsumer();
-        defineHandConsumer();
         processResize(viewHub.getScreenSize());
         return super.execute();
     }
@@ -87,27 +78,21 @@ public class ClientInGame extends ClientState {
         switch (tokens[0].toUpperCase()) {
             case "SHOW" -> {
                 if (tokens.length == 2) {
-                    showPopup(tokens[1]);
+                    popManager.showPopup(tokens[1]);
                 }
                 else notificationStack.addUrgent("ERROR", MISSING_ARG.apply("show"));
             }
             case "HIDE" -> {
-                if (tokens.length == 2) {
-                    hidePopup(tokens[1]);
-                }
-                else {
-                    decksPopup.hide();
-                    handPopup.hide();
-                    focusedStrokeConsumer = null;
-                }
+                if (tokens.length == 2) popManager.hidePopup(tokens[1]);
+                else popManager.hideFocusedPopup();
             }
             case "HOME" -> {
                 centerBoardPointer();
                 gameStage.centerBoard();
                 gameStage.updateBoard();
             }
-            case "HAND", "DECK", "DECKS" -> showPopup(tokens[0]);
-            default -> notificationStack.addUrgent("ERROR", tokens[0]+" is not a valid command");
+            case "HAND", "DECKS" -> popManager.showPopup(tokens[0]);
+            default -> notificationStack.addUrgent("ERROR", INVALID_CMD.apply(tokens[0], "game"));
         }
     }
 
@@ -115,8 +100,15 @@ public class ClientInGame extends ClientState {
     protected void processKeyStroke(KeyStroke keyStroke) {
         strokeConsumed = false;
         if (notificationStack.consumeKeyStroke(keyStroke)) return;
-        if (focusedStrokeConsumer != null) focusedStrokeConsumer.accept(keyStroke);
-        boardStrokeConsumer.accept(keyStroke);
+        popManager.consumeKeyStroke(this, keyStroke);
+        if (keyStroke.isShiftDown()) {
+            switch (keyStroke.getKeyType()) {
+                case ArrowUp -> shiftBoardPointer(Side.NORD);
+                case ArrowDown -> shiftBoardPointer(Side.SUD);
+                case ArrowLeft -> shiftBoardPointer(Side.WEST);
+                case ArrowRight -> shiftBoardPointer(Side.EAST);
+            }
+        }
         if (!strokeConsumed) super.processCommonKeyStrokes(keyStroke);
     }
 
@@ -124,23 +116,18 @@ public class ClientInGame extends ClientState {
     protected void processResize(TerminalSize size) {
         centerBoardPointer();
         super.processResize(size);
-        handPopup.resize();
-        decksPopup.resize();
-        if (gameStage.getWidth() < 4 * PlayableCardView.WIDTH && decksPopup.isVisible() && handPopup.isVisible())
-            decksPopup.hide();
+        popManager.resizePopups();
         //viewHub.updateStage();
     }
 
     public void drawCardFromDeck() {
         JsonConverter converter = new JsonConverter();
         if (!cardPicked && cardPlaced) {
+            DecksPopup decksPopup = (DecksPopup) popManager.getPopup("decks");
+            HandPopup handPopup = (HandPopup) popManager.getPopup("hand");
             player.addCardToHand(decksPopup.getSelectedCard());
             handPopup.loadHand();
-            decksPopup.hide();
-            if (handPopup.isVisible()) {
-                handPopup.enable();
-                focusedStrokeConsumer = handStrokeConsumer;
-            };
+            popManager.hidePopup("decks");
             cardPicked = true;
             try {
                 JsonObject jsonPlacedCard = (JsonObject) new JsonParser().parse(converter.objectToJSON(placedCard));
@@ -155,6 +142,7 @@ public class ClientInGame extends ClientState {
     }
 
     public void placeCardFromHand() {
+        HandPopup handPopup = (HandPopup) popManager.getPopup("hand");
         if (!cardPlaced && player.placeCard(handPopup.getSelectedCard(), boardPointer)) {
             placedCard = new PlacedCard(handPopup.getSelectedCard(), boardPointer);
             cardPlaced = true;
@@ -179,98 +167,11 @@ public class ClientInGame extends ClientState {
     }
 
     private void updateBoardPointerImage() {
-        if (cardPlaced)
+        if (cardPlaced || readOnly)
             gameStage.setPointerColor(TextColor.ANSI.BLACK_BRIGHT);
         else if (player.getBoard().spotAvailable(boardPointer))
             gameStage.setPointerColor(TextColor.ANSI.GREEN_BRIGHT);
         else gameStage.setPointerColor(TextColor.ANSI.RED_BRIGHT);
-    }
-
-    private void showPopup(String token) {
-        switch (token.toUpperCase()) {
-            case "HAND" -> {
-                if (gameStage.getWidth() < 4 * PlayableCardView.WIDTH)
-                    decksPopup.hide();
-                else {
-                    decksPopup.disable();
-                    viewHub.update();
-                }
-                handPopup.show();
-                focusedStrokeConsumer = handStrokeConsumer;
-            }
-            case "DECK", "DECKS" -> {
-                if (gameStage.getWidth() < 4 * PlayableCardView.WIDTH)
-                    handPopup.hide();
-                else {
-                    handPopup.disable();
-                    viewHub.update();
-                }
-                decksPopup.show();
-                focusedStrokeConsumer = decksStrokeConsumer;
-            }
-            default -> notificationStack.addUrgent("ERROR", INVALID_ARG.apply(token, "show"));
-        }
-    }
-
-    private void hidePopup(String token) {
-        switch (token.toUpperCase()) {
-            case "HAND" -> {
-                handPopup.hide();
-                if (decksPopup.isVisible()) {
-                    decksPopup.enable();
-                    focusedStrokeConsumer = decksStrokeConsumer;
-                } else {
-                    focusedStrokeConsumer = null;
-                }
-            }
-            case "DECK", "DECKS" -> {
-                decksPopup.hide();
-                if (handPopup.isVisible()) {
-                    handPopup.enable();
-                    focusedStrokeConsumer = handStrokeConsumer;
-                } else {
-                    focusedStrokeConsumer = null;
-                }
-            }
-            default -> notificationStack.addUrgent("ERROR", INVALID_ARG.apply(token, "hide"));
-        }
-    }
-
-    private void loadDecks(ArrayList<NormalCard> normalCards, ArrayList<GoldenCard> goldenCards) {
-        if (decksPopup == null) {
-            decksPopup = new DecksPopup(viewHub, normalCards, goldenCards);
-        } else {
-            decksPopup.loadDecks(normalCards, goldenCards);
-        }
-    }
-
-    private void loadHand(ArrayList<PlayableCard> hand) {
-        if (handPopup == null) {
-            handPopup = new HandPopup(viewHub, hand);
-        } else {
-            handPopup.loadHand(hand);
-        }
-    }
-
-    private void defineBoardConsumer() {
-        boardStrokeConsumer = (keyStroke) -> {
-            if (keyStroke.isShiftDown()) {
-                switch (keyStroke.getKeyType()) {
-                    case ArrowUp -> shiftBoardPointer(Side.NORD);
-                    case ArrowDown -> shiftBoardPointer(Side.SUD);
-                    case ArrowLeft -> shiftBoardPointer(Side.WEST);
-                    case ArrowRight -> shiftBoardPointer(Side.EAST);
-                }
-            }
-        };
-    }
-
-    private void defineDecksConsumer() {
-        decksStrokeConsumer = decksPopup.keyStrokeConsumer(this);
-    }
-
-    private void defineHandConsumer() {
-        handStrokeConsumer = handPopup.keyStrokeConsumer(this);
     }
 
     public void setStrokeConsumed(boolean consumed) {

@@ -1,7 +1,7 @@
 package IS24_LB11.cli.view.stage;
 
 import IS24_LB11.cli.ViewHub;
-import IS24_LB11.cli.controller.ClientInGame;
+import IS24_LB11.cli.controller.GameState;
 import IS24_LB11.cli.utils.Side;
 import IS24_LB11.cli.view.game.CardViewFactory;
 import IS24_LB11.cli.view.game.PlayableCardView;
@@ -20,12 +20,12 @@ public class GameStage extends Stage {
     private static final int UNIT_X = WIDTH-7;
     private static final int UNIT_Y = PlayableCardView.HEIGHT-3;
 
-    private final ClientInGame state;
+    private final GameState state;
     private final ArrayList<PlayableCardView> cardviews;
     private TextColor pointerColor;
     private TerminalPosition gridBase;
 
-    public GameStage(ClientInGame state, ViewHub viewHub) {
+    public GameStage(GameState state, ViewHub viewHub) {
         super(viewHub);
         this.state = state;
         this.cardviews = new ArrayList<>();

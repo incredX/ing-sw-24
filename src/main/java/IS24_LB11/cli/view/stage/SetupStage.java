@@ -1,7 +1,7 @@
 package IS24_LB11.cli.view.stage;
 
 import IS24_LB11.cli.ViewHub;
-import IS24_LB11.cli.controller.ClientInSetup;
+import IS24_LB11.cli.controller.SetupState;
 import IS24_LB11.cli.view.game.*;
 import IS24_LB11.game.components.*;
 import com.googlecode.lanterna.TerminalPosition;
@@ -12,11 +12,11 @@ public class SetupStage extends Stage {
     private static final String[] GOAL_LABELS = new String[]{"goal (a)", "goal (b)"};
     private final ArrayList<PlayableCardView> handView;
     private final ArrayList<GoalView> goalViews;
-    private final ClientInSetup state;
+    private final SetupState state;
     private StarterCardView starterCardView;
     private int chosenGoalIndex;
 
-    public SetupStage(ViewHub viewHub, ClientInSetup state) {
+    public SetupStage(ViewHub viewHub, SetupState state) {
         super(viewHub);
         this.state = state;
         this.chosenGoalIndex = 0;

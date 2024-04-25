@@ -1,7 +1,7 @@
 package IS24_LB11.cli;
 
-import IS24_LB11.cli.controller.ClientInGame;
-import IS24_LB11.cli.controller.ClientInSetup;
+import IS24_LB11.cli.controller.GameState;
+import IS24_LB11.cli.controller.SetupState;
 import IS24_LB11.cli.view.PopupView;
 import IS24_LB11.cli.view.CommandLineView;
 import IS24_LB11.cli.view.NotificationView;
@@ -148,7 +148,7 @@ public class ViewHub implements Runnable {
         }
     }
 
-    public GameStage setGameStage(ClientInGame state) {
+    public GameStage setGameStage(GameState state) {
         GameStage gameStage = new GameStage(state, this);
         gameStage.loadCardViews();
         stage = gameStage;
@@ -156,7 +156,7 @@ public class ViewHub implements Runnable {
         return gameStage;
     }
 
-    public SetupStage setSetupStage(ClientInSetup state) {
+    public SetupStage setSetupStage(SetupState state) {
         SetupStage setupStage = new SetupStage(this, state);
         setupStage.loadStarterCard();
         stage = setupStage;

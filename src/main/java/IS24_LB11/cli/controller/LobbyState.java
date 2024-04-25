@@ -17,10 +17,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ClientInLobby extends ClientState {
+public class LobbyState extends ClientState {
     private LobbyStage lobbyStage;
 
-    public ClientInLobby(ViewHub hub) throws IOException {
+    public LobbyState(ViewHub hub) throws IOException {
         super(hub);
         this.username = "";
     }
@@ -40,7 +40,7 @@ public class ClientInLobby extends ClientState {
             }
             case ServerPlayerSetupEvent setupEvent -> {
                 notificationStack.add(Priority.LOW, "received player setup");
-                try { setNextState(new ClientInSetup(viewHub, notificationStack, setupEvent.getPlayerSetup())); }
+                try { setNextState(new SetupState(viewHub, notificationStack, setupEvent.getPlayerSetup())); }
                 catch (IOException e) {
                     e.printStackTrace();
                     quit();
@@ -63,7 +63,7 @@ public class ClientInLobby extends ClientState {
                 else notificationStack.addUrgent("ERROR", MISSING_ARG.apply("set"));
             }
             case "SETUP" -> {
-                try { setNextState(new ClientInSetup(viewHub, notificationStack, getDefaultSetup())); } // wait server response to switch
+                try { setNextState(new SetupState(viewHub, notificationStack, getDefaultSetup())); } // wait server response to switch
                 catch (IOException e) {
                     e.printStackTrace();
                     quit();
@@ -73,7 +73,7 @@ public class ClientInLobby extends ClientState {
                 if (tokens.length == 2) processCommandPopup(tokens[1]);
                 else notificationStack.addUrgent("ERROR", "missing argument");
             }
-            default -> notificationStack.addUrgent("ERROR", tokens[0]+" is not a valid command");
+            default -> notificationStack.addUrgent("ERROR", INVALID_CMD.apply(tokens[0], "lobby"));
         };
     }
 

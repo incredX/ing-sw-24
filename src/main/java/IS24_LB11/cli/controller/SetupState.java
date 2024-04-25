@@ -18,16 +18,16 @@ import com.googlecode.lanterna.input.KeyType;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class ClientInSetup extends ClientState {
+public class SetupState extends ClientState {
     private final PlayerSetup setup;
     private SetupStage setupStage;
 
-    public ClientInSetup(ViewHub viewHub, NotificationStack stack, PlayerSetup setup) throws IOException {
+    public SetupState(ViewHub viewHub, NotificationStack stack, PlayerSetup setup) throws IOException {
         super(viewHub, stack);
         this.setup = setup;
     }
 
-    public ClientInSetup(ViewHub viewHub, PlayerSetup setup) throws IOException {
+    public SetupState(ViewHub viewHub, PlayerSetup setup) throws IOException {
         super(viewHub);
         this.setup = setup;
     }
@@ -73,13 +73,13 @@ public class ClientInSetup extends ClientState {
                         new String[]{"starterCard","goalCard"},
                         new String[]{setup.getStarterCard().asString(), setup.chosenGoal().asString()});
                 setupStage.clear();
-                try { setNextState(new ClientInGame(viewHub, setup)); } // wait server response to switch to InGame
+                try { setNextState(new GameState(viewHub, setup)); } // wait server response to switch to InGame
                 catch (IOException e) {
                     e.printStackTrace();
                     quit();
                 }
             }
-            default -> notificationStack.addUrgent("ERROR", tokens[0]+" is not a valid command");
+            default -> notificationStack.addUrgent("ERROR", INVALID_CMD.apply(tokens[0], "game setup"));
         };
     }
 

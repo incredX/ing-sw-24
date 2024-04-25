@@ -1,8 +1,8 @@
 package IS24_LB11.cli;
 
-import IS24_LB11.cli.controller.ClientInGame;
-import IS24_LB11.cli.controller.ClientInLobby;
-import IS24_LB11.cli.controller.ClientInSetup;
+import IS24_LB11.cli.controller.GameState;
+import IS24_LB11.cli.controller.LobbyState;
+import IS24_LB11.cli.controller.SetupState;
 import IS24_LB11.cli.controller.ClientState;
 import IS24_LB11.cli.listeners.InputListener;
 import IS24_LB11.cli.listeners.ResizeListener;
@@ -37,11 +37,11 @@ public class Client {
         try {
             viewHub = new ViewHub();
             if (args.length == 1 && args[0].equals("setup")) {
-                state = new ClientInSetup(viewHub, setup);
+                state = new SetupState(viewHub, setup);
             } else if (args.length == 1 && args[0].equals("game")) {
-                state = new ClientInGame(viewHub, setup);
+                state = new GameState(viewHub, setup);
             } else {
-                state = new ClientInLobby(viewHub);
+                state = new LobbyState(viewHub);
             }
             resizeListener = new ResizeListener(state);
             inputListener = new InputListener(state);

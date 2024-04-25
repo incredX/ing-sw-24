@@ -1,7 +1,8 @@
 package IS24_LB11.cli.popup;
 
 import IS24_LB11.cli.ViewHub;
-import IS24_LB11.cli.controller.ClientInGame;
+import IS24_LB11.cli.controller.ClientState;
+import IS24_LB11.cli.controller.GameState;
 import IS24_LB11.cli.utils.Side;
 import IS24_LB11.cli.view.HandView;
 import IS24_LB11.game.components.PlayableCard;
@@ -87,38 +88,49 @@ public class HandPopup extends Popup {
         super.disable();
     }
 
+    @Override
+    public void consumeKeyStroke(ClientState state, KeyStroke keyStroke) {
+        if (!enabled) return; // pointer is not here
+        switch (state) {
+            case GameState gameState -> consumeKeyStrokeInGame(gameState, keyStroke);
+            default -> {
+                return;
+            }
+        }
+    }
+
+    public void consumeKeyStrokeInGame(GameState gameState, KeyStroke keyStroke) {
+        if (keyStroke.isCtrlDown()) {
+            switch (keyStroke.getKeyType()) {
+                case ArrowUp -> shiftPointer(NORD);
+                case ArrowDown -> shiftPointer(SUD);
+                case Enter -> gameState.placeCardFromHand();
+                case Character -> {
+                    if (keyStroke.getCharacter() == 'f') {
+                        hand.get(selectedCard).flip();
+                        manageView(handView -> {
+                            handView.loadCards(hand);
+                            handView.build();
+                        });
+                    }
+                }
+                default -> {
+                    return;
+                }
+            }
+            if (visible) update();
+            gameState.setStrokeConsumed(true);
+        }
+    }
+
+    @Override
+    public String label() { return "hand"; }
+
     public PlayableCard getSelectedCard() {
         return hand.get(selectedCard);
     }
 
     protected void manageView(Consumer<HandView> consumer) {
         consumer.accept((HandView) popView);
-    }
-
-    public Consumer<KeyStroke> keyStrokeConsumer(ClientInGame game) {
-        return keyStroke -> {
-            if (!enabled) return; // pointer is not here
-            if (keyStroke.isCtrlDown()) {
-                switch (keyStroke.getKeyType()) {
-                    case ArrowUp -> shiftPointer(NORD);
-                    case ArrowDown -> shiftPointer(SUD);
-                    case Enter -> game.placeCardFromHand();
-                    case Character -> {
-                        if (keyStroke.getCharacter() == 'f') {
-                            hand.get(selectedCard).flip();
-                            manageView(handView -> {
-                                handView.loadCards(hand);
-                                handView.build();
-                            });
-                        }
-                    }
-                    default -> {
-                        return;
-                    }
-                }
-                if (visible) update();
-                game.setStrokeConsumed(true);
-            }
-        };
     }
 }
