@@ -4,7 +4,6 @@ import java.net.*;
 import java.util.ArrayList;
 
 import IS24_LB11.game.Game;
-import IS24_LB11.game.utils.SyntaxException;
 import IS24_LB11.network.events.ServerEventHandler;
 import com.google.gson.*;
 
@@ -150,6 +149,10 @@ public class ClientHandler implements Runnable {
 
     public Game getGame() {
         return server.game;
+    }
+
+    public void setGame(Game game) {
+        server.game = game;
     }
 
     public ArrayList<ClientHandler> getClientHandlers(){
