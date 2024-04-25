@@ -3,7 +3,7 @@ package IS24_LB11.cli.listeners;
 import IS24_LB11.cli.controller.ClientState;
 import IS24_LB11.cli.event.ResultServerEvent;
 
-import IS24_LB11.cli.event.ServerEventFactory;
+import IS24_LB11.cli.event.server.ServerEventFactory;
 import com.google.gson.*;
 
 import java.io.IOException;
@@ -43,7 +43,8 @@ public class ServerHandler extends Listener implements Runnable {
                         state.queueEvent(new ResultServerEvent(Error("Bad request", "json syntax error")));
                         continue;
                     }
-                    //System.out.println(event.toString());
+                    if (event.has("type") && !event.get("type").getAsString().equalsIgnoreCase("heartbeat"))
+                        System.out.println("from server: "+event);
                     state.queueEvent(new ResultServerEvent(ServerEventFactory.createServerEvent(event)));
                 }
             }
@@ -64,6 +65,8 @@ public class ServerHandler extends Listener implements Runnable {
     }
     
     public void write(JsonObject object) {
+        if (object.has("type") && !object.get("type").getAsString().equalsIgnoreCase("heartbeat"))
+            System.out.println("to server: "+object);
         writer.println(object.toString());
         writer.flush();
     }

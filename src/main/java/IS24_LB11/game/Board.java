@@ -44,7 +44,7 @@ public class Board implements JsonConvertable {
      * @param position where the card is to be placed
      * @return true if the card has been placed
      */
-    public boolean placeCard(PlayableCard card, Position position) throws SyntaxException {
+    public boolean placeCard(PlayableCard card, Position position) {
         if (!spotAvailable(position)) return false;
         if (card.asString().charAt(0) == 'G' && !placeGoldCardCheck((GoldenCard) card) && !card.isFaceDown()) return false;
         placedCards.add(new PlacedCard(card, position));
@@ -53,7 +53,7 @@ public class Board implements JsonConvertable {
         return true;
     }
 
-    public boolean placeGoldCardCheck(GoldenCard card) throws SyntaxException {
+    public boolean placeGoldCardCheck(GoldenCard card) {
         ArrayList<Suit> suitNeeded = card.getSuitsNeeded();
         for (Symbol symbol:symbolCounter.keySet())
             if (symbolCounter.get(symbol)<suitNeeded.stream().filter(x->x==symbol).count())

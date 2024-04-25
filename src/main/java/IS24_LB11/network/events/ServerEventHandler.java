@@ -296,8 +296,8 @@ public class ServerEventHandler {
         }
         else{
             response.addProperty("error", hasProps);
-            clientHandler.sendMessage(response.toString());
         }
+        clientHandler.sendMessage(response.toString());
     }
 
     private static String hasProperties(JsonObject event, String... properties) {
