@@ -5,6 +5,7 @@ import IS24_LB11.cli.event.server.ServerLoginEvent;
 import IS24_LB11.cli.event.server.ServerPlayerSetupEvent;
 import IS24_LB11.cli.notification.Priority;
 import IS24_LB11.cli.ViewHub;
+import IS24_LB11.cli.view.stage.LobbyStage;
 import IS24_LB11.game.PlayerSetup;
 import IS24_LB11.game.Result;
 import IS24_LB11.game.components.*;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ClientInLobby extends ClientState {
+    private LobbyStage lobbyStage;
 
     public ClientInLobby(ViewHub hub) throws IOException {
         super(hub);
@@ -26,7 +28,8 @@ public class ClientInLobby extends ClientState {
 
     @Override
     public ClientState execute() {
-        viewHub.setLobbyStage();
+        lobbyStage = viewHub.setLobbyStage();
+        processResize(viewHub.getScreenSize());
         return super.execute();
     }
 
@@ -79,7 +82,7 @@ public class ClientInLobby extends ClientState {
     protected void processResize(TerminalSize size) {
         cmdLine.setWidth(size.getColumns());
         viewHub.resize(size, cmdLine);
-        stage.resize();
+        lobbyStage.resize();
     }
 
     @Override

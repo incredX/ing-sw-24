@@ -21,6 +21,7 @@ public class LobbyStage extends Stage {
 
     public LobbyStage(ViewHub viewHub) {
         super(viewHub);
+        resize();
     }
 
     @Override
@@ -33,10 +34,10 @@ public class LobbyStage extends Stage {
     @Override
     public void resize() {
         super.resize();
-        updateViewHub();
+        rebuild();
     }
 
-    public void drawWallpaper() {
+    private void drawWallpaper() {
         String[] lines = WALLPAPER.split("\n");
         int maxLenght = Arrays.stream(lines).max((s1, s2) -> Integer.compare(s1.length(), s2.length())).get().length();
         int offsetY = Integer.max(0, innerHeight()-lines.length)/2;

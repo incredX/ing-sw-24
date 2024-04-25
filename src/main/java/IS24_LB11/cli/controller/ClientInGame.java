@@ -28,8 +28,6 @@ import java.util.Arrays;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-//TODO : manage pointers color here
-//TODO : move pointer to clientState
 //TODO : move consumers inside popups + add new method to switch focus
 //       es: focusedConsumer = handPopup.enableConsumer()
 //TODO : reforme the interface keyconsumer (?)
@@ -97,7 +95,11 @@ public class ClientInGame extends ClientState {
                 if (tokens.length == 2) {
                     hidePopup(tokens[1]);
                 }
-                else notificationStack.addUrgent("ERROR", MISSING_ARG.apply("hide"));
+                else {
+                    decksPopup.hide();
+                    handPopup.hide();
+                    focusedStrokeConsumer = null;
+                }
             }
             case "HOME" -> {
                 centerBoardPointer();
@@ -157,11 +159,11 @@ public class ClientInGame extends ClientState {
     public void placeCardFromHand() {
         if (!cardPlaced && player.placeCard(handPopup.getSelectedCard(), boardPointer)) {
             placedCard = new PlacedCard(handPopup.getSelectedCard(), boardPointer);
+            cardPlaced = true;
             updateBoardPointerImage();
             gameStage.updateBoard();
             handPopup.removeSelectedCard();
             handPopup.update();
-            cardPlaced = true;
         }
         else notificationStack.addUrgent("WARNING", "cannot place card");
     }

@@ -40,7 +40,6 @@ public abstract class ClientState {
     protected final ViewHub viewHub;
     protected final CommandLine cmdLine;
     protected ServerHandler serverHandler;
-    protected Stage stage;
 
     public ClientState(ViewHub viewHub, NotificationStack notificationStack) {
         this.nextState = null;
@@ -48,7 +47,6 @@ public abstract class ClientState {
         this.notificationStack = notificationStack;
         this.viewHub = viewHub;
         this.cmdLine = new CommandLine(viewHub.getScreenSize().getColumns());
-        this.stage = viewHub.getStage();
         viewHub.updateCommandLine(cmdLine);
     }
 

@@ -1,6 +1,7 @@
 package IS24_LB11.cli;
 
 import IS24_LB11.cli.controller.ClientInGame;
+import IS24_LB11.cli.controller.ClientInSetup;
 import IS24_LB11.cli.view.PopupView;
 import IS24_LB11.cli.view.CommandLineView;
 import IS24_LB11.cli.view.NotificationView;
@@ -8,7 +9,6 @@ import IS24_LB11.cli.view.stage.GameStage;
 import IS24_LB11.cli.view.stage.LobbyStage;
 import IS24_LB11.cli.view.stage.SetupStage;
 import IS24_LB11.cli.view.stage.Stage;
-import IS24_LB11.game.PlayerSetup;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import com.googlecode.lanterna.terminal.Terminal;
@@ -150,22 +150,20 @@ public class ViewHub implements Runnable {
         GameStage gameStage = new GameStage(state, this);
         gameStage.loadCardViews();
         stage = gameStage;
-        stage.build();
         update();
         return gameStage;
     }
 
-    public SetupStage setSetupStage(PlayerSetup setup) {
-        SetupStage setupStage = new SetupStage(this, setup);
+    public SetupStage setSetupStage(ClientInSetup state) {
+        SetupStage setupStage = new SetupStage(this, state);
+        setupStage.loadStarterCard();
         stage = setupStage;
-        stage.build();
         return setupStage;
     }
 
     public LobbyStage setLobbyStage() {
         LobbyStage lobbyStage = new LobbyStage(this);
         stage = lobbyStage;
-        stage.build();
         return lobbyStage;
     }
 

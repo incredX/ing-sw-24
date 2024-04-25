@@ -1,37 +1,31 @@
 package IS24_LB11.cli.view.stage;
 
 import IS24_LB11.cli.ViewHub;
+import IS24_LB11.cli.controller.ClientInSetup;
 import IS24_LB11.cli.view.game.*;
-import IS24_LB11.game.PlayerSetup;
 import IS24_LB11.game.components.*;
 import com.googlecode.lanterna.TerminalPosition;
-import com.googlecode.lanterna.TerminalSize;
 
 import java.util.ArrayList;
 
 public class SetupStage extends Stage {
-    private int chosenGoalIndex;
-    private StarterCardView starterCardView;
+    private static final String[] GOAL_LABELS = new String[]{"goal (a)", "goal (b)"};
     private final ArrayList<PlayableCardView> handView;
     private final ArrayList<GoalView> goalViews;
+    private final ClientInSetup state;
+    private StarterCardView starterCardView;
+    private int chosenGoalIndex;
 
-    public SetupStage(ViewHub viewHub, PlayerSetup setup) {
+    public SetupStage(ViewHub viewHub, ClientInSetup state) {
         super(viewHub);
+        this.state = state;
         this.chosenGoalIndex = 0;
-        this.starterCardView = new StarterCardView(setup.getStarterCard());
+        this.starterCardView = new StarterCardView(state.getStarterCard());
         this.handView = new ArrayList<>(3);
         this.goalViews = new ArrayList<>(2);
-        for(PlayableCard card: setup.hand()) switch(card) {
-            case GoldenCard goldenCard -> handView.add(new GoldenCardView(goldenCard));
-            case NormalCard normalCard -> handView.add(new NormalCardView(normalCard));
-            default -> throw new IllegalArgumentException("Invalid card: " + card.asString());
-        }
-        for(GoalCard goal: setup.getGoals()) switch(goal) {
-            case GoalPattern pattern -> goalViews.add(new GoalPatternView(pattern));
-            case GoalSymbol symbol -> goalViews.add(new GoalSymbolView(symbol));
-            default -> throw new IllegalStateException("Invalid goal: " + goal);
-        }
-        for (PlayableCardView cardView: handView) cardView.setMargins(0);
+        loadStarterCard();
+        loadGoals();
+        loadHand();
         resize();
     }
 
@@ -48,10 +42,10 @@ public class SetupStage extends Stage {
     @Override
     public void resize() {
         super.resize();
-        placeStarterCard(getScreenSize());
-        placeGoals(getScreenSize());
-        placeHandHorizontal(getScreenSize());
-        updateViewHub();
+        placeStarterCard();
+        placeGoals();
+        placeHandHorizontal();
+        rebuild();
     }
 
     public void setChosenGoal(int index) {
@@ -60,10 +54,29 @@ public class SetupStage extends Stage {
         drawGoalPointer();
     }
 
-    public void buildStarterCard(StarterCard starterCard) {
-        starterCardView = new StarterCardView(starterCard);
-        placeStarterCard(rectangle.getSize().withRelative(0, 4));
-        drawStarterCard();
+    public void loadStarterCard() {
+        starterCardView = new StarterCardView(state.getStarterCard());
+    }
+
+    public void loadGoals() {
+        goalViews.clear();
+        for(GoalCard goal: state.getGoals()) switch(goal) {
+            case GoalPattern pattern -> goalViews.add(new GoalPatternView(pattern));
+            case GoalSymbol symbol -> goalViews.add(new GoalSymbolView(symbol));
+            default -> throw new IllegalStateException("Invalid goal: " + goal);
+        }
+    }
+
+    public void loadHand() {
+        handView.clear();
+        for(PlayableCard card: state.getHand()) {
+            switch (card) {
+                case GoldenCard goldenCard -> handView.add(new GoldenCardView(goldenCard));
+                case NormalCard normalCard -> handView.add(new NormalCardView(normalCard));
+                default -> throw new IllegalArgumentException("Invalid card: " + card.asString());
+            }
+            handView.getLast().setMargins(0);
+        }
     }
 
     private void drawStarterCard() {
@@ -115,18 +128,18 @@ public class SetupStage extends Stage {
         buildRelativeArea(2, 3, x+w, y);
     }
 
-    private void placeStarterCard(TerminalSize terminalSize) {
-        if (!isMininimalSize(terminalSize)) {
+    public void placeStarterCard() {
+        if (!isMininimalSize()) {
             int w = starterCardView.getWidth(), h = starterCardView.getHeight();
-            starterCardView.setPosition((terminalSize.getColumns()-w)/2, (terminalSize.getRows()-h)/2-2);
+            starterCardView.setPosition((getWidth()-w)/2, (getHeight()-h)/2-2);
         } else
             starterCardView.setPosition(0,0);
     }
 
-    private void placeGoals(TerminalSize terminalSize) {
+    private void placeGoals() {
         int goalWidth = goalViews.getFirst().getWidth(), goalHeight = goalViews.getFirst().getHeight();
-        if (!isMininimalSize(terminalSize)) {
-            int x = (terminalSize.getColumns()-2*goalWidth-goalHeight)/2;
+        if (!isMininimalSize()) {
+            int x = (getWidth()-2*goalWidth-goalHeight)/2;
             int y = starterCardView.getY()-goalHeight-1;
             for (GoalView goal : goalViews) {
                 goal.setPosition(x, y);
@@ -138,20 +151,19 @@ public class SetupStage extends Stage {
         }
     }
 
-    private void placeHandHorizontal(TerminalSize terminalSize) {
+    private void placeHandHorizontal() {
         int width = handView.size()*(handView.getFirst().getWidth()-1);
         int height = handView.getFirst().getHeight();
-        int x = (terminalSize.getColumns()-width)/2 -1;
-        int y = isMininimalSize(terminalSize) ?
-                terminalSize.getRows()-height-6 : starterCardView.getYAndHeight()+1;
+        int x = (getWidth()-width)/2 -1;
+        int y = starterCardView.getYAndHeight()+1;
         for (PlayableCardView cardView: handView) {
             cardView.setPosition(x, y);
             x += cardView.getWidth()-1;
         }
     }
 
-    private boolean isMininimalSize(TerminalSize terminalSize) {
+    private boolean isMininimalSize() {
         int goalHeight = goalViews.getFirst().getHeight();
-        return terminalSize.getRows() < 2*starterCardView.getHeight()+goalHeight+2;
+        return getHeight() < 2*starterCardView.getHeight()+goalHeight+2;
     }
 }

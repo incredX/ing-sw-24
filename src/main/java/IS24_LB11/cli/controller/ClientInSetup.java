@@ -9,11 +9,15 @@ import IS24_LB11.cli.notification.Priority;
 import IS24_LB11.cli.ViewHub;
 import IS24_LB11.game.PlayerSetup;
 import IS24_LB11.game.Result;
+import IS24_LB11.game.components.GoalCard;
+import IS24_LB11.game.components.PlayableCard;
+import IS24_LB11.game.components.StarterCard;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class ClientInSetup extends ClientState {
     private final PlayerSetup setup;
@@ -31,7 +35,7 @@ public class ClientInSetup extends ClientState {
 
     @Override
     public ClientState execute() {
-        setupStage = viewHub.setSetupStage(setup);
+        setupStage = viewHub.setSetupStage(this);
         viewHub.resize(viewHub.getScreenSize(), cmdLine);
         return super.execute();
     }
@@ -54,7 +58,7 @@ public class ClientInSetup extends ClientState {
         String[] tokens = command.split(" ", 2);
         switch (tokens[0].toUpperCase()) {
             case "GOAL", "G" -> {
-                if (tokens.length == 2) {
+                if (tokens.length < 2) {
                     notificationStack.addUrgent("ERROR", MISSING_ARG.apply("goal"));
                     return;
                 }
@@ -69,7 +73,7 @@ public class ClientInSetup extends ClientState {
                 sendToServer("setup",
                         new String[]{"starterCard","goalCard"},
                         new String[]{setup.getStarterCard().asString(), setup.chosenGoal().asString()});
-                stage.clear();
+                setupStage.clear();
                 try { setNextState(new ClientInGame(viewHub, setup)); } // wait server response to switch to InGame
                 catch (IOException e) {
                     e.printStackTrace();
@@ -84,7 +88,7 @@ public class ClientInSetup extends ClientState {
     protected void processResize(TerminalSize size) {
         cmdLine.setWidth(size.getColumns());
         viewHub.resize(size, cmdLine);
-        stage.resize();
+        setupStage.resize();
     }
 
     @Override
@@ -97,7 +101,9 @@ public class ClientInSetup extends ClientState {
                 setChosenGoal(1);
             } else if (keyStroke.getKeyType() == KeyType.Character && keyStroke.getCharacter() == 'f') {
                 setup.getStarterCard().flip();
-                setupStage.buildStarterCard(setup.getStarterCard());
+                setupStage.loadStarterCard();
+                setupStage.placeStarterCard();
+                setupStage.build();
             }
         } else {
             super.processCommonKeyStrokes(keyStroke);
@@ -108,5 +114,17 @@ public class ClientInSetup extends ClientState {
         setup.chooseGoal(index);
         setupStage.setChosenGoal(index);
         viewHub.update();
+    }
+
+    public StarterCard getStarterCard() {
+        return setup.getStarterCard();
+    }
+
+    public ArrayList<PlayableCard> getHand() {
+        return setup.hand();
+    }
+
+    public GoalCard[] getGoals() {
+        return setup.getGoals();
     }
 }
