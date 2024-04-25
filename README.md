@@ -16,8 +16,8 @@
 ## Fasi dello sviluppo
 | Fase                                                                          | Realizzazione      |
 |-------------------------------------------------------------------------------|--------------------|
-| [Diagramma UML iniziale del model](deliverables/initial-uml.png)              | :white_check_mark: |
-| [Diagramma UML iniziale di model e controller](deliverables/initial-uml.png)  | :white_check_mark: |
+| [Diagramma UML iniziale del model](deliveries/initial-uml.png)              | :white_check_mark: |
+| [Diagramma UML iniziale di model e controller](deliveries/initial-uml.png)  | :white_check_mark: |
 
 ## Funzionalità avanzate
 | Funzionalità | Realizzazione |

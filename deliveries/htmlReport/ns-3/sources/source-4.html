@@ -1,0 +1,134 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > Symbol</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">IS24_LB11.game.symbol</a>
+</div>
+
+<h1>Coverage Summary for Class: Symbol (IS24_LB11.game.symbol)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Symbol</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (3/3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    93,3%
+  </span>
+  <span class="absValue">
+    (14/15)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package IS24_LB11.game.symbol;
+&nbsp;
+&nbsp;import IS24_LB11.game.utils.SyntaxException;
+&nbsp;
+&nbsp;public interface Symbol {
+&nbsp;    String INVALID_CHAR_MSG = &quot;invalid char (&#39;%c&#39;)&quot;;
+<b class="fc">&nbsp;    Character nullChar = &#39;_&#39;;</b>
+&nbsp;
+&nbsp;    //Character getChar();
+&nbsp;
+&nbsp;    static Symbol fromChar(Character c) throws SyntaxException {
+<b class="fc">&nbsp;        if (Suit.isValidChar(c)) return Suit.fromCharacter(c);</b>
+<b class="fc">&nbsp;        if (Item.isValidChar(c)) return Item.fromCharacter(c);</b>
+<b class="fc">&nbsp;        if (c == Empty.CHAR) return Empty.symbol();</b>
+<b class="fc">&nbsp;        if (c == Symbol.nullChar) return null;</b>
+<b class="nc">&nbsp;        throw new SyntaxException(String.format(Symbol.INVALID_CHAR_MSG, c));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    static Character toChar(Symbol symbol) {
+<b class="fc">&nbsp;        if (symbol == Suit.ANIMAL) return &#39;A&#39;;</b>
+<b class="fc">&nbsp;        if (symbol == Suit.MUSHROOM) return &#39;F&#39;;</b>
+<b class="fc">&nbsp;        if (symbol == Suit.INSECT) return &#39;I&#39;;</b>
+<b class="fc">&nbsp;        if (symbol == Suit.PLANT) return &#39;P&#39;;</b>
+<b class="fc">&nbsp;        if (symbol == Item.QUILL) return &#39;Q&#39;;</b>
+<b class="fc">&nbsp;        if (symbol == Item.INKWELL) return &#39;K&#39;;</b>
+<b class="fc">&nbsp;        if (symbol == Item.MANUSCRIPT) return &#39;M&#39;;</b>
+<b class="fc">&nbsp;        if (Empty.symbol().equals(symbol)) return Empty.CHAR;</b>
+<b class="fc">&nbsp;        return nullChar;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-04-25 15:23</div>
+</div>
+</body>
+</html>
