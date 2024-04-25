@@ -1,0 +1,178 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > GoalPattern</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">IS24_LB11.game.components</a>
+</div>
+
+<h1>Coverage Summary for Class: GoalPattern (IS24_LB11.game.components)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">GoalPattern</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    40%
+  </span>
+  <span class="absValue">
+    (2/5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    44,8%
+  </span>
+  <span class="absValue">
+    (13/29)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package IS24_LB11.game.components;
+&nbsp;
+&nbsp;import IS24_LB11.game.symbol.Symbol;
+&nbsp;import IS24_LB11.game.utils.Direction;
+&nbsp;import IS24_LB11.game.utils.Position;
+&nbsp;import IS24_LB11.game.utils.SyntaxException;
+&nbsp;
+&nbsp;public class GoalPattern extends GoalSymbol {
+&nbsp;    private final char variant;
+&nbsp;    private final int dir;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Construct a &lt;code&gt;GoalPattern&lt;/code&gt; from the information encoded in the given &lt;code&gt;String&lt;/code&gt; with the following syntax:
+&nbsp;     * &lt;code&gt;char&lt;/code&gt; 0-3 : same syntax followed by &lt;code&gt;GoalSymbol&lt;/code&gt;
+&nbsp;     * &lt;code&gt;char&lt;/code&gt; 4   : represents the pattern&#39;s variant (expected &#39;D&#39; or &#39;L&#39;)
+&nbsp;     * &lt;code&gt;char&lt;/code&gt; 5   : represents the pattern&#39;s direction
+&nbsp;     *
+&nbsp;     * @param id a &lt;code&gt;String&lt;/code&gt; containing the encoded information that identify the card
+&nbsp;     * @throws SyntaxException if the information are not correctly encoded or missing
+&nbsp;     */
+&nbsp;    public GoalPattern(String id) throws SyntaxException {
+<b class="fc">&nbsp;        super(id);</b>
+<b class="fc">&nbsp;        if (id.length() &lt; 6) {</b>
+<b class="nc">&nbsp;            throw new SyntaxException(String.format(SHORT_ID_MSG, id));</b>
+&nbsp;        }
+<b class="fc">&nbsp;        char dirAsChar = id.charAt(5);</b>
+&nbsp;
+<b class="fc">&nbsp;        variant = id.charAt(4);</b>
+<b class="fc">&nbsp;        dir = dirAsChar - &#39;0&#39;;</b>
+&nbsp;
+<b class="fc">&nbsp;        if (dir &lt; 0 || dir &gt; 9) {</b>
+<b class="nc">&nbsp;            throw new SyntaxException(String.format(NOT_A_DIGIT_MSG, dirAsChar));</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        if (variant == &#39;L&#39;) {</b>
+<b class="fc">&nbsp;            if (dir &gt;= 4) {</b>
+<b class="nc">&nbsp;                throw new SyntaxException(String.format(INVALID_DIGIT_MSG, dirAsChar))</b>
+<b class="nc">&nbsp;                        .addContext(&quot;(expected a digit in range 0..=3)&quot;);</b>
+&nbsp;            }
+<b class="fc">&nbsp;        } else if (variant == &#39;D&#39;) {</b>
+<b class="fc">&nbsp;            if (dir &gt;= 2) {</b>
+<b class="nc">&nbsp;                throw new SyntaxException(String.format(INVALID_DIGIT_MSG, dirAsChar))</b>
+<b class="nc">&nbsp;                        .addContext(&quot;(expected a digit in range 0..=2)&quot;);</b>
+&nbsp;            }
+&nbsp;        } else {
+<b class="nc">&nbsp;            throw new SyntaxException(String.format(Symbol.INVALID_CHAR_MSG, variant));</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public String asString() {
+<b class="fc">&nbsp;        String str = super.asString();</b>
+<b class="fc">&nbsp;        str = str + variant + dir;</b>
+<b class="fc">&nbsp;        return str;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Position[] getPatternSteps() {
+<b class="nc">&nbsp;        Position[] steps = new Position[2];</b>
+<b class="nc">&nbsp;        steps[0] = Direction.parse(dir).opposite().relativePosition();</b>
+<b class="nc">&nbsp;        switch (variant) {</b>
+&nbsp;            case &#39;L&#39; -&gt; {
+<b class="nc">&nbsp;                steps[1] = steps[0].transformY(y -&gt; y*3);</b>
+<b class="nc">&nbsp;            }</b>
+&nbsp;            case &#39;D&#39; -&gt; {
+<b class="nc">&nbsp;                steps[1] = steps[0].transform(c -&gt; c*2);</b>
+&nbsp;            }
+&nbsp;        }
+<b class="nc">&nbsp;        return steps;</b>
+&nbsp;    }
+&nbsp;
+<b class="nc">&nbsp;    public char getVariant() { return variant; }</b>
+&nbsp;
+<b class="nc">&nbsp;    public int getDir() { return dir; }</b>
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-04-25 15:23</div>
+</div>
+</body>
+</html>
