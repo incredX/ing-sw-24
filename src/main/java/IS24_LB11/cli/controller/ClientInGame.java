@@ -123,14 +123,12 @@ public class ClientInGame extends ClientState {
     @Override
     protected void processResize(TerminalSize size) {
         centerBoardPointer();
-        cmdLine.setWidth(size.getColumns());
-        viewHub.resize(size, cmdLine);
-        gameStage.resize();
+        super.processResize(size);
         handPopup.resize();
         decksPopup.resize();
         if (gameStage.getWidth() < 4 * PlayableCardView.WIDTH && decksPopup.isVisible() && handPopup.isVisible())
             decksPopup.hide();
-        viewHub.updateStage();
+        //viewHub.updateStage();
     }
 
     public void drawCardFromDeck() {

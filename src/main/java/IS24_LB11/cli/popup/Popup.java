@@ -31,17 +31,13 @@ public class Popup<T extends PopupView> {
         popView.resize(viewHub.getScreenSize());
         if (visible) {
             if (!viewInsideStage()) hide();
-            else {
-                System.out.println("covering"+popView.getSize()+" in "+popView.getPosition());
-                viewHub.getStage().setCover(popView, true);
-            }
+            else viewHub.getStage().setCover(popView, true);
         }
     }
 
     public void show() {
         resize();
         if (viewInsideStage()) {
-            System.out.println("showing popup");
             if (!visible) {
                 viewHub.addPopup(popView);
                 update();

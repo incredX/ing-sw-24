@@ -43,11 +43,11 @@ public class ViewHub implements Runnable {
     @Override
     public void run() {
         Thread.currentThread().setName("thread-view-hub");
-        stage.build();
         while (true) {
             synchronized (lock) {
                 try {
-                    lock.wait(10);
+                    // timeout should be unnecessary: the lock should be waked every time the screen need to be updated
+                    lock.wait(100);
                     stage.print(terminal);
                     for (PopupView popup : popups) popup.print(terminal);
                     if (notificationView != null) notificationView.print(terminal);
@@ -76,10 +76,12 @@ public class ViewHub implements Runnable {
             commandLineView.resize(size);
             commandLineView.buildCommandLine(commandLine);
             commandLineView.build();
+            stage.resize();
             if (notificationView != null) {
                 notificationView.resize(size);
                 notificationView.build();
             }
+            lock.notify();
         }
     }
 

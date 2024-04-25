@@ -5,7 +5,6 @@ import IS24_LB11.cli.event.server.ServerEvent;
 import IS24_LB11.cli.event.server.ServerHeartBeatEvent;
 import IS24_LB11.cli.event.server.ServerMessageEvent;
 import IS24_LB11.cli.event.server.ServerNotificationEvent;
-import IS24_LB11.cli.view.stage.Stage;
 import IS24_LB11.cli.event.*;
 import IS24_LB11.cli.notification.NotificationStack;
 import IS24_LB11.cli.notification.Priority;
@@ -90,9 +89,12 @@ public abstract class ClientState {
 
     protected abstract void processCommand(String command);
 
-    protected abstract void processResize(TerminalSize size);
-
     protected abstract void processKeyStroke(KeyStroke keyStroke);
+
+    protected void processResize(TerminalSize size) {
+        cmdLine.setWidth(size.getColumns());
+        viewHub.resize(size, cmdLine);
+    }
 
     protected void processResult(Result<ServerEvent> result) {
         if (result.isError()) {

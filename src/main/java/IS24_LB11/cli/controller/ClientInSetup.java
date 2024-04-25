@@ -12,7 +12,6 @@ import IS24_LB11.game.Result;
 import IS24_LB11.game.components.GoalCard;
 import IS24_LB11.game.components.PlayableCard;
 import IS24_LB11.game.components.StarterCard;
-import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 
@@ -82,13 +81,6 @@ public class ClientInSetup extends ClientState {
             }
             default -> notificationStack.addUrgent("ERROR", tokens[0]+" is not a valid command");
         };
-    }
-
-    @Override
-    protected void processResize(TerminalSize size) {
-        cmdLine.setWidth(size.getColumns());
-        viewHub.resize(size, cmdLine);
-        setupStage.resize();
     }
 
     @Override

@@ -11,7 +11,6 @@ import IS24_LB11.game.Result;
 import IS24_LB11.game.components.*;
 import IS24_LB11.game.utils.Color;
 import IS24_LB11.game.utils.SyntaxException;
-import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.input.KeyStroke;
 
 import java.io.IOException;
@@ -76,13 +75,6 @@ public class ClientInLobby extends ClientState {
             }
             default -> notificationStack.addUrgent("ERROR", tokens[0]+" is not a valid command");
         };
-    }
-
-    @Override
-    protected void processResize(TerminalSize size) {
-        cmdLine.setWidth(size.getColumns());
-        viewHub.resize(size, cmdLine);
-        lobbyStage.resize();
     }
 
     @Override
