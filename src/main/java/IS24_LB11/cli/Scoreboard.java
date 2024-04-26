@@ -1,16 +1,16 @@
-package IS24_LB11.game;
+package IS24_LB11.cli;
 
-import com.googlecode.lanterna.TextColor;
+import IS24_LB11.game.utils.Color;
 
 import java.util.ArrayList;
 
 public class Scoreboard {
     private final ArrayList<String> players;
     private final ArrayList<Integer> scores;
-    private final ArrayList<TextColor> colors;
+    private final ArrayList<Color> colors;
     private int indexCurrentPlayer;
 
-    public Scoreboard(ArrayList<String> players, ArrayList<Integer> scores, ArrayList<TextColor> colors) {
+    public Scoreboard(ArrayList<String> players, ArrayList<Integer> scores, ArrayList<Color> colors) {
         this.players = players;
         this.scores = scores;
         this.colors = colors;
@@ -35,7 +35,7 @@ public class Scoreboard {
         return scores;
     }
 
-    public ArrayList<TextColor> getColors() {
+    public ArrayList<Color> getColors() {
         return colors;
     }
 

@@ -5,7 +5,7 @@ import IS24_LB11.cli.controller.ClientState;
 import IS24_LB11.cli.controller.GameState;
 import IS24_LB11.cli.controller.SetupState;
 import IS24_LB11.cli.view.TableView;
-import IS24_LB11.game.Scoreboard;
+import IS24_LB11.cli.Scoreboard;
 import IS24_LB11.game.components.GoalCard;
 import com.googlecode.lanterna.input.KeyStroke;
 

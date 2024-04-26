@@ -1,5 +1,6 @@
 package IS24_LB11.cli.controller;
 
+import IS24_LB11.cli.Table;
 import IS24_LB11.cli.event.server.ServerEvent;
 import IS24_LB11.cli.event.server.ServerPlayerSetupEvent;
 import IS24_LB11.cli.event.server.ServerUpdatePlayerBoardEvent;
@@ -9,6 +10,7 @@ import IS24_LB11.cli.notification.Priority;
 import IS24_LB11.cli.ViewHub;
 import IS24_LB11.game.PlayerSetup;
 import IS24_LB11.game.Result;
+import IS24_LB11.cli.Scoreboard;
 import IS24_LB11.game.components.GoalCard;
 import IS24_LB11.game.components.PlayableCard;
 import IS24_LB11.game.components.StarterCard;
@@ -20,16 +22,19 @@ import java.util.ArrayList;
 
 public class SetupState extends ClientState {
     private final PlayerSetup setup;
+    private Table table;
     private SetupStage setupStage;
 
-    public SetupState(ViewHub viewHub, NotificationStack stack, PlayerSetup setup) throws IOException {
+    public SetupState(ViewHub viewHub, NotificationStack stack, PlayerSetup setup, Table table) throws IOException {
         super(viewHub, stack);
         this.setup = setup;
+        this.table = table;
     }
 
-    public SetupState(ViewHub viewHub, PlayerSetup setup) throws IOException {
+    public SetupState(ViewHub viewHub, PlayerSetup setup, Table table) throws IOException {
         super(viewHub);
         this.setup = setup;
+        this.table = table;
     }
 
     @Override
@@ -73,7 +78,7 @@ public class SetupState extends ClientState {
                         new String[]{"starterCard","goalCard"},
                         new String[]{setup.getStarterCard().asString(), setup.chosenGoal().asString()});
                 setupStage.clear();
-                try { setNextState(new GameState(viewHub, setup)); } // wait server response to switch to InGame
+                try { setNextState(new GameState(viewHub, notificationStack, setup, table)); }
                 catch (IOException e) {
                     e.printStackTrace();
                     quit();

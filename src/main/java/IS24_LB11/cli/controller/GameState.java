@@ -1,6 +1,9 @@
 package IS24_LB11.cli.controller;
 
+import IS24_LB11.cli.Scoreboard;
+import IS24_LB11.cli.Table;
 import IS24_LB11.cli.event.server.ServerNewTurnEvent;
+import IS24_LB11.cli.notification.NotificationStack;
 import IS24_LB11.cli.popup.*;
 import IS24_LB11.cli.view.stage.GameStage;
 import IS24_LB11.cli.event.server.ServerEvent;
@@ -25,14 +28,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
+//TODO : rename PlayerSetupEvent to GameReadyEvent
 //TODO : add scoreboard event
 //TODO : reconnection to server in lobby
 //TODO : close everything if the input listener is closed
 
 public class GameState extends ClientState {
     private final Player player;
-    private Scoreboard scoreboard;
-    private ArrayList<GoalCard> goals;
+    private Table table;
     private ArrayList<NormalCard> normalDeck;
     private ArrayList<GoldenCard> goldenDeck;
     private GameStage gameStage;
@@ -44,11 +47,10 @@ public class GameState extends ClientState {
     private boolean cardPicked;
     private boolean readOnly;
 
-    public GameState(ViewHub viewHub, PlayerSetup setup) throws IOException {
-        super(viewHub);
+    public GameState(ViewHub viewHub, NotificationStack stack, PlayerSetup setup, Table table) throws IOException {
+        super(viewHub, stack);
         this.player = new Player(username, setup);
-        this.goals = new ArrayList<>();
-        this.scoreboard = null;
+        this.table = table;
         this.normalDeck = new ArrayList<>();
         this.goldenDeck = new ArrayList<>();
         this.popManager = new PopupManager(new Popup[]{
@@ -61,13 +63,16 @@ public class GameState extends ClientState {
         this.cardPlaced = false;
         this.cardPicked = false;
         this.readOnly = false;
-        this.goals.add(setup.chosenGoal());
+    }
+
+    public GameState(ViewHub viewHub, PlayerSetup setup, Table table) throws IOException {
+        this(viewHub, new NotificationStack(viewHub, 0), setup, table);
     }
 
     @Override
     public ClientState execute() {
         player.applySetup();
-        scoreboard = defaultScoreboard();
+        System.out.println(table.toString());
         normalDeck = defaultNormalDeck();
         goldenDeck = defaultGoldenDeck();
         gameStage = viewHub.setGameStage(this);
@@ -86,6 +91,7 @@ public class GameState extends ClientState {
                     cardPicked = false;
                     updateBoardPointerImage();
                 }
+                table.getScoreboard().setNextPlayer();
                 normalDeck = newTurnEvent.normalDeck();
                 goldenDeck = newTurnEvent.goldenDeck();
                 if (!normalDeck.getLast().isFaceDown()) normalDeck.getLast().flip();
@@ -159,7 +165,7 @@ public class GameState extends ClientState {
                 JsonObject jsonPlacedCard = (JsonObject) new JsonParser().parse(converter.objectToJSON(placedCard));
                 JsonElement jsonDeckType = new JsonPrimitive(!decksPopup.selectedNormalDeck());
                 JsonElement jsonCardIndex = new JsonPrimitive(decksPopup.getCardIndex()+1);
-                sendToServer("actions", new String[]{"placedCard", "deckType", "indexVisibleCards"},
+                sendToServer("turnActions", new String[]{"placedCard", "deckType", "indexVisibleCards"},
                         new JsonElement[]{jsonPlacedCard, jsonDeckType, jsonCardIndex});
             } catch (JsonException e) {
                 e.printStackTrace();
@@ -224,10 +230,13 @@ public class GameState extends ClientState {
     }
 
     public Scoreboard getScoreboard() {
-        return scoreboard;
+        return table.getScoreboard();
     }
     
     public ArrayList<GoalCard> getGoals() {
+        ArrayList<GoalCard> goals = new ArrayList<>();
+        goals.add(player.getPersonalGoal());
+        goals.addAll(table.getPublicGoals());
         return goals;
     }
     
@@ -258,22 +267,5 @@ public class GameState extends ClientState {
                     new GoldenCard("_EEKIF1KIIF__"), new GoldenCard("EE_EIF2EIIIA_"), new GoldenCard("EEE_PB2EPPPA_")
             }).collect(Collectors.toList());
         } catch (SyntaxException e) { return null; }
-    }
-
-    private static Scoreboard defaultScoreboard() {
-        return new Scoreboard(
-                (ArrayList<String>) Arrays.stream(new String[] {"wasd", "Lorem ipsum", "player_3"}).collect(Collectors.toList()),
-                (ArrayList<Integer>) Arrays.stream(new Integer[] {8, 17, 12}).collect(Collectors.toList()),
-                defaultColors()
-        );
-    }
-
-    private static ArrayList<TextColor> defaultColors() {
-        ArrayList<TextColor> colors = new ArrayList<>();
-        colors.add(TextColor.ANSI.RED_BRIGHT);
-        colors.add(TextColor.ANSI.GREEN_BRIGHT);
-        colors.add(TextColor.ANSI.BLUE_BRIGHT);
-        colors.add(TextColor.ANSI.YELLOW_BRIGHT);
-        return colors;
     }
 }

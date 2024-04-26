@@ -8,5 +8,6 @@ import java.util.ArrayList;
 public record ServerNewTurnEvent(
         String player,
         ArrayList<NormalCard> normalDeck,
-        ArrayList<GoldenCard> goldenDeck)
+        ArrayList<GoldenCard> goldenDeck,
+        ArrayList<Integer> scores)
         implements ServerEvent {}

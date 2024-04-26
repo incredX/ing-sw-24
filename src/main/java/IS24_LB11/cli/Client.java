@@ -14,8 +14,10 @@ import IS24_LB11.game.utils.SyntaxException;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Client {
     public static void main(String[] args) throws SyntaxException {
@@ -26,20 +28,14 @@ public class Client {
         ResizeListener resizeListener;
         ServerHandler serverHandler;
         HashMap<String, Thread> threadMap = new HashMap<>();
-        PlayableCard[] hand = new PlayableCard[] {
-                new GoldenCard("_EEQFF1QFFA__"), new NormalCard("FEF_FF0"), new NormalCard("EA_AAF0")
-        };
-        PlayerSetup setup = new PlayerSetup(new StarterCard("EPIE_F0I__FPIA"),
-                new GoalCard[]{new GoalSymbol("2KK_"), new GoalPattern("3IPPL2")},
-                new ArrayList<>(List.of(hand)),
-                Color.RED);
 
         try {
             viewHub = new ViewHub();
             if (args.length == 1 && args[0].equals("setup")) {
-                state = new SetupState(viewHub, setup);
+                state = new SetupState(viewHub, getDefaultSetup(), defaultTable());
             } else if (args.length == 1 && args[0].equals("game")) {
-                state = new GameState(viewHub, setup);
+                System.err.println(defaultTable());
+                state = new GameState(viewHub, getDefaultSetup(), defaultTable());
             } else {
                 state = new LobbyState(viewHub);
             }
@@ -79,5 +75,45 @@ public class Client {
         threadMap.get("views").interrupt();
         threadMap.get("resize").interrupt();
         threadMap.get("server").interrupt();
+    }
+
+    public static PlayerSetup getDefaultSetup() {
+        try {
+            PlayableCard[] hand = new PlayableCard[] {
+                    new GoldenCard("_EEQFF1QFFA__"), new NormalCard("FEF_FF0"), new NormalCard("EA_AAF0")
+            };
+            return new PlayerSetup(new StarterCard("EPIE_F0I__FPIA"),
+                    new GoalCard[]{new GoalSymbol("2KK_"), new GoalPattern("3IPPL2")},
+                    new ArrayList<>(List.of(hand)),
+                    Color.RED);
+        } catch (SyntaxException e) { return null; }
+    }
+
+    public static Table defaultTable() {
+        try {
+            return new Table(
+                    defaultScoreboard(),
+                    (ArrayList<GoalCard>) Arrays.stream(new GoalCard[]{
+                            new GoalSymbol("3QKM"), new GoalPattern("2IIID0")
+                    }).collect(Collectors.toList())
+            );
+        } catch (SyntaxException e) { return null; }
+    }
+
+    public static Scoreboard defaultScoreboard() {
+        return new Scoreboard(
+                (ArrayList<String>) Arrays.stream(new String[] {"wasd", "Lorem ipsum", "player_3"}).collect(Collectors.toList()),
+                (ArrayList<Integer>) Arrays.stream(new Integer[] {8, 17, 12}).collect(Collectors.toList()),
+                defaultColors()
+        );
+    }
+
+    public static ArrayList<Color> defaultColors() {
+        ArrayList<Color> colors = new ArrayList<>();
+        colors.add(Color.RED);
+        colors.add(Color.GREEN);
+        colors.add(Color.BLUE);
+        colors.add(Color.YELLOW);
+        return colors;
     }
 }

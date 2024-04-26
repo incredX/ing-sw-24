@@ -12,10 +12,10 @@ import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
-//└────────────────────────────────────────────────────────┘
 public class TableView extends PopupView {
-    private static final int DEFAULT_WIDTH = 58;
+    private static final int DEFAULT_WIDTH = 60;
     private static final int DEFAULT_HEIGHT = 16;
     private static final String DASHED_HORIZONTAL_SEPARATOR = "-".repeat(DEFAULT_WIDTH-2);
 
@@ -49,8 +49,8 @@ public class TableView extends PopupView {
         setPosition(new TerminalPosition(x, y));
     }
 
-    public void loadColors(ArrayList<TextColor> colors) {
-        this.colors = colors;
+    public void loadColors(ArrayList<Color> colors) {
+        this.colors = (ArrayList<TextColor>) colors.stream().map(color -> adaptColor(color)).collect(Collectors.toList());
     }
 
     public void loadPlayers(ArrayList<String> players) {
@@ -63,8 +63,9 @@ public class TableView extends PopupView {
     public void loadScores(ArrayList<Integer> scores) {
         this.scores = scores;
         for (int i = 0; i < scores.size(); i++) {
+            String scoreLine = scores.get(i) == 0 ? "" : "=".repeat(scores.get(i)-1)+">";
             fillRow(firstRow()+2+i, firstColumn()+19, String.format("%2d", scores.get(i)));
-            fillRow(firstRow()+2+i, firstColumn()+22, "=".repeat(scores.get(i)));
+            fillRow(firstRow()+2+i, firstColumn()+22, scoreLine, colors.get(i));
         }
     }
 

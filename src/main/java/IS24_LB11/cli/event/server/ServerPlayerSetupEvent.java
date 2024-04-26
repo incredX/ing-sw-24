@@ -1,15 +1,15 @@
 package IS24_LB11.cli.event.server;
 
 import IS24_LB11.game.PlayerSetup;
+import IS24_LB11.game.components.GoalCard;
+import IS24_LB11.game.utils.Color;
 
-public class ServerPlayerSetupEvent implements ServerEvent {
-    private final PlayerSetup playerSetup;
+import java.util.ArrayList;
 
-    public ServerPlayerSetupEvent(PlayerSetup playerSetup) {
-        this.playerSetup = playerSetup;
-    }
-
-    public PlayerSetup getPlayerSetup() {
-        return playerSetup;
-    }
+public record ServerPlayerSetupEvent(
+        PlayerSetup setup,
+        ArrayList<GoalCard> publicGoals,
+        ArrayList<String> playersList,
+        ArrayList<Color> colorList
+) implements ServerEvent {
 }
