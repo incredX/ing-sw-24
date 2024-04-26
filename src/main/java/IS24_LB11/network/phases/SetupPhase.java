@@ -10,6 +10,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+
 import java.util.ArrayList;
 
 public class SetupPhase {
@@ -35,19 +36,19 @@ public class SetupPhase {
                 for(GoalCard goalCard: clientHandler.getGame().getPublicGoals()) {
                     publicGoals.add(goalCard.asString());
                 }
-                obj.add("publicGoals", gson.toJsonTree(publicGoals));
+                obj.add("publicGoals", new Gson().toJsonTree(publicGoals).getAsJsonArray());
 
                 ArrayList<String> playerNames = new ArrayList<>();
                 for(Player player : clientHandler.getGame().getPlayers()) {
                     playerNames.add(player.name());
                 }
-                obj.add("playerNames", gson.toJsonTree(playerNames));
+                obj.add("playerNames", new Gson().toJsonTree(playerNames).getAsJsonArray());
 
                 ArrayList<String> colors = new ArrayList<>();
                 for(Player player : clientHandler.getGame().getPlayers()) {
                     colors.add(player.getColor().name());
                 }
-                obj.add("colors", gson.toJsonTree(colors));
+                obj.add("colors", new Gson().toJsonTree(colors).getAsJsonArray());
 
                 clHandler.sendMessage(obj.toString());
 
