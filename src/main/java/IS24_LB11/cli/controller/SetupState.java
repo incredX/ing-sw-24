@@ -2,7 +2,7 @@ package IS24_LB11.cli.controller;
 
 import IS24_LB11.cli.event.server.ServerEvent;
 import IS24_LB11.cli.event.server.ServerPlayerSetupEvent;
-import IS24_LB11.cli.event.server.ServerUpdateEvent;
+import IS24_LB11.cli.event.server.ServerUpdatePlayerBoardEvent;
 import IS24_LB11.cli.view.stage.SetupStage;
 import IS24_LB11.cli.notification.NotificationStack;
 import IS24_LB11.cli.notification.Priority;
@@ -42,7 +42,7 @@ public class SetupState extends ClientState {
     protected void processServerEvent(ServerEvent serverEvent) {
         if (processServerEventIfCommon(serverEvent)) return;
         switch (serverEvent) {
-            case ServerUpdateEvent updateEvent -> {
+            case ServerUpdatePlayerBoardEvent updateEvent -> {
                 notificationStack.add(Priority.LOW, "received updated players' state");
             }
             case ServerPlayerSetupEvent playerSetupEvent -> {

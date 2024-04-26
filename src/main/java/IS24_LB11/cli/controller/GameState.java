@@ -1,16 +1,13 @@
 package IS24_LB11.cli.controller;
 
-import IS24_LB11.cli.popup.Popup;
-import IS24_LB11.cli.popup.PopupManager;
+import IS24_LB11.cli.event.server.ServerNewTurnEvent;
+import IS24_LB11.cli.popup.*;
 import IS24_LB11.cli.view.stage.GameStage;
 import IS24_LB11.cli.event.server.ServerEvent;
 import IS24_LB11.cli.ViewHub;
-import IS24_LB11.cli.popup.DecksPopup;
-import IS24_LB11.cli.popup.HandPopup;
 import IS24_LB11.cli.utils.Side;
-import IS24_LB11.game.PlacedCard;
-import IS24_LB11.game.Player;
-import IS24_LB11.game.PlayerSetup;
+import IS24_LB11.game.*;
+import IS24_LB11.game.components.GoalCard;
 import IS24_LB11.game.components.GoldenCard;
 import IS24_LB11.game.components.NormalCard;
 import IS24_LB11.game.components.PlayableCard;
@@ -26,19 +23,22 @@ import com.googlecode.lanterna.input.KeyStroke;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-//TODO : reforme the interface keyconsumer (?)
+//TODO : add scoreboard event
+//TODO : reconnection to server in lobby
 //TODO : close everything if the input listener is closed
 
 public class GameState extends ClientState {
     private final Player player;
+    private Scoreboard scoreboard;
+    private ArrayList<GoalCard> goals;
+    private ArrayList<NormalCard> normalDeck;
+    private ArrayList<GoldenCard> goldenDeck;
     private GameStage gameStage;
     private PopupManager popManager;
     private Position boardPointer;
     private PlacedCard placedCard;
-    private Consumer<KeyStroke> focusedStrokeConsumer;
     private boolean strokeConsumed;
     private boolean cardPlaced;
     private boolean cardPicked;
@@ -47,20 +47,31 @@ public class GameState extends ClientState {
     public GameState(ViewHub viewHub, PlayerSetup setup) throws IOException {
         super(viewHub);
         this.player = new Player(username, setup);
+        this.goals = new ArrayList<>();
+        this.scoreboard = null;
+        this.normalDeck = new ArrayList<>();
+        this.goldenDeck = new ArrayList<>();
         this.popManager = new PopupManager(new Popup[]{
-                new HandPopup(viewHub, getPlayerHand()),
-                new DecksPopup(viewHub, defaultNormalDeck(), defaultGoldenDeck())});
+                new TablePopup(viewHub, this),
+                new HandPopup(viewHub, this), 
+                new DecksPopup(viewHub, this)}
+        );
         this.boardPointer = new Position(0, 0);
         this.placedCard = null;
         this.cardPlaced = false;
         this.cardPicked = false;
         this.readOnly = false;
+        this.goals.add(setup.chosenGoal());
     }
 
     @Override
     public ClientState execute() {
         player.applySetup();
+        scoreboard = defaultScoreboard();
+        normalDeck = defaultNormalDeck();
+        goldenDeck = defaultGoldenDeck();
         gameStage = viewHub.setGameStage(this);
+        popManager.updatePopups();
         processResize(viewHub.getScreenSize());
         return super.execute();
     }
@@ -68,6 +79,21 @@ public class GameState extends ClientState {
     @Override
     protected void processServerEvent(ServerEvent event) {
         if (processServerEventIfCommon(event)) return;
+        switch (event) {
+            case ServerNewTurnEvent newTurnEvent -> {
+                if (newTurnEvent.player().equals(username)) {
+                    cardPlaced = false;
+                    cardPicked = false;
+                    updateBoardPointerImage();
+                }
+                normalDeck = newTurnEvent.normalDeck();
+                goldenDeck = newTurnEvent.goldenDeck();
+                if (!normalDeck.getLast().isFaceDown()) normalDeck.getLast().flip();
+                if (!goldenDeck.getLast().isFaceDown()) goldenDeck.getLast().flip();
+                popManager.getPopup("decks").update();
+            }
+            default -> processResult(Result.Error("received unknown server event"));
+        }
     }
 
     @Override
@@ -91,7 +117,7 @@ public class GameState extends ClientState {
                 gameStage.centerBoard();
                 gameStage.updateBoard();
             }
-            case "HAND", "DECKS" -> popManager.showPopup(tokens[0]);
+            case "HAND", "DECKS", "TABLE" -> popManager.showPopup(tokens[0]);
             default -> notificationStack.addUrgent("ERROR", INVALID_CMD.apply(tokens[0], "game"));
         }
     }
@@ -126,7 +152,7 @@ public class GameState extends ClientState {
             DecksPopup decksPopup = (DecksPopup) popManager.getPopup("decks");
             HandPopup handPopup = (HandPopup) popManager.getPopup("hand");
             player.addCardToHand(decksPopup.getSelectedCard());
-            handPopup.loadHand();
+            handPopup.update();
             popManager.hidePopup("decks");
             cardPicked = true;
             try {
@@ -148,7 +174,6 @@ public class GameState extends ClientState {
             cardPlaced = true;
             updateBoardPointerImage();
             gameStage.updateBoard();
-            handPopup.removeSelectedCard();
             handPopup.update();
         }
         else notificationStack.addUrgent("WARNING", "cannot place card");
@@ -177,6 +202,10 @@ public class GameState extends ClientState {
     public void setStrokeConsumed(boolean consumed) {
         strokeConsumed = consumed;
     }
+    
+    public void flipHandCard(int cardIndex) {
+        player.getHand().get(cardIndex).flip();
+    }
 
     public boolean pointerInValidSpot() {
         return player.getBoard().spotAvailable(boardPointer);
@@ -194,15 +223,30 @@ public class GameState extends ClientState {
         return player.getBoard().getPlacedCards();
     }
 
+    public Scoreboard getScoreboard() {
+        return scoreboard;
+    }
+    
+    public ArrayList<GoalCard> getGoals() {
+        return goals;
+    }
+    
+    public ArrayList<NormalCard> getNormalDeck() {
+        return normalDeck;
+    }
+    
+    public ArrayList<GoldenCard> getGoldenDeck() {
+        return goldenDeck;
+    }
+
     public Position getBoardPointer() {
         return boardPointer;
     }
 
-
     private static ArrayList<NormalCard> defaultNormalDeck() {
         try {
             return (ArrayList<NormalCard>) Arrays.stream(new NormalCard[] {
-                    new NormalCard("Q_AFAF0"), new NormalCard("F_EEFF1"), new NormalCard("FP_KPF0")
+                    new NormalCard("Q_AFAF0"), new NormalCard("F_EEFF1"), new NormalCard("FP_KPB0")
             }).collect(Collectors.toList());
         } catch (SyntaxException e) { return null; }
     }
@@ -211,8 +255,25 @@ public class GameState extends ClientState {
         ArrayList<GoldenCard> goldenCards;
         try {
             return  (ArrayList<GoldenCard>) Arrays.stream(new GoldenCard[] {
-                    new GoldenCard("_EEKIF1KIIF__"), new GoldenCard("EE_EIF2EIIIA_"), new GoldenCard("EEE_PF2EPPPA_")
+                    new GoldenCard("_EEKIF1KIIF__"), new GoldenCard("EE_EIF2EIIIA_"), new GoldenCard("EEE_PB2EPPPA_")
             }).collect(Collectors.toList());
         } catch (SyntaxException e) { return null; }
+    }
+
+    private static Scoreboard defaultScoreboard() {
+        return new Scoreboard(
+                (ArrayList<String>) Arrays.stream(new String[] {"wasd", "Lorem ipsum", "player_3"}).collect(Collectors.toList()),
+                (ArrayList<Integer>) Arrays.stream(new Integer[] {8, 17, 12}).collect(Collectors.toList()),
+                defaultColors()
+        );
+    }
+
+    private static ArrayList<TextColor> defaultColors() {
+        ArrayList<TextColor> colors = new ArrayList<>();
+        colors.add(TextColor.ANSI.RED_BRIGHT);
+        colors.add(TextColor.ANSI.GREEN_BRIGHT);
+        colors.add(TextColor.ANSI.BLUE_BRIGHT);
+        colors.add(TextColor.ANSI.YELLOW_BRIGHT);
+        return colors;
     }
 }

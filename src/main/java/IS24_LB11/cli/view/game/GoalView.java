@@ -14,8 +14,8 @@ import static IS24_LB11.cli.utils.Side.NORD;
 import static IS24_LB11.cli.utils.Side.SUD;
 
 public class GoalView extends CliBox {
-    protected static final int WIDTH = 17;
-    protected static final int HEIGHT = 5;
+    public static final int WIDTH = 17;
+    public static final int HEIGHT = 5;
     protected final GoalCard goal;
 
     public GoalView(GoalCard goal) {

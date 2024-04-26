@@ -108,7 +108,7 @@ public class Player implements JsonConvertable {
         JsonConverter jsonConverter = new JsonConverter();
         try {
             return "Player{" +
-                    "name='" + name + '\'' +
+                    "playerName='" + name + '\'' +
                     ", color=" + color +
                     ", ACTUALhand=" + hand.stream().map(x -> x.asString()).reduce("", (x, y) -> x + " " + y) +
                     ", board=" + jsonConverter.objectToJSON(board) +

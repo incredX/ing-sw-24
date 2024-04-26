@@ -8,57 +8,34 @@ import IS24_LB11.cli.view.HandView;
 import IS24_LB11.game.components.PlayableCard;
 import com.googlecode.lanterna.input.KeyStroke;
 
-import java.util.ArrayList;
 import java.util.function.Consumer;
 
 import static IS24_LB11.cli.utils.Side.*;
 
 public class HandPopup extends Popup {
-    private ArrayList<PlayableCard> hand;
+    private final GameState gameState;
     private int selectedCard;
 
-    public HandPopup(ViewHub viewHub, ArrayList<PlayableCard> hand) {
-        super(viewHub, new HandView(viewHub.getScreenSize(), hand));
-        this.hand = hand;
-        selectedCard = 0;
+    public HandPopup(ViewHub viewHub, GameState gameState) {
+        super(viewHub, new HandView(viewHub.getScreenSize(), gameState.getPlayerHand()));
+        this.gameState = gameState;
+        this.selectedCard = 0;
     }
 
-    public void loadHand(ArrayList<PlayableCard> hand) {
-        this.hand = hand;
-        manageView(handView -> {
-            handView.loadCards(hand);
-            handView.build();
-        });
-    }
+    @Override
+    public String label() { return "hand"; }
 
-    public void loadHand() {
-        manageView(handView -> {
-            handView.loadCards(hand);
-        });
-        update();
-    }
-
-    public void shiftPointer(Side side) {
-        if (!side.isVertical()) return;
-        if (side == Side.NORD)
-            selectedCard = (selectedCard == 0) ? hand.size() - 1 : selectedCard - 1;
-        else selectedCard = (selectedCard == hand.size() - 1) ? 0 : selectedCard + 1;
-        manageView(decksView -> {
-            decksView.updatePointerPosition(selectedCard);
-            decksView.build();
-        });
-        //drawViewInStage();
-    }
-
-    public void removeSelectedCard() {
-        selectedCard = selectedCard % hand.size();
+    @Override
+    public void update() {
+        selectedCard = selectedCard % gameState.getPlayerHand().size();
         manageView(handView -> {
             handView.updatePointerPosition(selectedCard);
-            handView.loadCards(hand);
+            handView.loadCards(gameState.getPlayerHand());
             handView.rebuild();
         });
     }
 
+    @Override
     public void show() {
         enable(); // at start, when shown, the popup is enabled
         super.show();
@@ -99,7 +76,7 @@ public class HandPopup extends Popup {
         }
     }
 
-    public void consumeKeyStrokeInGame(GameState gameState, KeyStroke keyStroke) {
+    private void consumeKeyStrokeInGame(GameState gameState, KeyStroke keyStroke) {
         if (keyStroke.isCtrlDown()) {
             switch (keyStroke.getKeyType()) {
                 case ArrowUp -> shiftPointer(NORD);
@@ -107,27 +84,33 @@ public class HandPopup extends Popup {
                 case Enter -> gameState.placeCardFromHand();
                 case Character -> {
                     if (keyStroke.getCharacter() == 'f') {
-                        hand.get(selectedCard).flip();
-                        manageView(handView -> {
-                            handView.loadCards(hand);
-                            handView.build();
-                        });
+                        gameState.flipHandCard(selectedCard);
+                        update();
                     }
                 }
                 default -> {
                     return;
                 }
             }
-            if (visible) update();
+            if (visible) updateView();
             gameState.setStrokeConsumed(true);
         }
     }
 
-    @Override
-    public String label() { return "hand"; }
+    private void shiftPointer(Side side) {
+        if (!side.isVertical()) return;
+        if (side == Side.NORD)
+            selectedCard = (selectedCard == 0) ? gameState.getPlayerHand().size() - 1 : selectedCard - 1;
+        else selectedCard = (selectedCard == gameState.getPlayerHand().size() - 1) ? 0 : selectedCard + 1;
+        manageView(decksView -> {
+            decksView.updatePointerPosition(selectedCard);
+            decksView.build();
+        });
+        //drawViewInStage();
+    }
 
     public PlayableCard getSelectedCard() {
-        return hand.get(selectedCard);
+        return gameState.getPlayerHand().get(selectedCard);
     }
 
     protected void manageView(Consumer<HandView> consumer) {

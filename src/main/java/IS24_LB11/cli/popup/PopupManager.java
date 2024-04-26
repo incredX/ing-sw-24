@@ -21,6 +21,10 @@ public class PopupManager {
         getFocusedPopup().ifPresent(popup -> popup.consumeKeyStroke(state, keyStroke));
     }
 
+    public void updatePopups() {
+        popups.values().forEach(Popup::update);
+    }
+
     public void resizePopups() {
         popups.values().forEach(popup -> popup.resize());
         popups.values().stream()
