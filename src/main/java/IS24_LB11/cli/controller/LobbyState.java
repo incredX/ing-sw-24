@@ -1,5 +1,6 @@
 package IS24_LB11.cli.controller;
 
+import IS24_LB11.cli.Table;
 import IS24_LB11.cli.event.server.ServerEvent;
 import IS24_LB11.cli.event.server.ServerLoginEvent;
 import IS24_LB11.cli.event.server.ServerPlayerSetupEvent;
@@ -8,6 +9,7 @@ import IS24_LB11.cli.ViewHub;
 import IS24_LB11.cli.view.stage.LobbyStage;
 import IS24_LB11.game.PlayerSetup;
 import IS24_LB11.game.Result;
+import IS24_LB11.cli.Scoreboard;
 import IS24_LB11.game.components.*;
 import IS24_LB11.game.utils.Color;
 import IS24_LB11.game.utils.SyntaxException;
@@ -15,7 +17,12 @@ import com.googlecode.lanterna.input.KeyStroke;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static IS24_LB11.cli.Client.defaultTable;
+import static IS24_LB11.cli.Client.getDefaultSetup;
 
 public class LobbyState extends ClientState {
     private LobbyStage lobbyStage;
@@ -40,7 +47,12 @@ public class LobbyState extends ClientState {
             }
             case ServerPlayerSetupEvent setupEvent -> {
                 notificationStack.add(Priority.LOW, "received player setup");
-                try { setNextState(new SetupState(viewHub, notificationStack, setupEvent.getPlayerSetup())); }
+                try {
+                    PlayerSetup setup = setupEvent.setup();
+                    Scoreboard scoreboard = new Scoreboard(setupEvent.playersList(), new ArrayList<>(), setupEvent.colorList());
+                    Table table = new Table(scoreboard, setupEvent.publicGoals());
+                    setNextState(new SetupState(viewHub, notificationStack, setup, table));
+                }
                 catch (IOException e) {
                     e.printStackTrace();
                     quit();
@@ -63,7 +75,7 @@ public class LobbyState extends ClientState {
                 else notificationStack.addUrgent("ERROR", MISSING_ARG.apply("set"));
             }
             case "SETUP" -> {
-                try { setNextState(new SetupState(viewHub, notificationStack, getDefaultSetup())); } // wait server response to switch
+                try { setNextState(new SetupState(viewHub, notificationStack, getDefaultSetup(), defaultTable())); } // wait server response to switch
                 catch (IOException e) {
                     e.printStackTrace();
                     quit();
@@ -125,17 +137,5 @@ public class LobbyState extends ClientState {
         } else {
             notificationStack.addUrgent("ERROR", MISSING_ARG.apply("popup"));
         }
-    }
-
-    private static PlayerSetup getDefaultSetup() {
-        try {
-            PlayableCard[] hand = new PlayableCard[] {
-                    new GoldenCard("_EEQFF1QFFA__"), new NormalCard("FEF_FF0"), new NormalCard("EA_AAF0")
-            };
-            return new PlayerSetup(new StarterCard("EPIE_F0I__FPIA"),
-                    new GoalCard[]{new GoalSymbol("2KK_"), new GoalPattern("3IPPL2")},
-                    new ArrayList<>(List.of(hand)),
-                    Color.RED);
-        } catch (SyntaxException e) { return null; }
     }
 }

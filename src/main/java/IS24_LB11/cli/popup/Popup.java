@@ -21,12 +21,14 @@ public abstract class Popup<T extends PopupView> {
         this.overlap = false;
     }
 
-    public void update() {
+    public void updateView() {
         popView.build();
         viewHub.update();
     }
 
     public abstract String label();
+    
+    public abstract void update();
 
     public abstract void consumeKeyStroke(ClientState state, KeyStroke keyStroke);
 
@@ -43,7 +45,7 @@ public abstract class Popup<T extends PopupView> {
         if (viewInsideStage()) {
             if (!visible) {
                 viewHub.addPopup(popView);
-                update();
+                updateView();
             }
             visible = true;
         }
@@ -52,7 +54,7 @@ public abstract class Popup<T extends PopupView> {
     public void hide() {
         if (visible) {
             viewHub.removePopup(popView.getId());
-            update();
+            updateView();
             visible = false;
         }
     }

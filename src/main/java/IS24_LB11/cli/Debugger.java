@@ -15,7 +15,7 @@ public class Debugger {
 
     public void printIntro(String msg) {
         if(!active) return;
-        String osName = System.getProperty("os.name");
+        String osName = System.getProperty("os.playerName");
         String osArch = System.getProperty("os.arch");
         String jvVer = System.getProperty("java.version");
         String vmVer = System.getProperty("java.vm.specification.version");

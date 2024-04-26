@@ -92,7 +92,7 @@ public class ServerEventHandler {
 
         clientHandler.setUserName(username);
 
-        // tell client the name they chose
+        // tell client the playerName they chose
         response.addProperty("type", "setUsername");
         response.addProperty("username", username);
         clientHandler.sendMessage(response.toString());

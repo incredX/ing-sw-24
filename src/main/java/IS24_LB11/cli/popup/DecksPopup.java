@@ -5,8 +5,6 @@ import IS24_LB11.cli.controller.ClientState;
 import IS24_LB11.cli.controller.GameState;
 import IS24_LB11.cli.utils.Side;
 import IS24_LB11.cli.view.DecksView;
-import IS24_LB11.game.components.GoldenCard;
-import IS24_LB11.game.components.NormalCard;
 import IS24_LB11.game.components.PlayableCard;
 import com.googlecode.lanterna.input.KeyStroke;
 
@@ -16,46 +14,27 @@ import java.util.function.Consumer;
 import static IS24_LB11.cli.utils.Side.*;
 
 public class DecksPopup extends Popup {
-    private ArrayList<NormalCard> normalCards;
-    private ArrayList<GoldenCard> goldenCards;
+    private final GameState gameState;
     private boolean deckIsNormal;
     private int cardIndex;
 
-    public DecksPopup(ViewHub viewHub, ArrayList<NormalCard> normalCards, ArrayList<GoldenCard> goldenCards) {
-        super(viewHub, new DecksView(viewHub.getScreenSize(), normalCards, goldenCards));
+    public DecksPopup(ViewHub viewHub, GameState gameState) {
+        super(viewHub, new DecksView(viewHub.getScreenSize(), new ArrayList<>(), new ArrayList<>()));
+        this.gameState = gameState;
         this.deckIsNormal = true; //true = normal, false = golden
         this.cardIndex = 0;
-        loadDecks(normalCards, goldenCards);
     }
 
-    public void loadDecks(ArrayList<NormalCard> normalCards, ArrayList<GoldenCard> goldenCards) {
-        this.normalCards = normalCards;
-        this.goldenCards = goldenCards;
-        if (!goldenCards.getLast().isFaceDown()) goldenCards.getLast().flip();
-        if (!normalCards.getLast().isFaceDown()) normalCards.getLast().flip();
-        manageView(decksView -> {
-            decksView.loadGoldenDeck(goldenCards);
-            decksView.loadNormalDeck(normalCards);
+    @Override
+    public String label() { return "decks"; }
+
+    @Override
+    public void update() {
+        castView(decksView -> {
+            decksView.loadGoldenDeck(gameState.getGoldenDeck());
+            decksView.loadNormalDeck(gameState.getNormalDeck());
             decksView.build();
         });
-    }
-
-    public PlayableCard getSelectedCard() {
-        if (deckIsNormal) return normalCards.get(cardIndex);
-        else return goldenCards.get(cardIndex);
-    }
-
-    public void shiftPointer(Side side) {
-        int size = getSelectedDeckSize();
-        if (side.isVertical()) {
-            if (side == SUD) cardIndex = (cardIndex+1) % size;
-            else cardIndex = cardIndex == 0 ? size - 1 : cardIndex - 1;
-        } else deckIsNormal = !deckIsNormal;
-        manageView(decksView -> {
-            decksView.updatePointerPosition(deckIsNormal, cardIndex);
-            decksView.build();
-        });
-        //drawViewInStage();
     }
 
     @Override
@@ -72,7 +51,7 @@ public class DecksPopup extends Popup {
 
     @Override
     public void enable() {
-        manageView(decksView -> {
+        castView(decksView -> {
             decksView.updatePointerPosition(deckIsNormal, cardIndex);
             decksView.build();
         });
@@ -81,20 +60,21 @@ public class DecksPopup extends Popup {
 
     @Override
     public void disable() {
-        manageView(decksView -> {
+        castView(decksView -> {
             decksView.hidePointer();
             decksView.build();
         });
         super.disable();
     }
 
-    protected void manageView(Consumer<DecksView> consumer) {
-        consumer.accept((DecksView) popView);
+    public PlayableCard getSelectedCard() {
+        if (deckIsNormal) return gameState.getNormalDeck().get(cardIndex);
+        else return gameState.getGoldenDeck().get(cardIndex);
     }
 
     private int getSelectedDeckSize() {
-        if (deckIsNormal) return normalCards.size();
-        else return goldenCards.size();
+        if (deckIsNormal) return gameState.getNormalDeck().size();
+        else return gameState.getGoldenDeck().size();
     }
 
     @Override
@@ -108,7 +88,7 @@ public class DecksPopup extends Popup {
         }
     }
 
-    public void consumeKeyStrokeInGame(GameState gameState, KeyStroke keyStroke) {
+    private void consumeKeyStrokeInGame(GameState gameState, KeyStroke keyStroke) {
         if (!enabled) return; // pointer is not here
         if (keyStroke.isCtrlDown()) {
             switch (keyStroke.getKeyType()) {
@@ -121,13 +101,26 @@ public class DecksPopup extends Popup {
                     return;
                 }
             }
-            if (visible) update();
+            if (visible) updateView();
             gameState.setStrokeConsumed(true);
         }
     }
 
-    @Override
-    public String label() { return "decks"; }
+    private void shiftPointer(Side side) {
+        int size = getSelectedDeckSize();
+        if (side.isVertical()) {
+            if (side == SUD) cardIndex = (cardIndex+1) % size;
+            else cardIndex = cardIndex == 0 ? size - 1 : cardIndex - 1;
+        } else deckIsNormal = !deckIsNormal;
+        castView(decksView -> {
+            decksView.updatePointerPosition(deckIsNormal, cardIndex);
+            decksView.build();
+        });
+    }
+
+    protected void castView(Consumer<DecksView> consumer) {
+        consumer.accept((DecksView) popView);
+    }
 
     public boolean selectedNormalDeck() {
         return deckIsNormal;

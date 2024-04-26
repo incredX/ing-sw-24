@@ -94,7 +94,7 @@ public class JsonConverter {
     public String objectToJSON(Player player) throws JsonException {
         checkNullObject(player);
         String str = "\"Player\":{";
-        str = str + "\"name\":\"" + player.name() + "\",";
+        str = str + "\"playerName\":\"" + player.name() + "\",";
         str = str + "\"Color\":\"" + player.getColor() + "\",";
         str = str + "\"Hand\":[";
         for (PlayableCard playableCard : player.getHand())
@@ -189,7 +189,7 @@ public class JsonConverter {
 
     private JsonConvertable JSONToPlayer(String stringInput) throws JsonException, SyntaxException {
         System.out.println(stringInput);
-        String auxString = stringInput.substring(stringInput.indexOf("name") + 7);
+        String auxString = stringInput.substring(stringInput.indexOf("playerName") + 7);
         System.out.println(auxString);
         String name = auxString.substring(0, auxString.indexOf("\""));
         System.out.println(name);
