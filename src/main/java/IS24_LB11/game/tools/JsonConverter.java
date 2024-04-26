@@ -2,9 +2,9 @@ package IS24_LB11.game.tools;
 
 import IS24_LB11.game.*;
 import IS24_LB11.game.components.*;
-import IS24_LB11.game.utils.*;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
+import IS24_LB11.game.utils.Color;
+import IS24_LB11.game.utils.Position;
+import IS24_LB11.game.utils.SyntaxException;
 
 import java.io.File;
 import java.io.FileNotFoundException;
