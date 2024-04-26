@@ -36,19 +36,19 @@ public class SetupPhase {
                 for(GoalCard goalCard: clientHandler.getGame().getPublicGoals()) {
                     publicGoals.add(goalCard.asString());
                 }
-                obj.add("publicGoals", new Gson().toJsonTree(publicGoals).getAsJsonArray());
+                obj.addProperty("publicGoals", new Gson().toJson(publicGoals));
 
                 ArrayList<String> playerNames = new ArrayList<>();
                 for(Player player : clientHandler.getGame().getPlayers()) {
                     playerNames.add(player.name());
                 }
-                obj.add("playerNames", new Gson().toJsonTree(playerNames).getAsJsonArray());
+                obj.addProperty("playerNames", new Gson().toJson(playerNames));
 
                 ArrayList<String> colors = new ArrayList<>();
                 for(Player player : clientHandler.getGame().getPlayers()) {
                     colors.add(player.getColor().name());
                 }
-                obj.add("colors", new Gson().toJsonTree(colors).getAsJsonArray());
+                obj.addProperty("colors", new Gson().toJson(colors));
 
                 clHandler.sendMessage(obj.toString());
 
