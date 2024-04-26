@@ -45,6 +45,7 @@ public class GameTest {
                 game.getPlayers().get(i).getSetup().flipStarterCard();
             starterCardsSideChoosen.add(game.getPlayers().get(i).getSetup().getStarterCard());
         }
+
         for (Player player: game.getPlayers()){
             assertEquals(3, player.getHand().size());
             assertEquals(0, player.getScore());
