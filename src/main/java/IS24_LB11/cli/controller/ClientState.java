@@ -1,44 +1,58 @@
 package IS24_LB11.cli.controller;
 
 import IS24_LB11.cli.CommandLine;
-import IS24_LB11.cli.Stage;
+import IS24_LB11.cli.event.server.ServerEvent;
+import IS24_LB11.cli.event.server.ServerHeartBeatEvent;
+import IS24_LB11.cli.event.server.ServerMessageEvent;
+import IS24_LB11.cli.event.server.ServerNotificationEvent;
 import IS24_LB11.cli.event.*;
-import IS24_LB11.cli.popup.PopUpStack;
-import IS24_LB11.cli.popup.Priority;
+import IS24_LB11.cli.notification.NotificationStack;
+import IS24_LB11.cli.notification.Priority;
 import IS24_LB11.cli.ViewHub;
-import IS24_LB11.cli.KeyConsumer;
 import IS24_LB11.cli.listeners.ServerHandler;
 import IS24_LB11.game.Result;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.terminal.Terminal;
 
-import java.io.IOException;
-import java.util.PriorityQueue;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.TimeUnit;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 public abstract class ClientState {
+    protected static final Function<String, String> MISSING_ARG =
+            (cmd) -> String.format("missing argument for command \"%s\"", cmd);
+    protected static final BiFunction<String, String, String> INVALID_CMD =
+            (key, state) -> String.format("\"%s\" is not a command in %s", key, state);
+    protected static final BiFunction<String, String, String> INVALID_ARG =
+            (arg, cmd) -> String.format("\"%s\" is not a valid argument for command \"%s\"", arg, cmd);
+    protected static final Function<String, String> EXPECTED_INT =
+            key -> String.format("\"%s\" expected an integer", key);
+
     private static final int QUEUE_CAPACITY = 64;
 
     private ClientState nextState;
     protected String username;
     protected final ArrayBlockingQueue<Event> queue;
-    protected final PopUpStack popUpStack;
+    protected final NotificationStack notificationStack;
     protected final ViewHub viewHub;
     protected final CommandLine cmdLine;
     protected ServerHandler serverHandler;
-    protected Stage stage;
 
-    public ClientState(ViewHub viewHub) throws IOException {
+    public ClientState(ViewHub viewHub, NotificationStack notificationStack) {
         this.nextState = null;
         this.queue = new ArrayBlockingQueue<>(QUEUE_CAPACITY);
-        this.popUpStack = new PopUpStack(viewHub, 0);
+        this.notificationStack = notificationStack;
         this.viewHub = viewHub;
-        this.cmdLine = new CommandLine(viewHub.getTerminal().getTerminalSize().getColumns());
-        this.stage = viewHub.getStage();
+        this.cmdLine = new CommandLine(viewHub.getScreenSize().getColumns());
         viewHub.updateCommandLine(cmdLine);
+    }
+
+    public ClientState(ViewHub viewHub) {
+        this(viewHub, new NotificationStack(viewHub, 0));
     }
 
     public ClientState execute() {
@@ -51,8 +65,8 @@ public abstract class ClientState {
                 }
                 while(!queue.isEmpty()) {
                     handleEvent(queue.poll());
-                    if (nextState != null) { return nextState; }
                 }
+                if (nextState != null) { return nextState; }
             }
         }
         return null;
@@ -79,27 +93,27 @@ public abstract class ClientState {
 
     protected abstract void processKeyStroke(KeyStroke keyStroke);
 
+    protected void processResize(TerminalSize size) {
+        cmdLine.setWidth(size.getColumns());
+        viewHub.resize(size, cmdLine);
+    }
+
     protected void processResult(Result<ServerEvent> result) {
         if (result.isError()) {
             String text;
             text = result.getError();
             if (result.getCause() != null)
                 text += " : "+result.getCause();
-            popUpStack.addUrgentPopUp("ERROR", text);
+            notificationStack.addUrgent("ERROR", text);
             return;
         }
         processServerEvent(result.get());
     }
 
-    protected void processResize(TerminalSize size) {
-        cmdLine.setWidth(size.getColumns());
-        viewHub.resize(size, cmdLine);
-    }
-
     protected boolean processServerEventIfCommon(ServerEvent serverEvent) {
         switch (serverEvent) {
             case ServerNotificationEvent notificationEvent -> {
-                popUpStack.addPopUp(Priority.LOW, "from server", notificationEvent.message());
+                notificationStack.add(Priority.LOW, "from server", notificationEvent.message());
             }
             case ServerMessageEvent messageEvent -> {
                 String text;
@@ -107,7 +121,7 @@ public abstract class ClientState {
                     text = String.format("%s @ all : %s", messageEvent.from(), messageEvent.message());
                 else
                     text = String.format("%s : %s", messageEvent.from(), messageEvent.message());
-                popUpStack.addPopUp(Priority.MEDIUM, text);
+                notificationStack.add(Priority.MEDIUM, text);
             }
             case ServerHeartBeatEvent heartBeatEvent -> {
                 sendToServer("heartbeat");
@@ -129,12 +143,12 @@ public abstract class ClientState {
             }
             case "SENDTO", "@" -> {
                 if (tokens.length == 2) processCommandSendto(tokens[1]);
-                else popUpStack.addUrgentPopUp("ERROR", "missing argument");
+                else notificationStack.addUrgent("ERROR", MISSING_ARG.apply("sendto"));
                 return true;
             }
             case "SENDTOALL", "@ALL" -> {
                 if (tokens.length == 2) processCommandSendtoall(tokens[1]);
-                else popUpStack.addUrgentPopUp("ERROR", "missing argument");
+                else notificationStack.addUrgent("ERROR", MISSING_ARG.apply("sendtoall"));
                 return true;
             }
         };
@@ -178,7 +192,7 @@ public abstract class ClientState {
             String[] values = new String[] {username, tokens[0], tokens[1]};
             sendToServer("message", fields, values);
         } else {
-            popUpStack.addUrgentPopUp("ERROR", "syntax error in given commmand");
+            notificationStack.addUrgent("ERROR", "syntax error in given commmand");
         }
     }
 
@@ -209,6 +223,14 @@ public abstract class ClientState {
         serverHandler.write(object);
     }
 
+    protected void sendToServer(String type, String field, int value) {
+        if (serverHandler == null) return;
+        JsonObject object = new JsonObject();
+        object.addProperty("type", type);
+        object.addProperty(field, value);
+        serverHandler.write(object);
+    }
+
     protected void sendToServer(String type, String field, JsonObject value) {
         if (serverHandler == null) return;
         JsonObject object = new JsonObject();
@@ -229,6 +251,14 @@ public abstract class ClientState {
         object.addProperty("type", type);
         for (int i = 0; i < Integer.min(dataFields.length, values.length); i++)
             object.addProperty(dataFields[i], values[i]);
+        serverHandler.write(object);
+    }
+
+    protected void sendToServer(String type, String[] dataFields, JsonElement[] values) {
+        JsonObject object = new JsonObject();
+        object.addProperty("type", type);
+        for (int i = 0; i < Integer.min(dataFields.length, values.length); i++)
+            object.add(dataFields[i], values[i]);
         serverHandler.write(object);
     }
 

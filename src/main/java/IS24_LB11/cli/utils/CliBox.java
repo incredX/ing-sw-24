@@ -9,7 +9,6 @@ import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.terminal.Terminal;
 
 import java.io.IOException;
-import java.util.function.Consumer;
 
 public class CliBox implements CliFrame {
     protected TerminalRectangle rectangle;
@@ -89,7 +88,17 @@ public class CliBox implements CliFrame {
                 int x = firstColumn() + box.rectangle.getX() + c;
                 int y = firstRow() + box.rectangle.getY() + r;
                 if (x > lastColumn() || y > lastRow() || x <= 0 || y <= 0) continue;
-                image[y][x] = new Cell(box.image[r][c]);
+                image[y][x].set(box.image[r][c]);
+            }
+        }
+    }
+
+    public void setCover(CliBox box, boolean covered) {
+        for (int r=box.getY(); r<box.rectangle.getYAndHeight(); r++) {
+            for (int c=box.getX(); c<box.rectangle.getXAndWidth(); c++) {
+                if (rectangle.contains(new TerminalPosition(c, r))) {
+                    image[r-getY()][c-getX()].setCovered(covered);
+                }
             }
         }
     }
@@ -111,16 +120,20 @@ public class CliBox implements CliFrame {
     }
 
     protected void drawCell(TerminalPosition pos, char c, TextColor color) {
-        image[pos.getRow()][pos.getColumn()] = new Cell(c, color);
+        image[pos.getRow()][pos.getColumn()].set(c, color);
+    }
+
+    protected void drawCell(int col, int row, char c, TextColor color) {
+        image[row][col].set(c, color);
     }
 
     protected void drawCell(TerminalPosition pos, Cell cell) {
-        image[pos.getRow()][pos.getColumn()] = cell;
+        image[pos.getRow()][pos.getColumn()] = new Cell(cell);
     }
 
     protected void fillRow(int row, int offset, char c, TextColor color) {
         for (int i=firstColumn()+offset; i<=lastColumn(); i++) {
-            drawCell(new TerminalPosition(i, row), new Cell(c, color));
+            drawCell(new TerminalPosition(i, row), c, color);
         }
     }
 
@@ -158,12 +171,16 @@ public class CliBox implements CliFrame {
         }
     }
 
-    protected void fillColumn(int col, int offset, String line) {
+    protected void fillColumn(int col, int offset, String line, TextColor color) {
         for (int i=firstRow()+offset,j=0; i<=lastRow(); i++) {
             if (j >= line.length()) break;
-            drawCell(new TerminalPosition(col, i), line.charAt(j));
+            drawCell(new TerminalPosition(col, i), line.charAt(j), color);
             j++;
         }
+    }
+
+    protected void fillColumn(int col, int offset, String line) {
+        fillColumn(col, offset, line, TextColor.ANSI.DEFAULT);
     }
 
     protected void fillColumn(int col, String line) {
@@ -180,7 +197,6 @@ public class CliBox implements CliFrame {
         updateInnerArea();
     }
 
-    //TODO: upgrade method (borderArea is not setted correctly)
     public void setSize(TerminalSize size) {
         rectangle.setSize(size);
         borderArea.setSize(rectangle.getSize().withRelative(-1,-1));
@@ -188,17 +204,24 @@ public class CliBox implements CliFrame {
         resetImage();
     }
 
+    protected void updateInnerArea() {
+        innerArea.setPosition(borderArea.getPosition().withRelative(1,1));
+        innerArea.setSize(borderArea.getSize().withRelative(-2,-2));
+    }
+
+    protected int innerWidth() { return innerArea.getWidth(); }
+    protected int innerHeight() { return innerArea.getHeight(); }
+    protected int firstRow() { return innerArea.getY(); }
+    protected int lastRow() { return innerArea.getYAndHeight(); }
+    protected int firstColumn() { return innerArea.getX(); }
+    protected int lastColumn() { return innerArea.getXAndWidth(); }
+
     public void setPosition(TerminalPosition newPosition) {
         rectangle.setPosition(newPosition);
     }
 
     public void setPosition(int x, int y) {
         rectangle.setPosition(x, y);
-    }
-
-    protected void updateInnerArea() {
-        innerArea.setPosition(borderArea.getPosition().withRelative(1,1));
-        innerArea.setSize(borderArea.getSize().withRelative(-2,-2));
     }
 
     protected TerminalPosition getCornerPosition(int dir) {
@@ -209,13 +232,6 @@ public class CliBox implements CliFrame {
     protected TerminalPosition getCornerPosition(Direction dir) {
         return getCornerPosition(dir.ordinal());
     }
-
-    protected int innerWidth() { return innerArea.getWidth(); }
-    protected int innerHeight() { return innerArea.getHeight(); }
-    protected int firstRow() { return innerArea.getY(); }
-    protected int lastRow() { return innerArea.getYAndHeight(); }
-    protected int firstColumn() { return innerArea.getX(); }
-    protected int lastColumn() { return innerArea.getXAndWidth(); }
 
     @Override
     public TerminalPosition getPosition() {

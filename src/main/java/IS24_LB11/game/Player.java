@@ -36,7 +36,7 @@ public class Player implements JsonConvertable {
         this.board.start(setup.getStarterCard());
     }
 
-    public boolean placeCard(PlayableCard card, Position position) throws JsonException, SyntaxException {
+    public boolean placeCard(PlayableCard card, Position position) {
         if (hand.stream().filter(x -> x.asString().compareTo(card.asString()) == 0).count() == 0) {
             return false;
         }

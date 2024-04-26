@@ -21,7 +21,7 @@ public class ResizeListener extends Listener implements Runnable {
     @Override
     public void run() {
         int millis = 25;
-        int minMillisBetweenResizes = millis * 8;
+        int minMillisBetweenResizes = millis * 4;
         int counter = 0;
 
         Thread.currentThread().setName("thread-resize-listener");
