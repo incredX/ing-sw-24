@@ -37,7 +37,7 @@ public class NotifyTurnPhase {
         for(Player player : clientHandler.getGame().getPlayers()) {
             scores.add(String.valueOf(player.getScore()));
         }
-        response.add("scores", new Gson().toJsonTree(scores).getAsJsonArray());
+        response.addProperty("scores", new Gson().toJson(scores));
 
 
         // add first three cards of each deck to response
