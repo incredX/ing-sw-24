@@ -7,19 +7,14 @@ import IS24_LB11.game.tools.JsonException;
 import IS24_LB11.game.utils.Color;
 import IS24_LB11.game.utils.Position;
 import IS24_LB11.game.utils.SyntaxException;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Scanner;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class JsonConverterTest {
     @Test
@@ -43,83 +38,9 @@ public class JsonConverterTest {
         cardList.add(cardFactory.newSerialCard("O2FFFD1"));
         
         for (int index = 0; index < cardList.size(); index++) {
-            System.out.println(jsonConverter.objectToJSON(cardList.get(index)));
             assert(jsonConverter.objectToJSON(cardList.get(index)).compareTo(stringCards.get(index))==0);
         }
     }
-
-    @Test
-    @DisplayName("Converting placedCard to JSON")
-    public void placedCardConversionTest() throws SyntaxException, JsonException {
-        PlacedCard placedCard = new PlacedCard(CardFactory.newPlayableCard("NFEF_FF0"),new Position(1,1));
-        String str = new JsonConverter().objectToJSON(placedCard);
-        System.out.println(str);
-    }
-    @Test
-    @DisplayName("Converting json to PlacedCar")
-    public  void jsonPlacedCardConversion() throws JsonException, SyntaxException {
-        String str="{\"PlacedCard\":{\"normalCard\":\"NFEF_FF0\",\"Position\":\"X1Y1\"}}";
-        PlacedCard placedCard= (PlacedCard) new JsonConverter().JSONToObject(str);
-        System.out.println(new JsonConverter().objectToJSON(placedCard));
-    }
-
-    @Test
-    @DisplayName("Converting object board to json")
-    public void boardConversionTest() throws JsonException, SyntaxException{
-        String str = "{\"Board\":{\"placedCards\":[{\"PlacedCard\":{\"starterCard\":\"SEEEE_F0AI_PIAF\",\"Position\":\"X0Y0\"}},{\"PlacedCard\":{\"normalCard\":\"NFEF_FF0\",\"Position\":\"X1Y1\"}},{\"PlacedCard\":{\"goldenCard\":\"GEK_EFB1KFFP__\",\"Position\":\"X-1Y1\"}}]}}";
-        JsonConverter jsonConverter = new JsonConverter();
-        Board board = new Board();
-        CardFactory cardFactory = new CardFactory();
-        StarterCard starterCard = (StarterCard) cardFactory.newSerialCard("SEEEE_F0AI_PIAF");
-        NormalCard normalCard = (NormalCard) cardFactory.newSerialCard("NFEF_FF0");
-        GoldenCard goldenCard = (GoldenCard) cardFactory.newSerialCard("GEK_EFB1KFFP__");
-        board.start(starterCard);
-        board.placeCard(normalCard, new Position(1,1));
-        board.placeCard(goldenCard, new Position(-1,1));
-
-        System.out.println(str);
-        System.out.println(jsonConverter.objectToJSON(board));
-        assert(jsonConverter.objectToJSON(board).compareTo(str)==0);
-    }
-
-    @Test
-    @DisplayName("Converting object player to json")
-    public void playerConversionTest() throws JsonException,SyntaxException{
-        JsonConverter jsonConverter = new JsonConverter();
-        CardFactory cardFactory = new CardFactory();
-        GoalCard[] goalCards = new GoalCard[2];
-        goalCards[0] = (GoalCard) cardFactory.newSerialCard("O2FFF");
-        goalCards[1] = (GoalCard) cardFactory.newSerialCard("O2PPP");
-        ArrayList<PlayableCard> playerHand = new ArrayList<>();
-        playerHand.add((PlayableCard) cardFactory.newSerialCard("NFEF_FF0"));
-        playerHand.add((PlayableCard) cardFactory.newSerialCard("N_FEFFF0"));
-        playerHand.add((PlayableCard) cardFactory.newSerialCard("GEK_EFB1KFFP__"));
-
-        PlayerSetup playerSetup = new PlayerSetup((StarterCard) cardFactory.newSerialCard("SEEEE_F0AI_PIAF"),goalCards,playerHand,Color.fromInt(1));
-        Player player = new Player("Test",playerSetup);
-        player.getSetup().selectGoal(goalCards[1]);
-        player.applySetup();
-        System.out.println(jsonConverter.objectToJSON(player));
-        }
-
-    @Test
-    @DisplayName("Converting object playerSetup to json")
-    public void playerSetupConversionTest() throws JsonException,SyntaxException{
-        JsonConverter jsonConverter = new JsonConverter();
-        CardFactory cardFactory = new CardFactory();
-        GoalCard[] goalCards = new GoalCard[2];
-        goalCards[0] = (GoalCard) cardFactory.newSerialCard("O2FFF");
-        goalCards[1] = (GoalCard) cardFactory.newSerialCard("O2PPP");
-        ArrayList<PlayableCard> playerHand = new ArrayList<>();
-        playerHand.add((PlayableCard) cardFactory.newSerialCard("NFEF_FF0"));
-        playerHand.add((PlayableCard) cardFactory.newSerialCard("N_FEFFF0"));
-        playerHand.add((PlayableCard) cardFactory.newSerialCard("GEK_EFF1KFFP__"));
-
-        PlayerSetup playerSetup = new PlayerSetup((StarterCard) cardFactory.newSerialCard("SEEEE_F0AI_PIAF"),goalCards,playerHand,Color.fromInt(1));
-        playerSetup.selectGoal(goalCards[1]);
-        System.out.println(jsonConverter.objectToJSON(playerSetup));
-    }
-
     @Test
     @DisplayName("Converting JSON to all types of card")
     public void jsonCardConversionTest() throws JsonException,SyntaxException{
@@ -146,7 +67,39 @@ public class JsonConverterTest {
             cardListConverted.add((CardInterface) jsonConverter.JSONToObject(stringCards.get(index)));
             assert(cardListConverted.get(index).asString().compareTo(cardListGenerated.get(index).asString())==0);
         }
+    }
 
+    @Test
+    @DisplayName("Converting placedCard to JSON")
+    public void placedCardConversionTest() throws SyntaxException, JsonException {
+        String str="{\"PlacedCard\":{\"normalCard\":\"NFEF_FF0\",\"Position\":\"X1Y1\"}}";
+        PlacedCard placedCard = new PlacedCard(CardFactory.newPlayableCard("NFEF_FF0"),new Position(1,1));
+        String strConverted = new JsonConverter().objectToJSON(placedCard);
+        assert (str.compareTo(strConverted)==0);
+    }
+    @Test
+    @DisplayName("Converting json to PlacedCar")
+    public  void jsonPlacedCardConversion() throws JsonException, SyntaxException {
+        String str="{\"PlacedCard\":{\"normalCard\":\"NFEF_FF0\",\"Position\":\"X1Y-2\"}}";
+        PlacedCard placedCard= (PlacedCard) new JsonConverter().JSONToObject(str);
+        assertEquals("NFEF_FF0",placedCard.card().asString());
+        assertEquals(1,placedCard.position().getX());
+        assertEquals(-2,placedCard.position().getY());
+    }
+    @Test
+    @DisplayName("Converting object board to json")
+    public void boardConversionTest() throws JsonException, SyntaxException{
+        String str = "{\"Board\":{\"placedCards\":[{\"PlacedCard\":{\"starterCard\":\"SEEEE_F0AI_PIAF\",\"Position\":\"X0Y0\"}},{\"PlacedCard\":{\"normalCard\":\"NFEF_FF0\",\"Position\":\"X1Y1\"}},{\"PlacedCard\":{\"goldenCard\":\"GEK_EFB1KFFP__\",\"Position\":\"X-1Y1\"}}]}}";
+        JsonConverter jsonConverter = new JsonConverter();
+        Board board = new Board();
+        CardFactory cardFactory = new CardFactory();
+        StarterCard starterCard = (StarterCard) cardFactory.newSerialCard("SEEEE_F0AI_PIAF");
+        NormalCard normalCard = (NormalCard) cardFactory.newSerialCard("NFEF_FF0");
+        GoldenCard goldenCard = (GoldenCard) cardFactory.newSerialCard("GEK_EFB1KFFP__");
+        board.start(starterCard);
+        board.placeCard(normalCard, new Position(1,1));
+        board.placeCard(goldenCard, new Position(-1,1));
+        assert(jsonConverter.objectToJSON(board).compareTo(str)==0);
     }
     @Test
     @DisplayName("Converting JSON to Board")
@@ -154,16 +107,38 @@ public class JsonConverterTest {
         JsonConverter jsonConverter = new JsonConverter();
         String str = "{\"Board\":{\"placedCards\":[{\"PlacedCard\":{\"starterCard\":\"SEEEE_F0AI_PIAF\",\"Position\":\"X0Y0\"}},{\"PlacedCard\":{\"normalCard\":\"NFEF_FF0\",\"Position\":\"X1Y1\"}},{\"PlacedCard\":{\"goldenCard\":\"GEK_EFB1KFFP__\",\"Position\":\"X-1Y1\"}}]}}";
         Board board = (Board) jsonConverter.JSONToObject(str);
-        assert(jsonConverter.objectToJSON(board).compareTo(str)==0);
+        // check number of placed cards
+        assertEquals(3,board.getPlacedCards().size());
+        // check first card
+        assertEquals("SEEEE_F0AI_PIAF",board.getPlacedCards().getFirst().card().asString());
+        assertEquals(0,board.getPlacedCards().getFirst().position().getX());
+        assertEquals(0,board.getPlacedCards().getFirst().position().getY());
+        // check second card
+        assertEquals("NFEF_FF0",board.getPlacedCards().get(1).card().asString());
+        assertEquals(1,board.getPlacedCards().get(1).position().getX());
+        assertEquals(1,board.getPlacedCards().get(1).position().getX());
+        //check third card
+        assertEquals("GEK_EFB1KFFP__",board.getPlacedCards().getLast().card().asString());
+        assertEquals(-1,board.getPlacedCards().getLast().position().getX());
+        assertEquals(1,board.getPlacedCards().getLast().position().getY());
     }
-
     @Test
-    @DisplayName("Converting JSON to player")
-    public void jsonPlayerConversionTest() throws JsonException, SyntaxException {
+    @DisplayName("Converting object playerSetup to json")
+    public void playerSetupConversionTest() throws JsonException,SyntaxException{
         JsonConverter jsonConverter = new JsonConverter();
-        String str= "{\"Player\":{\"name\":\"Test\",\"Color\":\"GREEN\",\"Hand\":[{\"normalCard\":\"NFEF_FF0\"},{\"normalCard\":\"N_FEFFF0\"},{\"goldenCard\":\"GEK_EFB1KFFP__\"}],\"PersonalGoal\":{\"goalCard\":\"O2PPP\"},\"Score\":\"0\",\"PlayerSetup\":{\"StarterCard\":{\"starterCard\":\"SEEEE_F0AI_PIAF\"},\"Goals\":[{\"goalCard\":\"O2FFF\"},{\"goalCard\":\"O2PPP\"}],\"Color\":\"GREEN\",\"Hand\":[{\"normalCard\":\"NFEF_FF0\"},{\"normalCard\":\"N_FEFFF0\"},{\"goldenCard\":\"GEK_EFB1KFFP__\"}],\"chosenGoalIndex\":\"1\"},\"Board\":{\"placedCards\":[{\"PlacedCard\":{\"starterCard\":\"SEEEE_F0AI_PIAF\",\"Position\":\"X0Y0\"}}]}}}";
-        Player player = (Player) jsonConverter.JSONToObject(str);
-        assert(str.compareTo(jsonConverter.objectToJSON(player))==0);
+        CardFactory cardFactory = new CardFactory();
+        GoalCard[] goalCards = new GoalCard[2];
+        goalCards[0] = (GoalCard) cardFactory.newSerialCard("O2FFF");
+        goalCards[1] = (GoalCard) cardFactory.newSerialCard("O2PPP");
+        ArrayList<PlayableCard> playerHand = new ArrayList<>();
+        playerHand.add((PlayableCard) cardFactory.newSerialCard("NFEF_FF0"));
+        playerHand.add((PlayableCard) cardFactory.newSerialCard("N_FEFFF0"));
+        playerHand.add((PlayableCard) cardFactory.newSerialCard("GEK_EFF1KFFP__"));
+
+        PlayerSetup playerSetup = new PlayerSetup((StarterCard) cardFactory.newSerialCard("SEEEE_F0AI_PIAF"),goalCards,playerHand,Color.fromInt(1));
+        playerSetup.selectGoal(goalCards[1]);
+        String str= "{\"PlayerSetup\":{\"StarterCard\":{\"starterCard\":\"SEEEE_F0AI_PIAF\"},\"Goals\":[{\"goalCard\":\"O2FFF\"},{\"goalCard\":\"O2PPP\"}],\"Color\":\"GREEN\",\"Hand\":[{\"normalCard\":\"NFEF_FF0\"},{\"normalCard\":\"N_FEFFF0\"},{\"goldenCard\":\"GEK_EFF1KFFP__\"}],\"chosenGoalIndex\":\"1\"}}";
+        assertEquals(str,jsonConverter.objectToJSON(playerSetup));
     }
     @Test
     @DisplayName("Converting JSON to playerSetup")
@@ -171,7 +146,49 @@ public class JsonConverterTest {
         JsonConverter jsonConverter = new JsonConverter();
         String str= "{\"PlayerSetup\":{\"StarterCard\":{\"starterCard\":\"SEEEE_F0AI_PIAF\"},\"Goals\":[{\"goalCard\":\"O2FFF\"},{\"goalCard\":\"O2PPP\"}],\"Color\":\"GREEN\",\"Hand\":[{\"normalCard\":\"NFEF_FF0\"},{\"normalCard\":\"N_FEFFF0\"},{\"goldenCard\":\"GEK_EFF1KFFP__\"}],\"chosenGoalIndex\":\"1\"}}";
         PlayerSetup playerSetup = (PlayerSetup) jsonConverter.JSONToObject(str);
-        assert (str.compareTo(jsonConverter.objectToJSON(playerSetup))==0);
+        assertEquals("SEEEE_F0AI_PIAF",playerSetup.getStarterCard().asString());
+        assertEquals("O2FFF",playerSetup.getGoals()[0].asString());
+        assertEquals("O2PPP",playerSetup.getGoals()[1].asString());
+        assertEquals(1,playerSetup.getChosenGoalIndex());
+        assertEquals(Color.GREEN,playerSetup.getColor());
+        assertEquals("NFEF_FF0",playerSetup.hand().getFirst().asString());
+        assertEquals("N_FEFFF0",playerSetup.hand().get(1).asString());
+        assertEquals("GEK_EFF1KFFP__",playerSetup.hand().getLast().asString());
+    }
+    @Test
+    @DisplayName("Converting object player to json")
+    public void playerConversionTest() throws JsonException,SyntaxException{
+        String str= "{\"Player\":{\"name\":\"Test\",\"Color\":\"GREEN\",\"Hand\":[{\"normalCard\":\"NFEF_FF0\"},{\"normalCard\":\"N_FEFFF0\"},{\"goldenCard\":\"GEK_EFB1KFFP__\"}],\"PersonalGoal\":{\"goalCard\":\"O2PPP\"},\"Score\":\"0\",\"PlayerSetup\":{\"StarterCard\":{\"starterCard\":\"SEEEE_F0AI_PIAF\"},\"Goals\":[{\"goalCard\":\"O2FFF\"},{\"goalCard\":\"O2PPP\"}],\"Color\":\"GREEN\",\"Hand\":[{\"normalCard\":\"NFEF_FF0\"},{\"normalCard\":\"N_FEFFF0\"},{\"goldenCard\":\"GEK_EFB1KFFP__\"}],\"chosenGoalIndex\":\"1\"},\"Board\":{\"placedCards\":[{\"PlacedCard\":{\"starterCard\":\"SEEEE_F0AI_PIAF\",\"Position\":\"X0Y0\"}}]}}}";
+        JsonConverter jsonConverter = new JsonConverter();
+        CardFactory cardFactory = new CardFactory();
+        GoalCard[] goalCards = new GoalCard[2];
+        goalCards[0] = (GoalCard) cardFactory.newSerialCard("O2FFF");
+        goalCards[1] = (GoalCard) cardFactory.newSerialCard("O2PPP");
+        ArrayList<PlayableCard> playerHand = new ArrayList<>();
+        playerHand.add((PlayableCard) cardFactory.newSerialCard("NFEF_FF0"));
+        playerHand.add((PlayableCard) cardFactory.newSerialCard("N_FEFFF0"));
+        playerHand.add((PlayableCard) cardFactory.newSerialCard("GEK_EFB1KFFP__"));
+
+        PlayerSetup playerSetup = new PlayerSetup((StarterCard) cardFactory.newSerialCard("SEEEE_F0AI_PIAF"),goalCards,playerHand,Color.fromInt(1));
+        Player player = new Player("Test",playerSetup);
+        player.getSetup().selectGoal(goalCards[1]);
+        player.applySetup();
+        assert(str.compareTo(jsonConverter.objectToJSON(player))==0);
+    }
+    @Test
+    @DisplayName("Converting JSON to player")
+    public void jsonPlayerConversionTest() throws JsonException, SyntaxException {
+        JsonConverter jsonConverter = new JsonConverter();
+        String str= "{\"Player\":{\"name\":\"Test\",\"Color\":\"GREEN\",\"Hand\":[{\"normalCard\":\"NFEF_FF0\"},{\"normalCard\":\"N_FEFFF0\"},{\"goldenCard\":\"GEK_EFB1KFFP__\"}],\"PersonalGoal\":{\"goalCard\":\"O2PPP\"},\"Score\":\"0\",\"PlayerSetup\":{\"StarterCard\":{\"starterCard\":\"SEEEE_F0AI_PIAF\"},\"Goals\":[{\"goalCard\":\"O2FFF\"},{\"goalCard\":\"O2PPP\"}],\"Color\":\"GREEN\",\"Hand\":[{\"normalCard\":\"NFEF_FF0\"},{\"normalCard\":\"N_FEFFF0\"},{\"goldenCard\":\"GEK_EFB1KFFP__\"}],\"chosenGoalIndex\":\"1\"},\"Board\":{\"placedCards\":[{\"PlacedCard\":{\"starterCard\":\"SEEEE_F0AI_PIAF\",\"Position\":\"X0Y0\"}}]}}}";
+        Player player = (Player) jsonConverter.JSONToObject(str);
+        assertEquals("Test",player.name());
+        assertEquals(0,player.getScore());
+        assertEquals(Color.GREEN,player.getColor());
+        assertEquals(3,player.getHand().size());
+        assertEquals("NFEF_FF0",player.getHand().getFirst().asString());
+        assertEquals("N_FEFFF0",player.getHand().get(1).asString());
+        assertEquals("GEK_EFB1KFFP__",player.getHand().getLast().asString());
+        assertEquals("O2PPP",player.getPersonalGoal().asString());
     }
 
     @Test
@@ -189,7 +206,7 @@ public class JsonConverterTest {
                 .count();
         assertEquals(0,checkNormalCard);
         assertEquals(40,deckNormal.size());
-
+        // golden deck checking
         ArrayList<String> deckGoldenCardString = new ArrayList<>(Arrays.asList("G_EEQFF1QFFA__", "GEK_EFF1KFFP__", "GMEE_FF1MFFI__", "GEE_EFF2EFFFA_", "GEEE_FF2EFFFP_", "GE_EEFF2EFFFI_", "GE_K_FF3_FFF__", "GQE__FF3_FFF__", "G_M_EFF3_FFF__", "GE_E_FF5_FFFFF",
                 "GQEE_PF1QPPI__", "GEM_EPF1MPPF__", "GE_KEPF1KPPA__", "G_EEEPF2EPPPI_", "GEEE_PF2EPPPA_", "GE_EEPF2EPPPF_", "GE_Q_PF3_PPP__", "GME__PF3_PPP__", "G_K_EPF3_PPP__", "GEE__PF5_PPPPP",
                 "GKEE_AF1KAAI__", "G_EEMAF1MAAP__", "GE_QEAF1QAAF__", "GEE_EAF2EAAAI_", "GE_EEAF2EAAAF_", "G_EEEAF2EAAAP_", "GE_M_AF3_AAA__", "GEK__AF3_AAA__", "G_E_QAF3_AAA__", "G_E_EAF5_AAAAA",
@@ -201,7 +218,7 @@ public class JsonConverterTest {
                 .count();
         assertEquals(0,checkGoldenCard);
         assertEquals(40,deckGold.size());
-
+        // starter deck checking
         ArrayList<String> deckStarterCardString = new ArrayList<>(Arrays.asList("SEPIE_F0I__FPIA", "SAEEF_F0F__PAFI", "SEEEE_F0PF_IAFP", "SEEEE_F0AI_PIAF", "SEE___F0AIPIFPA", "SEE___F0PAFFAPI"));
         Deck deckStarter = jsonConverter.JSONToDeck('S');
         int checkStarterCard = (int) deckStarter.getCards()
@@ -210,7 +227,7 @@ public class JsonConverterTest {
                 .count();
         assertEquals(0,checkStarterCard);
         assertEquals(6,deckStarter.size());
-
+        // goal deck checking
         ArrayList<String> deckGoalCardString = new ArrayList<>(Arrays.asList("O2FFF", "O2PPP", "O2AAA", "O2III", "O3QKM", "O2MM_", "O2KK_", "O2QQ_", "O2FFFD1", "O2PPPD0", "O2AAAD1", "O2IIID0", "O3PFFL3", "O3IPPL2", "O3FAAL1", "O3AIIL0"));
         Deck deckGoal = jsonConverter.JSONToDeck('O');
         int checkGoalCard = (int) deckGoal.getCards()
