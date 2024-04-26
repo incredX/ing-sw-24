@@ -10,7 +10,6 @@ import IS24_LB11.cli.notification.Priority;
 import IS24_LB11.cli.ViewHub;
 import IS24_LB11.game.PlayerSetup;
 import IS24_LB11.game.Result;
-import IS24_LB11.cli.Scoreboard;
 import IS24_LB11.game.components.GoalCard;
 import IS24_LB11.game.components.PlayableCard;
 import IS24_LB11.game.components.StarterCard;
@@ -24,6 +23,12 @@ public class SetupState extends ClientState {
     private final PlayerSetup setup;
     private Table table;
     private SetupStage setupStage;
+
+    public SetupState(LobbyState lobbyState, PlayerSetup setup, Table table) throws IOException {
+        super(lobbyState);
+        this.setup = setup;
+        this.table = table;
+    }
 
     public SetupState(ViewHub viewHub, NotificationStack stack, PlayerSetup setup, Table table) throws IOException {
         super(viewHub, stack);
@@ -111,6 +116,14 @@ public class SetupState extends ClientState {
         setup.chooseGoal(index);
         setupStage.setChosenGoal(index);
         viewHub.update();
+    }
+
+    public PlayerSetup getSetup() {
+        return setup;
+    }
+
+    public Table getTable() {
+        return table;
     }
 
     public StarterCard getStarterCard() {

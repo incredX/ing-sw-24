@@ -18,8 +18,8 @@ public class ServerEventHandler {
     private static final Gson gson = new Gson();
     private static ClientHandler clientHandler;
 
-    private static ArrayList<GoalCard> pickedGoalCards = null;
-    private static ArrayList<StarterCard> pickedStarterCards = null;
+    private static ArrayList<GoalCard> pickedGoalCards = new ArrayList<>();
+    private static ArrayList<StarterCard> pickedStarterCards = new ArrayList<>();
 
 
     // Method to handle incoming events
@@ -194,6 +194,8 @@ public class ServerEventHandler {
         if(checkEvent.equals("OK")){
 
             try {
+                System.out.println(event.toString());
+                System.out.println(event.get("goalCard").getAsString());
                 pickedGoalCards.add((GoalCard) CardFactory.newSerialCard(event.get("goalCard").getAsString()));
                 pickedStarterCards.add((StarterCard) CardFactory.newSerialCard(event.get("starterCard").getAsString()));
 

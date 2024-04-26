@@ -7,6 +7,7 @@ import IS24_LB11.cli.controller.ClientState;
 import IS24_LB11.cli.listeners.InputListener;
 import IS24_LB11.cli.listeners.ResizeListener;
 import IS24_LB11.cli.listeners.ServerHandler;
+import IS24_LB11.cli.notification.NotificationStack;
 import IS24_LB11.game.PlayerSetup;
 import IS24_LB11.game.components.*;
 import IS24_LB11.game.utils.Color;
@@ -35,7 +36,7 @@ public class Client {
                 state = new SetupState(viewHub, getDefaultSetup(), defaultTable());
             } else if (args.length == 1 && args[0].equals("game")) {
                 System.err.println(defaultTable());
-                state = new GameState(viewHub, getDefaultSetup(), defaultTable());
+                state = new GameState(viewHub, new NotificationStack(viewHub, 0), getDefaultSetup(), defaultTable());
             } else {
                 state = new LobbyState(viewHub);
             }
@@ -60,6 +61,7 @@ public class Client {
             ClientState nextState = state.execute();
             if (nextState == null) break;
             else {
+                System.out.println(state.toString()+" -> "+nextState.getClass());
                 state = nextState;
                 inputListener.setState(state);
                 resizeListener.setState(state);

@@ -44,10 +44,21 @@ public abstract class ClientState {
 
     public ClientState(ViewHub viewHub, NotificationStack notificationStack) {
         this.nextState = null;
+        this.username = "";
         this.queue = new ArrayBlockingQueue<>(QUEUE_CAPACITY);
         this.notificationStack = notificationStack;
         this.viewHub = viewHub;
         this.cmdLine = new CommandLine(viewHub.getScreenSize().getColumns());
+        viewHub.updateCommandLine(cmdLine);
+    }
+
+    public ClientState(ClientState state) {
+        this.nextState = null;
+        this.username = state.username;
+        this.queue = state.queue;
+        this.notificationStack = state.notificationStack;
+        this.viewHub = state.viewHub;
+        this.cmdLine = state.cmdLine;
         viewHub.updateCommandLine(cmdLine);
     }
 

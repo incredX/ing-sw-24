@@ -17,6 +17,13 @@ public class Scoreboard {
         indexCurrentPlayer = 0;
     }
 
+    public Scoreboard(ArrayList<String> players, ArrayList<Color> colors) {
+        this.players = players;
+        this.scores = new ArrayList<>(players.stream().map(p -> 0).toList());
+        this.colors = colors;
+        indexCurrentPlayer = 0;
+    }
+
     public void setScore(String playerName, int score) {
         for (int i = 0; i < players.size(); i++) {
             if (playerName.equals(players.get(i))) scores.set(i, score);

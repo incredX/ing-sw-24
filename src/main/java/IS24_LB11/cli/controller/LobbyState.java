@@ -10,16 +10,9 @@ import IS24_LB11.cli.view.stage.LobbyStage;
 import IS24_LB11.game.PlayerSetup;
 import IS24_LB11.game.Result;
 import IS24_LB11.cli.Scoreboard;
-import IS24_LB11.game.components.*;
-import IS24_LB11.game.utils.Color;
-import IS24_LB11.game.utils.SyntaxException;
 import com.googlecode.lanterna.input.KeyStroke;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import static IS24_LB11.cli.Client.defaultTable;
 import static IS24_LB11.cli.Client.getDefaultSetup;
@@ -49,9 +42,9 @@ public class LobbyState extends ClientState {
                 notificationStack.add(Priority.LOW, "received player setup");
                 try {
                     PlayerSetup setup = setupEvent.setup();
-                    Scoreboard scoreboard = new Scoreboard(setupEvent.playersList(), new ArrayList<>(), setupEvent.colorList());
+                    Scoreboard scoreboard = new Scoreboard(setupEvent.playersList(), setupEvent.colorList());
                     Table table = new Table(scoreboard, setupEvent.publicGoals());
-                    setNextState(new SetupState(viewHub, notificationStack, setup, table));
+                    setNextState(new SetupState(this, setup, table));
                 }
                 catch (IOException e) {
                     e.printStackTrace();
@@ -75,7 +68,7 @@ public class LobbyState extends ClientState {
                 else notificationStack.addUrgent("ERROR", MISSING_ARG.apply("set"));
             }
             case "SETUP" -> {
-                try { setNextState(new SetupState(viewHub, notificationStack, getDefaultSetup(), defaultTable())); } // wait server response to switch
+                try { setNextState(new SetupState(this, getDefaultSetup(), defaultTable())); } // wait server response to switch
                 catch (IOException e) {
                     e.printStackTrace();
                     quit();

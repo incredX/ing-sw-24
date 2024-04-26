@@ -47,10 +47,10 @@ public class GameState extends ClientState {
     private boolean cardPicked;
     private boolean readOnly;
 
-    public GameState(ViewHub viewHub, NotificationStack stack, PlayerSetup setup, Table table) throws IOException {
-        super(viewHub, stack);
-        this.player = new Player(username, setup);
-        this.table = table;
+    public GameState(SetupState setupState) throws IOException {
+        super(setupState);
+        this.player = new Player(username, setupState.getSetup());
+        this.table = setupState.getTable();
         this.normalDeck = new ArrayList<>();
         this.goldenDeck = new ArrayList<>();
         this.popManager = new PopupManager(new Popup[]{
@@ -65,8 +65,22 @@ public class GameState extends ClientState {
         this.readOnly = false;
     }
 
-    public GameState(ViewHub viewHub, PlayerSetup setup, Table table) throws IOException {
-        this(viewHub, new NotificationStack(viewHub, 0), setup, table);
+    public GameState(ViewHub viewHub, NotificationStack stack, PlayerSetup setup, Table table) throws IOException {
+        super(viewHub, stack);
+        this.player = new Player(username, setup);
+        this.table = table;
+        this.normalDeck = new ArrayList<>();
+        this.goldenDeck = new ArrayList<>();
+        this.popManager = new PopupManager(new Popup[]{
+                new TablePopup(viewHub, this),
+                new HandPopup(viewHub, this),
+                new DecksPopup(viewHub, this)}
+        );
+        this.boardPointer = new Position(0, 0);
+        this.placedCard = null;
+        this.cardPlaced = false;
+        this.cardPicked = false;
+        this.readOnly = false;
     }
 
     @Override
