@@ -18,8 +18,8 @@ public class ServerEventHandler {
     private static final Gson gson = new Gson();
     private static ClientHandler clientHandler;
 
-    private static ArrayList<GoalCard> pickedGoalCards = null;
-    private static ArrayList<StarterCard> pickedStarterCards = null;
+    private static ArrayList<GoalCard> pickedGoalCards = new ArrayList<>();
+    private static ArrayList<StarterCard> pickedStarterCards = new ArrayList<>();
 
 
     // Method to handle incoming events
