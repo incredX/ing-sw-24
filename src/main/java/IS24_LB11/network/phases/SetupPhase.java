@@ -1,6 +1,7 @@
 package IS24_LB11.network.phases;
 
 import IS24_LB11.game.Game;
+import IS24_LB11.game.Player;
 import IS24_LB11.game.components.GoalCard;
 import IS24_LB11.game.tools.JsonConverter;
 import IS24_LB11.game.tools.JsonException;
@@ -11,7 +12,7 @@ import com.google.gson.JsonParser;
 
 import java.util.ArrayList;
 
-public class PickPhase {
+public class SetupPhase {
 
     public static void startPhase(ClientHandler clientHandler, Game game) {
 
@@ -28,8 +29,6 @@ public class PickPhase {
 
                 JsonObject obj = new JsonObject();
                 obj.addProperty("type", "setup");
-
-                // check if this works
                 obj.add("setup", new JsonParser().parse(playerSetup));
 
                 ArrayList<String> publicGoals = new ArrayList<>();
@@ -37,6 +36,18 @@ public class PickPhase {
                     publicGoals.add(goalCard.asString());
                 }
                 obj.add("publicGoals", gson.toJsonTree(publicGoals));
+
+                ArrayList<String> playerNames = new ArrayList<>();
+                for(Player player : clientHandler.getGame().getPlayers()) {
+                    playerNames.add(player.name());
+                }
+                obj.add("playerNames", gson.toJsonTree(playerNames));
+
+                ArrayList<String> colors = new ArrayList<>();
+                for(Player player : clientHandler.getGame().getPlayers()) {
+                    colors.add(player.getColor().name());
+                }
+                obj.add("colors", gson.toJsonTree(colors));
 
                 clHandler.sendMessage(obj.toString());
 

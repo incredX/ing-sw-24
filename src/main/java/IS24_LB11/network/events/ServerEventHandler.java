@@ -48,8 +48,8 @@ public class ServerEventHandler {
             case "setup":
                 handleSetupEvent(event);
                 break;
-            case "placedCard":
-                handlePlacedCardEvent(event);
+            case "turnActions":
+                handleTurnActionsEvent(event);
                 break;
             case "scoreboard":
                 handleScoreboardEvent(event);
@@ -199,8 +199,11 @@ public class ServerEventHandler {
 
                 // start notify turn phase
                 if (pickedGoalCards.size() == clientHandler.getMaxPlayers()) {
+                    // choose goals for each player
+                    clientHandler.getGame().chooseGoalPhase(pickedGoalCards, pickedStarterCards);
+
                     new Thread(() ->{
-                        NotifyTurnPhase.startPhase(clientHandler, pickedGoalCards, pickedStarterCards);
+                        NotifyTurnPhase.startPhase(clientHandler);
                     }).start();
                 }
             } catch (SyntaxException e) {
@@ -231,7 +234,7 @@ public class ServerEventHandler {
     }
 
 
-    private static void handlePlacedCardEvent(JsonObject event){
+    private static void handleTurnActionsEvent(JsonObject event){
 
         String hasProps = hasProperties(event, "placedCard", "deckType", "indexVisibleCards");
 
@@ -245,8 +248,6 @@ public class ServerEventHandler {
             response.addProperty("error", hasProps);
             clientHandler.sendMessage(response.toString());
         }
-
-
     }
 
 

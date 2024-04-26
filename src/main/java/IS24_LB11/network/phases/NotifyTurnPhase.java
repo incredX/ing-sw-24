@@ -1,9 +1,8 @@
 package IS24_LB11.network.phases;
 
-import IS24_LB11.game.components.GoalCard;
+import IS24_LB11.game.Player;
 import IS24_LB11.game.components.GoldenCard;
 import IS24_LB11.game.components.NormalCard;
-import IS24_LB11.game.components.StarterCard;
 import IS24_LB11.network.ClientHandler;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -16,25 +15,38 @@ public class NotifyTurnPhase {
 
     static Gson gson = new Gson();
 
-    public static void startPhase(ClientHandler clientHandler, ArrayList<GoalCard> pickedGoalCards, ArrayList<StarterCard> pickedStarterCards) {
-        clientHandler.getGame().chooseGoalPhase(pickedGoalCards, pickedStarterCards);
+    public static void startPhase(ClientHandler clientHandler) {
+        JsonObject response = new JsonObject();
 
-        // notify first player turn
-        JsonObject notification = new JsonObject();
-        notification.addProperty("type", "notification");
-        notification.addProperty("message", "It is your turn");
-        clientHandler.getClientHandlerWithUsername(clientHandler.getGame().currentPlayer().name()).sendMessage(notification.toString());
+        // send notification to next player turn
+        response.addProperty("type", "notification");
+        response.addProperty("message", "It is your turn");
+        clientHandler.getClientHandlerWithUsername(clientHandler.getGame().currentPlayer().name())
+                .sendMessage(response.toString());
+        response.remove("message");
 
 
-        notification.addProperty("type", "turn");
-        notification.addProperty("player", clientHandler.getGame().currentPlayer().name());
+        response.addProperty("type", "turn");
+        if(clientHandler.getGame().hasGameEnded())
+            response.addProperty("player", "");
+        else
+            response.addProperty("player", clientHandler.getGame().currentPlayer().name());
 
-        // add first three cards of each deck to notification
-        for (Map.Entry<String, JsonElement> entry : get3CardsFromEachDeck(clientHandler).entrySet()) {
-            notification.add(entry.getKey(), entry.getValue());
+        //add player respective scores
+        ArrayList<String> scores = new ArrayList<>();
+        for(Player player : clientHandler.getGame().getPlayers()) {
+            scores.add(String.valueOf(player.getScore()));
         }
+        response.add("scores", gson.toJsonTree(scores));
 
-        clientHandler.getClientHandlerWithUsername(clientHandler.getGame().currentPlayer().name()).sendMessage(notification.toString());
+
+        // add first three cards of each deck to response
+        for (Map.Entry<String, JsonElement> entry : get3CardsFromEachDeck(clientHandler).entrySet()) {
+            response.add(entry.getKey(), entry.getValue());
+        }
+        //send current player turn to every player
+        clientHandler.broadcast(response.toString());
+        clientHandler.sendMessage(response.toString());
     }
 
     private static JsonObject get3CardsFromEachDeck(ClientHandler clientHandler) {
