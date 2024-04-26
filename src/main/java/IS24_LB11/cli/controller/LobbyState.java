@@ -37,6 +37,7 @@ public class LobbyState extends ClientState {
         switch (serverEvent) {
             case ServerLoginEvent loginEvent -> {
                 username = loginEvent.username();
+                System.out.println("username set to " + username);
             }
             case ServerPlayerSetupEvent setupEvent -> {
                 notificationStack.add(Priority.LOW, "received player setup");

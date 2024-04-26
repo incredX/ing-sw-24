@@ -149,6 +149,7 @@ public abstract class ClientState {
         if (tokens.length == 0) return true;
         switch (tokens[0].toUpperCase()) {
             case "QUIT" -> {
+                sendToServer("quit");
                 quit();
                 return true;
             }

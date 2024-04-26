@@ -4,9 +4,7 @@ import IS24_LB11.game.Player;
 import IS24_LB11.game.components.GoldenCard;
 import IS24_LB11.game.components.NormalCard;
 import IS24_LB11.network.ClientHandler;
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import com.google.gson.*;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -33,11 +31,11 @@ public class NotifyTurnPhase {
             response.addProperty("player", clientHandler.getGame().currentPlayer().name());
 
         //add player respective scores
-        ArrayList<String> scores = new ArrayList<>();
+        JsonArray scores = new JsonArray();
         for(Player player : clientHandler.getGame().getPlayers()) {
-            scores.add(String.valueOf(player.getScore()));
+            scores.add(new JsonPrimitive(player.getScore()));
         }
-        response.addProperty("scores", new Gson().toJson(scores));
+        response.add("scores", scores);
 
 
         // add first three cards of each deck to response
@@ -53,18 +51,16 @@ public class NotifyTurnPhase {
         JsonObject obj = new JsonObject();
 
         //add first 3 normal cards
-        ArrayList<String> cards = new ArrayList<>();
-        cards.add(((NormalCard) clientHandler.getGame().getNormalDeck().getCards().get(0)).asString());
-        cards.add(((NormalCard) clientHandler.getGame().getNormalDeck().getCards().get(1)).asString());
-        cards.add(((NormalCard) clientHandler.getGame().getNormalDeck().getCards().get(2)).asString());
-        obj.addProperty("normalDeck", gson.toJson(cards));
+        JsonArray normalCards = new JsonArray();
+        for (int i=0; i<3; i++)
+            normalCards.add(new JsonPrimitive(clientHandler.getGame().getNormalDeck().getCards().get(i).asString()));
+        obj.add("normalDeck", normalCards);
 
         // add first 3 gold cards
-        cards.clear();
-        cards.add(((GoldenCard) clientHandler.getGame().getGoldenDeck().getCards().get(0)).asString());
-        cards.add(((GoldenCard) clientHandler.getGame().getGoldenDeck().getCards().get(1)).asString());
-        cards.add(((GoldenCard) clientHandler.getGame().getGoldenDeck().getCards().get(2)).asString());
-        obj.addProperty("goldDeck", gson.toJson(cards));
+        JsonArray goldenCards = new JsonArray();
+        for (int i=0; i<3; i++)
+            goldenCards.add(new JsonPrimitive(clientHandler.getGame().getGoldenDeck().getCards().get(i).asString()));
+        obj.add("goldenDeck", goldenCards);
 
         return obj;
     }

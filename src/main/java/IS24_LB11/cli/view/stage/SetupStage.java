@@ -85,10 +85,9 @@ public class SetupStage extends Stage {
     }
 
     private void drawGoals() {
-        String[] legends = new String[] {"Gaol (a)", "Gaol (b)"};
         for (int i=0; i<goalViews.size(); i++) {
             draw(goalViews.get(i));
-            fillRow(goalViews.get(i).getY(), goalViews.get(i).getX()+5, legends[i]);
+            fillRow(goalViews.get(i).getY(), goalViews.get(i).getX()+5, GOAL_LABELS[i]);
             buildRelativeArea(goalViews.get(i).getRectangle()
                     .withRelativePosition(0,-1)
                     .withRelativeSize(0,2));

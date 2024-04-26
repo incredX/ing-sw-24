@@ -6,9 +6,7 @@ import IS24_LB11.game.components.GoalCard;
 import IS24_LB11.game.tools.JsonConverter;
 import IS24_LB11.game.tools.JsonException;
 import IS24_LB11.network.ClientHandler;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
 
 
 import java.util.ArrayList;
@@ -32,23 +30,23 @@ public class SetupPhase {
                 obj.addProperty("type", "setup");
                 obj.add("setup", new JsonParser().parse(playerSetup));
 
-                ArrayList<String> publicGoals = new ArrayList<>();
+                JsonArray publicGoals = new JsonArray();
                 for(GoalCard goalCard: clientHandler.getGame().getPublicGoals()) {
-                    publicGoals.add(goalCard.asString());
+                    publicGoals.add(new JsonPrimitive(goalCard.asString()));
                 }
-                obj.addProperty("publicGoals", new Gson().toJson(publicGoals));
+                obj.add("publicGoals", publicGoals);
 
-                ArrayList<String> playerNames = new ArrayList<>();
+                JsonArray playerNames = new JsonArray();
                 for(Player player : clientHandler.getGame().getPlayers()) {
-                    playerNames.add(player.name());
+                    playerNames.add(new JsonPrimitive(player.name()));
                 }
-                obj.addProperty("playerNames", new Gson().toJson(playerNames));
+                obj.add("playerNames", playerNames);
 
-                ArrayList<String> colors = new ArrayList<>();
+                JsonArray colors = new JsonArray();
                 for(Player player : clientHandler.getGame().getPlayers()) {
-                    colors.add(player.getColor().name());
+                    colors.add(new JsonPrimitive(player.getColor().name()));
                 }
-                obj.addProperty("colors", new Gson().toJson(colors));
+                obj.add("colors", colors);
 
                 clHandler.sendMessage(obj.toString());
 
