@@ -194,8 +194,6 @@ public class ServerEventHandler {
         if(checkEvent.equals("OK")){
 
             try {
-                System.out.println(event.toString());
-                System.out.println(event.get("goalCard").getAsString());
                 pickedGoalCards.add((GoalCard) CardFactory.newSerialCard(event.get("goalCard").getAsString()));
                 pickedStarterCards.add((StarterCard) CardFactory.newSerialCard(event.get("starterCard").getAsString()));
 
