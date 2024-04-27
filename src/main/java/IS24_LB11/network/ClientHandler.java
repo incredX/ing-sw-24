@@ -126,6 +126,7 @@ public class ClientHandler implements Runnable {
 
     public void exit() {
         try {
+            System.out.println("Closing connection for " + userName);
             connectionClosed = true;
             in.close();
             out.close();
