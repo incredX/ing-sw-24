@@ -30,7 +30,7 @@ public class SetupStage extends Stage {
     }
 
     @Override
-    public void build() {
+    public void drawAll() {
         drawBorders();
         drawStarterCard();
         drawGoalPointer();
@@ -45,7 +45,7 @@ public class SetupStage extends Stage {
         placeStarterCard();
         placeGoals();
         placeHandHorizontal();
-        rebuild();
+        redraw();
     }
 
     public void setChosenGoal(int index) {
@@ -80,13 +80,13 @@ public class SetupStage extends Stage {
     }
 
     private void drawStarterCard() {
-        draw(starterCardView);
+        drawBox(starterCardView);
         buildRelativeArea(starterCardView.getRectangle());
     }
 
     private void drawGoals() {
         for (int i=0; i<goalViews.size(); i++) {
-            draw(goalViews.get(i));
+            drawBox(goalViews.get(i));
             fillRow(goalViews.get(i).getY(), goalViews.get(i).getX()+5, GOAL_LABELS[i]);
             buildRelativeArea(goalViews.get(i).getRectangle()
                     .withRelativePosition(0,-1)
@@ -98,7 +98,7 @@ public class SetupStage extends Stage {
         int x = handView.getLast().getXAndWidth(), y = handView.getLast().getYAndHeight();
         if (!rectangle.contains(new TerminalPosition(x, y))) return;
         for (PlayableCardView hand : handView) {
-            draw(hand);
+            drawBox(hand);
             buildRelativeArea(hand.getRectangle());
         }
     }

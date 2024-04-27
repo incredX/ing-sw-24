@@ -33,7 +33,7 @@ public class DecksPopup extends Popup {
         castView(decksView -> {
             decksView.loadGoldenDeck(gameState.getGoldenDeck());
             decksView.loadNormalDeck(gameState.getNormalDeck());
-            decksView.build();
+            decksView.drawAll();
         });
     }
 
@@ -53,7 +53,7 @@ public class DecksPopup extends Popup {
     public void enable() {
         castView(decksView -> {
             decksView.updatePointerPosition(deckIsNormal, cardIndex);
-            decksView.build();
+            decksView.drawAll();
         });
         super.enable();
     }
@@ -62,7 +62,7 @@ public class DecksPopup extends Popup {
     public void disable() {
         castView(decksView -> {
             decksView.hidePointer();
-            decksView.build();
+            decksView.drawAll();
         });
         super.disable();
     }
@@ -114,7 +114,7 @@ public class DecksPopup extends Popup {
         } else deckIsNormal = !deckIsNormal;
         castView(decksView -> {
             decksView.updatePointerPosition(deckIsNormal, cardIndex);
-            decksView.build();
+            decksView.drawAll();
         });
     }
 

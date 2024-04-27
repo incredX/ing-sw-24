@@ -1,7 +1,6 @@
 package IS24_LB11.cli.view.game;
 
-import IS24_LB11.cli.utils.Cell;
-import IS24_LB11.cli.utils.CellFactory;
+import IS24_LB11.cli.utils.SymbolAdapter;
 import IS24_LB11.game.components.GoldenCard;
 import IS24_LB11.game.symbol.Empty;
 import IS24_LB11.game.symbol.Suit;
@@ -14,8 +13,8 @@ public class GoldenCardView extends PlayableCardView {
         super(card);
     }
 
-    public void build() {
-        super.build();
+    public void drawAll() {
+        super.drawAll();
         drawSuitsNeeded();
         drawPoints();
     }
@@ -33,11 +32,11 @@ public class GoldenCardView extends PlayableCardView {
         char symbol = Symbol.toChar(card.getPointsCondition());
 
         if (symbol == Empty.CHAR) symbol = '#';
-        drawCell(center, '|');
-        drawCell(center.withRelative(-2, 0), new Cell((char)(card.getPoints()+'0'), TextColor.ANSI.YELLOW_BRIGHT));
-        drawCell(center.withRelative(2, 0), new Cell(symbol, TextColor.ANSI.YELLOW_BRIGHT));
-        drawCell(center.withRelative(-4, 0), '[');
-        drawCell(center.withRelative(4, 0), ']');
+        drawChar(center, '|');
+        drawChar(center.withRelative(-2, 0), (char)(card.getPoints()+'0'), TextColor.ANSI.YELLOW_BRIGHT);
+        drawChar(center.withRelative(2, 0), symbol, TextColor.ANSI.YELLOW_BRIGHT);
+        drawChar(center.withRelative(-4, 0), '[');
+        drawChar(center.withRelative(4, 0), ']');
     }
 
     private void drawSuitsNeeded() {
@@ -46,11 +45,11 @@ public class GoldenCardView extends PlayableCardView {
         int numSuits = (int) card.getSuitsNeeded().stream().filter(suit -> suit != null).count();
         TerminalPosition pos = new TerminalPosition((WIDTH)/2-numSuits-1, lastRow());
 
-        drawCell(pos, '[');
-        drawCell(pos.withRelative(numSuits*2+2, 0), ']');
+        drawChar(pos, '[');
+        drawChar(pos.withRelative(numSuits*2+2, 0), ']');
         for (int i=0; i<numSuits; i++) {
             Suit suit = card.getSuitsNeeded().get(i);
-            drawCell(pos.withRelative(2+i*2, 0), CellFactory.fromSymbol(suit));
+            drawChar(pos.withRelative(2+i*2, 0), SymbolAdapter.fromSymbol(suit));
         }
     }
 

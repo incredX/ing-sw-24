@@ -22,7 +22,7 @@ public abstract class Popup<T extends PopupView> {
     }
 
     public void updateView() {
-        popView.build();
+        popView.drawAll();
         viewHub.update();
     }
 
@@ -36,7 +36,7 @@ public abstract class Popup<T extends PopupView> {
         popView.resize(viewHub.getScreenSize());
         if (visible) {
             if (!viewInsideStage()) hide();
-            else viewHub.getStage().setCover(popView, true);
+            //else viewHub.getStage().setCover(popView, true);
         }
     }
 

@@ -27,7 +27,7 @@ public class DecksView extends CardsBoxView {
     }
 
     @Override
-    public void build() {
+    public void drawAll() {
         drawBorders();
         drawTitle();
         drawNormalDeck();
@@ -50,7 +50,7 @@ public class DecksView extends CardsBoxView {
         for (NormalCard normalCard : normalCards) {
             normalDeck.add(new NormalCardView(normalCard));
             normalDeck.getLast().setPosition(0, y);
-            normalDeck.getLast().build();
+            normalDeck.getLast().drawAll();
             y += HEIGHT + (y == HEIGHT ? 1 : 0);
         }
     }
@@ -62,7 +62,7 @@ public class DecksView extends CardsBoxView {
         for (GoldenCard goldenCard : goldenCards) {
             goldenDeck.add(new GoldenCardView(goldenCard));
             goldenDeck.getLast().setPosition(firstRow()+WIDTH-1, y);
-            goldenDeck.getLast().build();
+            goldenDeck.getLast().drawAll();
             y += HEIGHT + (y == HEIGHT ? 1 : 0);
         }
     }
@@ -73,11 +73,11 @@ public class DecksView extends CardsBoxView {
     }
 
     private void drawNormalDeck() {
-        for (NormalCardView normalCard : normalDeck) draw(normalCard);
+        for (NormalCardView normalCard : normalDeck) drawBox(normalCard);
     }
 
     private void drawGoldenDeck() {
-        for (GoldenCardView goldenCard : goldenDeck) draw(goldenCard);
+        for (GoldenCardView goldenCard : goldenDeck) drawBox(goldenCard);
     }
 
     public void updatePointerPosition(boolean deck, int cardIndex) {

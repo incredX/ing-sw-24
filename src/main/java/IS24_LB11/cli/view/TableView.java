@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 public class TableView extends PopupView {
     private static final int DEFAULT_WIDTH = 60;
     private static final int DEFAULT_HEIGHT = 16;
-    private static final String DASHED_HORIZONTAL_SEPARATOR = "-".repeat(DEFAULT_WIDTH-2);
+    private static final String DASHED_HORIZONTAL_SEPARATOR = "-".repeat(DEFAULT_WIDTH-4);
 
     private ArrayList<String> players;
     private ArrayList<TextColor> colors;
@@ -36,7 +36,7 @@ public class TableView extends PopupView {
     }
 
     @Override
-    public void build() {
+    public void drawAll() {
         drawBorders();
         drawStructure();
         drawGoals();
@@ -71,7 +71,7 @@ public class TableView extends PopupView {
 
     public void loadCurrentPlayer(int indexCurrentPlayer) {
         this.indexCurrentPlayer = indexCurrentPlayer;
-        fillRow(firstRow()+2+indexCurrentPlayer, firstColumn(), '>');
+        drawChar(firstColumn(), firstRow()+2+indexCurrentPlayer, '>', TextColor.ANSI.DEFAULT);
     }
 
     public void loadGoals(ArrayList<GoalCard> goals) {
@@ -83,7 +83,7 @@ public class TableView extends PopupView {
                 default -> throw new IllegalStateException("Invalid goal: " + goal);
             }
             goalViews.getLast().setPosition(x, lastRow()-GoalView.HEIGHT);
-            goalViews.getLast().build();
+            goalViews.getLast().drawAll();
             if (goalViews.size() == 1) x += GoalView.WIDTH+3;
             else x += GoalView.WIDTH;
         }
@@ -102,7 +102,7 @@ public class TableView extends PopupView {
     }
 
     private void drawGoals() {
-        for (GoalView goal : goalViews) draw(goal);
+        for (GoalView goal : goalViews) drawBox(goal);
     }
 
     private TextColor adaptColor(Color color) {

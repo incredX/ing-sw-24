@@ -3,14 +3,10 @@ package IS24_LB11.cli.view;
 import IS24_LB11.cli.CommandLine;
 import IS24_LB11.cli.style.SingleBorderStyle;
 import IS24_LB11.cli.utils.CliBox;
-import IS24_LB11.cli.utils.Side;
-import IS24_LB11.game.utils.Direction;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
-import com.googlecode.lanterna.terminal.Terminal;
-
-import java.io.IOException;
+import com.googlecode.lanterna.screen.Screen;
 
 import static IS24_LB11.cli.utils.Side.EAST;
 import static IS24_LB11.cli.utils.Side.WEST;
@@ -32,21 +28,20 @@ public class CommandLineView extends CliBox {
     }
 
     @Override
-    public void build() {
+    public void drawAll() {
         drawBorders();
         drawCommandLine();
     }
 
     @Override
-    public void print(Terminal terminal) throws IOException {
-        terminal.setCursorPosition(cursorPosition);
-        super.print(terminal);
+    public void print(Screen screen) {
+        screen.setCursorPosition(cursorPosition);
+        super.print(screen);
     }
 
     public void buildCommandLine(CommandLine commandLine) {
         setCursorPosition(commandLine.getCursor());
         commandString = commandLine.getVisibleLine();
-        //drawCommandLine();
     }
 
     public void drawCommandLine() {
@@ -57,14 +52,14 @@ public class CommandLineView extends CliBox {
     @Override
     protected void drawBorders() {
         super.drawBorders();
-        drawCell(getCornerPosition(UP_LEFT), borderStyle.getSeparator(WEST), TextColor.ANSI.DEFAULT);
-        drawCell(getCornerPosition(UP_RIGHT), borderStyle.getSeparator(EAST), TextColor.ANSI.DEFAULT);
+        drawChar(getCornerPosition(UP_LEFT), borderStyle.getSeparator(WEST), TextColor.ANSI.DEFAULT);
+        drawChar(getCornerPosition(UP_RIGHT), borderStyle.getSeparator(EAST), TextColor.ANSI.DEFAULT);
     }
 
     @Override
     public void resize(TerminalSize newSize) {
         rectangle.setPosition(0, newSize.getRows()-3);
-        setSize(newSize.withRows(3));
+        super.resize(newSize.withRows(3));
     }
 
     public void setCursorPosition(int cursor) {

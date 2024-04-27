@@ -38,8 +38,9 @@ public class TablePopup extends Popup {
             tableView.loadColors(scoreboard.getColors());
             tableView.loadPlayers(scoreboard.getPlayers());
             tableView.loadScores(scoreboard.getScores());
+            tableView.loadCurrentPlayer(scoreboard.getIndexCurrentPlayer());
             tableView.loadGoals(getGoals());
-            tableView.build();
+            tableView.drawAll();
         });
     }
 

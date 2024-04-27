@@ -27,7 +27,7 @@ public class LobbyState extends ClientState {
 
     @Override
     public ClientState execute() {
-        lobbyStage = viewHub.setLobbyStage();
+        lobbyStage = viewHub.setLobbyStage(this);
         processResize(viewHub.getScreenSize());
         return super.execute();
     }
@@ -37,10 +37,8 @@ public class LobbyState extends ClientState {
         switch (serverEvent) {
             case ServerLoginEvent loginEvent -> {
                 username = loginEvent.username();
-                System.out.println("username set to " + username);
             }
             case ServerPlayerSetupEvent setupEvent -> {
-                notificationStack.add(Priority.LOW, "received player setup");
                 try {
                     PlayerSetup setup = setupEvent.setup();
                     Scoreboard scoreboard = new Scoreboard(setupEvent.playersList(), setupEvent.colorList());
@@ -113,9 +111,6 @@ public class LobbyState extends ClientState {
 
     private void processCommandPopup(String argument) {
         String[] tokens = argument.split(" ", 3);
-        System.out.print("POPUP: ");
-        for (String token: tokens) System.out.print(token + ", ");
-        System.out.print("\n");
         Priority priority;
         try { priority = Priority.valueOf(tokens[0].toUpperCase()); }
         catch (IllegalArgumentException e) {
@@ -124,10 +119,8 @@ public class LobbyState extends ClientState {
         }
         if (tokens.length >= 3) {
             notificationStack.add(priority, tokens[1], tokens[2]);
-            System.out.println("added popup.");
         } else if (tokens.length == 2) {
             notificationStack.add(priority, tokens[1]);
-            System.out.println("added popup.");
         } else {
             notificationStack.addUrgent("ERROR", MISSING_ARG.apply("popup"));
         }

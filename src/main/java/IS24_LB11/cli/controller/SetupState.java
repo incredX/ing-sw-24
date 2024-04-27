@@ -83,7 +83,7 @@ public class SetupState extends ClientState {
                         new String[]{"starterCard","goalCard"},
                         new String[]{setup.getStarterCard().asString(), setup.chosenGoal().asString()});
                 setupStage.clear();
-                try { setNextState(new GameState(viewHub, notificationStack, setup, table)); }
+                try { setNextState(new GameState(this)); }
                 catch (IOException e) {
                     e.printStackTrace();
                     quit();
@@ -105,7 +105,7 @@ public class SetupState extends ClientState {
                 setup.getStarterCard().flip();
                 setupStage.loadStarterCard();
                 setupStage.placeStarterCard();
-                setupStage.build();
+                setupStage.drawAll();
             }
         } else {
             super.processCommonKeyStrokes(keyStroke);

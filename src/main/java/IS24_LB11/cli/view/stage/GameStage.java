@@ -35,7 +35,7 @@ public class GameStage extends Stage {
     }
 
     @Override
-    public void build() {
+    public void drawAll() {
         drawBorders();
         drawGrid();
         drawPlacedCards();
@@ -61,13 +61,13 @@ public class GameStage extends Stage {
 
         if (gridShiftSide != null) {
             shiftGridBase(gridShiftSide);
-            rebuild();
+            redraw();
         }else drawPointer();
     }
 
     public void updateBoard() {
         loadCardViews();
-        rebuild();
+        redraw();
     }
 
     public void centerBoard() {
@@ -87,7 +87,7 @@ public class GameStage extends Stage {
             TerminalPosition terminalPosition = convertPosition(cardView.getBoardPosition());
             terminalPosition = terminalPosition.withRelative(-3, -1);
             cardView.setPosition(terminalPosition);
-            draw(cardView);
+            drawBox(cardView);
             buildRelativeArea(size.withRelativeRows(1), terminalPosition.max(new TerminalPosition(0,0)));
         }
     }

@@ -1,6 +1,8 @@
 package IS24_LB11.cli;
 
+import IS24_LB11.cli.controller.ClientState;
 import IS24_LB11.cli.controller.GameState;
+import IS24_LB11.cli.controller.LobbyState;
 import IS24_LB11.cli.controller.SetupState;
 import IS24_LB11.cli.view.PopupView;
 import IS24_LB11.cli.view.CommandLineView;
@@ -10,29 +12,27 @@ import IS24_LB11.cli.view.stage.LobbyStage;
 import IS24_LB11.cli.view.stage.SetupStage;
 import IS24_LB11.cli.view.stage.Stage;
 import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
-import com.googlecode.lanterna.terminal.Terminal;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 public class ViewHub implements Runnable {
     private final Object lock = new Object();
-    private final Terminal terminal;
+    private final Screen screen;
     private final CommandLineView commandLineView;
     private final ArrayList<PopupView> popups;
     private NotificationView notificationView;
-    private Stage stage;
     private TerminalSize screenSize;
+    private ClientState state;
+    private Stage stage;
     private int nextPopupId;
 
     public ViewHub() throws IOException {
-        Charset charset = StandardCharsets.UTF_8;
-        terminal = new DefaultTerminalFactory(System.out, System.in, charset).createTerminal();
-        terminal.enterPrivateMode();
-        screenSize = terminal.getTerminalSize();
+        screen = new DefaultTerminalFactory().createScreen();
+        screen.startScreen();
+        screenSize = screen.getTerminalSize();
         commandLineView = new CommandLineView(screenSize);
         stage = new Stage(this);
         popups = new ArrayList<>(4);
@@ -42,46 +42,47 @@ public class ViewHub implements Runnable {
 
     @Override
     public void run() {
-        Thread.currentThread().setName("thread-view-hub");
+        Thread.currentThread().setName("view-hub");
         while (true) {
             synchronized (lock) {
                 try {
-                    // timeout should be unnecessary: the lock should be waked every time the screen need to be updated
-                    lock.wait(100);
-                    stage.print(terminal);
-                    for (PopupView popup : popups) popup.print(terminal);
-                    if (notificationView != null) notificationView.print(terminal);
-                    commandLineView.print(terminal);
-                    terminal.flush();
+                    stage.print(screen);
+                    for (PopupView popup : popups) popup.print(screen);
+                    if (notificationView != null) notificationView.print(screen);
+                    commandLineView.print(screen);
+                    screen.refresh();
+                    lock.wait();
                 }
                 catch (InterruptedException e) { break; }
-                catch (IOException e) {
-                    System.err.println("caught exception: "+e.getMessage());
-                }
+                catch (IOException e) { Debugger.print(e); }
             }
         }
         try {
-            terminal.exitPrivateMode();
-        } catch (IOException e) {
-            System.err.println("caught exception: "+e.getMessage());
-        }
-        System.out.println(Thread.currentThread().getName() + " offline");
+            screen.close();
+        } catch (IOException e) { Debugger.print(e); }
+        Debugger.print("thread terminated.");
     }
 
     public void resize(TerminalSize size, CommandLine commandLine) {
         screenSize = size;
         synchronized (lock) {
-            try { terminal.clearScreen(); }
-            catch (IOException ignored) { }
+            screen.clear();
             commandLineView.resize(size);
             commandLineView.buildCommandLine(commandLine);
-            commandLineView.build();
+            commandLineView.drawAll();
             stage.resize();
             if (notificationView != null) {
                 notificationView.resize(size);
-                notificationView.build();
+                notificationView.drawAll();
             }
             lock.notify();
+        }
+        Debugger.print("resize");
+    }
+
+    public TerminalSize screenSizeChanged() {
+        synchronized (lock) {
+            return screen.doResizeIfNecessary();
         }
     }
 
@@ -93,7 +94,7 @@ public class ViewHub implements Runnable {
 
     public void updateStage() {
         synchronized (lock) {
-            stage.build();
+            stage.drawAll();
             lock.notify();
         }
     }
@@ -101,15 +102,17 @@ public class ViewHub implements Runnable {
     public void updateCommandLine(CommandLine commandLine) {
         synchronized (lock) {
             commandLineView.buildCommandLine(commandLine);
-            commandLineView.build();
-            lock.notify(); }
+            commandLineView.drawAll();
+            lock.notify();
+        }
     }
 
     public void addNotification(String message, String title) {
-        notificationView = new NotificationView(screenSize, title, message);
-        notificationView.build();
-        stage.setCover(notificationView, true);
-        update();
+        synchronized (lock) {
+            notificationView = new NotificationView(screenSize, title, message);
+            notificationView.drawAll();
+            lock.notify();
+        }
     }
 
     public void addNotification(String message) {
@@ -118,7 +121,7 @@ public class ViewHub implements Runnable {
 
     public void removeNotification() {
         if (notificationView != null) {
-            stage.setCover(notificationView, false);
+            //stage.setCover(notificationView, false);
             stage.buildArea(notificationView.getRectangle());
             notificationView = null;
             update();
@@ -128,10 +131,9 @@ public class ViewHub implements Runnable {
     public void addPopup(PopupView popup) {
         synchronized (lock) {
             popups.add(popup);
-            stage.setCover(popups.getLast(), true);
+            //stage.setCover(popups.getLast(), true);
         }
         popups.getLast().setId(nextPopupId);
-        System.out.printf("new popup (%d) in %s, %s\n", nextPopupId, popup.getPosition(), popup.getSize());
         nextPopupId++;
     }
 
@@ -139,37 +141,41 @@ public class ViewHub implements Runnable {
         synchronized (lock) {
             for(int i=0; i<popups.size(); i++) {
                 if (popups.get(i).getId() != id) continue;
-                stage.setCover(popups.get(i), false);
+                //stage.setCover(popups.get(i), false);
                 stage.buildArea(popups.remove(i).getRectangle());
-                System.out.printf("popup %d removed\n", nextPopupId);
                 break;
             }
             if (popups.isEmpty()) nextPopupId = 0;
         }
     }
 
-    public GameStage setGameStage(GameState state) {
-        GameStage gameStage = new GameStage(state, this);
+    public GameStage setGameStage(GameState gameState) {
+        GameStage gameStage = new GameStage(gameState, this);
         gameStage.loadCardViews();
+        state = gameState;
         stage = gameStage;
         update();
         return gameStage;
     }
 
-    public SetupStage setSetupStage(SetupState state) {
-        SetupStage setupStage = new SetupStage(this, state);
+    public SetupStage setSetupStage(SetupState setupState) {
+        SetupStage setupStage = new SetupStage(this, setupState);
         setupStage.loadStarterCard();
+        state = setupState;
         stage = setupStage;
         return setupStage;
     }
 
-    public LobbyStage setLobbyStage() {
+    public LobbyStage setLobbyStage(LobbyState lobbyState) {
         LobbyStage lobbyStage = new LobbyStage(this);
+        state = lobbyState;
         stage = lobbyStage;
         return lobbyStage;
     }
 
-    public Terminal getTerminal() { return terminal; }
+    public Screen getScreen() {
+        return screen;
+    }
 
     public TerminalSize getScreenSize() { return screenSize; }
 

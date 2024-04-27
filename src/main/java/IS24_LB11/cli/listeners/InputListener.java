@@ -1,43 +1,39 @@
 package IS24_LB11.cli.listeners;
 
+import IS24_LB11.cli.Debugger;
 import IS24_LB11.cli.controller.ClientState;
 import IS24_LB11.cli.event.KeyboardEvent;
-import IS24_LB11.cli.event.MessageEvent;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
-import com.googlecode.lanterna.terminal.Terminal;
+import com.googlecode.lanterna.screen.Screen;
 
 import java.io.IOException;
 
 public class InputListener extends Listener implements Runnable {
-    private final Terminal terminal;
+    private final Screen screen;
 
     public InputListener(ClientState state) {
         super(state);
-        this.terminal = state.getTerminal();
+        this.screen = state.getScreen();
     }
 
     public void run() {
-        Thread.currentThread().setName("thread-input-listener");
+        Thread.currentThread().setName("input-listener");
         while (true) {
             try {
-                KeyStroke keyStroke = terminal.readInput();
+                KeyStroke keyStroke = screen.readInput();
                 if (keyStroke.getKeyType() == KeyType.EOF) break;
                 state.queueEvent(new KeyboardEvent(keyStroke));
-            } catch (IOException e) {
-                state.tryQueueEvent(new MessageEvent(e.getMessage()));
-            } catch (InterruptedException e) {
-                System.out.println("Thread of InputListener interrupted.");
+            } catch (IOException | InterruptedException e) {
+                Debugger.print(e);
                 break;
             }
         }
-        System.out.println(Thread.currentThread().getName() + " offline");
+        Debugger.print("thread terminated.");
     }
 
     public void shutdown() {
         try { System.in.close(); } // <- to close gracefuly the input listener
-        catch (IOException e) {
-            System.err.println("caught exception: "+e.getMessage());
-        }
+        catch (IOException e) { Debugger.print(e); }
     }
 }

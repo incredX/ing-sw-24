@@ -1,7 +1,7 @@
 package IS24_LB11.cli.view.game;
 
 import IS24_LB11.cli.style.DoubleBorderStyle;
-import IS24_LB11.cli.utils.CellFactory;
+import IS24_LB11.cli.utils.SymbolAdapter;
 import IS24_LB11.game.components.StarterCard;
 import IS24_LB11.game.symbol.Symbol;
 import com.googlecode.lanterna.TerminalPosition;
@@ -19,12 +19,12 @@ public class StarterCardView extends PlayableCardView {
     }
 
     @Override
-    public void build() {
-        super.build();
-        setCentralSuits();
+    public void drawAll() {
+        super.drawAll();
+        drawCentralSuits();
     }
 
-    private void setCentralSuits() {
+    private void drawCentralSuits() {
         if (card.isFaceDown()) return;
         StarterCard card = (StarterCard) this.card;
         TerminalPosition center = new TerminalPosition(WIDTH/2, HEIGHT/2);
@@ -36,11 +36,11 @@ public class StarterCardView extends PlayableCardView {
 
         for (int i=0; i<numSuits; i++) {
             TerminalPosition pos = center.withRelative(0, 2*i+1-numSuits);
-            drawCell(pos, CellFactory.fromSymbol(suits.get(i)));
+            drawChar(pos, SymbolAdapter.fromSymbol(suits.get(i)));
             drawClosedSquare(pos);
             if (i > 0) {
-                drawCell(pos.withRelative(-2, -1), borderStyle.getSeparator(WEST));
-                drawCell(pos.withRelative(2, -1), borderStyle.getSeparator(EAST));
+                drawChar(pos.withRelative(-2, -1), borderStyle.getSeparator(WEST));
+                drawChar(pos.withRelative(2, -1), borderStyle.getSeparator(EAST));
             }
         }
     }

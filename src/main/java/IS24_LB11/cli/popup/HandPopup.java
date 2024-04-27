@@ -31,7 +31,7 @@ public class HandPopup extends Popup {
         manageView(handView -> {
             handView.updatePointerPosition(selectedCard);
             handView.loadCards(gameState.getPlayerHand());
-            handView.rebuild();
+            handView.redraw();
         });
     }
 
@@ -51,7 +51,7 @@ public class HandPopup extends Popup {
     public void enable() {
         manageView(handView -> {
             handView.updatePointerPosition(selectedCard);
-            handView.build();
+            handView.drawAll();
         });
         super.enable();
     }
@@ -60,7 +60,7 @@ public class HandPopup extends Popup {
     public void disable() {
         manageView(handView -> {
             handView.hidePointer();
-            handView.build();
+            handView.drawAll();
         });
         super.disable();
     }
@@ -104,7 +104,7 @@ public class HandPopup extends Popup {
         else selectedCard = (selectedCard == gameState.getPlayerHand().size() - 1) ? 0 : selectedCard + 1;
         manageView(decksView -> {
             decksView.updatePointerPosition(selectedCard);
-            decksView.build();
+            decksView.drawAll();
         });
         //drawViewInStage();
     }

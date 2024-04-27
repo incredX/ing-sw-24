@@ -1,5 +1,6 @@
 package IS24_LB11.cli.controller;
 
+import IS24_LB11.cli.Debugger;
 import IS24_LB11.cli.Scoreboard;
 import IS24_LB11.cli.Table;
 import IS24_LB11.cli.event.server.ServerNewTurnEvent;
@@ -28,10 +29,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-//TODO : rename PlayerSetupEvent to GameReadyEvent
-//TODO : add scoreboard event
+//TODO : fix problem with lanterna's terminal
 //TODO : reconnection to server in lobby
+//TODO : automate game and clients setup
+//TODO : add table popup in setup
 //TODO : close everything if the input listener is closed
+//TODO : add quit popup to ask confirmation to close the app
 
 public class GameState extends ClientState {
     private final Player player;
@@ -45,7 +48,7 @@ public class GameState extends ClientState {
     private boolean strokeConsumed;
     private boolean cardPlaced;
     private boolean cardPicked;
-    private boolean readOnly;
+    private boolean playerTurn;
 
     public GameState(SetupState setupState) throws IOException {
         super(setupState);
@@ -62,7 +65,7 @@ public class GameState extends ClientState {
         this.placedCard = null;
         this.cardPlaced = false;
         this.cardPicked = false;
-        this.readOnly = false;
+        this.playerTurn = false;
     }
 
     public GameState(ViewHub viewHub, NotificationStack stack, PlayerSetup setup, Table table) throws IOException {
@@ -80,15 +83,12 @@ public class GameState extends ClientState {
         this.placedCard = null;
         this.cardPlaced = false;
         this.cardPicked = false;
-        this.readOnly = false;
+        this.playerTurn = false;
     }
 
     @Override
     public ClientState execute() {
         player.applySetup();
-        System.out.println(table.toString());
-        normalDeck = defaultNormalDeck();
-        goldenDeck = defaultGoldenDeck();
         gameStage = viewHub.setGameStage(this);
         popManager.updatePopups();
         processResize(viewHub.getScreenSize());
@@ -100,11 +100,13 @@ public class GameState extends ClientState {
         if (processServerEventIfCommon(event)) return;
         switch (event) {
             case ServerNewTurnEvent newTurnEvent -> {
+                Debugger.print("turn of "+newTurnEvent.player()+" (I'm "+username+")");
                 if (newTurnEvent.player().equals(username)) {
                     cardPlaced = false;
                     cardPicked = false;
-                    updateBoardPointerImage();
+                    playerTurn = true;
                 }
+                updateBoardPointerImage();
                 table.getScoreboard().setNextPlayer();
                 normalDeck = newTurnEvent.normalDeck();
                 goldenDeck = newTurnEvent.goldenDeck();
@@ -119,7 +121,7 @@ public class GameState extends ClientState {
     @Override
     protected void processCommand(String command) {
         if (processCommandIfCommon(command)) return;
-        System.out.println(command);
+        Debugger.print(command);
         String[] tokens = command.split(" ", 2);
         switch (tokens[0].toUpperCase()) {
             case "SHOW" -> {
@@ -163,7 +165,6 @@ public class GameState extends ClientState {
         centerBoardPointer();
         super.processResize(size);
         popManager.resizePopups();
-        //viewHub.updateStage();
     }
 
     public void drawCardFromDeck() {
@@ -175,6 +176,7 @@ public class GameState extends ClientState {
             handPopup.update();
             popManager.hidePopup("decks");
             cardPicked = true;
+            playerTurn = true;
             try {
                 JsonObject jsonPlacedCard = (JsonObject) new JsonParser().parse(converter.objectToJSON(placedCard));
                 JsonElement jsonDeckType = new JsonPrimitive(!decksPopup.selectedNormalDeck());
@@ -189,7 +191,15 @@ public class GameState extends ClientState {
 
     public void placeCardFromHand() {
         HandPopup handPopup = (HandPopup) popManager.getPopup("hand");
-        if (!cardPlaced && player.placeCard(handPopup.getSelectedCard(), boardPointer)) {
+        if (!playerTurn) {
+            notificationStack.addUrgent("WANING", "can't place cards outside of turn");
+            return;
+        }
+        if (cardPlaced) {
+            notificationStack.addUrgent("WARNING", "a card has alredy been placed in this turn");
+            return;
+        }
+        if (player.placeCard(handPopup.getSelectedCard(), boardPointer)) {
             placedCard = new PlacedCard(handPopup.getSelectedCard(), boardPointer);
             cardPlaced = true;
             updateBoardPointerImage();
@@ -212,7 +222,7 @@ public class GameState extends ClientState {
     }
 
     private void updateBoardPointerImage() {
-        if (cardPlaced || readOnly)
+        if (cardPlaced || !playerTurn)
             gameStage.setPointerColor(TextColor.ANSI.BLACK_BRIGHT);
         else if (player.getBoard().spotAvailable(boardPointer))
             gameStage.setPointerColor(TextColor.ANSI.GREEN_BRIGHT);
