@@ -45,7 +45,7 @@ public class GameState extends ClientState {
     private PopupManager popManager;
     private Position boardPointer;
     private PlacedCard placedCard;
-    private boolean strokeConsumed;
+    private boolean keyConsumed;
     private boolean cardPlaced;
     private boolean cardPicked;
     private boolean playerTurn;
@@ -96,9 +96,12 @@ public class GameState extends ClientState {
     }
 
     @Override
-    protected void processServerEvent(ServerEvent event) {
-        if (processServerEventIfCommon(event)) return;
-        switch (event) {
+    protected void processServerEvent(ServerEvent serverEvent) {
+        if (processServerEventIfCommon(serverEvent)) {
+            viewHub.update();
+            return;
+        }
+        switch (serverEvent) {
             case ServerNewTurnEvent newTurnEvent -> {
                 Debugger.print("turn of "+newTurnEvent.player()+" (I'm "+username+")");
                 if (newTurnEvent.player().equals(username)) {
@@ -113,14 +116,19 @@ public class GameState extends ClientState {
                 if (!normalDeck.getLast().isFaceDown()) normalDeck.getLast().flip();
                 if (!goldenDeck.getLast().isFaceDown()) goldenDeck.getLast().flip();
                 popManager.getPopup("decks").update();
+                popManager.getPopup("table").update();
             }
             default -> processResult(Result.Error("received unknown server event"));
         }
+        viewHub.update();
     }
 
     @Override
     protected void processCommand(String command) {
-        if (processCommandIfCommon(command)) return;
+        if (processCommandIfCommon(command)) {
+            viewHub.update();
+            return;
+        }
         Debugger.print(command);
         String[] tokens = command.split(" ", 2);
         switch (tokens[0].toUpperCase()) {
@@ -140,14 +148,21 @@ public class GameState extends ClientState {
                 gameStage.updateBoard();
             }
             case "HAND", "DECKS", "TABLE" -> popManager.showPopup(tokens[0]);
-            default -> notificationStack.addUrgent("ERROR", INVALID_CMD.apply(tokens[0], "game"));
+            default -> {
+                notificationStack.addUrgent("ERROR", INVALID_CMD.apply(tokens[0], "game"));
+            }
         }
+        viewHub.update();
     }
 
     @Override
     protected void processKeyStroke(KeyStroke keyStroke) {
-        strokeConsumed = false;
-        if (notificationStack.consumeKeyStroke(keyStroke)) return;
+        keyConsumed = false;
+        Debugger.print("pressed <"+keyStroke.getKeyType().name()+">");
+        if (notificationStack.consumeKeyStroke(keyStroke)) {
+            viewHub.update();
+            return;
+        }
         popManager.consumeKeyStroke(this, keyStroke);
         if (keyStroke.isShiftDown()) {
             switch (keyStroke.getKeyType()) {
@@ -157,7 +172,8 @@ public class GameState extends ClientState {
                 case ArrowRight -> shiftBoardPointer(Side.EAST);
             }
         }
-        if (!strokeConsumed) super.processCommonKeyStrokes(keyStroke);
+        if (!keyConsumed) super.processCommonKeyStrokes(keyStroke);
+        viewHub.updateCommandLine(cmdLine);
     }
 
     @Override
@@ -165,6 +181,7 @@ public class GameState extends ClientState {
         centerBoardPointer();
         super.processResize(size);
         popManager.resizePopups();
+        viewHub.update();
     }
 
     public void drawCardFromDeck() {
@@ -204,7 +221,7 @@ public class GameState extends ClientState {
             cardPlaced = true;
             updateBoardPointerImage();
             gameStage.updateBoard();
-            handPopup.update();
+            //handPopup.update();
         }
         else notificationStack.addUrgent("WARNING", "cannot place card");
     }
@@ -229,8 +246,8 @@ public class GameState extends ClientState {
         else gameStage.setPointerColor(TextColor.ANSI.RED_BRIGHT);
     }
 
-    public void setStrokeConsumed(boolean consumed) {
-        strokeConsumed = consumed;
+    public void setKeyConsumed(boolean consumed) {
+        keyConsumed = consumed;
     }
     
     public void flipHandCard(int cardIndex) {

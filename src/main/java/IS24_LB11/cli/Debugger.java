@@ -14,16 +14,19 @@ public class Debugger {
     private static Debugger instance = null;
 
     public static void startDebugger(PrintStream out) {
+        if (instance != null) closeDebugger();
         instance = new Debugger(out);
         instance.active = true;
         instance.printIntro();
     }
 
     public static void startDebugger() {
+        if (instance != null) { return; }
         startDebugger(System.out);
     }
 
     public static void startDebugger(String dirName) throws FileNotFoundException {
+        if (instance != null) { return; }
         startDebugger(new PrintStream(new FileOutputStream(new File(getNextFileName(dirName)))));
     }
 
@@ -70,7 +73,7 @@ public class Debugger {
     private void printMessage(String msg) {
         if(!active) return;
         //out.println("*********************** DEBUG - MESSAGE ************************");
-        out.printf("THREAD: %s => %s\n", Thread.currentThread().getName(), msg);
+        out.printf("in <%s> (%d) => %s\n", Thread.currentThread().getName(), Thread.currentThread().threadId(), msg);
         out.flush();
     }
 
@@ -79,7 +82,7 @@ public class Debugger {
         String message = e.getMessage();
         Throwable cause = e.getCause();
         out.println("******************* DEBUG - CAUGHT EXCEPTION *******************");
-        out.printf("THREAD: %s\n", Thread.currentThread().getName());
+        out.printf("in <%s> (%d) :\n", Thread.currentThread().getName(), Thread.currentThread().threadId());
         out.println("CLASS: " + e.getClass().getName());
         if (message != null) out.println("MESSAGE: " + message);
         if (cause != null) out.println("CAUSE: " + cause.getMessage());

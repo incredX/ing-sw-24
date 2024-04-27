@@ -101,8 +101,8 @@ public class DecksPopup extends Popup {
                     return;
                 }
             }
-            if (visible) updateView();
-            gameState.setStrokeConsumed(true);
+            if (visible) castView(DecksView::drawAll);
+            gameState.setKeyConsumed(true);
         }
     }
 

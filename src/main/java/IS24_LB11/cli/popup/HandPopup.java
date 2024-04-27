@@ -28,7 +28,7 @@ public class HandPopup extends Popup {
     @Override
     public void update() {
         selectedCard = selectedCard % gameState.getPlayerHand().size();
-        manageView(handView -> {
+        castView(handView -> {
             handView.updatePointerPosition(selectedCard);
             handView.loadCards(gameState.getPlayerHand());
             handView.redraw();
@@ -49,7 +49,7 @@ public class HandPopup extends Popup {
 
     @Override
     public void enable() {
-        manageView(handView -> {
+        castView(handView -> {
             handView.updatePointerPosition(selectedCard);
             handView.drawAll();
         });
@@ -58,7 +58,7 @@ public class HandPopup extends Popup {
 
     @Override
     public void disable() {
-        manageView(handView -> {
+        castView(handView -> {
             handView.hidePointer();
             handView.drawAll();
         });
@@ -92,8 +92,8 @@ public class HandPopup extends Popup {
                     return;
                 }
             }
-            if (visible) updateView();
-            gameState.setStrokeConsumed(true);
+            if (visible) castView(HandView::drawAll);
+            gameState.setKeyConsumed(true);
         }
     }
 
@@ -102,7 +102,7 @@ public class HandPopup extends Popup {
         if (side == Side.NORD)
             selectedCard = (selectedCard == 0) ? gameState.getPlayerHand().size() - 1 : selectedCard - 1;
         else selectedCard = (selectedCard == gameState.getPlayerHand().size() - 1) ? 0 : selectedCard + 1;
-        manageView(decksView -> {
+        castView(decksView -> {
             decksView.updatePointerPosition(selectedCard);
             decksView.drawAll();
         });
@@ -113,7 +113,7 @@ public class HandPopup extends Popup {
         return gameState.getPlayerHand().get(selectedCard);
     }
 
-    protected void manageView(Consumer<HandView> consumer) {
+    protected void castView(Consumer<HandView> consumer) {
         consumer.accept((HandView) popView);
     }
 }

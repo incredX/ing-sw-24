@@ -46,11 +46,12 @@ public class ViewHub implements Runnable {
         while (true) {
             synchronized (lock) {
                 try {
+                    Debugger.print("print");
                     stage.print(screen);
                     for (PopupView popup : popups) popup.print(screen);
                     if (notificationView != null) notificationView.print(screen);
                     commandLineView.print(screen);
-                    screen.refresh();
+                    screen.refresh(Screen.RefreshType.COMPLETE);
                     lock.wait();
                 }
                 catch (InterruptedException e) { break; }
@@ -66,16 +67,16 @@ public class ViewHub implements Runnable {
     public void resize(TerminalSize size, CommandLine commandLine) {
         screenSize = size;
         synchronized (lock) {
-            screen.clear();
             commandLineView.resize(size);
             commandLineView.buildCommandLine(commandLine);
             commandLineView.drawAll();
             stage.resize();
+            for (PopupView popup : popups) stage.buildArea(popup.getRectangle());
             if (notificationView != null) {
                 notificationView.resize(size);
                 notificationView.drawAll();
             }
-            lock.notify();
+            //lock.notify();
         }
         Debugger.print("resize");
     }
@@ -104,6 +105,7 @@ public class ViewHub implements Runnable {
             commandLineView.buildCommandLine(commandLine);
             commandLineView.drawAll();
             lock.notify();
+            //Debugger.print("update cmdline");
         }
     }
 
@@ -111,7 +113,7 @@ public class ViewHub implements Runnable {
         synchronized (lock) {
             notificationView = new NotificationView(screenSize, title, message);
             notificationView.drawAll();
-            lock.notify();
+            //lock.notify();
         }
     }
 
@@ -121,17 +123,14 @@ public class ViewHub implements Runnable {
 
     public void removeNotification() {
         if (notificationView != null) {
-            //stage.setCover(notificationView, false);
             stage.buildArea(notificationView.getRectangle());
             notificationView = null;
-            update();
         }
     }
 
     public void addPopup(PopupView popup) {
         synchronized (lock) {
             popups.add(popup);
-            //stage.setCover(popups.getLast(), true);
         }
         popups.getLast().setId(nextPopupId);
         nextPopupId++;
@@ -141,7 +140,6 @@ public class ViewHub implements Runnable {
         synchronized (lock) {
             for(int i=0; i<popups.size(); i++) {
                 if (popups.get(i).getId() != id) continue;
-                //stage.setCover(popups.get(i), false);
                 stage.buildArea(popups.remove(i).getRectangle());
                 break;
             }
@@ -154,7 +152,6 @@ public class ViewHub implements Runnable {
         gameStage.loadCardViews();
         state = gameState;
         stage = gameStage;
-        update();
         return gameStage;
     }
 

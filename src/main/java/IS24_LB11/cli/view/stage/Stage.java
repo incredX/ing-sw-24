@@ -38,6 +38,8 @@ public class Stage extends CliBox {
         drawBorders();
     }
 
+    public void buildStage() { buildArea(rectangle); }
+
     public void buildArea(TerminalRectangle area) {
         builtAreas.add(area);
     }
@@ -65,7 +67,6 @@ public class Stage extends CliBox {
         while (!builtAreas.isEmpty()) {
             TerminalRectangle area = builtAreas.removeLast();
             graphics.drawImage(area.getPosition(), image, area.getPosition(), area.getSize());
-            //graphics.drawImage(getPosition(), image, area.getPosition(), area.getSize());
             cnt++;
         }
     }
@@ -75,11 +76,6 @@ public class Stage extends CliBox {
         super.drawBox(cliBox);
         buildRelativeArea(cliBox.getRectangle());
     }
-
-//    @Override
-//    public void setCover(CliBox box, boolean covered) {
-//        //super.setCover(box, covered);
-//    }
 
     @Override
     protected void drawBorders() {
@@ -92,10 +88,6 @@ public class Stage extends CliBox {
 
     public void resize() {
         super.resize(viewHub.getScreenSize().withRelative(0, -2));
-    }
-
-    protected void updateViewHub() {
-        viewHub.update();
     }
 
     public void shift(Side side) {

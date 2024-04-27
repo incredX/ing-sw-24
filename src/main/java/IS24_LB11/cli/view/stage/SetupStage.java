@@ -12,15 +12,15 @@ public class SetupStage extends Stage {
     private static final String[] GOAL_LABELS = new String[]{"goal (a)", "goal (b)"};
     private final ArrayList<PlayableCardView> handView;
     private final ArrayList<GoalView> goalViews;
-    private final SetupState state;
+    private final SetupState setupState;
     private StarterCardView starterCardView;
     private int chosenGoalIndex;
 
-    public SetupStage(ViewHub viewHub, SetupState state) {
+    public SetupStage(ViewHub viewHub, SetupState setupState) {
         super(viewHub);
-        this.state = state;
+        this.setupState = setupState;
         this.chosenGoalIndex = 0;
-        this.starterCardView = new StarterCardView(state.getStarterCard());
+        this.starterCardView = new StarterCardView(setupState.getStarterCard());
         this.handView = new ArrayList<>(3);
         this.goalViews = new ArrayList<>(2);
         loadStarterCard();
@@ -31,12 +31,11 @@ public class SetupStage extends Stage {
 
     @Override
     public void drawAll() {
+        drawHand();
         drawBorders();
         drawStarterCard();
         drawGoalPointer();
         drawGoals();
-        drawHand();
-        updateViewHub();
     }
 
     @Override
@@ -55,12 +54,12 @@ public class SetupStage extends Stage {
     }
 
     public void loadStarterCard() {
-        starterCardView = new StarterCardView(state.getStarterCard());
+        starterCardView = new StarterCardView(setupState.getStarterCard());
     }
 
     public void loadGoals() {
         goalViews.clear();
-        for(GoalCard goal: state.getGoals()) switch(goal) {
+        for(GoalCard goal: setupState.getPossiblePrivateGoals()) switch(goal) {
             case GoalPattern pattern -> goalViews.add(new GoalPatternView(pattern));
             case GoalSymbol symbol -> goalViews.add(new GoalSymbolView(symbol));
             default -> throw new IllegalStateException("Invalid goal: " + goal);
@@ -69,13 +68,12 @@ public class SetupStage extends Stage {
 
     public void loadHand() {
         handView.clear();
-        for(PlayableCard card: state.getHand()) {
+        for(PlayableCard card: setupState.getHand()) {
             switch (card) {
                 case GoldenCard goldenCard -> handView.add(new GoldenCardView(goldenCard));
                 case NormalCard normalCard -> handView.add(new NormalCardView(normalCard));
                 default -> throw new IllegalArgumentException("Invalid card: " + card.asString());
             }
-            handView.getLast().setMargins(0);
         }
     }
 
@@ -105,26 +103,26 @@ public class SetupStage extends Stage {
 
     private void drawGoalPointer() {
         GoalView goalView = goalViews.get(chosenGoalIndex);
-        int x = goalView.getPosition().getColumn(), y = goalView.getPosition().getRow()+1;
+        int x = goalView.getPosition().getColumn(), y = goalView.getPosition().getRow()+firstRow();
         int w = goalView.getWidth()+1, h = goalView.getHeight()+2;
         fillColumn(x, y, "###");
         fillColumn(x+w, y, "###");
         fillColumn(x-1, y, "│││");
         fillColumn(x+w+1, y, "│││");
-        buildRelativeArea(2, 3, x-1, y);
-        buildRelativeArea(2, 3, x+w, y);
+        buildRelativeArea(2, 3, x-1, firstRow()+y);
+        buildRelativeArea(2, 3, x+w, firstRow()+y);
     }
 
     private void clearGoalPointer() {
         GoalView goalView = goalViews.get(chosenGoalIndex);
-        int x = goalView.getPosition().getColumn(), y = goalView.getPosition().getRow()+1;
+        int x = goalView.getPosition().getColumn(), y = goalView.getPosition().getRow()+firstRow();
         int w = goalView.getWidth()+1, h = goalView.getHeight()+2;
         fillColumn(x, y, "   ");
         fillColumn(x+w, y, "   ");
         fillColumn(x-1, y, "   ");
         fillColumn(x+w+1, y, "   ");
-        buildRelativeArea(2, 3, x-1, y);
-        buildRelativeArea(2, 3, x+w, y);
+        buildRelativeArea(2, 3, x-1, firstRow()+y);
+        buildRelativeArea(2, 3, x+w, firstRow()+y);
     }
 
     public void placeStarterCard() {

@@ -51,13 +51,13 @@ public class TablePopup extends Popup {
     }
 
     private ArrayList<GoalCard> getGoals() {
-        if (setupState != null && gameState == null) return new ArrayList<>();
+        if (setupState != null && gameState == null) return setupState.getGoals();
         if (gameState != null && setupState == null) return gameState.getGoals();
         return new ArrayList<>();
     }
 
     private Scoreboard getScoreboard() {
-        if (setupState != null && gameState == null) return null;
+        if (setupState != null && gameState == null) return setupState.getScoreboard();
         if (gameState != null && setupState == null) return gameState.getScoreboard();
         return null;
     }

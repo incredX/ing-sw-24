@@ -40,7 +40,6 @@ public class GameStage extends Stage {
         drawGrid();
         drawPlacedCards();
         drawPointer();
-        updateViewHub();
     }
 
     @Override
@@ -88,7 +87,7 @@ public class GameStage extends Stage {
             terminalPosition = terminalPosition.withRelative(-3, -1);
             cardView.setPosition(terminalPosition);
             drawBox(cardView);
-            buildRelativeArea(size.withRelativeRows(1), terminalPosition.max(new TerminalPosition(0,0)));
+            buildRelativeArea(size, terminalPosition.max(new TerminalPosition(0,0)));
         }
     }
 

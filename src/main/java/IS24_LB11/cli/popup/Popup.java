@@ -21,11 +21,6 @@ public abstract class Popup<T extends PopupView> {
         this.overlap = false;
     }
 
-    public void updateView() {
-        popView.drawAll();
-        viewHub.update();
-    }
-
     public abstract String label();
     
     public abstract void update();
@@ -33,7 +28,7 @@ public abstract class Popup<T extends PopupView> {
     public abstract void consumeKeyStroke(ClientState state, KeyStroke keyStroke);
 
     public void resize() {
-        popView.resize(viewHub.getScreenSize());
+        popView.resize(viewHub.getScreenSize().withRelative(0,-2));
         if (visible) {
             if (!viewInsideStage()) hide();
             //else viewHub.getStage().setCover(popView, true);
@@ -45,7 +40,6 @@ public abstract class Popup<T extends PopupView> {
         if (viewInsideStage()) {
             if (!visible) {
                 viewHub.addPopup(popView);
-                updateView();
             }
             visible = true;
         }
@@ -54,7 +48,6 @@ public abstract class Popup<T extends PopupView> {
     public void hide() {
         if (visible) {
             viewHub.removePopup(popView.getId());
-            updateView();
             visible = false;
         }
     }

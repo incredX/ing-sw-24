@@ -4,12 +4,12 @@ import IS24_LB11.cli.Table;
 import IS24_LB11.cli.event.server.ServerEvent;
 import IS24_LB11.cli.event.server.ServerLoginEvent;
 import IS24_LB11.cli.event.server.ServerPlayerSetupEvent;
-import IS24_LB11.cli.notification.Priority;
 import IS24_LB11.cli.ViewHub;
 import IS24_LB11.cli.view.stage.LobbyStage;
 import IS24_LB11.game.PlayerSetup;
 import IS24_LB11.game.Result;
 import IS24_LB11.cli.Scoreboard;
+import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.input.KeyStroke;
 
 import java.io.IOException;
@@ -33,7 +33,10 @@ public class LobbyState extends ClientState {
     }
 
     protected void processServerEvent(ServerEvent serverEvent) {
-        if (processServerEventIfCommon(serverEvent)) return;
+        if (processServerEventIfCommon(serverEvent)) {
+            viewHub.update();
+            return;
+        }
         switch (serverEvent) {
             case ServerLoginEvent loginEvent -> {
                 username = loginEvent.username();
@@ -52,10 +55,14 @@ public class LobbyState extends ClientState {
             }
             default -> processResult(Result.Error("received unknown server event"));
         }
+        viewHub.update();
     }
 
     protected void processCommand(String command) {
-        if (processCommandIfCommon(command)) return;
+        if (processCommandIfCommon(command)) {
+            viewHub.update();
+            return;
+        }
         String[] tokens = command.split(" ", 2);
         switch (tokens[0].toUpperCase()) {
             case "LOGIN" -> {
@@ -73,18 +80,26 @@ public class LobbyState extends ClientState {
                     quit();
                 }
             }
-            case "POPUP" -> {
-                if (tokens.length == 2) processCommandPopup(tokens[1]);
-                else notificationStack.addUrgent("ERROR", "missing argument");
-            }
             default -> notificationStack.addUrgent("ERROR", INVALID_CMD.apply(tokens[0], "lobby"));
         };
+        viewHub.update();
     }
 
     @Override
     protected void processKeyStroke(KeyStroke keyStroke) {
-        if (notificationStack.consumeKeyStroke(keyStroke)) return;
+        if (notificationStack.consumeKeyStroke(keyStroke)) {
+            viewHub.update();
+            return;
+        }
         super.processCommonKeyStrokes(keyStroke);
+        viewHub.updateCommandLine(cmdLine);
+    }
+
+    @Override
+    protected void processResize(TerminalSize size) {
+        super.processResize(size);
+        //popManager.resizePopups();
+        viewHub.update();
     }
 
     private void setProperty(String property) {
@@ -107,22 +122,5 @@ public class LobbyState extends ClientState {
 
     private void processCommandLogin(String username) {
         sendToServer("login", "username", username);
-    }
-
-    private void processCommandPopup(String argument) {
-        String[] tokens = argument.split(" ", 3);
-        Priority priority;
-        try { priority = Priority.valueOf(tokens[0].toUpperCase()); }
-        catch (IllegalArgumentException e) {
-            notificationStack.addUrgent("ERROR", tokens[0]+" is not a valid priority");
-            return;
-        }
-        if (tokens.length >= 3) {
-            notificationStack.add(priority, tokens[1], tokens[2]);
-        } else if (tokens.length == 2) {
-            notificationStack.add(priority, tokens[1]);
-        } else {
-            notificationStack.addUrgent("ERROR", MISSING_ARG.apply("popup"));
-        }
     }
 }

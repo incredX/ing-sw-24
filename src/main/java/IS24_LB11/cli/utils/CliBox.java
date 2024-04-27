@@ -78,11 +78,14 @@ public class CliBox {
     }
 
     protected void drawBox(CliBox box) {
-        int offsetX = firstColumn() + box.rectangle.getX();
-        int offsetY = firstRow() + box.rectangle.getY();
-        int columns = Integer.min(offsetX + box.getWidth(), getWidth());
-        int rows = Integer.min(offsetY + box.getHeight(), getHeight());
-        box.image.copyTo(image, 0, rows, 0, columns, offsetY, offsetX);
+        int thisOffsetX = firstColumn() + Integer.max(0, box.rectangle.getX());
+        int thisOffsetY = firstRow() + Integer.max(0, box.rectangle.getY());
+        int boxOffsetX = Integer.max(0, -box.rectangle.getX());
+        int boxOffsetY = Integer.max(0, -box.rectangle.getY());
+        int columns = Integer.min(box.getWidth(), lastColumn()-box.rectangle.getX());
+        int rows = Integer.min(box.getHeight(), lastRow()-box.rectangle.getY());
+        if (columns <= 0 || rows <= 0 || boxOffsetX >= box.getWidth() || boxOffsetY >= box.getHeight()) return;
+        box.image.copyTo(image, boxOffsetY, rows, boxOffsetX, columns, thisOffsetY, thisOffsetX);
     }
 
     protected void drawBorders() {
@@ -188,7 +191,7 @@ public class CliBox {
     }
 
     protected void updateInnerArea() {
-        innerArea.setPosition(new TerminalPosition(margins.get(EAST)+1, margins.get(NORD)+1));
+        innerArea.setPosition(borderArea.getPosition().withRelative(1, 1));
         innerArea.setSize(borderArea.getSize().withRelative(-2,-2));
     }
 

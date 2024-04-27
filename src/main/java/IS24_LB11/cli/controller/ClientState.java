@@ -50,7 +50,7 @@ public abstract class ClientState {
         this.notificationStack = notificationStack;
         this.viewHub = viewHub;
         this.cmdLine = new CommandLine(viewHub.getScreenSize().getColumns());
-        viewHub.updateCommandLine(cmdLine);
+        //viewHub.updateCommandLine(cmdLine);
     }
 
     public ClientState(ClientState state) {
@@ -60,7 +60,7 @@ public abstract class ClientState {
         this.notificationStack = state.notificationStack;
         this.viewHub = state.viewHub;
         this.cmdLine = state.cmdLine;
-        viewHub.updateCommandLine(cmdLine);
+        //viewHub.updateCommandLine(cmdLine);
     }
 
     public ClientState(ViewHub viewHub) {
@@ -196,7 +196,6 @@ public abstract class ClientState {
             default:
                 break;
         }
-        viewHub.updateCommandLine(cmdLine);
     }
 
     protected void processCommandSendto(String argument) {

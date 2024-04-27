@@ -63,7 +63,8 @@ public class HandView extends CardsBoxView {
                 default -> throw new IllegalArgumentException("Invalid card: " + card.asString());
             }
             cardViews.getLast().setPosition(0, y);
-            cardViews.getLast().drawAll();
+            cardViews.getLast().setMargins(0);
+            cardViews.getLast().redraw();
             y += HEIGHT;
         }
     }

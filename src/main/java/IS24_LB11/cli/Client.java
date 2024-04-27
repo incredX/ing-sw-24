@@ -12,6 +12,8 @@ import IS24_LB11.game.PlayerSetup;
 import IS24_LB11.game.components.*;
 import IS24_LB11.game.utils.Color;
 import IS24_LB11.game.utils.SyntaxException;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -22,7 +24,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class Client {
-    public static void main(String[] args) throws SyntaxException {
+    public static void main(String[] args) {
+        start(args);
+    }
+
+    public static void start(String[] args) {
         ClientState state;
         ViewHub viewHub;
         InputListener inputListener;
@@ -60,6 +66,16 @@ public class Client {
         threadMap.put("server", new Thread(serverHandler));
 
         for (Thread t: threadMap.values()) t.start();
+
+        JsonParser jsonParser = new JsonParser();
+        for (String arg: Arrays.stream(args).skip(1).toArray(String[]::new)) {
+            try {
+                serverHandler.write(jsonParser.parse(arg).getAsJsonObject());
+            } catch (JsonSyntaxException | ClassCastException e) {
+                Debugger.print(e);
+                System.exit(1);
+            }
+        }
 
         while (true) {
             ClientState nextState = state.execute();

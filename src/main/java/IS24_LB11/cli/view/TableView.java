@@ -75,7 +75,7 @@ public class TableView extends PopupView {
     }
 
     public void loadGoals(ArrayList<GoalCard> goals) {
-        int x = 1 + ((goals.size() == 2) ? DEFAULT_WIDTH+3 : 0);
+        int x = 1 + ((goals.size() == 2) ? GoalView.WIDTH+3 : 0);
         for (GoalCard goal : goals) {
             switch (goal) {
                 case GoalPattern pattern -> goalViews.add(new GoalPatternView(pattern));
