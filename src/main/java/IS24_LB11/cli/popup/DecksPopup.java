@@ -90,7 +90,7 @@ public class DecksPopup extends Popup {
 
     private void consumeKeyStrokeInGame(GameState gameState, KeyStroke keyStroke) {
         if (!enabled) return; // pointer is not here
-        if (keyStroke.isCtrlDown()) {
+        if (keyStroke.isAltDown()) {
             switch (keyStroke.getKeyType()) {
                 case ArrowUp -> shiftPointer(NORD);
                 case ArrowDown -> shiftPointer(SUD);
