@@ -48,7 +48,7 @@ public class ServerEventHandler {
             case "setup":
                 handleSetupEvent(event);
                 break;
-            case "turnActions":
+            case "turnactions":
                 handleTurnActionsEvent(event);
                 break;
             case "scoreboard":
@@ -56,7 +56,7 @@ public class ServerEventHandler {
                 break;
             default:
                 JsonObject error = new JsonObject();
-                error.addProperty("error", "Unknown event");
+                error.addProperty("error", "Unknown event ("+eventType+")");
                 clientHandler.sendMessage(error.toString());
                 break;
         }

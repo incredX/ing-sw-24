@@ -51,6 +51,7 @@ public class Server
             try {
                 Socket clientSocket = server.accept();
 
+                System.out.printf("New client (%d/%d alredy online)\n", clientHandlers.size(), maxPlayers);
                 if(!gameStarted && clientHandlers.size() < maxPlayers) {
                     System.out.println("New client connected: " + clientSocket.getInetAddress().getHostName());
 
@@ -59,7 +60,7 @@ public class Server
                     this.clientHandlers.add(clientHandler);
                     new Thread(clientHandler).start();
 
-                    if(clientHandlers.size() == maxPlayers)
+                    if(clientHandlers.size() == maxPlayers && maxPlayers != 1)
                         gameStarted = true;
                 }
                 else{

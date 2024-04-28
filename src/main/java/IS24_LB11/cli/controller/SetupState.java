@@ -4,13 +4,11 @@ import IS24_LB11.cli.Scoreboard;
 import IS24_LB11.cli.Table;
 import IS24_LB11.cli.event.server.ServerEvent;
 import IS24_LB11.cli.event.server.ServerPlayerSetupEvent;
-import IS24_LB11.cli.event.server.ServerUpdatePlayerBoardEvent;
 import IS24_LB11.cli.popup.Popup;
 import IS24_LB11.cli.popup.PopupManager;
 import IS24_LB11.cli.popup.TablePopup;
 import IS24_LB11.cli.view.stage.SetupStage;
 import IS24_LB11.cli.notification.NotificationStack;
-import IS24_LB11.cli.notification.Priority;
 import IS24_LB11.cli.ViewHub;
 import IS24_LB11.game.PlayerSetup;
 import IS24_LB11.game.Result;
@@ -53,7 +51,7 @@ public class SetupState extends ClientState {
     public ClientState execute() {
         setupStage = viewHub.setSetupStage(this);
         popManager.updatePopups();
-        viewHub.resize(viewHub.getScreenSize(), cmdLine);
+        viewHub.update();
         return super.execute();
     }
 
@@ -63,9 +61,6 @@ public class SetupState extends ClientState {
             return;
         }
         switch (serverEvent) {
-            case ServerUpdatePlayerBoardEvent updateEvent -> {
-                notificationStack.add(Priority.LOW, "received updated players' state");
-            }
             case ServerPlayerSetupEvent playerSetupEvent -> {
                 processResult(Result.Error("Invalid server event", "can't accept a new player setup"));
             }

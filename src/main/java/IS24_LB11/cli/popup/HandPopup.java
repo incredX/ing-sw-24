@@ -85,14 +85,16 @@ public class HandPopup extends Popup {
                 case Character -> {
                     if (keyStroke.getCharacter() == 'f') {
                         gameState.flipHandCard(selectedCard);
-                        update();
+                    } else if (keyStroke.getCharacter() == ' ') {
+                        gameState.placeCardFromHand();
                     }
                 }
                 default -> {
                     return;
                 }
             }
-            if (visible) castView(HandView::drawAll);
+            update();
+            //if (visible) castView(HandView::redraw);
             gameState.setKeyConsumed(true);
         }
     }

@@ -46,7 +46,7 @@ public class ViewHub implements Runnable {
         while (true) {
             synchronized (lock) {
                 try {
-                    Debugger.print("print");
+                    //Debugger.print("print");
                     stage.print(screen);
                     for (PopupView popup : popups) popup.print(screen);
                     if (notificationView != null) notificationView.print(screen);
@@ -65,20 +65,18 @@ public class ViewHub implements Runnable {
     }
 
     public void resize(TerminalSize size, CommandLine commandLine) {
-        screenSize = size;
+        Debugger.print("resize");
         synchronized (lock) {
+            screenSize = size;
             commandLineView.resize(size);
             commandLineView.buildCommandLine(commandLine);
             commandLineView.drawAll();
             stage.resize();
-            for (PopupView popup : popups) stage.buildArea(popup.getRectangle());
             if (notificationView != null) {
                 notificationView.resize(size);
                 notificationView.drawAll();
             }
-            //lock.notify();
         }
-        Debugger.print("resize");
     }
 
     public TerminalSize screenSizeChanged() {
@@ -115,10 +113,6 @@ public class ViewHub implements Runnable {
             notificationView.drawAll();
             //lock.notify();
         }
-    }
-
-    public void addNotification(String message) {
-        addNotification(message, "");
     }
 
     public void removeNotification() {

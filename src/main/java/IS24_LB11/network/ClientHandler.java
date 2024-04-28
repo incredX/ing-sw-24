@@ -142,6 +142,7 @@ public class ClientHandler implements Runnable {
 
     public void setMaxPlayers(int maxPlayers) {
         server.maxPlayers = maxPlayers;
+        System.out.println("num max players set to "+server.maxPlayers);
     }
 
     public int getMaxPlayers() {

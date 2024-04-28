@@ -28,7 +28,7 @@ public class LobbyState extends ClientState {
     @Override
     public ClientState execute() {
         lobbyStage = viewHub.setLobbyStage(this);
-        processResize(viewHub.getScreenSize());
+        viewHub.updateCommandLine(cmdLine);
         return super.execute();
     }
 
@@ -46,6 +46,7 @@ public class LobbyState extends ClientState {
                     PlayerSetup setup = setupEvent.setup();
                     Scoreboard scoreboard = new Scoreboard(setupEvent.playersList(), setupEvent.colorList());
                     Table table = new Table(scoreboard, setupEvent.publicGoals());
+                    //System.out.println("received setup!");
                     setNextState(new SetupState(this, setup, table));
                 }
                 catch (IOException e) {

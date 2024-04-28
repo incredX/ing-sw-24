@@ -29,12 +29,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-//TODO : fix problem with lanterna's terminal
+//TODO : add boolean edited in cliBox (on in drawAll & set to off in print)
+//TODO : pass popManager from Setup to Game
+//TODO : refactor viewhub as a cliBox's queue consumer. (maybe?)
 //TODO : reconnection to server in lobby
-//TODO : automate game and clients setup
-//TODO : add table popup in setup
 //TODO : close everything if the input listener is closed
 //TODO : add quit popup to ask confirmation to close the app
+//TODO : remap keyboard shortcuts + enable/disable of cmdline
 
 public class GameState extends ClientState {
     private final Player player;
@@ -110,9 +111,13 @@ public class GameState extends ClientState {
                     playerTurn = true;
                 }
                 updateBoardPointerImage();
-                table.getScoreboard().setNextPlayer();
+                table.setNextPlayer(newTurnEvent.player());
+                table.setScore(newTurnEvent.scores());
                 normalDeck = newTurnEvent.normalDeck();
                 goldenDeck = newTurnEvent.goldenDeck();
+                System.out.printf("%16s : (%s)  (%s)\n", username,
+                        normalDeck.stream().map(NormalCard::asString).collect(Collectors.joining(", ")),
+                        goldenDeck.stream().map(GoldenCard::asString).collect(Collectors.joining(", ")));
                 if (!normalDeck.getLast().isFaceDown()) normalDeck.getLast().flip();
                 if (!goldenDeck.getLast().isFaceDown()) goldenDeck.getLast().flip();
                 popManager.getPopup("decks").update();
@@ -129,7 +134,7 @@ public class GameState extends ClientState {
             viewHub.update();
             return;
         }
-        Debugger.print(command);
+        Debugger.print("command: "+command);
         String[] tokens = command.split(" ", 2);
         switch (tokens[0].toUpperCase()) {
             case "SHOW" -> {
@@ -158,7 +163,7 @@ public class GameState extends ClientState {
     @Override
     protected void processKeyStroke(KeyStroke keyStroke) {
         keyConsumed = false;
-        Debugger.print("pressed <"+keyStroke.getKeyType().name()+">");
+        Debugger.print("pressed <"+keyStroke.getKeyType().name()+"> ( ctrlDown = "+keyStroke.isCtrlDown()+" )");
         if (notificationStack.consumeKeyStroke(keyStroke)) {
             viewHub.update();
             return;
@@ -216,12 +221,12 @@ public class GameState extends ClientState {
             notificationStack.addUrgent("WARNING", "a card has alredy been placed in this turn");
             return;
         }
-        if (player.placeCard(handPopup.getSelectedCard(), boardPointer)) {
-            placedCard = new PlacedCard(handPopup.getSelectedCard(), boardPointer);
+        PlayableCard selectedCard = handPopup.getSelectedCard();
+        if (player.placeCard(selectedCard, boardPointer)) {
+            placedCard = new PlacedCard(selectedCard, boardPointer);
             cardPlaced = true;
             updateBoardPointerImage();
             gameStage.updateBoard();
-            //handPopup.update();
         }
         else notificationStack.addUrgent("WARNING", "cannot place card");
     }
@@ -239,7 +244,7 @@ public class GameState extends ClientState {
     }
 
     private void updateBoardPointerImage() {
-        if (cardPlaced || !playerTurn)
+        if (cardPlaced ^ !playerTurn)
             gameStage.setPointerColor(TextColor.ANSI.BLACK_BRIGHT);
         else if (player.getBoard().spotAvailable(boardPointer))
             gameStage.setPointerColor(TextColor.ANSI.GREEN_BRIGHT);

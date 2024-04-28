@@ -116,7 +116,8 @@ public abstract class ClientState {
             text = result.getError();
             if (result.getCause() != null)
                 text += " : "+result.getCause();
-            notificationStack.addUrgent("ERROR", text);
+            notificationStack.addUrgent("ERROR (from server)", text);
+            viewHub.update();
             return;
         }
         processServerEvent(result.get());

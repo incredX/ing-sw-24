@@ -69,23 +69,24 @@ public class TableView extends PopupView {
         }
     }
 
-    public void loadCurrentPlayer(int indexCurrentPlayer) {
-        this.indexCurrentPlayer = indexCurrentPlayer;
-        drawChar(firstColumn(), firstRow()+2+indexCurrentPlayer, '>', TextColor.ANSI.DEFAULT);
+    public void loadCurrentPlayer(int index) {
+        drawChar(firstColumn(), firstRow()+2+indexCurrentPlayer, ' ', TextColor.ANSI.DEFAULT);
+        indexCurrentPlayer = index;
+        drawChar(firstColumn(), firstRow()+2+index, '>', TextColor.ANSI.DEFAULT);
     }
 
     public void loadGoals(ArrayList<GoalCard> goals) {
-        int x = 1 + ((goals.size() == 2) ? GoalView.WIDTH+3 : 0);
+        int[] cols = new int[] { 1, GoalView.WIDTH+4, 2*GoalView.WIDTH+4 };
+        int i = 3-goals.size();
         for (GoalCard goal : goals) {
             switch (goal) {
                 case GoalPattern pattern -> goalViews.add(new GoalPatternView(pattern));
                 case GoalSymbol symbol -> goalViews.add(new GoalSymbolView(symbol));
                 default -> throw new IllegalStateException("Invalid goal: " + goal);
             }
-            goalViews.getLast().setPosition(x, lastRow()-GoalView.HEIGHT);
+            goalViews.getLast().setPosition(cols[i], lastRow()-GoalView.HEIGHT);
             goalViews.getLast().drawAll();
-            if (goalViews.size() == 1) x += GoalView.WIDTH+3;
-            else x += GoalView.WIDTH;
+            i++;
         }
     }
 
