@@ -1,8 +1,8 @@
 package IS24_LB11.cli.popup;
 
 import IS24_LB11.cli.ViewHub;
-import IS24_LB11.cli.controller.ClientState;
 import IS24_LB11.cli.controller.GameState;
+import IS24_LB11.cli.controller.PlayerStateInterface;
 import IS24_LB11.cli.utils.Side;
 import IS24_LB11.cli.view.HandView;
 import IS24_LB11.game.components.PlayableCard;
@@ -13,12 +13,12 @@ import java.util.function.Consumer;
 import static IS24_LB11.cli.utils.Side.*;
 
 public class HandPopup extends Popup {
-    private final GameState gameState;
+    private final PlayerStateInterface playerState;
     private int selectedCard;
 
-    public HandPopup(ViewHub viewHub, GameState gameState) {
-        super(viewHub, new HandView(viewHub.getScreenSize(), gameState.getPlayerHand()));
-        this.gameState = gameState;
+    public HandPopup(ViewHub viewHub, PlayerStateInterface playerState) {
+        super(viewHub, new HandView(viewHub.getScreenSize(), playerState.getPlayerHand()));
+        this.playerState = playerState;
         this.selectedCard = 0;
     }
 
@@ -27,10 +27,10 @@ public class HandPopup extends Popup {
 
     @Override
     public void update() {
-        selectedCard = selectedCard % gameState.getPlayerHand().size();
+        selectedCard = selectedCard % playerState.getPlayerHand().size();
         castView(handView -> {
             handView.updatePointerPosition(selectedCard);
-            handView.loadCards(gameState.getPlayerHand());
+            handView.loadCards(playerState.getPlayerHand());
             handView.redraw();
         });
     }
@@ -66,9 +66,9 @@ public class HandPopup extends Popup {
     }
 
     @Override
-    public void consumeKeyStroke(ClientState state, KeyStroke keyStroke) {
+    public void consumeKeyStroke(KeyStroke keyStroke) {
         if (!enabled) return; // pointer is not here
-        switch (state) {
+        switch (playerState) {
             case GameState gameState -> consumeKeyStrokeInGame(gameState, keyStroke);
             default -> {
                 return;
@@ -102,8 +102,8 @@ public class HandPopup extends Popup {
     private void shiftPointer(Side side) {
         if (!side.isVertical()) return;
         if (side == Side.NORD)
-            selectedCard = (selectedCard == 0) ? gameState.getPlayerHand().size() - 1 : selectedCard - 1;
-        else selectedCard = (selectedCard == gameState.getPlayerHand().size() - 1) ? 0 : selectedCard + 1;
+            selectedCard = (selectedCard == 0) ? playerState.getPlayerHand().size() - 1 : selectedCard - 1;
+        else selectedCard = (selectedCard == playerState.getPlayerHand().size() - 1) ? 0 : selectedCard + 1;
         castView(decksView -> {
             decksView.updatePointerPosition(selectedCard);
             decksView.drawAll();
@@ -112,7 +112,7 @@ public class HandPopup extends Popup {
     }
 
     public PlayableCard getSelectedCard() {
-        return gameState.getPlayerHand().get(selectedCard);
+        return playerState.getPlayerHand().get(selectedCard);
     }
 
     protected void castView(Consumer<HandView> consumer) {

@@ -1,7 +1,6 @@
 package IS24_LB11.cli.popup;
 
 import IS24_LB11.cli.ViewHub;
-import IS24_LB11.cli.controller.ClientState;
 import IS24_LB11.cli.utils.CliBox;
 import IS24_LB11.cli.view.PopupView;
 import com.googlecode.lanterna.input.KeyStroke;
@@ -25,7 +24,7 @@ public abstract class Popup<T extends PopupView> {
     
     public abstract void update();
 
-    public abstract void consumeKeyStroke(ClientState state, KeyStroke keyStroke);
+    public abstract void consumeKeyStroke(KeyStroke keyStroke);
 
     public void resize() {
         popView.resize(viewHub.getScreenSize().withRelative(0,-2));

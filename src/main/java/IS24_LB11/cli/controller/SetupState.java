@@ -4,44 +4,31 @@ import IS24_LB11.cli.Scoreboard;
 import IS24_LB11.cli.Table;
 import IS24_LB11.cli.event.server.ServerEvent;
 import IS24_LB11.cli.event.server.ServerPlayerSetupEvent;
-import IS24_LB11.cli.popup.Popup;
-import IS24_LB11.cli.popup.PopupManager;
 import IS24_LB11.cli.popup.TablePopup;
 import IS24_LB11.cli.view.stage.SetupStage;
-import IS24_LB11.cli.notification.NotificationStack;
 import IS24_LB11.cli.ViewHub;
 import IS24_LB11.game.PlayerSetup;
 import IS24_LB11.game.Result;
-import IS24_LB11.game.components.GoalCard;
-import IS24_LB11.game.components.PlayableCard;
-import IS24_LB11.game.components.StarterCard;
+import IS24_LB11.game.components.*;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
-public class SetupState extends ClientState {
+public class SetupState extends ClientState implements PlayerStateInterface {
     private final PlayerSetup setup;
     private Table table;
-    private PopupManager popManager;
     private SetupStage setupStage;
 
-    public SetupState(LobbyState lobbyState, PlayerSetup setup, Table table) throws IOException {
+    public SetupState(LobbyState lobbyState, PlayerSetup setup, Table table) {
         super(lobbyState);
-        this.popManager = new PopupManager(new Popup[]{new TablePopup(getViewHub(), this)});
         this.setup = setup;
         this.table = table;
+        popManager.addPopup(new TablePopup(getViewHub(), this));
     }
 
-    public SetupState(ViewHub viewHub, NotificationStack stack, PlayerSetup setup, Table table) throws IOException {
-        super(viewHub, stack);
-        this.setup = setup;
-        this.table = table;
-    }
-
-    public SetupState(ViewHub viewHub, PlayerSetup setup, Table table) throws IOException {
+    public SetupState(ViewHub viewHub, PlayerSetup setup, Table table) {
         super(viewHub);
         this.setup = setup;
         this.table = table;
@@ -50,6 +37,7 @@ public class SetupState extends ClientState {
     @Override
     public ClientState execute() {
         setupStage = viewHub.setSetupStage(this);
+
         popManager.updatePopups();
         viewHub.update();
         return super.execute();
@@ -93,11 +81,7 @@ public class SetupState extends ClientState {
                         new String[]{"starterCard","goalCard"},
                         new String[]{setup.getStarterCard().asString(), setup.chosenGoal().asString()});
                 setupStage.clear();
-                try { setNextState(new GameState(this)); }
-                catch (IOException e) {
-                    e.printStackTrace();
-                    quit();
-                }
+                setNextState(new GameState(this));
             }
             case "SHOW" -> {
                 if (tokens.length == 2) popManager.showPopup(tokens[1]);
@@ -119,6 +103,8 @@ public class SetupState extends ClientState {
             viewHub.update();
             return;
         }
+        popManager.consumeKeyStroke(keyStroke);
+
         if (keyStroke.isCtrlDown()) {
             if (keyStroke.getKeyType() == KeyType.ArrowLeft) {
                 setChosenGoal(0);
@@ -161,12 +147,12 @@ public class SetupState extends ClientState {
         return setup.getStarterCard();
     }
 
-    public ArrayList<PlayableCard> getHand() {
-        return setup.hand();
-    }
-
     public GoalCard[] getPossiblePrivateGoals() {
         return setup.getGoals();
+    }
+
+    public ArrayList<PlayableCard> getPlayerHand() {
+        return setup.hand();
     }
 
     public Scoreboard getScoreboard() {
@@ -175,5 +161,13 @@ public class SetupState extends ClientState {
 
     public ArrayList<GoalCard> getGoals() {
         return table.getPublicGoals();
+    }
+
+    public ArrayList<NormalCard> getNormalDeck() {
+        return null;
+    }
+
+    public ArrayList<GoldenCard> getGoldenDeck() {
+        return null;
     }
 }

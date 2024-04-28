@@ -20,8 +20,8 @@ import static IS24_LB11.cli.Client.getDefaultSetup;
 public class LobbyState extends ClientState {
     private LobbyStage lobbyStage;
 
-    public LobbyState(ViewHub hub) throws IOException {
-        super(hub);
+    public LobbyState(ViewHub viewHub) throws IOException {
+        super(viewHub);
         this.username = "";
     }
 
@@ -42,17 +42,10 @@ public class LobbyState extends ClientState {
                 username = loginEvent.username();
             }
             case ServerPlayerSetupEvent setupEvent -> {
-                try {
-                    PlayerSetup setup = setupEvent.setup();
-                    Scoreboard scoreboard = new Scoreboard(setupEvent.playersList(), setupEvent.colorList());
-                    Table table = new Table(scoreboard, setupEvent.publicGoals());
-                    //System.out.println("received setup!");
-                    setNextState(new SetupState(this, setup, table));
-                }
-                catch (IOException e) {
-                    e.printStackTrace();
-                    quit();
-                }
+                PlayerSetup setup = setupEvent.setup();
+                Scoreboard scoreboard = new Scoreboard(setupEvent.playersList(), setupEvent.colorList());
+                Table table = new Table(scoreboard, setupEvent.publicGoals());
+                setNextState(new SetupState(this, setup, table));
             }
             default -> processResult(Result.Error("received unknown server event"));
         }
@@ -75,11 +68,7 @@ public class LobbyState extends ClientState {
                 else notificationStack.addUrgent("ERROR", MISSING_ARG.apply("set"));
             }
             case "SETUP" -> {
-                try { setNextState(new SetupState(this, getDefaultSetup(), defaultTable())); } // wait server response to switch
-                catch (IOException e) {
-                    e.printStackTrace();
-                    quit();
-                }
+                setNextState(new SetupState(this, getDefaultSetup(), defaultTable()));
             }
             default -> notificationStack.addUrgent("ERROR", INVALID_CMD.apply(tokens[0], "lobby"));
         };

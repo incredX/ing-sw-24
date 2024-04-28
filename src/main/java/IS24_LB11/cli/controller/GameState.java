@@ -18,32 +18,27 @@ import IS24_LB11.game.components.PlayableCard;
 import IS24_LB11.game.tools.JsonConverter;
 import IS24_LB11.game.tools.JsonException;
 import IS24_LB11.game.utils.Position;
-import IS24_LB11.game.utils.SyntaxException;
 import com.google.gson.*;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.input.KeyStroke;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.stream.Collectors;
 
 //TODO : add boolean edited in cliBox (on in drawAll & set to off in print)
-//TODO : pass popManager from Setup to Game
 //TODO : refactor viewhub as a cliBox's queue consumer. (maybe?)
 //TODO : reconnection to server in lobby
 //TODO : close everything if the input listener is closed
 //TODO : add quit popup to ask confirmation to close the app
 //TODO : remap keyboard shortcuts + enable/disable of cmdline
 
-public class GameState extends ClientState {
+public class GameState extends ClientState implements PlayerStateInterface {
     private final Player player;
     private Table table;
     private ArrayList<NormalCard> normalDeck;
     private ArrayList<GoldenCard> goldenDeck;
     private GameStage gameStage;
-    private PopupManager popManager;
     private Position boardPointer;
     private PlacedCard placedCard;
     private boolean keyConsumed;
@@ -51,32 +46,28 @@ public class GameState extends ClientState {
     private boolean cardPicked;
     private boolean playerTurn;
 
-    public GameState(SetupState setupState) throws IOException {
+    public GameState(SetupState setupState) {
         super(setupState);
         this.player = new Player(username, setupState.getSetup());
         this.table = setupState.getTable();
         this.normalDeck = new ArrayList<>();
         this.goldenDeck = new ArrayList<>();
-        this.popManager = new PopupManager(new Popup[]{
-                new TablePopup(viewHub, this),
-                new HandPopup(viewHub, this), 
-                new DecksPopup(viewHub, this)}
-        );
         this.boardPointer = new Position(0, 0);
         this.placedCard = null;
         this.cardPlaced = false;
         this.cardPicked = false;
         this.playerTurn = false;
+        popManager.addPopup(new DecksPopup(getViewHub(), this));
+        popManager.addPopup(new HandPopup(getViewHub(), this));
     }
 
-    public GameState(ViewHub viewHub, NotificationStack stack, PlayerSetup setup, Table table) throws IOException {
+    public GameState(ViewHub viewHub, NotificationStack stack, PlayerSetup setup, Table table) {
         super(viewHub, stack);
         this.player = new Player(username, setup);
         this.table = table;
         this.normalDeck = new ArrayList<>();
         this.goldenDeck = new ArrayList<>();
-        this.popManager = new PopupManager(new Popup[]{
-                new TablePopup(viewHub, this),
+        this.popManager.addPopup(new Popup[]{
                 new HandPopup(viewHub, this),
                 new DecksPopup(viewHub, this)}
         );
@@ -168,7 +159,7 @@ public class GameState extends ClientState {
             viewHub.update();
             return;
         }
-        popManager.consumeKeyStroke(this, keyStroke);
+        popManager.consumeKeyStroke(keyStroke);
         if (keyStroke.isShiftDown()) {
             switch (keyStroke.getKeyType()) {
                 case ArrowUp -> shiftBoardPointer(Side.NORD);
@@ -296,22 +287,5 @@ public class GameState extends ClientState {
 
     public Position getBoardPointer() {
         return boardPointer;
-    }
-
-    private static ArrayList<NormalCard> defaultNormalDeck() {
-        try {
-            return (ArrayList<NormalCard>) Arrays.stream(new NormalCard[] {
-                    new NormalCard("Q_AFAF0"), new NormalCard("F_EEFF1"), new NormalCard("FP_KPB0")
-            }).collect(Collectors.toList());
-        } catch (SyntaxException e) { return null; }
-    }
-
-    private static ArrayList<GoldenCard> defaultGoldenDeck() {
-        ArrayList<GoldenCard> goldenCards;
-        try {
-            return  (ArrayList<GoldenCard>) Arrays.stream(new GoldenCard[] {
-                    new GoldenCard("_EEKIF1KIIF__"), new GoldenCard("EE_EIF2EIIIA_"), new GoldenCard("EEE_PB2EPPPA_")
-            }).collect(Collectors.toList());
-        } catch (SyntaxException e) { return null; }
     }
 }

@@ -68,7 +68,7 @@ public class SetupStage extends Stage {
 
     public void loadHand() {
         handView.clear();
-        for(PlayableCard card: setupState.getHand()) {
+        for(PlayableCard card: setupState.getPlayerHand()) {
             switch (card) {
                 case GoldenCard goldenCard -> handView.add(new GoldenCardView(goldenCard));
                 case NormalCard normalCard -> handView.add(new NormalCardView(normalCard));

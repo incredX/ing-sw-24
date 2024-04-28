@@ -11,6 +11,8 @@ import IS24_LB11.cli.notification.NotificationStack;
 import IS24_LB11.cli.notification.Priority;
 import IS24_LB11.cli.ViewHub;
 import IS24_LB11.cli.listeners.ServerHandler;
+import IS24_LB11.cli.popup.Popup;
+import IS24_LB11.cli.popup.PopupManager;
 import IS24_LB11.game.Result;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -37,6 +39,7 @@ public abstract class ClientState {
 
     private ClientState nextState;
     protected String username;
+    protected final PopupManager popManager;
     protected final ArrayBlockingQueue<Event> queue;
     protected final NotificationStack notificationStack;
     protected final ViewHub viewHub;
@@ -46,21 +49,21 @@ public abstract class ClientState {
     public ClientState(ViewHub viewHub, NotificationStack notificationStack) {
         this.nextState = null;
         this.username = "";
+        this.popManager = new PopupManager(new Popup[]{});
         this.queue = new ArrayBlockingQueue<>(QUEUE_CAPACITY);
         this.notificationStack = notificationStack;
         this.viewHub = viewHub;
         this.cmdLine = new CommandLine(viewHub.getScreenSize().getColumns());
-        //viewHub.updateCommandLine(cmdLine);
     }
 
     public ClientState(ClientState state) {
         this.nextState = null;
+        this.popManager = state.popManager;
         this.username = state.username;
         this.queue = state.queue;
         this.notificationStack = state.notificationStack;
         this.viewHub = state.viewHub;
         this.cmdLine = state.cmdLine;
-        //viewHub.updateCommandLine(cmdLine);
     }
 
     public ClientState(ViewHub viewHub) {
