@@ -59,7 +59,7 @@ public class Server
                     this.clientHandlers.add(clientHandler);
                     new Thread(clientHandler).start();
 
-                    if(clientHandlers.size() == maxPlayers)
+                    if(clientHandlers.size() != 1 && clientHandlers.size() == maxPlayers)
                         gameStarted = true;
                 }
                 else{
