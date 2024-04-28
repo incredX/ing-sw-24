@@ -65,7 +65,7 @@ public class Deck {
             throw new DeckException("The deck is empty. \n");
         }
 
-        if (cards.size() <= cardIndex || cardIndex < 1 || cardIndex > 3) {
+        if (cards.size() < cardIndex || cardIndex < 1 || cardIndex > 3) {
             throw new DeckException("Index out of bound. \n");
         }
 
