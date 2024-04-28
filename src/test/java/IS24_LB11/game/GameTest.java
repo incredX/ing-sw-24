@@ -241,6 +241,42 @@ public class GameTest {
         assertEquals(sortedScore, ranking);
     }
 
+
+    @Test
+    @DisplayName("Test created in order to make some check related to the CLI development")
+    void testValidDraw() throws SyntaxException, FileNotFoundException, DeckException, JsonException {
+        JsonConverter jsonConverter = new JsonConverter();
+        int playersNumber = 2;
+        Game game = new Game(playersNumber);
+        ArrayList<String> playerNames = new ArrayList<>(playersNumber);
+        for (int i = 0; i < 2; i++)
+            playerNames.add("Player " + (i + 1));
+        game.setupGame(playerNames);
+        ArrayList<GoalCard> goalCardsChoosen = new ArrayList<>();
+        for (int i = 0; i < 2; i++)
+            goalCardsChoosen.add(game.getPlayers().get(i).getSetup().getGoals()[i % 2]);
+        ArrayList<StarterCard> starterCardsSideChoosen = new ArrayList<>();
+        for (int i = 0; i < 2; i++)
+            starterCardsSideChoosen.add(game.getPlayers().get(i).getSetup().getStarterCard());
+        starterCardsSideChoosen.stream().forEach(x->x.flip());
+        game.chooseGoalPhase(goalCardsChoosen,starterCardsSideChoosen);
+
+
+        game.executeTurn(game.getPlayers().getFirst().name(),game.getPlayers().getFirst().getBoard().getAvailableSpots().getFirst(), game.getPlayers().getFirst().getHand().getFirst(),false,1 );
+
+        PlayableCard drawnCard = game.getPlayers().getFirst().getHand().getLast();
+        Deck originalDeck = game.getNormalDeck();
+
+        for (int i=0; i<35; i++){
+            //System.out.println(originalDeck.showCard(1).asString());
+            assertNotEquals(drawnCard.asString(), originalDeck.drawCard(1).asString());
+            //System.out.println(playedCard.asString());
+            //System.out.println(originalDeck.size());
+        }
+        assertEquals(0, originalDeck.size());
+
+    }
+
     @Test
     void invalidExecution() throws SyntaxException, FileNotFoundException, DeckException, JsonException {
         JsonConverter jsonConverter = new JsonConverter();
