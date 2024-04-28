@@ -13,7 +13,7 @@ import java.util.function.Consumer;
 import static IS24_LB11.cli.utils.Side.*;
 
 public class HandPopup extends Popup {
-    private final PlayerStateInterface playerState;
+    private PlayerStateInterface playerState;
     private int selectedCard;
 
     public HandPopup(ViewHub viewHub, PlayerStateInterface playerState) {
@@ -109,6 +109,10 @@ public class HandPopup extends Popup {
             decksView.drawAll();
         });
         //drawViewInStage();
+    }
+
+    public void setPlayerState(PlayerStateInterface playerState) {
+        this.playerState = playerState;
     }
 
     public PlayableCard getSelectedCard() {

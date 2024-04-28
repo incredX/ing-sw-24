@@ -51,7 +51,7 @@ public class ViewHub implements Runnable {
                     for (PopupView popup : popups) popup.print(screen);
                     if (notificationView != null) notificationView.print(screen);
                     commandLineView.print(screen);
-                    screen.refresh(Screen.RefreshType.COMPLETE);
+                    screen.refresh();
                     lock.wait();
                 }
                 catch (InterruptedException e) { break; }

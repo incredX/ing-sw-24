@@ -4,6 +4,7 @@ import IS24_LB11.cli.ViewHub;
 import IS24_LB11.cli.controller.PlayerStateInterface;
 import IS24_LB11.cli.view.TableView;
 import IS24_LB11.cli.Scoreboard;
+import IS24_LB11.game.components.GoalCard;
 import com.googlecode.lanterna.input.KeyStroke;
 
 import java.util.function.Consumer;
@@ -23,6 +24,8 @@ public class TablePopup extends Popup {
     @Override
     public void update() {
         Scoreboard scoreboard = playerState.getScoreboard();
+        System.out.printf("%s: %s\n", playerState.getClass().getName(),
+                playerState.getGoals().stream().map(GoalCard::asString).toList());
         castView(tableView -> {
             tableView.loadColors(scoreboard.getColors());
             tableView.loadPlayers(scoreboard.getPlayers());
@@ -37,6 +40,10 @@ public class TablePopup extends Popup {
     public void consumeKeyStroke(KeyStroke keyStroke) {
         if (!enabled) return; // focus is not here
         // cosume keyStroke here
+    }
+
+    public void setPlayerState(PlayerStateInterface playerState) {
+        this.playerState = playerState;
     }
 
     private void castView(Consumer<TableView> consumer) {
