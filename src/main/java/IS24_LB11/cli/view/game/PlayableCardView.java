@@ -3,7 +3,7 @@ package IS24_LB11.cli.view.game;
 
 import IS24_LB11.cli.style.BorderStyle;
 import IS24_LB11.cli.style.SingleBorderStyle;
-import IS24_LB11.cli.utils.CellFactory;
+import IS24_LB11.cli.utils.SymbolAdapter;
 import IS24_LB11.cli.utils.CliBox;
 import IS24_LB11.cli.utils.Side;
 import IS24_LB11.game.components.PlayableCard;
@@ -28,14 +28,14 @@ public class PlayableCardView extends CliBox {
         super(new TerminalSize(WIDTH, HEIGHT), borderStyle);
         this.card = card;
         this.position = position;
-        build();
+        drawAll();
     }
 
     public PlayableCardView(PlayableCard card, BorderStyle borderStyle) {
         super(new TerminalSize(WIDTH, HEIGHT), borderStyle);
         this.card = card;
         this.position = null;
-        build();
+        drawAll();
     }
 
     public PlayableCardView(PlayableCard card, Position position) {
@@ -51,7 +51,7 @@ public class PlayableCardView extends CliBox {
         position = position.withRelative(side.asRelativePosition());
     }
 
-    public void build() {
+    public void drawAll() {
         drawBorders();
         Direction.forEachDirection(dir -> drawCorner(dir));
         drawSuit();
@@ -63,10 +63,10 @@ public class PlayableCardView extends CliBox {
         TerminalPosition center = new TerminalPosition(WIDTH/2, HEIGHT/2);
         Symbol symbol = card.getSuit();
         if (card.isFaceDown()) {
-            drawCell(center, CellFactory.fromSymbol(symbol));
+            drawChar(center, SymbolAdapter.fromSymbol(symbol));
             drawClosedSquare(center);
         } else {
-            drawCell(center, Symbol.toChar(symbol));
+            drawChar(center, Symbol.toChar(symbol));
             //drawOpenSquare(center);
         }
     }
@@ -74,9 +74,9 @@ public class PlayableCardView extends CliBox {
     protected void drawPoints() {
         if (card.isFaceDown() || card.getPoints() == 0) return;
         TerminalPosition center = new TerminalPosition(WIDTH/2, firstRow());
-        drawCell(center, (char)(card.getPoints()+'0'));
-        drawCell(center.withRelative(-2, 0), '[');
-        drawCell(center.withRelative(2, 0), ']');
+        drawChar(center, (char)(card.getPoints()+'0'));
+        drawChar(center.withRelative(-2, 0), '[');
+        drawChar(center.withRelative(2, 0), ']');
     }
 
     protected void drawCorner(Direction dir) {
@@ -104,31 +104,31 @@ public class PlayableCardView extends CliBox {
         }
         corner = borderStyle.getCorner(dir.opposite());
 
-        drawCell(cornerPos.withRelative(dx*signX, 0), hSep);
-        drawCell(cornerPos.withRelative(0, dy*signY), vSep);
-        drawCell(cornerPos.withRelative(dx*signX, dy*signY), corner);
-        drawCell(cornerPos.withRelative(2*signX, signY), CellFactory.fromSymbol(symbol));
-        drawCell(cornerPos.withRelative(dx*signX, signY), borderStyle.getVLine());
+        drawChar(cornerPos.withRelative(dx*signX, 0), hSep);
+        drawChar(cornerPos.withRelative(0, dy*signY), vSep);
+        drawChar(cornerPos.withRelative(dx*signX, dy*signY), corner);
+        drawChar(cornerPos.withRelative(2*signX, signY), SymbolAdapter.fromSymbol(symbol));
+        drawChar(cornerPos.withRelative(dx*signX, signY), borderStyle.getVLine());
         for (int x=1; x<dx; x++) {
-            drawCell(cornerPos.withRelative((dx-x)*signX, dy*signY), borderStyle.getHLine());
+            drawChar(cornerPos.withRelative((dx-x)*signX, dy*signY), borderStyle.getHLine());
         }
     }
 
     protected void drawOpenSquare(TerminalPosition pos) {
-        drawCell(pos.withRelative(2, -1), borderStyle.getCorner(UP_RIGHT));
-        drawCell(pos.withRelative(-2, -1), borderStyle.getCorner(UP_LEFT));
-        drawCell(pos.withRelative(-2, 1), borderStyle.getCorner(DOWN_LEFT));
-        drawCell(pos.withRelative(2, 1), borderStyle.getCorner(DOWN_RIGHT));
+        drawChar(pos.withRelative(2, -1), borderStyle.getCorner(UP_RIGHT));
+        drawChar(pos.withRelative(-2, -1), borderStyle.getCorner(UP_LEFT));
+        drawChar(pos.withRelative(-2, 1), borderStyle.getCorner(DOWN_LEFT));
+        drawChar(pos.withRelative(2, 1), borderStyle.getCorner(DOWN_RIGHT));
     }
 
     protected void drawClosedSquare(TerminalPosition pos) {
         drawOpenSquare(pos);
         for (int i=-1; i<2; i++) {
-            drawCell(pos.withRelative(i, -1), borderStyle.getHLine());
-            drawCell(pos.withRelative(i, 1), borderStyle.getHLine());
+            drawChar(pos.withRelative(i, -1), borderStyle.getHLine());
+            drawChar(pos.withRelative(i, 1), borderStyle.getHLine());
         }
-        drawCell(pos.withRelative(-2, 0), borderStyle.getVLine());
-        drawCell(pos.withRelative(2, 0), borderStyle.getVLine());
+        drawChar(pos.withRelative(-2, 0), borderStyle.getVLine());
+        drawChar(pos.withRelative(2, 0), borderStyle.getVLine());
     }
 
     public void setBoardPosition(Position position) {

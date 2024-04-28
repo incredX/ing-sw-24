@@ -1,12 +1,9 @@
 package IS24_LB11.network.phases;
 
 import IS24_LB11.game.Player;
-import IS24_LB11.game.components.GoldenCard;
-import IS24_LB11.game.components.NormalCard;
 import IS24_LB11.network.ClientHandler;
 import com.google.gson.*;
 
-import java.util.ArrayList;
 import java.util.Map;
 
 public class NotifyTurnPhase {
@@ -42,6 +39,7 @@ public class NotifyTurnPhase {
         for (Map.Entry<String, JsonElement> entry : get3CardsFromEachDeck(clientHandler).entrySet()) {
             response.add(entry.getKey(), entry.getValue());
         }
+        System.out.println(response);
         //send current player turn to every player
         clientHandler.broadcast(response.toString());
         clientHandler.sendMessage(response.toString());

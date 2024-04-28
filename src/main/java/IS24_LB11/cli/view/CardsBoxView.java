@@ -15,7 +15,7 @@ public class CardsBoxView extends PopupView {
     }
 
     @Override
-    public void build() {
+    public void drawAll() {
         drawBorders();
         drawTitle();
         drawPointer();

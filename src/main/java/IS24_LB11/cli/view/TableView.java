@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 public class TableView extends PopupView {
     private static final int DEFAULT_WIDTH = 60;
     private static final int DEFAULT_HEIGHT = 16;
-    private static final String DASHED_HORIZONTAL_SEPARATOR = "-".repeat(DEFAULT_WIDTH-2);
+    private static final String DASHED_HORIZONTAL_SEPARATOR = "-".repeat(DEFAULT_WIDTH-4);
 
     private ArrayList<String> players;
     private ArrayList<TextColor> colors;
@@ -36,7 +36,7 @@ public class TableView extends PopupView {
     }
 
     @Override
-    public void build() {
+    public void drawAll() {
         drawBorders();
         drawStructure();
         drawGoals();
@@ -69,23 +69,24 @@ public class TableView extends PopupView {
         }
     }
 
-    public void loadCurrentPlayer(int indexCurrentPlayer) {
-        this.indexCurrentPlayer = indexCurrentPlayer;
-        fillRow(firstRow()+2+indexCurrentPlayer, firstColumn(), '>');
+    public void loadCurrentPlayer(int index) {
+        drawChar(firstColumn(), firstRow()+2+indexCurrentPlayer, ' ', TextColor.ANSI.DEFAULT);
+        indexCurrentPlayer = index;
+        drawChar(firstColumn(), firstRow()+2+index, '>', TextColor.ANSI.DEFAULT);
     }
 
     public void loadGoals(ArrayList<GoalCard> goals) {
-        int x = 1 + ((goals.size() == 2) ? DEFAULT_WIDTH+3 : 0);
+        int[] cols = new int[] { 1, GoalView.WIDTH+4, 2*GoalView.WIDTH+4 };
+        int i = 3-goals.size();
         for (GoalCard goal : goals) {
             switch (goal) {
                 case GoalPattern pattern -> goalViews.add(new GoalPatternView(pattern));
                 case GoalSymbol symbol -> goalViews.add(new GoalSymbolView(symbol));
                 default -> throw new IllegalStateException("Invalid goal: " + goal);
             }
-            goalViews.getLast().setPosition(x, lastRow()-GoalView.HEIGHT);
-            goalViews.getLast().build();
-            if (goalViews.size() == 1) x += GoalView.WIDTH+3;
-            else x += GoalView.WIDTH;
+            goalViews.getLast().setPosition(cols[i], lastRow()-GoalView.HEIGHT);
+            goalViews.getLast().drawAll();
+            i++;
         }
     }
 
@@ -102,7 +103,7 @@ public class TableView extends PopupView {
     }
 
     private void drawGoals() {
-        for (GoalView goal : goalViews) draw(goal);
+        for (GoalView goal : goalViews) drawBox(goal);
     }
 
     private TextColor adaptColor(Color color) {

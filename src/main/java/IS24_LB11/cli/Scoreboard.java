@@ -8,30 +8,35 @@ public class Scoreboard {
     private final ArrayList<String> players;
     private final ArrayList<Integer> scores;
     private final ArrayList<Color> colors;
-    private int indexCurrentPlayer;
+    private int indexPLayer;
 
     public Scoreboard(ArrayList<String> players, ArrayList<Integer> scores, ArrayList<Color> colors) {
         this.players = players;
         this.scores = scores;
         this.colors = colors;
-        indexCurrentPlayer = 0;
+        indexPLayer = 0;
     }
 
     public Scoreboard(ArrayList<String> players, ArrayList<Color> colors) {
         this.players = players;
         this.scores = new ArrayList<>(players.stream().map(p -> 0).toList());
         this.colors = colors;
-        indexCurrentPlayer = 0;
+        indexPLayer = 0;
     }
 
-    public void setScore(String playerName, int score) {
+    public void setScores(ArrayList<Integer> scores) {
         for (int i = 0; i < players.size(); i++) {
-            if (playerName.equals(players.get(i))) scores.set(i, score);
+            if (this.scores.get(i) != scores.get(i)) this.scores.set(i, scores.get(i));
         }
     }
 
-    public void setNextPlayer() {
-        indexCurrentPlayer += (indexCurrentPlayer+1) % players.size();
+    public void setNextPlayer(String playerName) {
+        for (int i = indexPLayer + 1; i < indexPLayer+players.size(); i++) {
+            if (playerName.equals(players.get(i%players.size()))) {
+                indexPLayer = i%players.size();
+                return;
+            }
+        }
     }
 
     public ArrayList<String> getPlayers() {
@@ -46,7 +51,7 @@ public class Scoreboard {
         return colors;
     }
 
-    public int getIndexCurrentPlayer() {
-        return indexCurrentPlayer;
+    public int getCurrentPlayerIndex() {
+        return indexPLayer;
     }
 }

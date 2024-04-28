@@ -13,6 +13,14 @@ public class Table {
         this.publicGoals = publicGoals;
     }
 
+    public void setNextPlayer(String player) {
+        scoreboard.setNextPlayer(player);
+    }
+
+    public void setScore(ArrayList<Integer> scores) {
+        scoreboard.setScores(scores);
+    }
+
     public Scoreboard getScoreboard() {
         return scoreboard;
     }

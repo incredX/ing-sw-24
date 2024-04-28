@@ -5,11 +5,11 @@ import IS24_LB11.cli.style.SingleBorderStyle;
 import IS24_LB11.cli.utils.Side;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
-import com.googlecode.lanterna.terminal.Terminal;
+import com.googlecode.lanterna.graphics.TextGraphics;
+import com.googlecode.lanterna.screen.Screen;
 import IS24_LB11.cli.utils.CliBox;
 import IS24_LB11.cli.utils.TerminalRectangle;
 
-import java.io.IOException;
 import java.util.ArrayDeque;
 
 
@@ -34,9 +34,11 @@ public class Stage extends CliBox {
     }
 
     @Override
-    public void build() {
+    public void drawAll() {
         drawBorders();
     }
+
+    public void buildStage() { buildArea(rectangle); }
 
     public void buildArea(TerminalRectangle area) {
         builtAreas.add(area);
@@ -59,35 +61,20 @@ public class Stage extends CliBox {
     }
 
     @Override
-    public void print(Terminal terminal) throws IOException {
-        TerminalPosition originalPosition = terminal.getCursorPosition();
+    public void print(Screen screen) {
+        TextGraphics graphics = screen.newTextGraphics();
+        int cnt = 0;
         while (!builtAreas.isEmpty()) {
             TerminalRectangle area = builtAreas.removeLast();
-            TerminalPosition base = area.getPosition();
-            TerminalPosition relative;
-            for (int r=0; r<=area.getHeight(); r++) {
-                relative = base.withRelativeRow(r).minus(this.getPosition());
-                terminal.setCursorPosition(base.withRelativeRow(r));
-                int relCol = relative.getColumn(), relRow = relative.getRow();
-                for (int c=0; c<=area.getWidth(); c++) {
-                    if (relRow < rectangle.getHeight() && relCol < rectangle.getWidth() && relRow >= 0 && relCol >= 0)
-                        image[relRow][relCol].print(terminal);
-                    relCol++;
-                }
-            }
+            graphics.drawImage(area.getPosition(), image, area.getPosition(), area.getSize());
+            cnt++;
         }
-        terminal.setCursorPosition(originalPosition);
     }
 
     @Override
-    public void draw(CliBox cliBox) {
-        super.draw(cliBox);
+    public void drawBox(CliBox cliBox) {
+        super.drawBox(cliBox);
         buildRelativeArea(cliBox.getRectangle());
-    }
-
-    @Override
-    public void setCover(CliBox box, boolean covered) {
-        super.setCover(box, covered);
     }
 
     @Override
@@ -101,10 +88,6 @@ public class Stage extends CliBox {
 
     public void resize() {
         super.resize(viewHub.getScreenSize().withRelative(0, -2));
-    }
-
-    protected void updateViewHub() {
-        viewHub.update();
     }
 
     public void shift(Side side) {

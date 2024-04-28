@@ -1,6 +1,7 @@
 package IS24_LB11.cli.controller;
 
 import IS24_LB11.cli.CommandLine;
+import IS24_LB11.cli.Debugger;
 import IS24_LB11.cli.event.server.ServerEvent;
 import IS24_LB11.cli.event.server.ServerHeartBeatEvent;
 import IS24_LB11.cli.event.server.ServerMessageEvent;
@@ -10,12 +11,14 @@ import IS24_LB11.cli.notification.NotificationStack;
 import IS24_LB11.cli.notification.Priority;
 import IS24_LB11.cli.ViewHub;
 import IS24_LB11.cli.listeners.ServerHandler;
+import IS24_LB11.cli.popup.Popup;
+import IS24_LB11.cli.popup.PopupManager;
 import IS24_LB11.game.Result;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.input.KeyStroke;
-import com.googlecode.lanterna.terminal.Terminal;
+import com.googlecode.lanterna.screen.Screen;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -36,6 +39,7 @@ public abstract class ClientState {
 
     private ClientState nextState;
     protected String username;
+    protected final PopupManager popManager;
     protected final ArrayBlockingQueue<Event> queue;
     protected final NotificationStack notificationStack;
     protected final ViewHub viewHub;
@@ -45,21 +49,21 @@ public abstract class ClientState {
     public ClientState(ViewHub viewHub, NotificationStack notificationStack) {
         this.nextState = null;
         this.username = "";
+        this.popManager = new PopupManager(new Popup[]{});
         this.queue = new ArrayBlockingQueue<>(QUEUE_CAPACITY);
         this.notificationStack = notificationStack;
         this.viewHub = viewHub;
         this.cmdLine = new CommandLine(viewHub.getScreenSize().getColumns());
-        viewHub.updateCommandLine(cmdLine);
     }
 
     public ClientState(ClientState state) {
         this.nextState = null;
+        this.popManager = state.popManager;
         this.username = state.username;
         this.queue = state.queue;
         this.notificationStack = state.notificationStack;
         this.viewHub = state.viewHub;
         this.cmdLine = state.cmdLine;
-        viewHub.updateCommandLine(cmdLine);
     }
 
     public ClientState(ViewHub viewHub) {
@@ -71,7 +75,7 @@ public abstract class ClientState {
             while (true) {
                 try { queue.wait(); }
                 catch (InterruptedException e) {
-                    System.err.println("caught exception: "+e.getMessage());
+                    Debugger.print(e);
                     break;
                 }
                 while(!queue.isEmpty()) {
@@ -89,7 +93,7 @@ public abstract class ClientState {
             case KeyboardEvent keyboardEvent -> processKeyStroke(keyboardEvent.keyStroke());
             case ResizeEvent resizeEvent -> processResize(resizeEvent.size());
             case ResultServerEvent resultServerEvent -> processResult(resultServerEvent.result());
-            default -> System.out.println("Unknown event: " + event.getClass().getName());
+            default -> Debugger.print("Unknown event: " + event.getClass().getName());
         };
     }
 
@@ -115,7 +119,8 @@ public abstract class ClientState {
             text = result.getError();
             if (result.getCause() != null)
                 text += " : "+result.getCause();
-            notificationStack.addUrgent("ERROR", text);
+            notificationStack.addUrgent("ERROR (from server)", text);
+            viewHub.update();
             return;
         }
         processServerEvent(result.get());
@@ -190,11 +195,11 @@ public abstract class ClientState {
                 cmdLine.moveCursor(1);
                 break;
             case Escape:
+                sendToServer("quit");
                 quit();
             default:
                 break;
         }
-        viewHub.updateCommandLine(cmdLine);
     }
 
     protected void processCommandSendto(String argument) {
@@ -282,7 +287,11 @@ public abstract class ClientState {
         this.serverHandler = serverHandler;
     }
 
-    public Terminal getTerminal() {
-        return viewHub.getTerminal();
+    public ViewHub getViewHub() {
+        return viewHub;
+    }
+
+    public Screen getScreen() {
+        return viewHub.getScreen();
     }
 }

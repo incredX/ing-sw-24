@@ -5,34 +5,43 @@ import IS24_LB11.cli.style.SingleBorderStyle;
 import IS24_LB11.game.utils.Direction;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.TextColor;
-import com.googlecode.lanterna.terminal.Terminal;
+import com.googlecode.lanterna.graphics.TextGraphics;
+import com.googlecode.lanterna.graphics.TextImage;
+import com.googlecode.lanterna.screen.Screen;
+import com.googlecode.lanterna.screen.ScreenBuffer;
 
-import java.io.IOException;
+import java.util.EnumMap;
 
-public class CliBox implements CliFrame {
+import static IS24_LB11.cli.utils.Side.*;
+
+public class CliBox {
     protected TerminalRectangle rectangle;
     protected TerminalRectangle innerArea;
     protected TerminalRectangle borderArea;
     protected BorderStyle borderStyle;
-    protected Cell[][] image;
+    protected TextImage image;
+    private EnumMap<Side, Integer> margins;
 
-    public CliBox(TerminalSize size, TerminalPosition position, BorderStyle bs) {
-        rectangle = new TerminalRectangle(size, position);
-        borderArea = rectangle.withRelativeSize(-3, -1)
-                .withPosition(new TerminalPosition(1, 0));
-        innerArea = borderArea.withRelativeSize(-2, -2)
-                .withRelativePosition(1, 1);
-        borderStyle = bs;
-        resetImage();
+    public CliBox(TerminalSize size, TerminalPosition position, BorderStyle borderStyle) {
+        this.rectangle = new TerminalRectangle(size, position);
+        this.borderArea = new TerminalRectangle(size, position);
+        this.innerArea = new TerminalRectangle(size, position);
+        this.borderStyle = borderStyle;
+        this.margins = new EnumMap<>(Side.class);
+        this.image = new ScreenBuffer(size, textChar(' '));
+        for(Side side: Side.values()) margins.put(side, side.isVertical() ? 0 : 1);
+        updateBorderArea();
+        updateInnerArea();
     }
 
-    public CliBox(int width, int height, int x, int y, BorderStyle bs) {
-        this(new TerminalSize(width, height), new TerminalPosition(x, y), bs);
+    public CliBox(int width, int height, int x, int y, BorderStyle borderStyle) {
+        this(new TerminalSize(width, height), new TerminalPosition(x, y), borderStyle);
     }
 
-    public CliBox(TerminalSize tSize, BorderStyle bs) {
-        this(tSize, new TerminalPosition(0,0), bs);
+    public CliBox(TerminalSize terminalSize, BorderStyle borderStyle) {
+        this(terminalSize, new TerminalPosition(0,0), borderStyle);
     }
 
     public CliBox(TerminalSize tSize) {
@@ -40,101 +49,76 @@ public class CliBox implements CliFrame {
     }
 
     public void clear() {
-        for (int r=0; r<getHeight(); r++) {
-            for (int c=0; c<getWidth(); c++) image[r][c] = new Cell(' ', TextColor.ANSI.DEFAULT);
-        }
+        image.setAll(textChar(' '));
     }
 
-    @Override
-    public void build() {
+    public void drawAll() {
         drawBorders();
     }
 
-    public void rebuild() {
+    public void redraw() {
         clear();
-        build();
+        drawAll();
     }
 
-    public void print(Terminal terminal) throws IOException {
-        TerminalPosition originalPosition = terminal.getCursorPosition();
-        for (int r=0; r<getHeight(); r++) {
-            terminal.setCursorPosition(rectangle.getX(), rectangle.getY()+r);
-            for(int c=0; c<getWidth(); c++) {
-                image[r][c].print(terminal);
-            }
-        }
-        terminal.setCursorPosition(originalPosition);
+    public void print(Screen screen) {
+        TextGraphics graphics = screen.newTextGraphics();
+        graphics.drawImage(rectangle.getPosition(), image);
     }
 
     public void resize(TerminalSize newSize) {
-        int deltaWidth = newSize.getColumns() - rectangle.getWidth();
-        int deltaHeight = newSize.getRows() - rectangle.getHeight();
         rectangle.setSize(newSize);
-        borderArea.resize(deltaWidth, deltaHeight);
+        updateBorderArea();
         updateInnerArea();
         resetImage();
     }
 
     protected void resetImage() {
-        image = new Cell[rectangle.getHeight()][rectangle.getWidth()];
-        for (int r=0; r<getHeight(); r++) {
-            for (int c=0; c<getWidth(); c++) image[r][c] = new Cell(' ', TextColor.ANSI.DEFAULT);
-        }
+        image = new ScreenBuffer(getSize(), textChar(' '));
     }
 
-    protected void draw(CliBox box) {
-        for (int r=0; r<box.rectangle.getHeight(); r++) {
-            for (int c=0; c<box.rectangle.getWidth(); c++) {
-                int x = firstColumn() + box.rectangle.getX() + c;
-                int y = firstRow() + box.rectangle.getY() + r;
-                if (x > lastColumn() || y > lastRow() || x <= 0 || y <= 0) continue;
-                image[y][x].set(box.image[r][c]);
-            }
-        }
-    }
-
-    public void setCover(CliBox box, boolean covered) {
-        for (int r=box.getY(); r<box.rectangle.getYAndHeight(); r++) {
-            for (int c=box.getX(); c<box.rectangle.getXAndWidth(); c++) {
-                if (rectangle.contains(new TerminalPosition(c, r))) {
-                    image[r-getY()][c-getX()].setCovered(covered);
-                }
-            }
-        }
+    protected void drawBox(CliBox box) {
+        int thisOffsetX = firstColumn() + Integer.max(0, box.rectangle.getX());
+        int thisOffsetY = firstRow() + Integer.max(0, box.rectangle.getY());
+        int boxOffsetX = Integer.max(0, -box.rectangle.getX());
+        int boxOffsetY = Integer.max(0, -box.rectangle.getY());
+        int columns = Integer.min(box.getWidth(), lastColumn()-box.rectangle.getX());
+        int rows = Integer.min(box.getHeight(), lastRow()-box.rectangle.getY());
+        if (columns <= 0 || rows <= 0 || boxOffsetX >= box.getWidth() || boxOffsetY >= box.getHeight()) return;
+        box.image.copyTo(image, boxOffsetY, rows, boxOffsetX, columns, thisOffsetY, thisOffsetX);
     }
 
     protected void drawBorders() {
-        fillRow(borderArea.side(Side.NORD), borderStyle.getHLine());
+        fillRow(borderArea.side(NORD), borderStyle.getHLine());
         fillRow(borderArea.side(Side.SUD), borderStyle.getHLine());
-        fillColumn(borderArea.side(Side.WEST), borderStyle.getVLine());
-        fillColumn(borderArea.side(Side.EAST), borderStyle.getVLine());
+        fillColumn(borderArea.side(WEST), borderStyle.getVLine());
+        fillColumn(borderArea.side(EAST), borderStyle.getVLine());
 
         for (int i=0; i<4; i++) {
             TerminalPosition corner = getCornerPosition(i);
-            drawCell(corner, borderStyle.getCorner(i));
+            drawChar(corner, borderStyle.getCorner(i));
         }
     }
 
-    protected void drawCell(TerminalPosition pos, char c) {
-        image[pos.getRow()][pos.getColumn()].set(c);
+    protected void drawChar(TerminalPosition position, TextCharacter character) {
+        image.setCharacterAt(position, character);
     }
 
-    protected void drawCell(TerminalPosition pos, char c, TextColor color) {
-        image[pos.getRow()][pos.getColumn()].set(c, color);
+    protected void drawChar(TerminalPosition position, char c) {
+        image.setCharacterAt(position, textChar(c));
     }
 
-    protected void drawCell(int col, int row, char c, TextColor color) {
-        image[row][col].set(c, color);
+    protected void drawChar(TerminalPosition position, char c, TextColor color) {
+        image.setCharacterAt(position, textChar(c, color));
     }
 
-    protected void drawCell(TerminalPosition pos, Cell cell) {
-        image[pos.getRow()][pos.getColumn()] = new Cell(cell);
+    protected void drawChar(int col, int row, char c, TextColor color) {
+        image.setCharacterAt(col, row, textChar(c, color));
     }
 
     protected void fillRow(int row, int offset, char c, TextColor color) {
-        for (int i=firstColumn()+offset; i<=lastColumn(); i++) {
-            drawCell(new TerminalPosition(i, row), c, color);
-        }
+        TextGraphics graphics = image.newTextGraphics();
+        graphics.drawLine(firstColumn()+offset, row, lastColumn(), row, textChar(c, color));
     }
 
     protected void fillRow(int row, char c) {
@@ -150,11 +134,9 @@ public class CliBox implements CliFrame {
     }
 
     protected void fillRow(int row, int offset, String line, TextColor color) {
-        for (int i=firstColumn()+offset,j=0; i<=lastColumn(); i++) {
-            if (j >= line.length()) break;
-            drawCell(new TerminalPosition(i, row), line.charAt(j), color);
-            j++;
-        }
+        TextGraphics graphics = image.newTextGraphics();
+        graphics.setForegroundColor(color);
+        graphics.putString(firstColumn()+offset, row, line.substring(0, Integer.min(lastColumn()-offset, line.length())));
     }
 
     protected void fillRow(int row, int offset, String line) {
@@ -166,15 +148,15 @@ public class CliBox implements CliFrame {
     }
 
     protected void fillColumn(int col, char c) {
-        for (int i=firstRow(); i<=lastRow(); i++) {
-            drawCell(new TerminalPosition(col, i), c);
+        for (int i=0; i<=getHeight(); i++) {
+            drawChar(new TerminalPosition(col, i), c);
         }
     }
 
     protected void fillColumn(int col, int offset, String line, TextColor color) {
         for (int i=firstRow()+offset,j=0; i<=lastRow(); i++) {
             if (j >= line.length()) break;
-            drawCell(new TerminalPosition(col, i), line.charAt(j), color);
+            drawChar(new TerminalPosition(col, i), line.charAt(j), color);
             j++;
         }
     }
@@ -192,20 +174,24 @@ public class CliBox implements CliFrame {
     }
 
     public void setMargins(int margin) {
-        borderArea.setPosition(margin, margin);
-        borderArea.setSize(rectangle.getSize().withRelative(-2*margin-1, -2*margin-1));
+        for(Side side: Side.values()) margins.put(side, margin);
+        updateBorderArea();
         updateInnerArea();
     }
 
-    public void setSize(TerminalSize size) {
-        rectangle.setSize(size);
-        borderArea.setSize(rectangle.getSize().withRelative(-1,-1));
+    public void setMargin(Side side, int margin) {
+        margins.put(side, margin);
+        updateBorderArea();
         updateInnerArea();
-        resetImage();
+    }
+
+    protected void updateBorderArea() {
+        borderArea.setPosition(new TerminalPosition(margins.get(EAST), margins.get(NORD)));
+        borderArea.setSize(rectangle.getSize().withRelative(-getHorizontalMargins()-1, -getVerticallMargins()-1));
     }
 
     protected void updateInnerArea() {
-        innerArea.setPosition(borderArea.getPosition().withRelative(1,1));
+        innerArea.setPosition(borderArea.getPosition().withRelative(1, 1));
         innerArea.setSize(borderArea.getSize().withRelative(-2,-2));
     }
 
@@ -233,16 +219,25 @@ public class CliBox implements CliFrame {
         return getCornerPosition(dir.ordinal());
     }
 
-    @Override
     public TerminalPosition getPosition() {
         return rectangle.getPosition();
     }
     public TerminalSize getSize() { return rectangle.getSize(); }
     public TerminalRectangle getRectangle() { return rectangle; }
+    public int getHorizontalMargins() { return margins.get(EAST) + margins.get(WEST); }
+    public int getVerticallMargins() { return margins.get(NORD) + margins.get(SUD); }
     public int getHeight() { return rectangle.getHeight(); }
     public int getWidth() { return rectangle.getWidth(); }
     public int getY() { return rectangle.getY(); }
     public int getX() { return rectangle.getX(); }
     public int getYAndHeight() { return rectangle.getYAndHeight(); }
     public int getXAndWidth() { return rectangle.getXAndWidth(); }
+
+    public static TextCharacter textChar(char c) {
+        return TextCharacter.fromCharacter(c)[0];
+    }
+
+    public static TextCharacter textChar(char c, TextColor color) {
+        return TextCharacter.fromCharacter(c, color, TextColor.ANSI.DEFAULT)[0];
+    }
 }

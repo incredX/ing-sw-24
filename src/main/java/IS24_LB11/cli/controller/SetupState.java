@@ -1,42 +1,34 @@
 package IS24_LB11.cli.controller;
 
+import IS24_LB11.cli.Scoreboard;
 import IS24_LB11.cli.Table;
 import IS24_LB11.cli.event.server.ServerEvent;
 import IS24_LB11.cli.event.server.ServerPlayerSetupEvent;
-import IS24_LB11.cli.event.server.ServerUpdatePlayerBoardEvent;
+import IS24_LB11.cli.popup.TablePopup;
 import IS24_LB11.cli.view.stage.SetupStage;
-import IS24_LB11.cli.notification.NotificationStack;
-import IS24_LB11.cli.notification.Priority;
 import IS24_LB11.cli.ViewHub;
 import IS24_LB11.game.PlayerSetup;
 import IS24_LB11.game.Result;
-import IS24_LB11.game.components.GoalCard;
-import IS24_LB11.game.components.PlayableCard;
-import IS24_LB11.game.components.StarterCard;
+import IS24_LB11.game.components.*;
+import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
-public class SetupState extends ClientState {
+public class SetupState extends ClientState implements PlayerStateInterface {
     private final PlayerSetup setup;
     private Table table;
     private SetupStage setupStage;
 
-    public SetupState(LobbyState lobbyState, PlayerSetup setup, Table table) throws IOException {
+    public SetupState(LobbyState lobbyState, PlayerSetup setup, Table table) {
         super(lobbyState);
         this.setup = setup;
         this.table = table;
+        popManager.addPopup(new TablePopup(getViewHub(), this));
     }
 
-    public SetupState(ViewHub viewHub, NotificationStack stack, PlayerSetup setup, Table table) throws IOException {
-        super(viewHub, stack);
-        this.setup = setup;
-        this.table = table;
-    }
-
-    public SetupState(ViewHub viewHub, PlayerSetup setup, Table table) throws IOException {
+    public SetupState(ViewHub viewHub, PlayerSetup setup, Table table) {
         super(viewHub);
         this.setup = setup;
         this.table = table;
@@ -45,25 +37,31 @@ public class SetupState extends ClientState {
     @Override
     public ClientState execute() {
         setupStage = viewHub.setSetupStage(this);
-        viewHub.resize(viewHub.getScreenSize(), cmdLine);
+
+        popManager.updatePopups();
+        viewHub.update();
         return super.execute();
     }
 
     protected void processServerEvent(ServerEvent serverEvent) {
-        if (processServerEventIfCommon(serverEvent)) return;
+        if (processServerEventIfCommon(serverEvent)) {
+            viewHub.update();
+            return;
+        }
         switch (serverEvent) {
-            case ServerUpdatePlayerBoardEvent updateEvent -> {
-                notificationStack.add(Priority.LOW, "received updated players' state");
-            }
             case ServerPlayerSetupEvent playerSetupEvent -> {
                 processResult(Result.Error("Invalid server event", "can't accept a new player setup"));
             }
             default -> processResult(Result.Error("received unknown server event"));
         }
+        viewHub.update();
     }
 
     protected void processCommand(String command) {
-        if (processCommandIfCommon(command)) return;
+        if (processCommandIfCommon(command)) {
+            viewHub.update();
+            return;
+        }
         String[] tokens = command.split(" ", 2);
         switch (tokens[0].toUpperCase()) {
             case "GOAL", "G" -> {
@@ -83,19 +81,30 @@ public class SetupState extends ClientState {
                         new String[]{"starterCard","goalCard"},
                         new String[]{setup.getStarterCard().asString(), setup.chosenGoal().asString()});
                 setupStage.clear();
-                try { setNextState(new GameState(viewHub, notificationStack, setup, table)); }
-                catch (IOException e) {
-                    e.printStackTrace();
-                    quit();
-                }
+                setNextState(new GameState(this));
             }
+            case "SHOW" -> {
+                if (tokens.length == 2) popManager.showPopup(tokens[1]);
+                else notificationStack.addUrgent("ERROR", MISSING_ARG.apply("show"));
+            }
+            case "HIDE" ->  {
+                if (tokens.length == 2) popManager.hidePopup(tokens[1]);
+                else popManager.hideFocusedPopup();
+            }
+            case "TABLE" -> popManager.showPopup(tokens[0]);
             default -> notificationStack.addUrgent("ERROR", INVALID_CMD.apply(tokens[0], "game setup"));
         };
+        viewHub.update();
     }
 
     @Override
     protected void processKeyStroke(KeyStroke keyStroke) {
-        if (notificationStack.consumeKeyStroke(keyStroke)) return;
+        if (notificationStack.consumeKeyStroke(keyStroke)) {
+            viewHub.update();
+            return;
+        }
+        popManager.consumeKeyStroke(keyStroke);
+
         if (keyStroke.isCtrlDown()) {
             if (keyStroke.getKeyType() == KeyType.ArrowLeft) {
                 setChosenGoal(0);
@@ -105,11 +114,19 @@ public class SetupState extends ClientState {
                 setup.getStarterCard().flip();
                 setupStage.loadStarterCard();
                 setupStage.placeStarterCard();
-                setupStage.build();
+                setupStage.drawAll();
             }
         } else {
             super.processCommonKeyStrokes(keyStroke);
         }
+        viewHub.updateCommandLine(cmdLine);
+    }
+
+    @Override
+    protected void processResize(TerminalSize size) {
+        super.processResize(size);
+        popManager.resizePopups();
+        viewHub.updateStage();
     }
 
     private void setChosenGoal(int index) {
@@ -130,11 +147,27 @@ public class SetupState extends ClientState {
         return setup.getStarterCard();
     }
 
-    public ArrayList<PlayableCard> getHand() {
+    public GoalCard[] getPossiblePrivateGoals() {
+        return setup.getGoals();
+    }
+
+    public ArrayList<PlayableCard> getPlayerHand() {
         return setup.hand();
     }
 
-    public GoalCard[] getGoals() {
-        return setup.getGoals();
+    public Scoreboard getScoreboard() {
+        return table.getScoreboard();
+    }
+
+    public ArrayList<GoalCard> getGoals() {
+        return table.getPublicGoals();
+    }
+
+    public ArrayList<NormalCard> getNormalDeck() {
+        return null;
+    }
+
+    public ArrayList<GoldenCard> getGoldenDeck() {
+        return null;
     }
 }

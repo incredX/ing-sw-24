@@ -1,6 +1,5 @@
 package IS24_LB11.cli.popup;
 
-import IS24_LB11.cli.controller.ClientState;
 import com.googlecode.lanterna.input.KeyStroke;
 
 import java.util.HashMap;
@@ -17,8 +16,20 @@ public class PopupManager {
         for (Popup popup : popups) this.popups.put(popup.label(), popup);
     }
 
-    public void consumeKeyStroke(ClientState state, KeyStroke keyStroke) {
-        getFocusedPopup().ifPresent(popup -> popup.consumeKeyStroke(state, keyStroke));
+    public void addPopup(Popup popup) {
+        if (popups.containsKey(popup.label())) return;
+        popups.put(popup.label(), popup);
+    }
+
+    public void addPopup(Popup[] popups) {
+        for (Popup popup : popups) {
+            if (this.popups.containsKey(popup.label())) return;
+            this.popups.put(popup.label(), popup);
+        }
+    }
+
+    public void consumeKeyStroke(KeyStroke keyStroke) {
+        getFocusedPopup().ifPresent(popup -> popup.consumeKeyStroke(keyStroke));
     }
 
     public void updatePopups() {
