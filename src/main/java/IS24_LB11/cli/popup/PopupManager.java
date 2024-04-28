@@ -4,6 +4,7 @@ import com.googlecode.lanterna.input.KeyStroke;
 
 import java.util.HashMap;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class PopupManager {
@@ -26,6 +27,10 @@ public class PopupManager {
             if (this.popups.containsKey(popup.label())) return;
             this.popups.put(popup.label(), popup);
         }
+    }
+
+    public void forEachPopup(Consumer<Popup> consumer) {
+        for (Popup popup : popups.values()) consumer.accept(popup);
     }
 
     public void consumeKeyStroke(KeyStroke keyStroke) {

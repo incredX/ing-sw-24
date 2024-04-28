@@ -24,7 +24,6 @@ import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.input.KeyStroke;
 
 import java.util.ArrayList;
-import java.util.stream.Collectors;
 
 //TODO : add boolean edited in cliBox (on in drawAll & set to off in print)
 //TODO : refactor viewhub as a cliBox's queue consumer. (maybe?)
@@ -36,8 +35,6 @@ import java.util.stream.Collectors;
 public class GameState extends ClientState implements PlayerStateInterface {
     private final Player player;
     private Table table;
-    private ArrayList<NormalCard> normalDeck;
-    private ArrayList<GoldenCard> goldenDeck;
     private GameStage gameStage;
     private Position boardPointer;
     private PlacedCard placedCard;
@@ -50,27 +47,18 @@ public class GameState extends ClientState implements PlayerStateInterface {
         super(setupState);
         this.player = new Player(username, setupState.getSetup());
         this.table = setupState.getTable();
-        this.normalDeck = new ArrayList<>();
-        this.goldenDeck = new ArrayList<>();
         this.boardPointer = new Position(0, 0);
         this.placedCard = null;
         this.cardPlaced = false;
         this.cardPicked = false;
         this.playerTurn = false;
-        popManager.addPopup(new DecksPopup(getViewHub(), this));
-        popManager.addPopup(new HandPopup(getViewHub(), this));
+        popManager.forEachPopup(popup -> popup.setPlayerState(this));
     }
 
     public GameState(ViewHub viewHub, NotificationStack stack, PlayerSetup setup, Table table) {
         super(viewHub, stack);
         this.player = new Player(username, setup);
         this.table = table;
-        this.normalDeck = new ArrayList<>();
-        this.goldenDeck = new ArrayList<>();
-        this.popManager.addPopup(new Popup[]{
-                new HandPopup(viewHub, this),
-                new DecksPopup(viewHub, this)}
-        );
         this.boardPointer = new Position(0, 0);
         this.placedCard = null;
         this.cardPlaced = false;
@@ -83,7 +71,8 @@ public class GameState extends ClientState implements PlayerStateInterface {
         player.applySetup();
         gameStage = viewHub.setGameStage(this);
         popManager.updatePopups();
-        processResize(viewHub.getScreenSize());
+        updateBoardPointerImage();
+        viewHub.update();
         return super.execute();
     }
 
@@ -102,15 +91,7 @@ public class GameState extends ClientState implements PlayerStateInterface {
                     playerTurn = true;
                 }
                 updateBoardPointerImage();
-                table.setNextPlayer(newTurnEvent.player());
-                table.setScore(newTurnEvent.scores());
-                normalDeck = newTurnEvent.normalDeck();
-                goldenDeck = newTurnEvent.goldenDeck();
-                System.out.printf("%16s : (%s)  (%s)\n", username,
-                        normalDeck.stream().map(NormalCard::asString).collect(Collectors.joining(", ")),
-                        goldenDeck.stream().map(GoldenCard::asString).collect(Collectors.joining(", ")));
-                if (!normalDeck.getLast().isFaceDown()) normalDeck.getLast().flip();
-                if (!goldenDeck.getLast().isFaceDown()) goldenDeck.getLast().flip();
+                table.update(newTurnEvent);
                 popManager.getPopup("decks").update();
                 popManager.getPopup("table").update();
             }
@@ -258,12 +239,12 @@ public class GameState extends ClientState implements PlayerStateInterface {
         return player.getBoard().spotAvailable(position);
     }
 
-    public ArrayList<PlayableCard> getPlayerHand() {
-        return player.getHand();
-    }
-
     public ArrayList<PlacedCard> getPlacedCardsInBoard() {
         return player.getBoard().getPlacedCards();
+    }
+
+    public ArrayList<PlayableCard> getPlayerHand() {
+        return player.getHand();
     }
 
     public Scoreboard getScoreboard() {
@@ -278,11 +259,11 @@ public class GameState extends ClientState implements PlayerStateInterface {
     }
     
     public ArrayList<NormalCard> getNormalDeck() {
-        return normalDeck;
+        return table.getNormalDeck();
     }
     
     public ArrayList<GoldenCard> getGoldenDeck() {
-        return goldenDeck;
+        return table.getGoldenDeck();
     }
 
     public Position getBoardPointer() {

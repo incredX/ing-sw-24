@@ -4,6 +4,9 @@ import IS24_LB11.cli.Scoreboard;
 import IS24_LB11.cli.Table;
 import IS24_LB11.cli.event.server.ServerEvent;
 import IS24_LB11.cli.event.server.ServerPlayerSetupEvent;
+import IS24_LB11.cli.popup.DecksPopup;
+import IS24_LB11.cli.popup.HandPopup;
+import IS24_LB11.cli.popup.Popup;
 import IS24_LB11.cli.popup.TablePopup;
 import IS24_LB11.cli.view.stage.SetupStage;
 import IS24_LB11.cli.ViewHub;
@@ -25,7 +28,11 @@ public class SetupState extends ClientState implements PlayerStateInterface {
         super(lobbyState);
         this.setup = setup;
         this.table = table;
-        popManager.addPopup(new TablePopup(getViewHub(), this));
+        popManager.addPopup(new Popup[]{
+                new TablePopup(getViewHub(), this),
+                new HandPopup(getViewHub(), this),
+                new DecksPopup(getViewHub(), this)
+        });
     }
 
     public SetupState(ViewHub viewHub, PlayerSetup setup, Table table) {
@@ -37,7 +44,6 @@ public class SetupState extends ClientState implements PlayerStateInterface {
     @Override
     public ClientState execute() {
         setupStage = viewHub.setSetupStage(this);
-
         popManager.updatePopups();
         viewHub.update();
         return super.execute();
@@ -164,10 +170,10 @@ public class SetupState extends ClientState implements PlayerStateInterface {
     }
 
     public ArrayList<NormalCard> getNormalDeck() {
-        return null;
+        return table.getNormalDeck();
     }
 
     public ArrayList<GoldenCard> getGoldenDeck() {
-        return null;
+        return table.getGoldenDeck();
     }
 }

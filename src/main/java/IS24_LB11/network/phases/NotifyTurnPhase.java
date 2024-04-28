@@ -1,5 +1,7 @@
 package IS24_LB11.network.phases;
 
+import IS24_LB11.game.Deck;
+import IS24_LB11.game.DeckException;
 import IS24_LB11.game.Player;
 import IS24_LB11.network.ClientHandler;
 import com.google.gson.*;
@@ -50,16 +52,20 @@ public class NotifyTurnPhase {
 
         //add first 3 normal cards
         JsonArray normalCards = new JsonArray();
-        for (int i=0; i<3; i++)
-            normalCards.add(new JsonPrimitive(clientHandler.getGame().getNormalDeck().getCards().get(i).asString()));
-        obj.add("normalDeck", normalCards);
-
-        // add first 3 gold cards
         JsonArray goldenCards = new JsonArray();
-        for (int i=0; i<3; i++)
-            goldenCards.add(new JsonPrimitive(clientHandler.getGame().getGoldenDeck().getCards().get(i).asString()));
-        obj.add("goldenDeck", goldenCards);
+        Deck normalDeck = clientHandler.getGame().getNormalDeck();
+        Deck goldenDeck = clientHandler.getGame().getGoldenDeck();
 
+        for (int i=1; i<=3; i++) {
+            try {
+                normalCards.add(new JsonPrimitive(normalDeck.showCard(i).asString()));
+                goldenCards.add(new JsonPrimitive(goldenDeck.showCard(i).asString()));
+            }
+            catch (DeckException e) { }
+
+        }
+        obj.add("normalDeck", normalCards);
+        obj.add("goldenDeck", goldenCards);
         return obj;
     }
 }

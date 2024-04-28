@@ -14,7 +14,7 @@ import java.util.function.Consumer;
 import static IS24_LB11.cli.utils.Side.*;
 
 public class DecksPopup extends Popup {
-    private final PlayerStateInterface playerState;
+    private PlayerStateInterface playerState;
     private boolean deckIsNormal;
     private int cardIndex;
 
@@ -90,7 +90,7 @@ public class DecksPopup extends Popup {
 
     private void consumeKeyStrokeInGame(GameState gameState, KeyStroke keyStroke) {
         if (!enabled) return; // pointer is not here
-        if (keyStroke.isCtrlDown()) {
+        if (keyStroke.isAltDown()) {
             switch (keyStroke.getKeyType()) {
                 case ArrowUp -> shiftPointer(NORD);
                 case ArrowDown -> shiftPointer(SUD);
@@ -116,6 +116,10 @@ public class DecksPopup extends Popup {
             decksView.updatePointerPosition(deckIsNormal, cardIndex);
             decksView.drawAll();
         });
+    }
+
+    public void setPlayerState(PlayerStateInterface playerState) {
+        this.playerState = playerState;
     }
 
     protected void castView(Consumer<DecksView> consumer) {

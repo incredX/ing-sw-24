@@ -4,13 +4,11 @@ import IS24_LB11.cli.ViewHub;
 import IS24_LB11.cli.controller.SetupState;
 import IS24_LB11.cli.view.game.*;
 import IS24_LB11.game.components.*;
-import com.googlecode.lanterna.TerminalPosition;
 
 import java.util.ArrayList;
 
 public class SetupStage extends Stage {
     private static final String[] GOAL_LABELS = new String[]{"goal (a)", "goal (b)"};
-    private final ArrayList<PlayableCardView> handView;
     private final ArrayList<GoalView> goalViews;
     private final SetupState setupState;
     private StarterCardView starterCardView;
@@ -21,17 +19,14 @@ public class SetupStage extends Stage {
         this.setupState = setupState;
         this.chosenGoalIndex = 0;
         this.starterCardView = new StarterCardView(setupState.getStarterCard());
-        this.handView = new ArrayList<>(3);
         this.goalViews = new ArrayList<>(2);
         loadStarterCard();
         loadGoals();
-        loadHand();
         resize();
     }
 
     @Override
     public void drawAll() {
-        drawHand();
         drawBorders();
         drawStarterCard();
         drawGoalPointer();
@@ -43,7 +38,6 @@ public class SetupStage extends Stage {
         super.resize();
         placeStarterCard();
         placeGoals();
-        placeHandHorizontal();
         redraw();
     }
 
@@ -66,17 +60,6 @@ public class SetupStage extends Stage {
         }
     }
 
-    public void loadHand() {
-        handView.clear();
-        for(PlayableCard card: setupState.getPlayerHand()) {
-            switch (card) {
-                case GoldenCard goldenCard -> handView.add(new GoldenCardView(goldenCard));
-                case NormalCard normalCard -> handView.add(new NormalCardView(normalCard));
-                default -> throw new IllegalArgumentException("Invalid card: " + card.asString());
-            }
-        }
-    }
-
     private void drawStarterCard() {
         drawBox(starterCardView);
         buildRelativeArea(starterCardView.getRectangle());
@@ -89,15 +72,6 @@ public class SetupStage extends Stage {
             buildRelativeArea(goalViews.get(i).getRectangle()
                     .withRelativePosition(0,-1)
                     .withRelativeSize(0,2));
-        }
-    }
-
-    private void drawHand() {
-        int x = handView.getLast().getXAndWidth(), y = handView.getLast().getYAndHeight();
-        if (!rectangle.contains(new TerminalPosition(x, y))) return;
-        for (PlayableCardView hand : handView) {
-            drawBox(hand);
-            buildRelativeArea(hand.getRectangle());
         }
     }
 
@@ -145,17 +119,6 @@ public class SetupStage extends Stage {
         } else {
             goalViews.getFirst().setPosition(starterCardView.getXAndWidth()+4, 2);
             goalViews.getLast().setPosition(goalViews.getFirst().getXAndWidth()+4, 2);
-        }
-    }
-
-    private void placeHandHorizontal() {
-        int width = handView.size()*(handView.getFirst().getWidth()-1);
-        int height = handView.getFirst().getHeight();
-        int x = (getWidth()-width)/2 -1;
-        int y = starterCardView.getYAndHeight()+1;
-        for (PlayableCardView cardView: handView) {
-            cardView.setPosition(x, y);
-            x += cardView.getWidth()-1;
         }
     }
 
