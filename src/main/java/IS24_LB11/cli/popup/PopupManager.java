@@ -5,7 +5,6 @@ import com.googlecode.lanterna.input.KeyStroke;
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 public class PopupManager {
     private final HashMap<String, Popup> popups;
@@ -94,11 +93,5 @@ public class PopupManager {
         return popups.values().stream()
                 .filter(p -> p.visible && !(p.canOverlap() || p.label().equals(popup.label())))
                 .anyMatch(popup::overlapping);
-    }
-
-    private void printPopupsStatus(Function<Popup, String> function) {
-        for (Popup popup : popups.values())
-            System.out.printf("%s, ", function.apply(popup));
-        System.out.println();
     }
 }

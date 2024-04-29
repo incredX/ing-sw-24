@@ -43,12 +43,14 @@ public class Debugger {
     }
 
     public static void print(String msg) {
+        if (instance == null) return;
         synchronized (instance) {
             instance.printMessage(msg);
         }
     }
 
     public static void print(Exception e) {
+        if (instance == null) return;
         synchronized (instance) {
             instance.printException(e);
         }
