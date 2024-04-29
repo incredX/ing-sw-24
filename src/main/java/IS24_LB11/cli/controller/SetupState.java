@@ -90,14 +90,20 @@ public class SetupState extends ClientState implements PlayerStateInterface {
                 setNextState(new GameState(this));
             }
             case "SHOW" -> {
-                if (tokens.length == 2) popManager.showPopup(tokens[1]);
+                if (tokens.length == 2) {
+                    popManager.showPopup(tokens[1]);
+                    popManager.getPopup(tokens[1]).disable();
+                }
                 else notificationStack.addUrgent("ERROR", MISSING_ARG.apply("show"));
             }
             case "HIDE" ->  {
                 if (tokens.length == 2) popManager.hidePopup(tokens[1]);
                 else popManager.hideFocusedPopup();
             }
-            case "TABLE" -> popManager.showPopup(tokens[0]);
+            case "TABLE", "HAND", "DECKS" -> {
+                popManager.showPopup(tokens[0]);
+                popManager.getPopup(tokens[0]).disable();
+            }
             default -> notificationStack.addUrgent("ERROR", INVALID_CMD.apply(tokens[0], "game setup"));
         };
         viewHub.update();
@@ -105,6 +111,25 @@ public class SetupState extends ClientState implements PlayerStateInterface {
 
     @Override
     protected void processKeyStroke(KeyStroke keyStroke) {
+        keyConsumed = notificationStack.consumeKeyStroke(keyStroke);
+        if (!keyConsumed) cmdLine.consumeKeyStroke(this, keyStroke);
+        if (!keyConsumed) popManager.consumeKeyStroke(keyStroke);
+        if (!(cmdLine.isEnabled() || keyConsumed)) {
+            switch (keyStroke.getKeyType()) {
+                case ArrowLeft -> setChosenGoal(0);
+                case ArrowRight -> setChosenGoal(1);
+                case Character -> {
+                    if (keyStroke.getCharacter() == 'f') {
+                        setup.getStarterCard().flip();
+                        setupStage.loadStarterCard();
+                        setupStage.placeStarterCard();
+                        setupStage.drawAll();
+                    }
+
+                }
+            }
+        }
+        viewHub.update();
         if (notificationStack.consumeKeyStroke(keyStroke)) {
             viewHub.update();
             return;
@@ -122,17 +147,16 @@ public class SetupState extends ClientState implements PlayerStateInterface {
                 setupStage.placeStarterCard();
                 setupStage.drawAll();
             }
-        } else {
-            super.processCommonKeyStrokes(keyStroke);
-        }
-        viewHub.updateCommandLine(cmdLine);
+        } else if (!keyConsumed) cmdLine.consumeKeyStroke(this, keyStroke);
+        viewHub.update();
     }
 
     @Override
-    protected void processResize(TerminalSize size) {
-        super.processResize(size);
+    protected void processResize(TerminalSize screenSize) {
+        super.processResize(screenSize);
         popManager.resizePopups();
-        viewHub.updateStage();
+//        viewHub.updateStage();
+        viewHub.update();
     }
 
     private void setChosenGoal(int index) {

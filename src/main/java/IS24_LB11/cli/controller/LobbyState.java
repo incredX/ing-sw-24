@@ -1,5 +1,6 @@
 package IS24_LB11.cli.controller;
 
+import IS24_LB11.cli.Debugger;
 import IS24_LB11.cli.Table;
 import IS24_LB11.cli.event.server.ServerEvent;
 import IS24_LB11.cli.event.server.ServerLoginEvent;
@@ -28,7 +29,8 @@ public class LobbyState extends ClientState {
     @Override
     public ClientState execute() {
         lobbyStage = viewHub.setLobbyStage(this);
-        viewHub.updateCommandLine(cmdLine);
+        cmdLine.update();
+        viewHub.update();
         return super.execute();
     }
 
@@ -77,17 +79,16 @@ public class LobbyState extends ClientState {
 
     @Override
     protected void processKeyStroke(KeyStroke keyStroke) {
-        if (notificationStack.consumeKeyStroke(keyStroke)) {
-            viewHub.update();
-            return;
+        Debugger.print("pressed <"+keyStroke.getKeyType().name()+"> ( ctrlDown = "+keyStroke.isCtrlDown()+" )");
+        if (!notificationStack.consumeKeyStroke(keyStroke)) {
+            cmdLine.consumeKeyStroke(this, keyStroke);
         }
-        super.processCommonKeyStrokes(keyStroke);
-        viewHub.updateCommandLine(cmdLine);
+        viewHub.update();
     }
 
     @Override
-    protected void processResize(TerminalSize size) {
-        super.processResize(size);
+    protected void processResize(TerminalSize screenSize) {
+        super.processResize(screenSize);
         //popManager.resizePopups();
         viewHub.update();
     }

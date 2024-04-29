@@ -21,6 +21,7 @@ import java.util.ArrayList;
 public class ViewHub implements Runnable {
     private final Object lock = new Object();
     private final Screen screen;
+    //private final PriorityQueue<CliBox> toPrintQueue;
     private final CommandLineView commandLineView;
     private final ArrayList<PopupView> popups;
     private NotificationView notificationView;
@@ -31,6 +32,7 @@ public class ViewHub implements Runnable {
 
     public ViewHub() throws IOException {
         screen = new DefaultTerminalFactory().createScreen();
+        //toPrintQueue = new PriorityQueue<>();
         screen.startScreen();
         screenSize = screen.getTerminalSize();
         commandLineView = new CommandLineView(screenSize);
@@ -64,13 +66,10 @@ public class ViewHub implements Runnable {
         Debugger.print("thread terminated.");
     }
 
-    public void resize(TerminalSize size, CommandLine commandLine) {
+    public void resize(TerminalSize size) {
         Debugger.print("resize");
         synchronized (lock) {
             screenSize = size;
-            commandLineView.resize(size);
-            commandLineView.buildCommandLine(commandLine);
-            commandLineView.drawAll();
             stage.resize();
             if (notificationView != null) {
                 notificationView.resize(size);
@@ -91,21 +90,21 @@ public class ViewHub implements Runnable {
         }
     }
 
-    public void updateStage() {
-        synchronized (lock) {
-            stage.drawAll();
-            lock.notify();
-        }
-    }
+//    public void updateStage() {
+//        synchronized (lock) {
+//            stage.drawAll();
+//            lock.notify();
+//        }
+//    }
 
-    public void updateCommandLine(CommandLine commandLine) {
-        synchronized (lock) {
-            commandLineView.buildCommandLine(commandLine);
-            commandLineView.drawAll();
-            lock.notify();
-            //Debugger.print("update cmdline");
-        }
-    }
+//    public void updateCommandLine(CommandLine commandLine) {
+//        synchronized (lock) {
+//            commandLineView.loadCommandLine(commandLine);
+//            commandLineView.drawAll();
+//            lock.notify();
+//            //Debugger.print("update cmdline");
+//        }
+//    }
 
     public void addNotification(String message, String title) {
         synchronized (lock) {
@@ -168,9 +167,13 @@ public class ViewHub implements Runnable {
         return screen;
     }
 
-    public TerminalSize getScreenSize() { return screenSize; }
-
     public Stage getStage() {
         return stage;
     }
+
+    public CommandLineView getCommandLineView() {
+        return commandLineView;
+    }
+
+    public TerminalSize getScreenSize() { return screenSize; }
 }

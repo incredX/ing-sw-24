@@ -11,7 +11,7 @@ import static IS24_LB11.cli.utils.Side.WEST;
 import static IS24_LB11.game.utils.Direction.UP_LEFT;
 import static IS24_LB11.game.utils.Direction.UP_RIGHT;
 
-public class NotificationView extends CliBox {
+public class NotificationView extends TerminalBox implements LayerInterface {
     private static final String ESCAPE_SEQUENCE = "[ESC]";
 
     private final String title;
@@ -25,6 +25,9 @@ public class NotificationView extends CliBox {
         this.message = message;
         setMargins(0);
     }
+
+    @Override
+    public int zIndex() { return 2; }
 
     @Override
     public void drawAll() {

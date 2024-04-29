@@ -6,7 +6,6 @@ import IS24_LB11.game.components.GoldenCard;
 import IS24_LB11.game.components.NormalCard;
 
 import java.util.ArrayList;
-import java.util.stream.Collectors;
 
 public class Table {
     private Scoreboard scoreboard;
@@ -26,9 +25,6 @@ public class Table {
         scoreboard.setNextPlayer(newTurnEvent.player());
         normalDeck = newTurnEvent.normalDeck();
         goldenDeck = newTurnEvent.goldenDeck();
-        System.out.printf("%16s : (%s)  (%s)\n", newTurnEvent.player(),
-                normalDeck.stream().map(NormalCard::asString).collect(Collectors.joining(", ")),
-                goldenDeck.stream().map(GoldenCard::asString).collect(Collectors.joining(", ")));
         if (!normalDeck.getLast().isFaceDown()) normalDeck.getLast().flip();
         if (!goldenDeck.getLast().isFaceDown()) goldenDeck.getLast().flip();
     }

@@ -15,7 +15,6 @@ import IS24_LB11.game.utils.SyntaxException;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,11 +35,7 @@ public class Client {
         ServerHandler serverHandler;
         HashMap<String, Thread> threadMap = new HashMap<>();
 
-        try { Debugger.startDebugger(Debugger.DIR_NAME); }
-        catch (FileNotFoundException e) {
-            Debugger.startDebugger();
-            Debugger.print(e);
-        }
+        Debugger.startDebugger();
 
         try {
             viewHub = new ViewHub();

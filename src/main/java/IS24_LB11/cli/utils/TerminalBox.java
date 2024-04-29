@@ -16,7 +16,7 @@ import java.util.EnumMap;
 
 import static IS24_LB11.cli.utils.Side.*;
 
-public class CliBox {
+public class TerminalBox {
     protected TerminalRectangle rectangle;
     protected TerminalRectangle innerArea;
     protected TerminalRectangle borderArea;
@@ -24,7 +24,7 @@ public class CliBox {
     protected TextImage image;
     private EnumMap<Side, Integer> margins;
 
-    public CliBox(TerminalSize size, TerminalPosition position, BorderStyle borderStyle) {
+    public TerminalBox(TerminalSize size, TerminalPosition position, BorderStyle borderStyle) {
         this.rectangle = new TerminalRectangle(size, position);
         this.borderArea = new TerminalRectangle(size, position);
         this.innerArea = new TerminalRectangle(size, position);
@@ -36,15 +36,15 @@ public class CliBox {
         updateInnerArea();
     }
 
-    public CliBox(int width, int height, int x, int y, BorderStyle borderStyle) {
+    public TerminalBox(int width, int height, int x, int y, BorderStyle borderStyle) {
         this(new TerminalSize(width, height), new TerminalPosition(x, y), borderStyle);
     }
 
-    public CliBox(TerminalSize terminalSize, BorderStyle borderStyle) {
+    public TerminalBox(TerminalSize terminalSize, BorderStyle borderStyle) {
         this(terminalSize, new TerminalPosition(0,0), borderStyle);
     }
 
-    public CliBox(TerminalSize tSize) {
+    public TerminalBox(TerminalSize tSize) {
         this(tSize, new SingleBorderStyle());
     }
 
@@ -77,7 +77,7 @@ public class CliBox {
         image = new ScreenBuffer(getSize(), textChar(' '));
     }
 
-    protected void drawBox(CliBox box) {
+    protected void drawBox(TerminalBox box) {
         int thisOffsetX = firstColumn() + Integer.max(0, box.rectangle.getX());
         int thisOffsetY = firstRow() + Integer.max(0, box.rectangle.getY());
         int boxOffsetX = Integer.max(0, -box.rectangle.getX());
@@ -136,7 +136,7 @@ public class CliBox {
     protected void fillRow(int row, int offset, String line, TextColor color) {
         TextGraphics graphics = image.newTextGraphics();
         graphics.setForegroundColor(color);
-        graphics.putString(firstColumn()+offset, row, line.substring(0, Integer.min(lastColumn()-offset, line.length())));
+        graphics.putString(firstColumn()+offset, row, line.substring(0, Integer.min(Integer.max(0, lastColumn()-offset), line.length())));
     }
 
     protected void fillRow(int row, int offset, String line) {
@@ -195,8 +195,8 @@ public class CliBox {
         innerArea.setSize(borderArea.getSize().withRelative(-2,-2));
     }
 
-    protected int innerWidth() { return innerArea.getWidth(); }
-    protected int innerHeight() { return innerArea.getHeight(); }
+    public int innerWidth() { return innerArea.getWidth(); }
+    public int innerHeight() { return innerArea.getHeight(); }
     protected int firstRow() { return innerArea.getY(); }
     protected int lastRow() { return innerArea.getYAndHeight(); }
     protected int firstColumn() { return innerArea.getX(); }
