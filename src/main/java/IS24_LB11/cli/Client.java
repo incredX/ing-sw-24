@@ -35,7 +35,13 @@ public class Client {
         ServerHandler serverHandler;
         HashMap<String, Thread> threadMap = new HashMap<>();
 
-        //Debugger.startDebugger();
+//        try {
+//            Debugger.startDebugger(Debugger.DIR_NAME);
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//            return;
+//        }
+        //Debugger.print("booting client...");
         //Debugger.closeDebugger();
 
         try {
@@ -55,6 +61,8 @@ public class Client {
             return;
         }
 
+        Debugger.print("booting client.");
+
         threadMap.put("views", new Thread(viewHub));
         threadMap.put("input", new Thread(inputListener));
         threadMap.put("resize", new Thread(resizeListener));
@@ -70,6 +78,7 @@ public class Client {
                 System.exit(1);
             }
         }
+
 
         while (true) {
             ClientState nextState = state.execute();

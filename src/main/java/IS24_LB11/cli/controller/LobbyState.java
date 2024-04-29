@@ -21,7 +21,7 @@ import static IS24_LB11.cli.Client.getDefaultSetup;
 public class LobbyState extends ClientState {
     private LobbyStage lobbyStage;
 
-    public LobbyState(ViewHub viewHub) throws IOException {
+    public LobbyState(ViewHub viewHub) {
         super(viewHub);
         this.username = "";
     }

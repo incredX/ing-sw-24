@@ -89,20 +89,28 @@ public class DecksPopup extends Popup {
     }
 
     private void consumeKeyStrokeInGame(GameState gameState, KeyStroke keyStroke) {
-        if (keyStroke.isShiftDown()) {
-            switch (keyStroke.getKeyType()) {
-                case ArrowUp -> shiftPointer(NORD);
-                case ArrowDown -> shiftPointer(SUD);
-                case ArrowLeft -> shiftPointer(WEST);
-                case ArrowRight -> shiftPointer(EAST);
-                case Enter -> gameState.drawCardFromDeck();
-                default -> {
-                    return;
-                }
+        switch (keyStroke.getKeyType()) {
+            case Enter -> gameState.drawCardFromDeck();
+            case ArrowUp -> {
+                if (!keyStroke.isShiftDown()) shiftPointer(NORD);
+                else { return; }
             }
-            castView(DecksView::drawAll);
-            gameState.keyConsumed();
+            case ArrowDown -> {
+                if (!keyStroke.isShiftDown()) shiftPointer(SUD);
+                else { return; }
+            }
+            case ArrowLeft -> {
+                if (!keyStroke.isShiftDown()) shiftPointer(EAST);
+                else { return; }
+            }
+            case ArrowRight -> {
+                if (!keyStroke.isShiftDown()) shiftPointer(WEST);
+                else { return; }
+            }
+            default -> { return; }
         }
+        castView(DecksView::drawAll);
+        gameState.keyConsumed();
     }
 
     private void shiftPointer(Side side) {

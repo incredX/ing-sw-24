@@ -49,7 +49,7 @@ public abstract class ClientState {
     protected boolean keyConsumed;
 
 
-    public ClientState(ViewHub viewHub, NotificationStack notificationStack) throws IOException {
+    public ClientState(ViewHub viewHub, NotificationStack notificationStack) {
         this.nextState = null;
         this.username = "";
         this.popManager = new PopupManager(new Popup[]{});
@@ -58,8 +58,12 @@ public abstract class ClientState {
         this.viewHub = viewHub;
         this.cmdLine = new CommandLine(viewHub.getCommandLineView());
         this.keyConsumed = false;
-        this.serverHandler = new ServerHandler(this, "127.0.0.1", 54321);
-        new Thread(this.serverHandler).start();
+        try {
+            this.serverHandler = new ServerHandler(this, "127.0.0.1", 54321);
+            new Thread(this.serverHandler).start();
+        } catch (IOException e) {
+            notificationStack.addUrgent("ERROR", "Connection to server failed");
+        }
     }
 
     public ClientState(ClientState state) {
@@ -73,7 +77,7 @@ public abstract class ClientState {
         this.serverHandler = state.serverHandler;
     }
 
-    public ClientState(ViewHub viewHub) throws IOException {
+    public ClientState(ViewHub viewHub) {
         this(viewHub, new NotificationStack(viewHub, 0));
     }
 
@@ -105,10 +109,12 @@ public abstract class ClientState {
     }
 
     public void quit() {
-        sendToServer("quit");
         setNextState(null);
         Thread.currentThread().interrupt();
-        serverHandler.shutdown();
+        if (serverHandler != null) {
+            sendToServer("quit");
+            serverHandler.shutdown();
+        }
     }
 
     protected abstract void processServerEvent(ServerEvent event);

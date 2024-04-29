@@ -1,5 +1,6 @@
 package IS24_LB11.cli.popup;
 
+import IS24_LB11.cli.Debugger;
 import IS24_LB11.cli.ViewHub;
 import IS24_LB11.cli.controller.GameState;
 import IS24_LB11.cli.controller.PlayerStateInterface;
@@ -77,26 +78,33 @@ public class HandPopup extends Popup {
     }
 
     private void consumeKeyStrokeInGame(GameState gameState, KeyStroke keyStroke) {
-        if (keyStroke.isShiftDown()) {
-            switch (keyStroke.getKeyType()) {
-                case ArrowUp -> shiftPointer(NORD);
-                case ArrowDown -> shiftPointer(SUD);
-                case Enter -> gameState.placeCardFromHand();
-                case Character -> {
-                    if (keyStroke.getCharacter() == 'F') {
-                        gameState.flipHandCard(selectedCard);
-                    } else if (keyStroke.getCharacter() == ' ') {
-                        gameState.placeCardFromHand();
-                    }
-                }
-                default -> {
-                    return;
-                }
+        switch (keyStroke.getKeyType()) {
+            case ArrowUp -> {
+                if (!keyStroke.isShiftDown()) shiftPointer(NORD);
+                else { return; }
             }
-            update();
-            //if (visible) castView(HandView::redraw);
-            gameState.keyConsumed();
+            case ArrowDown -> {
+                if (!keyStroke.isShiftDown()) shiftPointer(SUD);
+                else { return; }
+            }
+            case ArrowLeft,ArrowRight -> {
+                if (keyStroke.isShiftDown()) return;
+            }
+            case Enter -> gameState.placeCardFromHand();
+            case Character -> {
+                if (keyStroke.getCharacter() == 'F' || keyStroke.getCharacter() == 'f')
+                    gameState.flipHandCard(selectedCard);
+                else { return; }
+            }
+            default -> {
+                return;
+            }
         }
+        update();
+        //if (visible) castView(HandView::redraw);
+        gameState.keyConsumed();
+        Debugger.print(String.format("%s <%c> (shift:%s, ctrl:%s)\n", keyStroke.getKeyType(), keyStroke.getCharacter(),
+                keyStroke.isShiftDown(), keyStroke.isCtrlDown()));
     }
 
     private void shiftPointer(Side side) {

@@ -69,7 +69,6 @@ public class CommandLine {
         if (offset > cursor) offset = cursor;
         if (delta > 0 && cursor - offset >= width) {
             offset += delta;
-            //cursor -= delta;
         }
     }
 
@@ -82,6 +81,8 @@ public class CommandLine {
     }
 
     public void consumeKeyStroke(ClientState state, KeyStroke keyStroke) {
+        Debugger.print(String.format("%s <%c> (shift:%s, ctrl:%s)\n", keyStroke.getKeyType(), keyStroke.getCharacter(),
+                keyStroke.isShiftDown(), keyStroke.isCtrlDown()));
         if (keyStroke.isCtrlDown() || keyStroke.isCtrlDown()) {
             if (!toggle(state, keyStroke)) return;
         } else if (keyStroke.getKeyType() == KeyType.F1) {
@@ -102,7 +103,6 @@ public class CommandLine {
             if (!toggle(state, keyStroke))
                 return;
         }
-        //lastKeyEventType = keyStroke.getKeyType();
         view.loadCommandLine(this);
         view.drawCommandLine();
         state.keyConsumed();
