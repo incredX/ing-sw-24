@@ -1,9 +1,8 @@
-package IS24_LB11.network.events;
+package IS24_LB11.network;
 
 import IS24_LB11.game.Player;
 import IS24_LB11.game.components.*;
 import IS24_LB11.game.utils.SyntaxException;
-import IS24_LB11.network.ClientHandler;
 import IS24_LB11.network.phases.GameInitPhase;
 import IS24_LB11.network.phases.NotifyTurnPhase;
 import IS24_LB11.network.phases.TurnPhase;

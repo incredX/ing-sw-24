@@ -41,7 +41,6 @@ public class NotifyTurnPhase {
         for (Map.Entry<String, JsonElement> entry : get3CardsFromEachDeck(clientHandler).entrySet()) {
             response.add(entry.getKey(), entry.getValue());
         }
-        System.out.println(response);
         //send current player turn to every player
         clientHandler.broadcast(response.toString());
         clientHandler.sendMessage(response.toString());
