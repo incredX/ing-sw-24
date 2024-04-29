@@ -15,7 +15,6 @@ import IS24_LB11.game.Result;
 import IS24_LB11.game.components.*;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.input.KeyStroke;
-import com.googlecode.lanterna.input.KeyType;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -115,7 +114,7 @@ public class SetupState extends ClientState implements PlayerStateInterface {
         keyConsumed = notificationStack.consumeKeyStroke(keyStroke);
         if (!keyConsumed) cmdLine.consumeKeyStroke(this, keyStroke);
         if (!keyConsumed) popManager.consumeKeyStroke(keyStroke);
-        if (!(cmdLine.isEnabled() || keyConsumed)) {
+        if (!keyConsumed && (!cmdLine.isEnabled() || keyStroke.isCtrlDown())) {
             switch (keyStroke.getKeyType()) {
                 case ArrowLeft -> setChosenGoal(0);
                 case ArrowRight -> setChosenGoal(1);
@@ -130,25 +129,6 @@ public class SetupState extends ClientState implements PlayerStateInterface {
                 }
             }
         }
-        viewHub.update();
-        if (notificationStack.consumeKeyStroke(keyStroke)) {
-            viewHub.update();
-            return;
-        }
-        popManager.consumeKeyStroke(keyStroke);
-
-        if (keyStroke.isCtrlDown()) {
-            if (keyStroke.getKeyType() == KeyType.ArrowLeft) {
-                setChosenGoal(0);
-            } else if (keyStroke.getKeyType() == KeyType.ArrowRight) {
-                setChosenGoal(1);
-            } else if (keyStroke.getKeyType() == KeyType.Character && keyStroke.getCharacter() == 'f') {
-                setup.getStarterCard().flip();
-                setupStage.loadStarterCard();
-                setupStage.placeStarterCard();
-                setupStage.drawAll();
-            }
-        } else if (!keyConsumed) cmdLine.consumeKeyStroke(this, keyStroke);
         viewHub.update();
     }
 

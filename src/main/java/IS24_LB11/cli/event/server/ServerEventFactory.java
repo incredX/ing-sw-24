@@ -69,7 +69,15 @@ public class ServerEventFactory {
                     .andThen(setup -> extractGoalArray(data, "publicGoals", 2)
                             .andThen(publicGoals -> extractStringArray(data, "playerNames")
                                     .andThen(players -> extractColorArray(data, "colors")
-                                            .map(colors -> new ServerPlayerSetupEvent(setup, publicGoals, players, colors))
+                                            .andThen(colors -> extractCardArray(data, "normalDeck", 3)
+                                                    .andThen(normalDeck -> extractCardArray(data, "goldenDeck", 3)
+                                                            .map(goldenDeck -> new ServerPlayerSetupEvent(
+                                                                    setup, publicGoals, players, colors,
+                                                                    (ArrayList<NormalCard>) normalDeck.stream().map(c -> (NormalCard)c).collect(Collectors.toList()),
+                                                                    (ArrayList<GoldenCard>) goldenDeck.stream().map(c -> (GoldenCard)c).collect(Collectors.toList()))
+                                                            )
+                                                    )
+                                            )
                                     )
                             )
                     );

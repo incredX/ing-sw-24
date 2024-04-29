@@ -87,6 +87,7 @@ public class Client {
                 state = nextState;
                 inputListener.setState(state);
                 resizeListener.setState(state);
+                System.gc();
             }
         }
 

@@ -56,7 +56,8 @@ public class Server
 
                     OutputStream outputStream = clientSocket.getOutputStream();
                     JsonObject jsonResponse = new JsonObject();
-                    jsonResponse.addProperty("notification", "Welcome, please log in");
+                    jsonResponse.addProperty("type", "notification");
+                    jsonResponse.addProperty("message", "Welcome, please log in");
                     outputStream.write(jsonResponse.toString().getBytes());
 
                     // Create client handler and start thread

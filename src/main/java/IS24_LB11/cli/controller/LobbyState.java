@@ -9,7 +9,6 @@ import IS24_LB11.cli.listeners.ServerHandler;
 import IS24_LB11.cli.view.stage.LobbyStage;
 import IS24_LB11.game.PlayerSetup;
 import IS24_LB11.game.Result;
-import IS24_LB11.cli.Scoreboard;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.input.KeyStroke;
 
@@ -45,8 +44,7 @@ public class LobbyState extends ClientState {
             }
             case ServerPlayerSetupEvent setupEvent -> {
                 PlayerSetup setup = setupEvent.setup();
-                Scoreboard scoreboard = new Scoreboard(setupEvent.playersList(), setupEvent.colorList());
-                Table table = new Table(scoreboard, setupEvent.publicGoals());
+                Table table = new Table(setupEvent);
                 setNextState(new SetupState(this, setup, table));
             }
             default -> processResult(Result.Error("received unknown server event"));

@@ -1,6 +1,7 @@
 package IS24_LB11.cli;
 
 import IS24_LB11.cli.event.server.ServerNewTurnEvent;
+import IS24_LB11.cli.event.server.ServerPlayerSetupEvent;
 import IS24_LB11.game.components.GoalCard;
 import IS24_LB11.game.components.GoldenCard;
 import IS24_LB11.game.components.NormalCard;
@@ -18,6 +19,13 @@ public class Table {
         this.publicGoals = publicGoals;
         this.normalDeck = new ArrayList<>();
         this.goldenDeck = new ArrayList<>();
+    }
+
+    public Table(ServerPlayerSetupEvent setupEvent) {
+        this.scoreboard = new Scoreboard(setupEvent.playersList(), setupEvent.colorList());
+        this.publicGoals = setupEvent.publicGoals();
+        this.normalDeck = setupEvent.normalDeck();
+        this.goldenDeck = setupEvent.goldenDeck();
     }
 
     public void update(ServerNewTurnEvent newTurnEvent) {
