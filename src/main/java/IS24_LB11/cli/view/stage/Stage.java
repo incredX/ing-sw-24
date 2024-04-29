@@ -2,18 +2,19 @@ package IS24_LB11.cli.view.stage;
 
 import IS24_LB11.cli.ViewHub;
 import IS24_LB11.cli.style.SingleBorderStyle;
+import IS24_LB11.cli.utils.LayerInterface;
 import IS24_LB11.cli.utils.Side;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.screen.Screen;
-import IS24_LB11.cli.utils.CliBox;
+import IS24_LB11.cli.utils.TerminalBox;
 import IS24_LB11.cli.utils.TerminalRectangle;
 
 import java.util.ArrayDeque;
 
 
-public class Stage extends CliBox {
+public class Stage extends TerminalBox implements LayerInterface {
     private final ViewHub viewHub;
     private final ArrayDeque<TerminalRectangle> builtAreas;
 
@@ -26,6 +27,9 @@ public class Stage extends CliBox {
         setMargins(0);
         updateInnerArea();
     }
+
+    @Override
+    public int zIndex() { return 0; }
 
     @Override
     public void clear() {
@@ -72,9 +76,9 @@ public class Stage extends CliBox {
     }
 
     @Override
-    public void drawBox(CliBox cliBox) {
-        super.drawBox(cliBox);
-        buildRelativeArea(cliBox.getRectangle());
+    public void drawBox(TerminalBox terminalBox) {
+        super.drawBox(terminalBox);
+        buildRelativeArea(terminalBox.getRectangle());
     }
 
     @Override

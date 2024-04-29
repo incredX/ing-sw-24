@@ -77,7 +77,7 @@ public class HandPopup extends Popup {
     }
 
     private void consumeKeyStrokeInGame(GameState gameState, KeyStroke keyStroke) {
-        if (keyStroke.isAltDown()) {
+        if (keyStroke.isShiftDown()) {
             switch (keyStroke.getKeyType()) {
                 case ArrowUp -> shiftPointer(NORD);
                 case ArrowDown -> shiftPointer(SUD);
@@ -95,7 +95,7 @@ public class HandPopup extends Popup {
             }
             update();
             //if (visible) castView(HandView::redraw);
-            gameState.setKeyConsumed(true);
+            gameState.keyConsumed();
         }
     }
 

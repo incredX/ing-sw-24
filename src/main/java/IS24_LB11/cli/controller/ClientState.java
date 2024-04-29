@@ -27,13 +27,13 @@ import java.util.function.Function;
 
 public abstract class ClientState {
     protected static final Function<String, String> MISSING_ARG =
-            (cmd) -> String.format("missing argument for command \"%s\"", cmd);
+            (cmd) -> String.format("missing argument(s) for command \"%s\"", cmd);
     protected static final BiFunction<String, String, String> INVALID_CMD =
             (key, state) -> String.format("\"%s\" is not a command in %s", key, state);
     protected static final BiFunction<String, String, String> INVALID_ARG =
             (arg, cmd) -> String.format("\"%s\" is not a valid argument for command \"%s\"", arg, cmd);
     protected static final Function<String, String> EXPECTED_INT =
-            key -> String.format("\"%s\" expected an integer", key);
+            key -> String.format("argument \"%s\" expected an integer", key);
 
     private static final int QUEUE_CAPACITY = 64;
 
@@ -45,6 +45,8 @@ public abstract class ClientState {
     protected final ViewHub viewHub;
     protected final CommandLine cmdLine;
     protected ServerHandler serverHandler;
+    protected boolean keyConsumed;
+
 
     public ClientState(ViewHub viewHub, NotificationStack notificationStack) {
         this.nextState = null;
@@ -53,7 +55,8 @@ public abstract class ClientState {
         this.queue = new ArrayBlockingQueue<>(QUEUE_CAPACITY);
         this.notificationStack = notificationStack;
         this.viewHub = viewHub;
-        this.cmdLine = new CommandLine(viewHub.getScreenSize().getColumns());
+        this.cmdLine = new CommandLine(viewHub.getCommandLineView());
+        this.keyConsumed = false;
     }
 
     public ClientState(ClientState state) {
@@ -97,9 +100,11 @@ public abstract class ClientState {
         };
     }
 
-    protected void quit() {
+    public void quit() {
+        sendToServer("quit");
         setNextState(null);
         Thread.currentThread().interrupt();
+        serverHandler.shutdown();
     }
 
     protected abstract void processServerEvent(ServerEvent event);
@@ -108,9 +113,9 @@ public abstract class ClientState {
 
     protected abstract void processKeyStroke(KeyStroke keyStroke);
 
-    protected void processResize(TerminalSize size) {
-        cmdLine.setWidth(size.getColumns());
-        viewHub.resize(size, cmdLine);
+    protected void processResize(TerminalSize screenSize) {
+        cmdLine.resize(screenSize);
+        viewHub.resize(screenSize);
     }
 
     protected void processResult(Result<ServerEvent> result) {
@@ -154,7 +159,6 @@ public abstract class ClientState {
         if (tokens.length == 0) return true;
         switch (tokens[0].toUpperCase()) {
             case "QUIT" -> {
-                sendToServer("quit");
                 quit();
                 return true;
             }
@@ -170,36 +174,6 @@ public abstract class ClientState {
             }
         };
         return false;
-    }
-
-    protected void processCommonKeyStrokes(KeyStroke keyStroke) {
-        switch (keyStroke.getKeyType()) {
-            case Character:
-                cmdLine.insertChar(keyStroke.getCharacter());
-                break;
-            case Backspace:
-                cmdLine.deleteChar();
-                break;
-            case Enter:
-                tryQueueEvent(new CommandEvent(cmdLine.getFullLine()));
-                cmdLine.clearLine();
-                break;
-            case ArrowUp:
-                break;
-            case ArrowDown:
-                break;
-            case ArrowLeft:
-                cmdLine.moveCursor(-1);
-                break;
-            case ArrowRight:
-                cmdLine.moveCursor(1);
-                break;
-            case Escape:
-                sendToServer("quit");
-                quit();
-            default:
-                break;
-        }
     }
 
     protected void processCommandSendto(String argument) {
@@ -277,6 +251,10 @@ public abstract class ClientState {
         for (int i = 0; i < Integer.min(dataFields.length, values.length); i++)
             object.add(dataFields[i], values[i]);
         serverHandler.write(object);
+    }
+
+    public void keyConsumed() {
+        keyConsumed = true;
     }
 
     protected void setNextState(ClientState nextState) {

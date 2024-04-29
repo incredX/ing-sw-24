@@ -2,7 +2,7 @@ package IS24_LB11.cli.popup;
 
 import IS24_LB11.cli.ViewHub;
 import IS24_LB11.cli.controller.PlayerStateInterface;
-import IS24_LB11.cli.utils.CliBox;
+import IS24_LB11.cli.utils.TerminalBox;
 import IS24_LB11.cli.view.PopupView;
 import com.googlecode.lanterna.input.KeyStroke;
 
@@ -78,7 +78,7 @@ public abstract class Popup<T extends PopupView> {
                 popView.getX() >= 0 && popView.getY() >= 0;
     }
 
-    public boolean overlapping(CliBox box) {
+    public boolean overlapping(TerminalBox box) {
         int popX1 = popView.getX(), popY1 = popView.getY();
         int popX2 = popView.getXAndWidth(), popY2 = popView.getYAndHeight();
         int boxX1 = box.getX(), boxY1 = box.getY();

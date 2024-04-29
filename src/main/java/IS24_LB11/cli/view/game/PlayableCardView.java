@@ -4,7 +4,7 @@ package IS24_LB11.cli.view.game;
 import IS24_LB11.cli.style.BorderStyle;
 import IS24_LB11.cli.style.SingleBorderStyle;
 import IS24_LB11.cli.utils.SymbolAdapter;
-import IS24_LB11.cli.utils.CliBox;
+import IS24_LB11.cli.utils.TerminalBox;
 import IS24_LB11.cli.utils.Side;
 import IS24_LB11.game.components.PlayableCard;
 import IS24_LB11.game.symbol.Symbol;
@@ -17,7 +17,7 @@ import com.googlecode.lanterna.TerminalPosition;
 import static IS24_LB11.cli.utils.Side.*;
 import static IS24_LB11.game.utils.Direction.*;
 
-public class PlayableCardView extends CliBox {
+public class PlayableCardView extends TerminalBox {
     public static final int WIDTH = 27;
     public static final int HEIGHT = 9;
 

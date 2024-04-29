@@ -89,8 +89,7 @@ public class DecksPopup extends Popup {
     }
 
     private void consumeKeyStrokeInGame(GameState gameState, KeyStroke keyStroke) {
-        if (!enabled) return; // pointer is not here
-        if (keyStroke.isAltDown()) {
+        if (keyStroke.isShiftDown()) {
             switch (keyStroke.getKeyType()) {
                 case ArrowUp -> shiftPointer(NORD);
                 case ArrowDown -> shiftPointer(SUD);
@@ -101,8 +100,8 @@ public class DecksPopup extends Popup {
                     return;
                 }
             }
-            if (visible) castView(DecksView::drawAll);
-            gameState.setKeyConsumed(true);
+            castView(DecksView::drawAll);
+            gameState.keyConsumed();
         }
     }
 

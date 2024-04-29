@@ -25,12 +25,18 @@ import com.googlecode.lanterna.input.KeyStroke;
 
 import java.util.ArrayList;
 
-//TODO : add boolean edited in cliBox (on in drawAll & set to off in print)
-//TODO : refactor viewhub as a cliBox's queue consumer. (maybe?)
-//TODO : reconnection to server in lobby
+//NOTE : HIGH PRIORITY
 //TODO : close everything if the input listener is closed
-//TODO : add quit popup to ask confirmation to close the app
-//TODO : remap keyboard shortcuts + enable/disable of cmdline
+//TODO : automatization of game flow
+//NOTE : MEDIUM PRIORITY
+//TODO : notify succesfull connection to server
+//TODO : organize popups with a priorityQueue
+//TODO : error popup
+//TODO : chatBox (new popup)
+//NOTE : LOW PRIORITY
+//TODO : sowly remove resize from viewhub and assign to notification their views to resize
+//TODO : refactor viewhub as a cliBox's queue consumer. (maybe?)
+//TODO : add boolean edited in cliBox (on in drawAll & set to off in print)
 
 public class GameState extends ClientState implements PlayerStateInterface {
     private final Player player;
@@ -38,7 +44,6 @@ public class GameState extends ClientState implements PlayerStateInterface {
     private GameStage gameStage;
     private Position boardPointer;
     private PlacedCard placedCard;
-    private boolean keyConsumed;
     private boolean cardPlaced;
     private boolean cardPicked;
     private boolean playerTurn;
@@ -70,8 +75,10 @@ public class GameState extends ClientState implements PlayerStateInterface {
     public ClientState execute() {
         player.applySetup();
         gameStage = viewHub.setGameStage(this);
-        popManager.updatePopups();
         updateBoardPointerImage();
+        popManager.updatePopups();
+        gameStage.drawAll();
+        cmdLine.update();
         viewHub.update();
         return super.execute();
     }
@@ -134,14 +141,10 @@ public class GameState extends ClientState implements PlayerStateInterface {
 
     @Override
     protected void processKeyStroke(KeyStroke keyStroke) {
-        keyConsumed = false;
-        Debugger.print("pressed <"+keyStroke.getKeyType().name()+"> ( ctrlDown = "+keyStroke.isCtrlDown()+" )");
-        if (notificationStack.consumeKeyStroke(keyStroke)) {
-            viewHub.update();
-            return;
-        }
-        popManager.consumeKeyStroke(keyStroke);
-        if (keyStroke.isShiftDown()) {
+        keyConsumed = notificationStack.consumeKeyStroke(keyStroke);
+        if (!keyConsumed) cmdLine.consumeKeyStroke(this, keyStroke);
+        if (!keyConsumed) popManager.consumeKeyStroke(keyStroke);
+        if (!(cmdLine.isEnabled() || keyConsumed)) {
             switch (keyStroke.getKeyType()) {
                 case ArrowUp -> shiftBoardPointer(Side.NORD);
                 case ArrowDown -> shiftBoardPointer(Side.SUD);
@@ -149,14 +152,13 @@ public class GameState extends ClientState implements PlayerStateInterface {
                 case ArrowRight -> shiftBoardPointer(Side.EAST);
             }
         }
-        if (!keyConsumed) super.processCommonKeyStrokes(keyStroke);
-        viewHub.updateCommandLine(cmdLine);
+        viewHub.update();
     }
 
     @Override
-    protected void processResize(TerminalSize size) {
+    protected void processResize(TerminalSize screenSize) {
         centerBoardPointer();
-        super.processResize(size);
+        super.processResize(screenSize);
         popManager.resizePopups();
         viewHub.update();
     }
@@ -216,15 +218,10 @@ public class GameState extends ClientState implements PlayerStateInterface {
     }
 
     private void updateBoardPointerImage() {
-        if (cardPlaced ^ !playerTurn)
-            gameStage.setPointerColor(TextColor.ANSI.BLACK_BRIGHT);
-        else if (player.getBoard().spotAvailable(boardPointer))
-            gameStage.setPointerColor(TextColor.ANSI.GREEN_BRIGHT);
+        if (!playerTurn) gameStage.setPointerColor(TextColor.ANSI.BLACK_BRIGHT);
+        else if (cardPlaced) gameStage.setPointerColor(TextColor.ANSI.BLACK_BRIGHT);
+        else if (player.getBoard().spotAvailable(boardPointer)) gameStage.setPointerColor(TextColor.ANSI.GREEN_BRIGHT);
         else gameStage.setPointerColor(TextColor.ANSI.RED_BRIGHT);
-    }
-
-    public void setKeyConsumed(boolean consumed) {
-        keyConsumed = consumed;
     }
     
     public void flipHandCard(int cardIndex) {

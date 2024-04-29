@@ -15,9 +15,9 @@ import java.net.Socket;
 import static IS24_LB11.game.Result.Error;
 
 public class ServerHandler extends Listener implements Runnable {
-    private final Socket socket;
-    private final JsonStreamParser parser;
-    private final PrintWriter writer;
+    private Socket socket;
+    private JsonStreamParser parser;
+    private PrintWriter writer;
 
     public ServerHandler(ClientState state, String serverIP, int serverPORT) throws IOException {
         super(state);
@@ -70,6 +70,17 @@ public class ServerHandler extends Listener implements Runnable {
         writer.println(object.toString());
         writer.flush();
     }
+
+//    public void reconnect(String serverIP, int serverPORT) {
+//        try {
+//            socket.close();
+//            socket = new Socket(serverIP, serverPORT);
+//            parser = new JsonStreamParser(new InputStreamReader(socket.getInputStream()));
+//            writer = new PrintWriter(socket.getOutputStream());
+//        } catch (IOException e) {
+//            Debugger.print(e);
+//        }
+//    }
 
     public void shutdown() {
         try {

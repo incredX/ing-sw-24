@@ -1,16 +1,40 @@
 package IS24_LB11.cli;
 
+import IS24_LB11.cli.controller.ClientState;
+import IS24_LB11.cli.event.CommandEvent;
+import IS24_LB11.cli.view.CommandLineView;
+import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.input.KeyType;
+
 public class CommandLine {
+    private static final int BASE_OFFSET = CommandLineView.COMMAND_INTRO.length();
+
     private final StringBuilder line;
+    private final CommandLineView view;
+    private boolean enabled;
+    private int disabledChars;
     private int cursor;
     private int offset;
     private int width;
+    private long lastKeyEventTime;
+    private KeyType lastKeyEventType;
 
-    public CommandLine(int width) {
+    public CommandLine(CommandLineView view) {
         this.line = new StringBuilder();
-        this.width = width;
+        this.view = view;
+        this.enabled = true;
+        this.width = view.innerWidth() - BASE_OFFSET;
+        this.disabledChars = 0;
         this.cursor = 0;
         this.offset = 0;
+        this.lastKeyEventTime = 0;
+        this.lastKeyEventType = null;
+    }
+
+    public void update() {
+        view.loadCommandLine(this);
+        view.drawAll();
     }
 
     public void insertChar(char c) {
@@ -29,7 +53,7 @@ public class CommandLine {
     public void setLine(String string) {
         line.replace(0, line.length(), string);
         cursor = line.length();
-        offset = Integer.max(0,cursor - innerWidth() +1);
+        offset = Integer.max(0,cursor - width +1);
     }
 
     public void clearLine() {
@@ -40,27 +64,71 @@ public class CommandLine {
 
     public void moveCursor(int delta) {
         int newCursor = cursor+delta;
-        //System.out.printf("(% 3d) cur:% 3d, os:% 2d -> ", delta, cursor, offset);
         cursor = Integer.min(newCursor, line.length());
         cursor = Integer.max(cursor, 0);
         if (offset > cursor) offset = cursor;
-        if (delta > 0 && cursor - offset >= innerWidth()) {
+        if (delta > 0 && cursor - offset >= width) {
             offset += delta;
-        } /*else if (delta < 0 && cursor >= maxLength() -1) {
-            offset += delta;
-        }*/
-        //System.out.printf("cur:% 3d, os:% 2d\n", cursor, offset);
+            //cursor -= delta;
+        }
     }
 
-    public void setWidth(int width) {
-        this.width = width;
+    public void resize(TerminalSize screenSize) {
+        view.resize(screenSize);
+        width = view.innerWidth()-BASE_OFFSET;
         if (cursor >= width) cursor = width-1;
+        view.loadCommandLine(this);
+        view.drawAll();
     }
 
-    public int innerWidth() { return width-3; }
+    public void consumeKeyStroke(ClientState state, KeyStroke keyStroke) {
+        if (keyStroke.isCtrlDown() || keyStroke.isCtrlDown()) {
+            if (keyStroke.getKeyType() == KeyType.Character && keyStroke.getCharacter() == ' ') {
+                enabled = !enabled;
+                if (!enabled) clearLine();
+            }
+        } else if (!enabled) {
+            if (keyStroke.getKeyType() == KeyType.Enter) {
+                if (isStrokeOnTime(keyStroke, 400)) enabled = true;
+                else lastKeyEventTime = System.currentTimeMillis();
+            } else return;
+        } else switch (keyStroke.getKeyType()) {
+            case Character -> insertChar(keyStroke.getCharacter());
+            case Backspace -> deleteChar();
+            case Enter -> {
+                if (isStrokeOnTime(keyStroke, 400)) {
+                    enabled = !enabled;
+                    if (!enabled) clearLine();
+                }
+                else {
+                    lastKeyEventTime = System.currentTimeMillis();
+                    if(!line.isEmpty()) state.tryQueueEvent(new CommandEvent(getFullLine()));
+                    clearLine();
+                }
+            }
+            case ArrowLeft -> moveCursor(-1);
+            case ArrowRight -> moveCursor(1);
+            case Escape -> state.quit();
+            default -> { return; }
+        }
+        lastKeyEventType = keyStroke.getKeyType();
+        view.loadCommandLine(this);
+        view.drawCommandLine();
+        state.keyConsumed();
+    }
+
+    private boolean isStrokeOnTime(KeyStroke keyStroke, long intervall) {
+        if (lastKeyEventType != null && lastKeyEventType != keyStroke.getKeyType()) {
+            return false;
+        }
+        return keyStroke.getEventTime() - lastKeyEventTime < intervall;
+    }
 
     public String getFullLine() { return line.toString(); }
-    public String getVisibleLine() { return line.substring(offset, Integer.min(line.length(), width)); }
+    public String getVisibleLine() { return line.substring(offset, Integer.min(line.length(), offset+width)); }
+    public int getRelativeCursor() { return cursor-offset; }
     public int getCursor() { return cursor; }
     public int getOffset() { return offset; }
+    public int getWidth() { return width; }
+    public boolean isEnabled() { return enabled; }
 }

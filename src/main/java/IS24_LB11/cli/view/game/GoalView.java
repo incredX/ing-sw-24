@@ -2,7 +2,7 @@ package IS24_LB11.cli.view.game;
 
 
 import IS24_LB11.cli.utils.SymbolAdapter;
-import IS24_LB11.cli.utils.CliBox;
+import IS24_LB11.cli.utils.TerminalBox;
 import IS24_LB11.game.components.GoalCard;
 import IS24_LB11.game.symbol.Symbol;
 import com.googlecode.lanterna.TerminalPosition;
@@ -12,7 +12,7 @@ import com.googlecode.lanterna.TextColor;
 import static IS24_LB11.cli.utils.Side.NORD;
 import static IS24_LB11.cli.utils.Side.SUD;
 
-public class GoalView extends CliBox {
+public class GoalView extends TerminalBox {
     public static final int WIDTH = 17;
     public static final int HEIGHT = 5;
     protected final GoalCard goal;
