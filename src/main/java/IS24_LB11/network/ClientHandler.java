@@ -4,7 +4,6 @@ import java.net.*;
 import java.util.ArrayList;
 
 import IS24_LB11.game.Game;
-import IS24_LB11.network.events.ServerEventHandler;
 import com.google.gson.*;
 
 public class ClientHandler implements Runnable {
