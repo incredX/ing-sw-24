@@ -67,11 +67,9 @@ public class Stage extends TerminalBox implements LayerInterface {
     @Override
     public void print(Screen screen) {
         TextGraphics graphics = screen.newTextGraphics();
-        int cnt = 0;
         while (!builtAreas.isEmpty()) {
             TerminalRectangle area = builtAreas.removeLast();
             graphics.drawImage(area.getPosition(), image, area.getPosition(), area.getSize());
-            cnt++;
         }
     }
 

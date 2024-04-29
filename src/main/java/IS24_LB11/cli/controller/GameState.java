@@ -23,9 +23,11 @@ import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.input.KeyStroke;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 //NOTE : HIGH PRIORITY
+//TODO : synchronize stage.buildAreas
 //TODO : close everything if the input listener is closed
 //TODO : automatization of game flow
 //NOTE : MEDIUM PRIORITY
@@ -60,7 +62,7 @@ public class GameState extends ClientState implements PlayerStateInterface {
         popManager.forEachPopup(popup -> popup.setPlayerState(this));
     }
 
-    public GameState(ViewHub viewHub, NotificationStack stack, PlayerSetup setup, Table table) {
+    public GameState(ViewHub viewHub, NotificationStack stack, PlayerSetup setup, Table table) throws IOException {
         super(viewHub, stack);
         this.player = new Player(username, setup);
         this.table = table;

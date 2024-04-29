@@ -49,8 +49,7 @@ public class Client {
             }
             resizeListener = new ResizeListener(state);
             inputListener = new InputListener(state);
-            serverHandler = new ServerHandler(state, "127.0.0.1", 54321);
-            state.setServerHandler(serverHandler);
+            //state.setServerHandler(serverHandler);
         } catch (IOException e) {
             Debugger.print(e);
             return;
@@ -59,14 +58,13 @@ public class Client {
         threadMap.put("views", new Thread(viewHub));
         threadMap.put("input", new Thread(inputListener));
         threadMap.put("resize", new Thread(resizeListener));
-        threadMap.put("server", new Thread(serverHandler));
 
         for (Thread t: threadMap.values()) t.start();
 
         JsonParser jsonParser = new JsonParser();
         for (String arg: Arrays.stream(args).skip(1).toArray(String[]::new)) {
             try {
-                serverHandler.write(jsonParser.parse(arg).getAsJsonObject());
+                state.getServerHandler().write(jsonParser.parse(arg).getAsJsonObject());
             } catch (JsonSyntaxException | ClassCastException e) {
                 Debugger.print(e);
                 System.exit(1);
@@ -80,18 +78,14 @@ public class Client {
                 state = nextState;
                 inputListener.setState(state);
                 resizeListener.setState(state);
-                serverHandler.setState(state);
-                state.setServerHandler(serverHandler);
             }
         }
 
         Debugger.print("closing client.");
 
         inputListener.shutdown();
-        serverHandler.shutdown();
         threadMap.get("views").interrupt();
         threadMap.get("resize").interrupt();
-        threadMap.get("server").interrupt();
 
         try { Thread.sleep(200); }
         catch (InterruptedException e) { Debugger.print(e); }

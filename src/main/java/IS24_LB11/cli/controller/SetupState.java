@@ -17,6 +17,7 @@ import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class SetupState extends ClientState implements PlayerStateInterface {
@@ -35,7 +36,7 @@ public class SetupState extends ClientState implements PlayerStateInterface {
         });
     }
 
-    public SetupState(ViewHub viewHub, PlayerSetup setup, Table table) {
+    public SetupState(ViewHub viewHub, PlayerSetup setup, Table table) throws IOException {
         super(viewHub);
         this.setup = setup;
         this.table = table;

@@ -17,8 +17,8 @@ public class CommandLine {
     private int cursor;
     private int offset;
     private int width;
-    private long lastKeyEventTime;
-    private KeyType lastKeyEventType;
+    //private long lastKeyEventTime;
+    //private KeyType lastKeyEventType;
 
     public CommandLine(CommandLineView view) {
         this.line = new StringBuilder();
@@ -28,8 +28,8 @@ public class CommandLine {
         this.disabledChars = 0;
         this.cursor = 0;
         this.offset = 0;
-        this.lastKeyEventTime = 0;
-        this.lastKeyEventType = null;
+        //this.lastKeyEventTime = 0;
+        //this.lastKeyEventType = null;
     }
 
     public void update() {
@@ -83,46 +83,54 @@ public class CommandLine {
 
     public void consumeKeyStroke(ClientState state, KeyStroke keyStroke) {
         if (keyStroke.isCtrlDown() || keyStroke.isCtrlDown()) {
-            if (keyStroke.getKeyType() == KeyType.Character && keyStroke.getCharacter() == ' ') {
-                enabled = !enabled;
-                if (!enabled) clearLine();
-            }
-        } else if (!enabled) {
-            if (keyStroke.getKeyType() == KeyType.Enter) {
-                if (isStrokeOnTime(keyStroke, 400)) enabled = true;
-                else lastKeyEventTime = System.currentTimeMillis();
-            } else return;
-        } else switch (keyStroke.getKeyType()) {
+            if (!toggle(state, keyStroke)) return;
+        } else if (keyStroke.getKeyType() == KeyType.F1) {
+            toggle();
+        } else if (enabled)
+            switch (keyStroke.getKeyType()) {
             case Character -> insertChar(keyStroke.getCharacter());
             case Backspace -> deleteChar();
             case Enter -> {
-                if (isStrokeOnTime(keyStroke, 400)) {
-                    enabled = !enabled;
-                    if (!enabled) clearLine();
-                }
-                else {
-                    lastKeyEventTime = System.currentTimeMillis();
-                    if(!line.isEmpty()) state.tryQueueEvent(new CommandEvent(getFullLine()));
-                    clearLine();
-                }
+                if(!line.isEmpty()) state.tryQueueEvent(new CommandEvent(getFullLine()));
+                clearLine();
             }
             case ArrowLeft -> moveCursor(-1);
             case ArrowRight -> moveCursor(1);
             case Escape -> state.quit();
             default -> { return; }
+        } else {
+            if (!toggle(state, keyStroke))
+                return;
         }
-        lastKeyEventType = keyStroke.getKeyType();
+        //lastKeyEventType = keyStroke.getKeyType();
         view.loadCommandLine(this);
         view.drawCommandLine();
         state.keyConsumed();
     }
 
-    private boolean isStrokeOnTime(KeyStroke keyStroke, long intervall) {
-        if (lastKeyEventType != null && lastKeyEventType != keyStroke.getKeyType()) {
-            return false;
+    private boolean toggle(ClientState state, KeyStroke keyStroke) {
+        if (keyStroke.getKeyType() != KeyType.Character) return false;
+        switch (keyStroke.getCharacter()) {
+            case ' ' -> toggle();
+            case 'h','H' -> state.togglePopup("hand");
+            case 'd','D' -> state.togglePopup("decks");
+            case 't','T' -> state.togglePopup("table");
+            default -> { return false; }
         }
-        return keyStroke.getEventTime() - lastKeyEventTime < intervall;
+        return true;
     }
+
+    private void toggle() {
+        enabled = !enabled;
+        clearLine();
+    }
+
+//    private boolean isStrokeOnTime(KeyStroke keyStroke, long intervall) {
+//        if (lastKeyEventType != null && lastKeyEventType != keyStroke.getKeyType()) {
+//            return false;
+//        }
+//        return keyStroke.getEventTime() - lastKeyEventTime < intervall;
+//    }
 
     public String getFullLine() { return line.toString(); }
     public String getVisibleLine() { return line.substring(offset, Integer.min(line.length(), offset+width)); }

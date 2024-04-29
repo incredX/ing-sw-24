@@ -68,7 +68,9 @@ public class LobbyState extends ClientState {
             case "CONNECT" -> {
                 if (tokens.length == 2) {
                     tokens = tokens[1].split(" ", 2);
-                    try {
+                    if (tokens.length != 2)
+                        notificationStack.addUrgent("ERROR", MISSING_ARG.apply(tokens[0]));
+                    else try {
                         int serverPort = Integer.parseInt(tokens[1]);
                         sendToServer("quit");
                         serverHandler.shutdown();

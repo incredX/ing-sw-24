@@ -83,7 +83,7 @@ public class HandPopup extends Popup {
                 case ArrowDown -> shiftPointer(SUD);
                 case Enter -> gameState.placeCardFromHand();
                 case Character -> {
-                    if (keyStroke.getCharacter() == 'f') {
+                    if (keyStroke.getCharacter() == 'F') {
                         gameState.flipHandCard(selectedCard);
                     } else if (keyStroke.getCharacter() == ' ') {
                         gameState.placeCardFromHand();

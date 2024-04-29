@@ -20,6 +20,7 @@ import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.screen.Screen;
 
+import java.io.IOException;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
@@ -48,7 +49,7 @@ public abstract class ClientState {
     protected boolean keyConsumed;
 
 
-    public ClientState(ViewHub viewHub, NotificationStack notificationStack) {
+    public ClientState(ViewHub viewHub, NotificationStack notificationStack) throws IOException {
         this.nextState = null;
         this.username = "";
         this.popManager = new PopupManager(new Popup[]{});
@@ -57,6 +58,8 @@ public abstract class ClientState {
         this.viewHub = viewHub;
         this.cmdLine = new CommandLine(viewHub.getCommandLineView());
         this.keyConsumed = false;
+        this.serverHandler = new ServerHandler(this, "127.0.0.1", 54321);
+        new Thread(this.serverHandler).start();
     }
 
     public ClientState(ClientState state) {
@@ -67,9 +70,10 @@ public abstract class ClientState {
         this.notificationStack = state.notificationStack;
         this.viewHub = state.viewHub;
         this.cmdLine = state.cmdLine;
+        this.serverHandler = state.serverHandler;
     }
 
-    public ClientState(ViewHub viewHub) {
+    public ClientState(ViewHub viewHub) throws IOException {
         this(viewHub, new NotificationStack(viewHub, 0));
     }
 
@@ -253,6 +257,13 @@ public abstract class ClientState {
         serverHandler.write(object);
     }
 
+    public void togglePopup(String label) {
+        popManager.getOptionalPopup(label).ifPresent(popup -> {
+            if (popup.isVisible()) popManager.hidePopup(label);
+            else popManager.showPopup(label);
+        });
+    }
+
     public void keyConsumed() {
         keyConsumed = true;
     }
@@ -272,4 +283,6 @@ public abstract class ClientState {
     public Screen getScreen() {
         return viewHub.getScreen();
     }
+
+    public ServerHandler getServerHandler() { return serverHandler; }
 }
