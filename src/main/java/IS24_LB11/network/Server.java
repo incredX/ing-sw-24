@@ -54,6 +54,11 @@ public class Server
                 if(!gameStarted && clientHandlers.size() < maxPlayers) {
                     System.out.println("New client connected: " + clientSocket.getInetAddress().getHostName());
 
+                    OutputStream outputStream = clientSocket.getOutputStream();
+                    JsonObject jsonResponse = new JsonObject();
+                    jsonResponse.addProperty("notification", "Welcome, please log in");
+                    outputStream.write(jsonResponse.toString().getBytes());
+
                     // Create client handler and start thread
                     ClientHandler clientHandler = new ClientHandler(this, clientSocket);
                     this.clientHandlers.add(clientHandler);
