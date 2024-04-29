@@ -26,10 +26,11 @@ import com.googlecode.lanterna.input.KeyStroke;
 import java.util.ArrayList;
 
 //NOTE : HIGH PRIORITY
-//TODO : reconnection to server in lobby
 //TODO : close everything if the input listener is closed
 //TODO : automatization of game flow
 //NOTE : MEDIUM PRIORITY
+//TODO : notify succesfull connection to server
+//TODO : organize popups with a priorityQueue
 //TODO : error popup
 //TODO : chatBox (new popup)
 //NOTE : LOW PRIORITY

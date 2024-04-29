@@ -27,13 +27,13 @@ import java.util.function.Function;
 
 public abstract class ClientState {
     protected static final Function<String, String> MISSING_ARG =
-            (cmd) -> String.format("missing argument for command \"%s\"", cmd);
+            (cmd) -> String.format("missing argument(s) for command \"%s\"", cmd);
     protected static final BiFunction<String, String, String> INVALID_CMD =
             (key, state) -> String.format("\"%s\" is not a command in %s", key, state);
     protected static final BiFunction<String, String, String> INVALID_ARG =
             (arg, cmd) -> String.format("\"%s\" is not a valid argument for command \"%s\"", arg, cmd);
     protected static final Function<String, String> EXPECTED_INT =
-            key -> String.format("\"%s\" expected an integer", key);
+            key -> String.format("argument \"%s\" expected an integer", key);
 
     private static final int QUEUE_CAPACITY = 64;
 
@@ -104,6 +104,7 @@ public abstract class ClientState {
         sendToServer("quit");
         setNextState(null);
         Thread.currentThread().interrupt();
+        serverHandler.shutdown();
     }
 
     protected abstract void processServerEvent(ServerEvent event);

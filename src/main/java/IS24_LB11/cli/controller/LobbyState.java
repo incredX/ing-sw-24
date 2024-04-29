@@ -1,11 +1,11 @@
 package IS24_LB11.cli.controller;
 
-import IS24_LB11.cli.Debugger;
 import IS24_LB11.cli.Table;
 import IS24_LB11.cli.event.server.ServerEvent;
 import IS24_LB11.cli.event.server.ServerLoginEvent;
 import IS24_LB11.cli.event.server.ServerPlayerSetupEvent;
 import IS24_LB11.cli.ViewHub;
+import IS24_LB11.cli.listeners.ServerHandler;
 import IS24_LB11.cli.view.stage.LobbyStage;
 import IS24_LB11.game.PlayerSetup;
 import IS24_LB11.game.Result;
@@ -63,11 +63,28 @@ public class LobbyState extends ClientState {
         switch (tokens[0].toUpperCase()) {
             case "LOGIN" -> {
                 if (tokens.length == 2) processCommandLogin(tokens[1]);
-                else notificationStack.addUrgent("ERROR", MISSING_ARG.apply("login"));
+                else notificationStack.addUrgent("ERROR", MISSING_ARG.apply(tokens[0]));
+            }
+            case "CONNECT" -> {
+                if (tokens.length == 2) {
+                    tokens = tokens[1].split(" ", 2);
+                    try {
+                        int serverPort = Integer.parseInt(tokens[1]);
+                        sendToServer("quit");
+                        serverHandler.shutdown();
+                        serverHandler = new ServerHandler(this, tokens[0], serverPort);
+                        new Thread(serverHandler).start();
+                    } catch (NumberFormatException e) {
+                        notificationStack.addUrgent("ERROR", EXPECTED_INT.apply("port"));
+                    } catch (IOException e) {
+                        notificationStack.addUrgent("ERROR", "connection to server failed");
+                    }
+                }
+                else notificationStack.addUrgent("ERROR", MISSING_ARG.apply(tokens[0]));
             }
             case "SET" -> {
                 if (tokens.length == 2) setProperty(tokens[1]);
-                else notificationStack.addUrgent("ERROR", MISSING_ARG.apply("set"));
+                else notificationStack.addUrgent("ERROR", MISSING_ARG.apply(tokens[0]));
             }
             case "SETUP" -> {
                 setNextState(new SetupState(this, getDefaultSetup(), defaultTable()));
@@ -79,7 +96,6 @@ public class LobbyState extends ClientState {
 
     @Override
     protected void processKeyStroke(KeyStroke keyStroke) {
-        Debugger.print("pressed <"+keyStroke.getKeyType().name()+"> ( ctrlDown = "+keyStroke.isCtrlDown()+" )");
         if (!notificationStack.consumeKeyStroke(keyStroke)) {
             cmdLine.consumeKeyStroke(this, keyStroke);
         }
