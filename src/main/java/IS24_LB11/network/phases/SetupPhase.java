@@ -9,7 +9,9 @@ import IS24_LB11.network.ClientHandler;
 import com.google.gson.*;
 
 
-import java.util.ArrayList;
+import java.util.Map;
+
+import static IS24_LB11.network.phases.NotifyTurnPhase.get3CardsFromEachDeck;
 
 public class SetupPhase {
 
@@ -47,6 +49,11 @@ public class SetupPhase {
                     colors.add(new JsonPrimitive(player.getColor().name()));
                 }
                 obj.add("colors", colors);
+
+                // add first three cards of each deck to response
+                for (Map.Entry<String, JsonElement> entry : get3CardsFromEachDeck(clientHandler).entrySet()) {
+                    obj.add(entry.getKey(), entry.getValue());
+                }
 
                 clHandler.sendMessage(obj.toString());
 

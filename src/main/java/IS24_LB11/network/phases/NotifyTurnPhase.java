@@ -46,7 +46,7 @@ public class NotifyTurnPhase {
         clientHandler.sendMessage(response.toString());
     }
 
-    private static JsonObject get3CardsFromEachDeck(ClientHandler clientHandler) {
+    public static JsonObject get3CardsFromEachDeck(ClientHandler clientHandler) {
         JsonObject obj = new JsonObject();
 
         //add first 3 normal cards
