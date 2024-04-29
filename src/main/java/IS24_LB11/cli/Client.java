@@ -35,7 +35,8 @@ public class Client {
         ServerHandler serverHandler;
         HashMap<String, Thread> threadMap = new HashMap<>();
 
-        Debugger.startDebugger();
+        //Debugger.startDebugger();
+        //Debugger.closeDebugger();
 
         try {
             viewHub = new ViewHub();

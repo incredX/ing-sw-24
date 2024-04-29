@@ -24,8 +24,6 @@ public class TablePopup extends Popup {
     @Override
     public void update() {
         Scoreboard scoreboard = playerState.getScoreboard();
-        System.out.printf("%s: %s\n", playerState.getClass().getName(),
-                playerState.getGoals().stream().map(GoalCard::asString).toList());
         castView(tableView -> {
             tableView.loadColors(scoreboard.getColors());
             tableView.loadPlayers(scoreboard.getPlayers());

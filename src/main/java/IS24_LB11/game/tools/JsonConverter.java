@@ -175,44 +175,44 @@ public class JsonConverter {
         Board convertedBoard = new Board();
         while (stringInput.contains("PlacedCard")) {
             auxString = stringInput.substring(stringInput.indexOf("{"), stringInput.indexOf("}") + 1);
-            System.out.println(auxString);
+            //System.out.println(auxString);
             PlacedCard placedCard = (PlacedCard) JSONToObject(auxString);
             if (placedCard.card().asString().startsWith("S"))
                 convertedBoard.start((StarterCard) placedCard.card());
             else
                 convertedBoard.placeCard((PlayableCard) placedCard.card(),placedCard.position());
-            System.out.println(stringInput);
+            //System.out.println(stringInput);
             stringInput = stringInput.substring(stringInput.indexOf("}") + 3);
         }
         return convertedBoard;
     }
 
     private JsonConvertable JSONToPlayer(String stringInput) throws JsonException, SyntaxException {
-        System.out.println(stringInput);
+        //System.out.println(stringInput);
         String auxString = stringInput.substring(stringInput.indexOf("playerName") + 7);
-        System.out.println(auxString);
+        //System.out.println(auxString);
         String name = auxString.substring(0, auxString.indexOf("\""));
-        System.out.println(name);
+        //System.out.println(name);
         Character character = auxString.charAt(auxString.indexOf("Color") + 8);
         Color color = Color.fromChar(character);
-        System.out.println(color);
+        //System.out.println(color);
         auxString = auxString.substring(auxString.indexOf("Hand") + 7, auxString.indexOf("]"));
         ArrayList<PlayableCard> hand = new ArrayList<>();
         for (int i = 0; i < 3; i++) {
-            System.out.println(auxString);
+            //System.out.println(auxString);
             hand.add((PlayableCard) JSONToObject(auxString.substring(auxString.indexOf("{"), auxString.indexOf("}"))));
             auxString = (i != 2) ? auxString.substring(auxString.indexOf("}") + 2) : auxString;
         }
-        for (PlayableCard playableCard : hand)
-            System.out.println(playableCard.asString());
+        //for (PlayableCard playableCard : hand)
+        //    System.out.println(playableCard.asString());
         auxString = stringInput.substring(stringInput.indexOf("Score") + 8);
         auxString = auxString.substring(0, auxString.indexOf("\""));
         int score = Integer.valueOf(auxString);
 
         PlayerSetup playerSetup = (PlayerSetup) JSONToSetupPlayer(stringInput.substring(stringInput.indexOf("PlayerSetup"), stringInput.length() - 2));
-        System.out.println("{" + stringInput.substring(stringInput.indexOf("\"Board"),stringInput.length()-2));
+        //System.out.println("{" + stringInput.substring(stringInput.indexOf("\"Board"),stringInput.length()-2));
         Board board = (Board) JSONToObject("{" + stringInput.substring(stringInput.indexOf("\"Board"),stringInput.length()-1));
-        System.out.println(objectToJSON(board));
+        //System.out.println(objectToJSON(board));
         Player playerConverted = new Player(name,playerSetup);
         playerConverted.applySetup();
         playerConverted.setBoard(board);
@@ -226,11 +226,11 @@ public class JsonConverter {
         auxString = auxString.substring(0, auxString.indexOf("]"));
         GoalCard[] goals = new GoalCard[2];
         for (int i = 0; i < 2; i++) {
-            System.out.println(auxString);
+            //System.out.println(auxString);
             goals[i] = ((GoalCard) JSONToObject(auxString.substring(auxString.indexOf("{"), auxString.indexOf("}"))));
             auxString = (i != 1) ? auxString.substring(auxString.indexOf("}") + 2) : auxString;
         }
-        System.out.println(auxString);
+        //System.out.println(auxString);
         auxString = stringInput.substring(stringInput.indexOf("Color") + 8);
         Color color = Color.fromChar(auxString.charAt(0));
         auxString = stringInput.substring(stringInput.indexOf("Hand") + 7);
