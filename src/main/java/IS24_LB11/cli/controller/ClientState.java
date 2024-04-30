@@ -11,7 +11,6 @@ import IS24_LB11.cli.notification.NotificationStack;
 import IS24_LB11.cli.notification.Priority;
 import IS24_LB11.cli.ViewHub;
 import IS24_LB11.cli.listeners.ServerHandler;
-import IS24_LB11.cli.popup.Popup;
 import IS24_LB11.cli.popup.PopupManager;
 import IS24_LB11.game.Result;
 import com.google.gson.JsonElement;
@@ -52,7 +51,7 @@ public abstract class ClientState {
     public ClientState(ViewHub viewHub, NotificationStack notificationStack) {
         this.nextState = null;
         this.username = "";
-        this.popManager = new PopupManager(new Popup[]{});
+        this.popManager = new PopupManager();
         this.queue = new ArrayBlockingQueue<>(QUEUE_CAPACITY);
         this.notificationStack = notificationStack;
         this.viewHub = viewHub;

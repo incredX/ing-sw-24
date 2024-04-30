@@ -27,11 +27,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 //NOTE : HIGH PRIORITY
+//TODO : manage shortage of cards in decks popup
 //TODO : synchronize stage.buildAreas
 //TODO : close everything if the input listener is closed
-//TODO : automatization of game flow
 //NOTE : MEDIUM PRIORITY
-//TODO : notify succesfull connection to server
 //TODO : organize popups with a priorityQueue
 //TODO : error popup
 //TODO : chatBox (new popup)
@@ -62,6 +61,21 @@ public class GameState extends ClientState implements PlayerStateInterface {
         popManager.forEachPopup(popup -> popup.setPlayerState(this));
     }
 
+    public GameState(AutomatedState automatedState) {
+        super(automatedState);
+        this.player = automatedState.getPlayer();
+        this.table = automatedState.getTable();
+        this.boardPointer = new Position(0, 0);
+        this.placedCard = null;
+        this.cardPlaced = false;
+        this.cardPicked = false;
+        this.playerTurn = false;
+        this.popManager.addPopup(
+                new TablePopup(getViewHub(), this),
+                new HandPopup(getViewHub(), this),
+                new DecksPopup(getViewHub(), this));
+    }
+
     public GameState(ViewHub viewHub, NotificationStack stack, PlayerSetup setup, Table table) throws IOException {
         super(viewHub, stack);
         this.player = new Player(username, setup);
@@ -75,11 +89,11 @@ public class GameState extends ClientState implements PlayerStateInterface {
 
     @Override
     public ClientState execute() {
-        player.applySetup();
+        if (getPlacedCardsInBoard().isEmpty()) player.applySetup();
         gameStage = viewHub.setGameStage(this);
         updateBoardPointerImage();
         popManager.updatePopups();
-        gameStage.drawAll();
+        //gameStage.drawAll();
         cmdLine.update();
         viewHub.update();
         return super.execute();

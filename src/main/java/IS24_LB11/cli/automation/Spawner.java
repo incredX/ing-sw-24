@@ -1,4 +1,4 @@
-package IS24_LB11.automation;
+package IS24_LB11.cli.automation;
 
 import IS24_LB11.cli.Client;
 import IS24_LB11.cli.Debugger;

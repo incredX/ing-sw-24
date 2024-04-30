@@ -2,7 +2,6 @@ package IS24_LB11.cli.event.server;
 
 import IS24_LB11.game.Board;
 
-//TODO: new event ServerGetPublicDataEvent
 public class ServerUpdatePlayerBoardEvent implements ServerEvent {
     private final String username;
     private final Board board;

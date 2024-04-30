@@ -30,7 +30,6 @@ public class GameStage extends Stage {
         this.state = state;
         this.cardviews = new ArrayList<>();
         this.pointerColor = TextColor.ANSI.BLACK_BRIGHT;
-        centerBoard();
         resize();
     }
 

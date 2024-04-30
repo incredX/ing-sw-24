@@ -6,7 +6,6 @@ import IS24_LB11.cli.controller.SetupState;
 import IS24_LB11.cli.controller.ClientState;
 import IS24_LB11.cli.listeners.InputListener;
 import IS24_LB11.cli.listeners.ResizeListener;
-import IS24_LB11.cli.listeners.ServerHandler;
 import IS24_LB11.cli.notification.NotificationStack;
 import IS24_LB11.game.PlayerSetup;
 import IS24_LB11.game.components.*;
@@ -32,7 +31,6 @@ public class Client {
         ViewHub viewHub;
         InputListener inputListener;
         ResizeListener resizeListener;
-        ServerHandler serverHandler;
         HashMap<String, Thread> threadMap = new HashMap<>();
 
 //        try {

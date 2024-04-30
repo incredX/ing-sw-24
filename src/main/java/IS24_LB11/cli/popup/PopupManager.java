@@ -10,18 +10,13 @@ public class PopupManager {
     private final HashMap<String, Popup> popups;
     private Popup focusedPopup;
 
-    public PopupManager(Popup[] popups) {
+    public PopupManager(Popup... popups) {
         this.popups = new HashMap<>();
         this.focusedPopup = null;
         for (Popup popup : popups) this.popups.put(popup.label(), popup);
     }
 
-    public void addPopup(Popup popup) {
-        if (popups.containsKey(popup.label())) return;
-        popups.put(popup.label(), popup);
-    }
-
-    public void addPopup(Popup[] popups) {
+    public void addPopup(Popup... popups) {
         for (Popup popup : popups) {
             if (this.popups.containsKey(popup.label())) return;
             this.popups.put(popup.label(), popup);

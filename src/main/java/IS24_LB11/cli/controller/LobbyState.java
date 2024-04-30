@@ -65,20 +65,7 @@ public class LobbyState extends ClientState {
             }
             case "CONNECT" -> {
                 if (tokens.length == 2) {
-                    tokens = tokens[1].split(" ", 2);
-                    if (tokens.length != 2)
-                        notificationStack.addUrgent("ERROR", MISSING_ARG.apply(tokens[0]));
-                    else try {
-                        int serverPort = Integer.parseInt(tokens[1]);
-                        sendToServer("quit");
-                        serverHandler.shutdown();
-                        serverHandler = new ServerHandler(this, tokens[0], serverPort);
-                        new Thread(serverHandler).start();
-                    } catch (NumberFormatException e) {
-                        notificationStack.addUrgent("ERROR", EXPECTED_INT.apply("port"));
-                    } catch (IOException e) {
-                        notificationStack.addUrgent("ERROR", "connection to server failed");
-                    }
+
                 }
                 else notificationStack.addUrgent("ERROR", MISSING_ARG.apply(tokens[0]));
             }
@@ -129,5 +116,22 @@ public class LobbyState extends ClientState {
 
     private void processCommandLogin(String username) {
         sendToServer("login", "username", username);
+    }
+
+    private void processCommandConnect(String argument) {
+        String[] tokens = argument.split(" ", 2);
+        if (tokens.length != 2)
+            notificationStack.addUrgent("ERROR", MISSING_ARG.apply(tokens[0]));
+        else try {
+            int serverPort = Integer.parseInt(tokens[1]);
+            sendToServer("quit");
+            serverHandler.shutdown();
+            serverHandler = new ServerHandler(this, tokens[0], serverPort);
+            new Thread(serverHandler).start();
+        } catch (NumberFormatException e) {
+            notificationStack.addUrgent("ERROR", EXPECTED_INT.apply("port"));
+        } catch (IOException e) {
+            notificationStack.addUrgent("ERROR", "connection to server failed");
+        }
     }
 }
