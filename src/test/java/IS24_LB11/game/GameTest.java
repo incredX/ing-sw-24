@@ -1,26 +1,24 @@
 package IS24_LB11.game;
 
-import IS24_LB11.game.components.*;
+import IS24_LB11.game.components.CardFactory;
+import IS24_LB11.game.components.GoalCard;
+import IS24_LB11.game.components.PlayableCard;
+import IS24_LB11.game.components.StarterCard;
 import IS24_LB11.game.tools.JsonConverter;
 import IS24_LB11.game.tools.JsonException;
-import IS24_LB11.game.utils.Color;
 import IS24_LB11.game.utils.Position;
 import IS24_LB11.game.utils.SyntaxException;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static IS24_LB11.game.GameMessages.*;
 import static junit.framework.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class GameTest {
     @Test
@@ -47,10 +45,11 @@ public class GameTest {
                 game.getPlayers().get(i).getSetup().flipStarterCard();
             starterCardsSideChoosen.add(game.getPlayers().get(i).getSetup().getStarterCard());
         }
+
         for (Player player: game.getPlayers()){
             assertEquals(3, player.getHand().size());
             assertEquals(0, player.getScore());
-            assertEquals(-1, player.getSetup().getChosenGoalIndex());
+            assertEquals(0, player.getSetup().getChosenGoalIndex());
             assertEquals(2, player.setup().getGoals().length);
             assertEquals(2, numNormalCard);
             assertEquals(1, numGoldenCard);
@@ -240,6 +239,42 @@ public class GameTest {
         ranking = game.getFinalRanking();
 
         assertEquals(sortedScore, ranking);
+    }
+
+
+    @Test
+    @DisplayName("Test created in order to make some check related to the CLI development")
+    void testValidDraw() throws SyntaxException, FileNotFoundException, DeckException, JsonException {
+        JsonConverter jsonConverter = new JsonConverter();
+        int playersNumber = 2;
+        Game game = new Game(playersNumber);
+        ArrayList<String> playerNames = new ArrayList<>(playersNumber);
+        for (int i = 0; i < 2; i++)
+            playerNames.add("Player " + (i + 1));
+        game.setupGame(playerNames);
+        ArrayList<GoalCard> goalCardsChoosen = new ArrayList<>();
+        for (int i = 0; i < 2; i++)
+            goalCardsChoosen.add(game.getPlayers().get(i).getSetup().getGoals()[i % 2]);
+        ArrayList<StarterCard> starterCardsSideChoosen = new ArrayList<>();
+        for (int i = 0; i < 2; i++)
+            starterCardsSideChoosen.add(game.getPlayers().get(i).getSetup().getStarterCard());
+        starterCardsSideChoosen.stream().forEach(x->x.flip());
+        game.chooseGoalPhase(goalCardsChoosen,starterCardsSideChoosen);
+
+
+        game.executeTurn(game.getPlayers().getFirst().name(),game.getPlayers().getFirst().getBoard().getAvailableSpots().getFirst(), game.getPlayers().getFirst().getHand().getFirst(),false,1 );
+
+        PlayableCard drawnCard = game.getPlayers().getFirst().getHand().getLast();
+        Deck originalDeck = game.getNormalDeck();
+
+        for (int i=0; i<35; i++){
+            //System.out.println(originalDeck.showCard(1).asString());
+            assertNotEquals(drawnCard.asString(), originalDeck.drawCard(1).asString());
+            //System.out.println(playedCard.asString());
+            //System.out.println(originalDeck.size());
+        }
+        assertEquals(0, originalDeck.size());
+
     }
 
     @Test
