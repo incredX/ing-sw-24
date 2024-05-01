@@ -1,5 +1,6 @@
 package IS24_LB11.cli.listeners;
 
+import IS24_LB11.cli.Debugger;
 import IS24_LB11.cli.controller.ClientState;
 import IS24_LB11.cli.event.ResultServerEvent;
 
@@ -14,9 +15,9 @@ import java.net.Socket;
 import static IS24_LB11.game.Result.Error;
 
 public class ServerHandler extends Listener implements Runnable {
-    private final Socket socket;
-    private final JsonStreamParser parser;
-    private final PrintWriter writer;
+    private Socket socket;
+    private JsonStreamParser parser;
+    private PrintWriter writer;
 
     public ServerHandler(ClientState state, String serverIP, int serverPORT) throws IOException {
         super(state);
@@ -26,9 +27,8 @@ public class ServerHandler extends Listener implements Runnable {
     }
 
     public void run() {
-        System.out.println("server-handler: online");
-
-        Thread.currentThread().setName("thread-server-handler");
+        Thread.currentThread().setName("server-handler");
+        Debugger.print("thread started.");
 
         while (true) {
             if (socket.isClosed()) break;
@@ -44,7 +44,7 @@ public class ServerHandler extends Listener implements Runnable {
                         continue;
                     }
                     if (event.has("type") && !event.get("type").getAsString().equalsIgnoreCase("heartbeat"))
-                        System.out.println("from server: "+event);
+                        Debugger.print("from server: "+event);
                     state.queueEvent(new ResultServerEvent(ServerEventFactory.createServerEvent(event)));
                 }
             }
@@ -52,30 +52,39 @@ public class ServerHandler extends Listener implements Runnable {
                 state.tryQueueEvent(new ResultServerEvent(Error("Bad request", "json syntax error")));
             }
             catch (JsonIOException e) {
-                System.out.println("caught exception: " + e.toString());
+                Debugger.print(e);
                 break;
             }
             catch (InterruptedException e) { break; }
         }
         if (!socket.isClosed()) {
             try { socket.close(); }
-            catch (IOException e) { System.out.printf("%s\n", e); }
+            catch (IOException e) { Debugger.print(e); }
         }
-        System.out.println(Thread.currentThread().getName() + " offline");
+        Debugger.print("thread terminated.");
     }
     
     public void write(JsonObject object) {
         if (object.has("type") && !object.get("type").getAsString().equalsIgnoreCase("heartbeat"))
-            System.out.println("to server: "+object);
+            Debugger.print("to server: "+object);
         writer.println(object.toString());
         writer.flush();
     }
 
+//    public void reconnect(String serverIP, int serverPORT) {
+//        try {
+//            socket.close();
+//            socket = new Socket(serverIP, serverPORT);
+//            parser = new JsonStreamParser(new InputStreamReader(socket.getInputStream()));
+//            writer = new PrintWriter(socket.getOutputStream());
+//        } catch (IOException e) {
+//            Debugger.print(e);
+//        }
+//    }
+
     public void shutdown() {
         try {
             if (!socket.isClosed()) socket.close();
-        } catch (IOException e) {
-            System.err.println("caught exception: "+e.getMessage());
-        }
+        } catch (IOException e) { Debugger.print(e); }
     }
 }

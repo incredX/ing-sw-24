@@ -5,7 +5,6 @@ import java.io.*;
 import java.util.ArrayList;
 
 import IS24_LB11.game.Game;
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 /**
@@ -14,16 +13,13 @@ import com.google.gson.JsonObject;
 public class Server
 {
     //initialize socket and input stream
-    private Socket socket = null;
     private ServerSocket server = null;
-    private DataInputStream in	 = null;
     public ArrayList<ClientHandler> clientHandlers = new ArrayList<ClientHandler>();
     public int maxPlayers = 1;
 
+    //GAME state
     public Game game = null;
-
-    //useful to convert json to string and viceversa
-    private Gson gson = new Gson();
+    private boolean gameStarted = false;
 
     /**
      * Constructs a Server instance with the specified port.
@@ -55,13 +51,22 @@ public class Server
             try {
                 Socket clientSocket = server.accept();
 
-                if(clientHandlers.size() < maxPlayers) {
+                if(!gameStarted && clientHandlers.size() < maxPlayers) {
                     System.out.println("New client connected: " + clientSocket.getInetAddress().getHostName());
+
+                    OutputStream outputStream = clientSocket.getOutputStream();
+                    JsonObject jsonResponse = new JsonObject();
+                    jsonResponse.addProperty("type", "notification");
+                    jsonResponse.addProperty("message", "Welcome, please log in");
+                    outputStream.write(jsonResponse.toString().getBytes());
 
                     // Create client handler and start thread
                     ClientHandler clientHandler = new ClientHandler(this, clientSocket);
                     this.clientHandlers.add(clientHandler);
                     new Thread(clientHandler).start();
+
+                    if(clientHandlers.size() != 1 && clientHandlers.size() == maxPlayers)
+                        gameStarted = true;
                 }
                 else{
                     System.out.println("Client " + clientSocket.getInetAddress().getHostName() +
@@ -90,8 +95,9 @@ public class Server
      * @throws IOException if an I/O error occurs.
      */
     public void exit() throws IOException {
-        //TODO: cleanup and server shutdown
-        socket.close();
+        for(ClientHandler clientHandler : clientHandlers) {
+            clientHandler.exit();
+        }
     }
 
     /**

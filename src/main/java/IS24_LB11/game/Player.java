@@ -5,7 +5,6 @@ import IS24_LB11.game.tools.JsonConverter;
 import IS24_LB11.game.tools.JsonException;
 import IS24_LB11.game.utils.Color;
 import IS24_LB11.game.utils.Position;
-import IS24_LB11.game.utils.SyntaxException;
 
 /*
 java.awt.* (Abstract Window Toolkit)  allows us to use some intefaces that help us to menage graphic intefaces
@@ -37,9 +36,10 @@ public class Player implements JsonConvertable {
     }
 
     public boolean placeCard(PlayableCard card, Position position) {
-        if (hand.stream().filter(x -> x.asString().compareTo(card.asString()) == 0).count() == 0) {
-            return false;
-        }
+//        it doesn't work when the card has been flipped by the client
+//        if (hand.stream().filter(x -> x.asString().compareTo(card.asString()) == 0).count() == 0) {
+//            return false;
+//        }
         if (board.placeCard(card, position)) {
             hand.removeIf(carhand -> carhand.asString().compareTo(card.asString()) == 0);
             return true;
@@ -108,7 +108,7 @@ public class Player implements JsonConvertable {
         JsonConverter jsonConverter = new JsonConverter();
         try {
             return "Player{" +
-                    "name='" + name + '\'' +
+                    "playerName='" + name + '\'' +
                     ", color=" + color +
                     ", ACTUALhand=" + hand.stream().map(x -> x.asString()).reduce("", (x, y) -> x + " " + y) +
                     ", board=" + jsonConverter.objectToJSON(board) +

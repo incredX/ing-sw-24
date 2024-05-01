@@ -25,16 +25,15 @@ public class LobbyStage extends Stage {
     }
 
     @Override
-    public void build() {
+    public void drawAll() {
         drawBorders();
         drawWallpaper();
-        updateViewHub();
     }
 
     @Override
     public void resize() {
         super.resize();
-        rebuild();
+        redraw();
     }
 
     private void drawWallpaper() {

@@ -1,9 +1,8 @@
-package IS24_LB11.network.events;
+package IS24_LB11.network;
 
 import IS24_LB11.game.Player;
 import IS24_LB11.game.components.*;
 import IS24_LB11.game.utils.SyntaxException;
-import IS24_LB11.network.ClientHandler;
 import IS24_LB11.network.phases.GameInitPhase;
 import IS24_LB11.network.phases.NotifyTurnPhase;
 import IS24_LB11.network.phases.TurnPhase;
@@ -18,8 +17,8 @@ public class ServerEventHandler {
     private static final Gson gson = new Gson();
     private static ClientHandler clientHandler;
 
-    private static ArrayList<GoalCard> pickedGoalCards = null;
-    private static ArrayList<StarterCard> pickedStarterCards = null;
+    private static ArrayList<GoalCard> pickedGoalCards = new ArrayList<>();
+    private static ArrayList<StarterCard> pickedStarterCards = new ArrayList<>();
 
 
     // Method to handle incoming events
@@ -48,15 +47,15 @@ public class ServerEventHandler {
             case "setup":
                 handleSetupEvent(event);
                 break;
-            case "placedCard":
-                handlePlacedCardEvent(event);
+            case "turnactions":
+                handleTurnActionsEvent(event);
                 break;
             case "scoreboard":
                 handleScoreboardEvent(event);
                 break;
             default:
                 JsonObject error = new JsonObject();
-                error.addProperty("error", "Unknown event");
+                error.addProperty("error", "Unknown event ("+eventType+")");
                 clientHandler.sendMessage(error.toString());
                 break;
         }
@@ -92,7 +91,7 @@ public class ServerEventHandler {
 
         clientHandler.setUserName(username);
 
-        // tell client the name they chose
+        // tell client the playerName they chose
         response.addProperty("type", "setUsername");
         response.addProperty("username", username);
         clientHandler.sendMessage(response.toString());
@@ -179,7 +178,7 @@ public class ServerEventHandler {
         JsonObject response = new JsonObject();
         response.addProperty("type", "notification");
         response.addProperty("message", "Player " + clientHandler.getUserName() + " left the game");
-
+        System.out.println(response);
         clientHandler.broadcast(response.toString());
 
         clientHandler.exit();
@@ -199,8 +198,11 @@ public class ServerEventHandler {
 
                 // start notify turn phase
                 if (pickedGoalCards.size() == clientHandler.getMaxPlayers()) {
+                    // choose goals for each player
+                    clientHandler.getGame().chooseGoalPhase(pickedGoalCards, pickedStarterCards);
+
                     new Thread(() ->{
-                        NotifyTurnPhase.startPhase(clientHandler, pickedGoalCards, pickedStarterCards);
+                        NotifyTurnPhase.startPhase(clientHandler);
                     }).start();
                 }
             } catch (SyntaxException e) {
@@ -231,7 +233,7 @@ public class ServerEventHandler {
     }
 
 
-    private static void handlePlacedCardEvent(JsonObject event){
+    private static void handleTurnActionsEvent(JsonObject event){
 
         String hasProps = hasProperties(event, "placedCard", "deckType", "indexVisibleCards");
 
@@ -245,8 +247,6 @@ public class ServerEventHandler {
             response.addProperty("error", hasProps);
             clientHandler.sendMessage(response.toString());
         }
-
-
     }
 
 

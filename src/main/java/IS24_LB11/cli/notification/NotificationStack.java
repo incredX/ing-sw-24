@@ -26,9 +26,9 @@ public class NotificationStack implements KeyConsumer {
     @Override
     public boolean consumeKeyStroke(KeyStroke keyStroke) {
         if (isEmpty()) return false;
-        Notification popup = topNotification();
-        boolean keyConsumed = popup.consumeKeyStroke(keyStroke);
-        if (popup.isClosed()) {
+        Notification notification = topNotification();
+        boolean keyConsumed = notification.consumeKeyStroke(keyStroke);
+        if (notification.isClosed()) {
             removeTopNotification();
             setNextNotification();
         }

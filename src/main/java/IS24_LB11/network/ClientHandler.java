@@ -4,7 +4,6 @@ import java.net.*;
 import java.util.ArrayList;
 
 import IS24_LB11.game.Game;
-import IS24_LB11.network.events.ServerEventHandler;
 import com.google.gson.*;
 
 public class ClientHandler implements Runnable {
@@ -126,6 +125,7 @@ public class ClientHandler implements Runnable {
 
     public void exit() {
         try {
+            System.out.println("Closing connection for " + userName);
             connectionClosed = true;
             in.close();
             out.close();
@@ -141,6 +141,7 @@ public class ClientHandler implements Runnable {
 
     public void setMaxPlayers(int maxPlayers) {
         server.maxPlayers = maxPlayers;
+        System.out.println("num max players set to "+server.maxPlayers);
     }
 
     public int getMaxPlayers() {

@@ -1,24 +1,38 @@
 package IS24_LB11.cli.popup;
 
-import IS24_LB11.cli.controller.ClientState;
 import com.googlecode.lanterna.input.KeyStroke;
 
 import java.util.HashMap;
 import java.util.Optional;
-import java.util.function.Function;
+import java.util.function.Consumer;
 
 public class PopupManager {
     private final HashMap<String, Popup> popups;
     private Popup focusedPopup;
 
-    public PopupManager(Popup[] popups) {
+    public PopupManager(Popup... popups) {
         this.popups = new HashMap<>();
         this.focusedPopup = null;
         for (Popup popup : popups) this.popups.put(popup.label(), popup);
     }
 
-    public void consumeKeyStroke(ClientState state, KeyStroke keyStroke) {
-        getFocusedPopup().ifPresent(popup -> popup.consumeKeyStroke(state, keyStroke));
+    public void addPopup(Popup... popups) {
+        for (Popup popup : popups) {
+            if (this.popups.containsKey(popup.label())) return;
+            this.popups.put(popup.label(), popup);
+        }
+    }
+
+    public void forEachPopup(Consumer<Popup> consumer) {
+        for (Popup popup : popups.values()) consumer.accept(popup);
+    }
+
+    public void consumeKeyStroke(KeyStroke keyStroke) {
+        getFocusedPopup().ifPresent(popup -> popup.consumeKeyStroke(keyStroke));
+    }
+
+    public void updatePopups() {
+        popups.values().forEach(Popup::update);
     }
 
     public void resizePopups() {
@@ -74,11 +88,5 @@ public class PopupManager {
         return popups.values().stream()
                 .filter(p -> p.visible && !(p.canOverlap() || p.label().equals(popup.label())))
                 .anyMatch(popup::overlapping);
-    }
-
-    private void printPopupsStatus(Function<Popup, String> function) {
-        for (Popup popup : popups.values())
-            System.out.printf("%s, ", function.apply(popup));
-        System.out.println();
     }
 }
