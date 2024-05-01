@@ -33,7 +33,7 @@ public class HandView extends CardsBoxView {
     }
 
     @Override
-    public void build() {
+    public void drawAll() {
         drawBorders();
         drawTitle();
         drawCards();
@@ -63,20 +63,21 @@ public class HandView extends CardsBoxView {
                 default -> throw new IllegalArgumentException("Invalid card: " + card.asString());
             }
             cardViews.getLast().setPosition(0, y);
-            cardViews.getLast().build();
+            cardViews.getLast().setMargins(0);
+            cardViews.getLast().redraw();
             y += HEIGHT;
         }
     }
 
     public void drawCards() {
-        for (PlayableCardView cardView : cardViews) draw(cardView);
+        for (PlayableCardView cardView : cardViews) drawBox(cardView);
     }
 
     @Override
     public void drawBorders() {
         super.drawBorders();
-        drawCell(getCornerPosition(UP_RIGHT), borderStyle.getSeparator(EAST));
-        drawCell(getCornerPosition(DOWN_RIGHT), borderStyle.getSeparator(EAST));
+        drawChar(getCornerPosition(UP_RIGHT), borderStyle.getSeparator(EAST));
+        drawChar(getCornerPosition(DOWN_RIGHT), borderStyle.getSeparator(EAST));
     }
 
     public void updatePointerPosition(int cardIndex) {

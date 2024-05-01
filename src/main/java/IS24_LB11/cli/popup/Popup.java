@@ -1,8 +1,8 @@
 package IS24_LB11.cli.popup;
 
 import IS24_LB11.cli.ViewHub;
-import IS24_LB11.cli.controller.ClientState;
-import IS24_LB11.cli.utils.CliBox;
+import IS24_LB11.cli.controller.PlayerStateInterface;
+import IS24_LB11.cli.utils.TerminalBox;
 import IS24_LB11.cli.view.PopupView;
 import com.googlecode.lanterna.input.KeyStroke;
 
@@ -21,20 +21,19 @@ public abstract class Popup<T extends PopupView> {
         this.overlap = false;
     }
 
-    public void update() {
-        popView.build();
-        viewHub.update();
-    }
-
     public abstract String label();
+    
+    public abstract void update();
 
-    public abstract void consumeKeyStroke(ClientState state, KeyStroke keyStroke);
+    public abstract void consumeKeyStroke(KeyStroke keyStroke);
+
+    public abstract void setPlayerState(PlayerStateInterface playerState);
 
     public void resize() {
-        popView.resize(viewHub.getScreenSize());
+        popView.resize(viewHub.getScreenSize().withRelative(0,-2));
         if (visible) {
             if (!viewInsideStage()) hide();
-            else viewHub.getStage().setCover(popView, true);
+            //else viewHub.getStage().setCover(popView, true);
         }
     }
 
@@ -43,7 +42,6 @@ public abstract class Popup<T extends PopupView> {
         if (viewInsideStage()) {
             if (!visible) {
                 viewHub.addPopup(popView);
-                update();
             }
             visible = true;
         }
@@ -52,7 +50,6 @@ public abstract class Popup<T extends PopupView> {
     public void hide() {
         if (visible) {
             viewHub.removePopup(popView.getId());
-            update();
             visible = false;
         }
     }
@@ -81,7 +78,7 @@ public abstract class Popup<T extends PopupView> {
                 popView.getX() >= 0 && popView.getY() >= 0;
     }
 
-    public boolean overlapping(CliBox box) {
+    public boolean overlapping(TerminalBox box) {
         int popX1 = popView.getX(), popY1 = popView.getY();
         int popX2 = popView.getXAndWidth(), popY2 = popView.getYAndHeight();
         int boxX1 = box.getX(), boxY1 = box.getY();

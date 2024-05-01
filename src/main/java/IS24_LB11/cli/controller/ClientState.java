@@ -1,6 +1,7 @@
 package IS24_LB11.cli.controller;
 
 import IS24_LB11.cli.CommandLine;
+import IS24_LB11.cli.Debugger;
 import IS24_LB11.cli.event.server.ServerEvent;
 import IS24_LB11.cli.event.server.ServerHeartBeatEvent;
 import IS24_LB11.cli.event.server.ServerMessageEvent;
@@ -10,13 +11,15 @@ import IS24_LB11.cli.notification.NotificationStack;
 import IS24_LB11.cli.notification.Priority;
 import IS24_LB11.cli.ViewHub;
 import IS24_LB11.cli.listeners.ServerHandler;
+import IS24_LB11.cli.popup.PopupManager;
 import IS24_LB11.game.Result;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.input.KeyStroke;
-import com.googlecode.lanterna.terminal.Terminal;
+import com.googlecode.lanterna.screen.Screen;
 
+import java.io.IOException;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
@@ -24,31 +27,53 @@ import java.util.function.Function;
 
 public abstract class ClientState {
     protected static final Function<String, String> MISSING_ARG =
-            (cmd) -> String.format("missing argument for command \"%s\"", cmd);
+            (cmd) -> String.format("missing argument(s) for command \"%s\"", cmd);
     protected static final BiFunction<String, String, String> INVALID_CMD =
             (key, state) -> String.format("\"%s\" is not a command in %s", key, state);
     protected static final BiFunction<String, String, String> INVALID_ARG =
             (arg, cmd) -> String.format("\"%s\" is not a valid argument for command \"%s\"", arg, cmd);
     protected static final Function<String, String> EXPECTED_INT =
-            key -> String.format("\"%s\" expected an integer", key);
+            key -> String.format("argument \"%s\" expected an integer", key);
 
     private static final int QUEUE_CAPACITY = 64;
 
     private ClientState nextState;
     protected String username;
+    protected final PopupManager popManager;
     protected final ArrayBlockingQueue<Event> queue;
     protected final NotificationStack notificationStack;
     protected final ViewHub viewHub;
     protected final CommandLine cmdLine;
     protected ServerHandler serverHandler;
+    protected boolean keyConsumed;
+
 
     public ClientState(ViewHub viewHub, NotificationStack notificationStack) {
         this.nextState = null;
+        this.username = "";
+        this.popManager = new PopupManager();
         this.queue = new ArrayBlockingQueue<>(QUEUE_CAPACITY);
         this.notificationStack = notificationStack;
         this.viewHub = viewHub;
-        this.cmdLine = new CommandLine(viewHub.getScreenSize().getColumns());
-        viewHub.updateCommandLine(cmdLine);
+        this.cmdLine = new CommandLine(viewHub.getCommandLineView());
+        this.keyConsumed = false;
+        try {
+            this.serverHandler = new ServerHandler(this, "127.0.0.1", 54321);
+            new Thread(this.serverHandler).start();
+        } catch (IOException e) {
+            notificationStack.addUrgent("ERROR", "Connection to server failed");
+        }
+    }
+
+    public ClientState(ClientState state) {
+        this.nextState = null;
+        this.popManager = state.popManager;
+        this.username = state.username;
+        this.queue = state.queue;
+        this.notificationStack = state.notificationStack;
+        this.viewHub = state.viewHub;
+        this.cmdLine = state.cmdLine;
+        this.serverHandler = state.serverHandler;
     }
 
     public ClientState(ViewHub viewHub) {
@@ -60,7 +85,7 @@ public abstract class ClientState {
             while (true) {
                 try { queue.wait(); }
                 catch (InterruptedException e) {
-                    System.err.println("caught exception: "+e.getMessage());
+                    Debugger.print(e);
                     break;
                 }
                 while(!queue.isEmpty()) {
@@ -78,13 +103,17 @@ public abstract class ClientState {
             case KeyboardEvent keyboardEvent -> processKeyStroke(keyboardEvent.keyStroke());
             case ResizeEvent resizeEvent -> processResize(resizeEvent.size());
             case ResultServerEvent resultServerEvent -> processResult(resultServerEvent.result());
-            default -> System.out.println("Unknown event: " + event.getClass().getName());
+            default -> Debugger.print("Unknown event: " + event.getClass().getName());
         };
     }
 
-    protected void quit() {
+    public void quit() {
         setNextState(null);
         Thread.currentThread().interrupt();
+        if (serverHandler != null) {
+            sendToServer("quit");
+            serverHandler.shutdown();
+        }
     }
 
     protected abstract void processServerEvent(ServerEvent event);
@@ -93,9 +122,9 @@ public abstract class ClientState {
 
     protected abstract void processKeyStroke(KeyStroke keyStroke);
 
-    protected void processResize(TerminalSize size) {
-        cmdLine.setWidth(size.getColumns());
-        viewHub.resize(size, cmdLine);
+    protected void processResize(TerminalSize screenSize) {
+        cmdLine.resize(screenSize);
+        viewHub.resize(screenSize);
     }
 
     protected void processResult(Result<ServerEvent> result) {
@@ -104,7 +133,8 @@ public abstract class ClientState {
             text = result.getError();
             if (result.getCause() != null)
                 text += " : "+result.getCause();
-            notificationStack.addUrgent("ERROR", text);
+            notificationStack.addUrgent("ERROR (from server)", text);
+            viewHub.update();
             return;
         }
         processServerEvent(result.get());
@@ -153,36 +183,6 @@ public abstract class ClientState {
             }
         };
         return false;
-    }
-
-    protected void processCommonKeyStrokes(KeyStroke keyStroke) {
-        switch (keyStroke.getKeyType()) {
-            case Character:
-                cmdLine.insertChar(keyStroke.getCharacter());
-                break;
-            case Backspace:
-                cmdLine.deleteChar();
-                break;
-            case Enter:
-                tryQueueEvent(new CommandEvent(cmdLine.getFullLine()));
-                cmdLine.clearLine();
-                break;
-            case ArrowUp:
-                break;
-            case ArrowDown:
-                break;
-            case ArrowLeft:
-                cmdLine.moveCursor(-1);
-                break;
-            case ArrowRight:
-                cmdLine.moveCursor(1);
-                break;
-            case Escape:
-                quit();
-            default:
-                break;
-        }
-        viewHub.updateCommandLine(cmdLine);
     }
 
     protected void processCommandSendto(String argument) {
@@ -262,6 +262,17 @@ public abstract class ClientState {
         serverHandler.write(object);
     }
 
+    public void togglePopup(String label) {
+        popManager.getOptionalPopup(label).ifPresent(popup -> {
+            if (popup.isVisible()) popManager.hidePopup(label);
+            else popManager.showPopup(label);
+        });
+    }
+
+    public void keyConsumed() {
+        keyConsumed = true;
+    }
+
     protected void setNextState(ClientState nextState) {
         this.nextState = nextState;
     }
@@ -270,7 +281,13 @@ public abstract class ClientState {
         this.serverHandler = serverHandler;
     }
 
-    public Terminal getTerminal() {
-        return viewHub.getTerminal();
+    public ViewHub getViewHub() {
+        return viewHub;
     }
+
+    public Screen getScreen() {
+        return viewHub.getScreen();
+    }
+
+    public ServerHandler getServerHandler() { return serverHandler; }
 }

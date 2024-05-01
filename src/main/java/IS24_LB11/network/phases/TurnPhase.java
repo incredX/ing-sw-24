@@ -2,18 +2,20 @@ package IS24_LB11.network.phases;
 
 import IS24_LB11.game.DeckException;
 import IS24_LB11.game.PlacedCard;
-import IS24_LB11.game.Player;
 import IS24_LB11.game.tools.JsonConverter;
 import IS24_LB11.game.tools.JsonException;
 import IS24_LB11.game.utils.SyntaxException;
 import IS24_LB11.network.ClientHandler;
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 
 public class TurnPhase {
+    static Gson gson = new Gson();
 
     public static void startPhase(ClientHandler clientHandler, JsonObject event) {
         JsonObject response = new JsonObject();
+        Gson gson = new Gson();
 
         String status = null;
         try {
@@ -26,6 +28,7 @@ public class TurnPhase {
                     event.get("deckType").getAsBoolean(),
                     event.get("indexVisibleCards").getAsInt()
             );
+
         } catch (JsonException e) {
             throw new RuntimeException(e);
         } catch (DeckException e) {
@@ -37,24 +40,7 @@ public class TurnPhase {
         response.addProperty("message", status);
         clientHandler.sendMessage(response.toString());
 
-        if(clientHandler.getGame().hasGameEnded()){
-            JsonObject finalResponse = new JsonObject();
-            finalResponse.addProperty("type", "finalRank");
-            String finalRank = "";
-            for(Player player : clientHandler.getGame().getFinalRanking()){
-                finalRank = finalRank + player.name() + " " + player.getScore() + "\n";
-            }
-            finalResponse.addProperty("finalrank", finalRank);
 
-        }
-        else{
-            response.addProperty("type", "notification");
-            response.addProperty("message", "It is your turn");
-
-            clientHandler.getClientHandlerWithUsername(clientHandler.getGame().currentPlayer().name())
-                    .sendMessage(response.toString());
-
-        }
+        NotifyTurnPhase.startPhase(clientHandler);
     }
-
 }

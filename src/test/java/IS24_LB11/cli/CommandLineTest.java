@@ -1,10 +1,13 @@
 package IS24_LB11.cli;
 
 
-import IS24_LB11.cli.CommandLine;
+import IS24_LB11.cli.view.CommandLineView;
+import com.googlecode.lanterna.TerminalSize;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CommandLineTest {
     private final int CMD_LINE_WIDTH = 10;
@@ -12,7 +15,7 @@ public class CommandLineTest {
 
     @BeforeEach
     void init() {
-        cmdLine = new CommandLine(CMD_LINE_WIDTH);
+        cmdLine = new CommandLine(new CommandLineView(new TerminalSize(CMD_LINE_WIDTH+6, 3)));
     }
 
     @Test
@@ -21,7 +24,7 @@ public class CommandLineTest {
         // ----[ ipsum.|]
         //      ^-- offset = 1 + line.length() - line.width()
         String input = "Lorem ipsum.";
-        int offset = 1 + input.length() - cmdLine.innerWidth();
+        int offset = Integer.max(0, 1 + input.length() - cmdLine.getWidth());
         cmdLine.setLine(input);
         assert (cmdLine.getFullLine().equals(input));
         assert (cmdLine.getCursor() == input.length());
@@ -76,7 +79,7 @@ public class CommandLineTest {
 
         for (int cursor=input.length()-1; cursor>=0; cursor--) {
             cmdLine.deleteChar();
-            int offset = Integer.max(0, 1 + cursor - cmdLine.innerWidth());
+            int offset = Integer.max(0, 1 + cursor - cmdLine.getWidth());
             String substr = input.substring(0,cursor);
             assert (cmdLine.getFullLine().equals(substr));
             assert (cmdLine.getCursor() == cursor);
@@ -105,25 +108,25 @@ public class CommandLineTest {
     }
 
     @Test
-    @DisplayName("test control over the offset")
+    @DisplayName("test commandline's control over its offset")
     void testGetVisibleLine() {
         String input = "Lorem ipsum.";
-        int offset = 1 + input.length() - cmdLine.innerWidth();
+        int offset = Integer.max(0, 1 + input.length() - cmdLine.getWidth());
         int width = Integer.min(input.length(), CMD_LINE_WIDTH);
 
         cmdLine.setLine(input);
-        assert (cmdLine.getOffset() == offset);
-        assert (cmdLine.getVisibleLine().equals(input.substring(offset, width)));
+        assertEquals (offset, cmdLine.getOffset());
+        assertEquals (input.substring(offset, Integer.min(input.length(), offset+width)), cmdLine.getVisibleLine());
 
-        cmdLine.moveCursor(-cmdLine.innerWidth()+1);
-        assert (cmdLine.getVisibleLine().equals(input.substring(offset, width)));
-        assert (cmdLine.getOffset() == offset);
+        cmdLine.moveCursor(-cmdLine.getWidth()+1);
+        assertEquals (offset, cmdLine.getOffset());
+        assertEquals (input.substring(offset, Integer.min(input.length(), offset+width)), cmdLine.getVisibleLine());
 
         for (int i=0; i<4; i++) {
             if (offset > 0) offset--;
             cmdLine.moveCursor(-1);
-            assert (cmdLine.getVisibleLine().equals(input.substring(offset, width)));
-            assert (cmdLine.getOffset() == offset);
+            assertEquals (offset, cmdLine.getOffset());
+            assertEquals (input.substring(offset, Integer.min(input.length(), offset+width)), cmdLine.getVisibleLine());
         }
     }
 }

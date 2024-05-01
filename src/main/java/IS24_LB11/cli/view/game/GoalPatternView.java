@@ -1,6 +1,6 @@
 package IS24_LB11.cli.view.game;
 
-import IS24_LB11.cli.utils.CellFactory;
+import IS24_LB11.cli.utils.SymbolAdapter;
 import IS24_LB11.game.components.GoalPattern;
 import IS24_LB11.game.symbol.Symbol;
 import com.googlecode.lanterna.TerminalPosition;
@@ -24,7 +24,7 @@ public class GoalPatternView extends GoalView {
 
             for (Symbol symbol: goal.getSymbols()) {
                 fillRow(row, col, "[ ]");
-                drawCell(new TerminalPosition(col+2, row), CellFactory.fromSymbol(symbol));
+                drawChar(new TerminalPosition(col+2, row), SymbolAdapter.fromSymbol(symbol));
                 row++;
                 col += dx;
             }
@@ -37,7 +37,7 @@ public class GoalPatternView extends GoalView {
             for (Symbol symbol: goal.getSymbols()) {
                 int curCol = (i == 0) ? col : c0+2;
                 fillRow(row, curCol, "[ ]");
-                drawCell(new TerminalPosition(curCol+2, row), CellFactory.fromSymbol(symbol));
+                drawChar(new TerminalPosition(curCol+2, row), SymbolAdapter.fromSymbol(symbol));
                 row += dy;
                 i++;
             }

@@ -17,7 +17,7 @@ public class GameInitPhase {
 
             clientHandler.setGame(game);
 
-            PickPhase.startPhase(clientHandler, clientHandler.getGame());
+            SetupPhase.startPhase(clientHandler, clientHandler.getGame());
         } catch (SyntaxException e) {
             throw new RuntimeException(e);
         } catch (FileNotFoundException e) {
