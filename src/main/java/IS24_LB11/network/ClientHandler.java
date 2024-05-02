@@ -183,6 +183,9 @@ public class ClientHandler implements Runnable {
     public void setGame(Game game) {
         server.game = game;
     }
+    public int getMaxPlayers() {
+        return server.maxPlayers;
+    }
 
     public ArrayList<ClientHandler> getClientHandlers(){
         return server.clientHandlers;

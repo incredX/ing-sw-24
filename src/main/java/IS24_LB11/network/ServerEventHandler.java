@@ -112,7 +112,7 @@ public class ServerEventHandler {
 
         // check if this is the last player, so the game can start
         if(clientHandler.getAllUsernames().size() > 1 &&
-                clientHandler.getAllUsernames().size() == clientHandler.getGame().getPlayers().size()) {
+                clientHandler.getAllUsernames().size() == clientHandler.getMaxPlayers()) {
             response = new JsonObject();
             response.addProperty("type", "notification");
             response.addProperty("message", "Last player logged in successfully! GAME IS STARTING NOW");
@@ -122,7 +122,7 @@ public class ServerEventHandler {
 
             // start game setup
             new Thread(() -> {
-                GameInitPhase.startPhase(clientHandler, clientHandler.getGame(), clientHandler.getGame().getPlayers().size());
+                GameInitPhase.startPhase(clientHandler, clientHandler.getGame(), clientHandler.getMaxPlayers());
             }).start();
         }
     }
