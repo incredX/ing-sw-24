@@ -27,14 +27,19 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 //NOTE : HIGH PRIORITY
+//TODO : popup with final ranking
+//TODO : check if keystroke.isAltDown is implemented correctly
 //TODO : manage shortage of cards in decks popup
 //TODO : synchronize stage.buildAreas
 //TODO : close everything if the input listener is closed
 //NOTE : MEDIUM PRIORITY
+//TODO : change message when you place a card and its not your turn
+//TODO : add letter for hide like "h" for hand and "d" for deck
 //TODO : organize popups with a priorityQueue
 //TODO : error popup
 //TODO : chatBox (new popup)
 //NOTE : LOW PRIORITY
+//TODO : add letter loike "h"for hand that shows a popup with symbols counter
 //TODO : sowly remove resize from viewhub and assign to notification their views to resize
 //TODO : refactor viewhub as a cliBox's queue consumer. (maybe?)
 //TODO : add boolean edited in cliBox (on in drawAll & set to off in print)

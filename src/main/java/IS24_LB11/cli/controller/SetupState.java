@@ -111,7 +111,7 @@ public class SetupState extends ClientState implements PlayerStateInterface {
         keyConsumed = notificationStack.consumeKeyStroke(keyStroke);
         if (!keyConsumed) cmdLine.consumeKeyStroke(this, keyStroke);
         if (!keyConsumed) popManager.consumeKeyStroke(keyStroke);
-        if (!keyConsumed && (!cmdLine.isEnabled() || keyStroke.isCtrlDown())) {
+        if (!keyConsumed && (!cmdLine.isEnabled() || keyStroke.isCtrlDown() || keyStroke.isAltDown())) {
             switch (keyStroke.getKeyType()) {
                 case ArrowLeft -> setChosenGoal(0);
                 case ArrowRight -> setChosenGoal(1);
