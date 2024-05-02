@@ -191,6 +191,7 @@ public class JsonConverterTest {
         assertEquals("O2PPP",player.getPersonalGoal().asString());
     }
 
+
     @Test
     @DisplayName("Deck initialiazing")
     public void jsonDeck() throws FileNotFoundException, SyntaxException {

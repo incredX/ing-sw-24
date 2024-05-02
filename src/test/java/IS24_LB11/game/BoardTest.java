@@ -9,6 +9,7 @@ import IS24_LB11.game.tools.JsonException;
 import IS24_LB11.game.utils.Position;
 import IS24_LB11.game.utils.SyntaxException;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -18,6 +19,7 @@ import java.util.HashMap;
 public class BoardTest {
 
     @Test
+    @DisplayName("Testing the invlid placement of a GoldenCard caused by the lack of symbols the inizialization of an existing StarterCard and ")
     public void testInvalidPlaceCard() throws SyntaxException, JsonException {
         Board board = new Board();
         JsonConverter jsonConverter = new JsonConverter();
@@ -31,6 +33,7 @@ public class BoardTest {
     }
 
     @Test
+    @DisplayName("Testing ")
     void testPlacement() throws SyntaxException {
         Placement[] placements = new Placement[] {
                 new Placement(
@@ -87,6 +90,7 @@ public class BoardTest {
     }
 
     @Test
+    @DisplayName("Testing ")
     void testCountersUpdate() throws SyntaxException {
         Board board = new Board();
         board.start(new StarterCard("EEEE_F0AI_PIAF"));
@@ -116,6 +120,7 @@ public class BoardTest {
 
 
     @Test
+    @DisplayName("Testing the proper functioning of the method countPattern applied on the D0 pattern")
     void testCountD0Patter() throws SyntaxException{
         GoalPattern goalD0 = (GoalPattern) CardFactory.newSerialCard("O2IIID0");
 
@@ -135,6 +140,7 @@ public class BoardTest {
         assert ((board.countGoalPatterns(goalD0)) == 6);
     }
     @Test
+    @DisplayName("Testing the proper functioning of the method countPattern applied on the D1 pattern")
     void testCountD1Pattern() throws SyntaxException{
         GoalPattern goalD1 = (GoalPattern) CardFactory.newSerialCard("O2IIID1");
 
@@ -158,6 +164,7 @@ public class BoardTest {
 
 
      @Test
+     @DisplayName("Testing the proper functioning of the method countPattern applied on the L0 pattern")
      void testCountL0Pattern() throws SyntaxException {
         GoalPattern goalL0 = (GoalPattern) CardFactory.newSerialCard("O3AIIL0");
 
@@ -180,6 +187,7 @@ public class BoardTest {
     }
 
     @Test
+    @DisplayName("Testing the proper functioning of the method countPattern applied on the L1 pattern")
     void testCountL1Pattern() throws SyntaxException {
         GoalPattern goalL1 = (GoalPattern) CardFactory.newSerialCard("O3FAAL1");
 
@@ -204,6 +212,7 @@ public class BoardTest {
     }
 
     @Test
+    @DisplayName("Testing the proper functioning of the method countPattern applied on the L2 pattern")
     void testCountL2Pattern() throws SyntaxException {
         GoalPattern goalL2 = (GoalPattern) CardFactory.newSerialCard("O3IPPL2");
 
@@ -228,6 +237,7 @@ public class BoardTest {
     }
 
     @Test
+    @DisplayName("Testing the proper functioning of the method countPattern applied on the L3 pattern")
     void testCountL3Pattern() throws SyntaxException {
         GoalPattern goalL2 = (GoalPattern) CardFactory.newSerialCard("O3PFFL3");
 
@@ -251,6 +261,7 @@ public class BoardTest {
     }
 
     @Test
+    @DisplayName("Testing the proper functioning of the method countGoalPattern and countGoalSymbols applied on some random goals")
     void testCountMixedPattern() throws SyntaxException {
         GoalPattern goalL0 = (GoalPattern) CardFactory.newSerialCard("O3AIIL0");
         GoalPattern goalD1 = (GoalPattern) CardFactory.newSerialCard("O2AAAD1");
@@ -278,6 +289,7 @@ public class BoardTest {
     }
 
     @Test
+    @DisplayName("Testing the proper functioning of the method calculateScoreOnLastPlaceCard checking the proper placement and the related quick score")
     void testCalculateScoreOnLastPlacedCard() throws SyntaxException {
         Board board = new Board();
         HashMap<Symbol, Integer> symbolCounterCard = new HashMap<>();
@@ -298,6 +310,7 @@ public class BoardTest {
 
 
     @Test
+    @DisplayName("Testing the proper functioning of the method countGoalSymbols applied on one random goal checking the proper placement and the proper final score")
     void testCountSymbols() throws SyntaxException{
         GoalSymbol goal = (GoalSymbol) CardFactory.newSerialCard("O2III");
 

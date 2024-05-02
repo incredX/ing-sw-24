@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class GameTest {
     @Test
-    @DisplayName("Simulating game setup")
+    @DisplayName("Simulating game setup checking the hand size, the inizialized score, the proper shown goal lenght, the porper number of NormalCard and GoldenCard ")
     public void gameStart() throws SyntaxException, FileNotFoundException, DeckException {
         int playersNumber = 4;
         Game game = new Game(playersNumber);
@@ -49,7 +49,7 @@ public class GameTest {
         for (Player player: game.getPlayers()){
             assertEquals(3, player.getHand().size());
             assertEquals(0, player.getScore());
-            assertEquals(0, player.getSetup().getChosenGoalIndex());
+            assertEquals(0, player.getSetup().getChosenGoalIndex()); //0 in order to have the cursor inizialized
             assertEquals(2, player.setup().getGoals().length);
             assertEquals(2, numNormalCard);
             assertEquals(1, numGoldenCard);
@@ -58,7 +58,6 @@ public class GameTest {
 
     @Test
     @DisplayName("Simulating normal turn")
-
     public void normalTurnSample() throws SyntaxException, FileNotFoundException, DeckException, JsonException {
         JsonConverter jsonConverter = new JsonConverter();
         int playersNumber = 4;
@@ -243,7 +242,7 @@ public class GameTest {
 
 
     @Test
-    @DisplayName("Test created in order to make some check related to the CLI development")
+    @DisplayName("Test created in order to make some check related to the CLI development that check the drawn card is not equal to teh remaining cards of the deck")
     void testValidDraw() throws SyntaxException, FileNotFoundException, DeckException, JsonException {
         JsonConverter jsonConverter = new JsonConverter();
         int playersNumber = 2;
@@ -278,6 +277,7 @@ public class GameTest {
     }
 
     @Test
+    @DisplayName("Testing the throw of Wrong Deck Index")
     void invalidExecution() throws SyntaxException, FileNotFoundException, DeckException, JsonException {
         JsonConverter jsonConverter = new JsonConverter();
         int playersNumber = 2;
@@ -306,6 +306,7 @@ public class GameTest {
     }
 
     @Test
+    @DisplayName("Testing the execution of the entire game letting the game finishing by himself with points trigger or the deck's emptiness")
     void testTotalGame() throws DeckException, SyntaxException, FileNotFoundException, JsonException {
         JsonConverter jsonConverter = new JsonConverter();
         int goldCounter = 0;

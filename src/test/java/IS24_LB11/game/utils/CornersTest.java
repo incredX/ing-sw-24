@@ -35,6 +35,7 @@ public class CornersTest {
     }
 
     @Test
+    @DisplayName("Testing the proper functioning of the method hasCorner using a random id")
     void testHasCorner() throws SyntaxException {
         Corners corners = new Corners("AEQ_");
         assert ( corners.hasCorner(UP_LEFT));
@@ -44,6 +45,7 @@ public class CornersTest {
     }
 
     @Test
+    @DisplayName("Testing the proper functioning of method getCorner using a random id")
     void testGetCorner() throws SyntaxException {
         Corners corners = new Corners("FQ_E");
         Symbol[] symbols = new Symbol[] {Suit.MUSHROOM, Item.QUILL, null, Empty.symbol()};
