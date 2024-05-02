@@ -115,11 +115,11 @@ public class CommandLine {
             case 'h','H' -> state.togglePopup("hand");
             case 'd','D' -> state.togglePopup("decks");
             case 't','T' -> state.togglePopup("table");
+            case 'w','W' -> state.hideAllPopups();
             default -> { return false; }
         }
         return true;
     }
-
     private void toggle() {
         enabled = !enabled;
         clearLine();

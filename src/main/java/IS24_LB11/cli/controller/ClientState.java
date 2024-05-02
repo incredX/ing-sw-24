@@ -269,6 +269,10 @@ public abstract class ClientState {
         });
     }
 
+    public void hideAllPopups(){
+        popManager.hideAllPopups();
+    }
+
     public void keyConsumed() {
         keyConsumed = true;
     }
