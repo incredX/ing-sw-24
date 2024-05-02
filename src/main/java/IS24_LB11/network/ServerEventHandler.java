@@ -203,7 +203,7 @@ public class ServerEventHandler {
                     clientHandler.getGame().chooseGoalPhase(pickedGoalCards, pickedStarterCards);
 
                     new Thread(() ->{
-                        NotifyTurnPhase.startPhase(clientHandler);
+                        NotifyTurnPhase.startPhase(clientHandler.getClientHandlerWithUsername(clientHandler.getGame().currentPlayer().name()));
                     }).start();
                 }
             } catch (SyntaxException e) {
