@@ -30,6 +30,13 @@ public class Scoreboard {
         }
     }
 
+    public void removePlayerFromScoreboard(String player) {
+        int indexOfPlayerToRemove = this.players.indexOf(player);
+        this.scores.remove(indexOfPlayerToRemove);
+        this.players.remove(indexOfPlayerToRemove);
+        this.colors.remove(indexOfPlayerToRemove);
+    }
+
     public void setNextPlayer(String playerName) {
         for (int i = indexPLayer + 1; i < indexPLayer+players.size(); i++) {
             if (playerName.equals(players.get(i%players.size()))) {

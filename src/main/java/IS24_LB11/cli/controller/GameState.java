@@ -4,6 +4,7 @@ import IS24_LB11.cli.Debugger;
 import IS24_LB11.cli.Scoreboard;
 import IS24_LB11.cli.Table;
 import IS24_LB11.cli.event.server.ServerNewTurnEvent;
+import IS24_LB11.cli.event.server.ServerPlayerDisconnectEvent;
 import IS24_LB11.cli.notification.NotificationStack;
 import IS24_LB11.cli.popup.*;
 import IS24_LB11.cli.view.stage.GameStage;
@@ -26,15 +27,21 @@ import com.googlecode.lanterna.input.KeyStroke;
 import java.io.IOException;
 import java.util.ArrayList;
 
+//NOTE : URGENT PRIORITY
+//TODO : handle disconnection of a player
 //NOTE : HIGH PRIORITY
+//TODO : popup with final ranking
+//TODO : check if keystroke.isAltDown is implemented correctly
 //TODO : manage shortage of cards in decks popup
 //TODO : synchronize stage.buildAreas
 //TODO : close everything if the input listener is closed
 //NOTE : MEDIUM PRIORITY
+//TODO : change message when you place a card and its not your turn
 //TODO : organize popups with a priorityQueue
 //TODO : error popup
 //TODO : chatBox (new popup)
 //NOTE : LOW PRIORITY
+//TODO : add letter like "h" for hand that shows a popup with symbols counter
 //TODO : sowly remove resize from viewhub and assign to notification their views to resize
 //TODO : refactor viewhub as a cliBox's queue consumer. (maybe?)
 //TODO : add boolean edited in cliBox (on in drawAll & set to off in print)
@@ -117,6 +124,9 @@ public class GameState extends ClientState implements PlayerStateInterface {
                 table.update(newTurnEvent);
                 popManager.getPopup("decks").update();
                 popManager.getPopup("table").update();
+            }
+            case ServerPlayerDisconnectEvent disconnectEvent -> {
+                table.getScoreboard().removePlayerFromScoreboard(disconnectEvent.player());
             }
             default -> processResult(Result.Error("received unknown server event"));
         }
@@ -204,7 +214,7 @@ public class GameState extends ClientState implements PlayerStateInterface {
     public void placeCardFromHand() {
         HandPopup handPopup = (HandPopup) popManager.getPopup("hand");
         if (!playerTurn) {
-            notificationStack.addUrgent("WANING", "can't place cards outside of turn");
+            notificationStack.addUrgent("WARNING", "can't place cards outside of turn");
             return;
         }
         if (cardPlaced) {

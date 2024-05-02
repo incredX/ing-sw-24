@@ -4,6 +4,7 @@ import java.net.*;
 import java.util.ArrayList;
 
 import IS24_LB11.game.Game;
+import IS24_LB11.network.phases.NotifyTurnPhase;
 import com.google.gson.*;
 
 public class ClientHandler implements Runnable {
@@ -36,9 +37,13 @@ public class ClientHandler implements Runnable {
                 public void run() {
                     while (!connectionClosed) {
                         try {
+                            JsonObject heartbeat = new JsonObject();
+                            heartbeat.addProperty("type", "heartbeat");
+                            out.println(heartbeat.toString());
+
                             Thread.sleep(HEARTBEAT_INTERVAL);
-                            long currentTime = System.currentTimeMillis();
-                            if (currentTime - lastHeartbeatTime > HEARTBEAT_INTERVAL * 2) {
+                            System.out.println(userName + "   " + (System.currentTimeMillis() - lastHeartbeatTime));
+                            if (System.currentTimeMillis() - lastHeartbeatTime > HEARTBEAT_INTERVAL*2.2) {
                                 System.out.println("Heartbeat timed out for " + userName);
 
                                 JsonObject response = new JsonObject();
@@ -50,9 +55,7 @@ public class ClientHandler implements Runnable {
                                 exit();
                                 break;
                             }
-                            JsonObject heartbeat = new JsonObject();
-                            heartbeat.addProperty("type", "heartbeat");
-                            out.println(heartbeat.toString());
+
 
                         } catch (InterruptedException e) {
                             exit();
@@ -60,12 +63,15 @@ public class ClientHandler implements Runnable {
                     }
                 }
             });
-            heartbeatThread.start();
-            addToStartedThreads(heartbeatThread);
+
 
             // wait for inputs from client
             in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             out = new PrintWriter(clientSocket.getOutputStream(), true);
+
+            heartbeatThread.start();
+            addToStartedThreads(heartbeatThread);
+
             String inputLine;
             while (!connectionClosed && (inputLine = in.readLine()) != null) {
                 // Handle the received JSON data
@@ -124,18 +130,44 @@ public class ClientHandler implements Runnable {
     }
 
     public void exit() {
-        try {
-            System.out.println("Closing connection for " + userName);
-            connectionClosed = true;
-            in.close();
-            out.close();
-            clientSocket.close();
-            for (Thread thread : allStartedThreads){
-                thread.interrupt();
-            }
-            server.removeClientHandler(this);
-        } catch (IOException e) {
+        if(!connectionClosed) {
+            try {
+                System.out.println("Closing connection for " + userName);
+                // notify all that client disconnected
+                JsonObject clientDisconnected = new JsonObject();
+                clientDisconnected.addProperty("type", "disconnected");
+                clientDisconnected.addProperty("player", this.getUserName());
+                this.broadcast(clientDisconnected.toString());
 
+
+                //pass turn to another player
+                if (this.getGame() != null && this.getGame().getPlayers().size() >= 1) {
+
+                    this.getGame().getPlayers().removeIf(player -> player.name() == this.getUserName());
+
+
+                    if (this.getGame().getPlayers().size() > 1) {
+                        this.getGame().setTurn(this.getGame().getPlayers().indexOf(this.getGame().currentPlayer()));
+
+                        //don't send notification turn when in setup phase
+                        if(this.getGame().getTurn() >= 0) {
+                            NotifyTurnPhase.startPhase(this.getClientHandlerWithUsername(this.getGame().currentPlayer().name()));
+                        }
+                    }
+                }
+
+
+                connectionClosed = true;
+                in.close();
+                out.close();
+                clientSocket.close();
+                for (Thread thread : allStartedThreads) {
+                    thread.interrupt();
+                }
+                server.removeClientHandler(this);
+            } catch (IOException e) {
+
+            }
         }
     }
 
@@ -144,16 +176,15 @@ public class ClientHandler implements Runnable {
         System.out.println("num max players set to "+server.maxPlayers);
     }
 
-    public int getMaxPlayers() {
-        return server.maxPlayers;
-    }
-
     public Game getGame() {
         return server.game;
     }
 
     public void setGame(Game game) {
         server.game = game;
+    }
+    public int getMaxPlayers() {
+        return server.maxPlayers;
     }
 
     public ArrayList<ClientHandler> getClientHandlers(){
