@@ -14,7 +14,7 @@ public class ClientHandler implements Runnable {
     private String userName = null;
     private Server server;
     private boolean connectionClosed = false;
-    private int HEARTBEAT_INTERVAL = 5000;
+    private int HEARTBEAT_INTERVAL = 2000;
     private long lastHeartbeatTime;
 
     private ArrayList<Thread> allStartedThreads = new ArrayList<>();
@@ -42,7 +42,7 @@ public class ClientHandler implements Runnable {
                             out.println(heartbeat.toString());
 
                             Thread.sleep(HEARTBEAT_INTERVAL);
-                            if (System.currentTimeMillis() - lastHeartbeatTime > HEARTBEAT_INTERVAL*1.1) {
+                            if (System.currentTimeMillis() - lastHeartbeatTime > HEARTBEAT_INTERVAL*2.2) {
                                 System.out.println("Heartbeat timed out for " + userName);
 
                                 JsonObject response = new JsonObject();
