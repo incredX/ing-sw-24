@@ -80,7 +80,7 @@ public class CardFactoryTest {
 
 
     @Test
-    @DisplayName("Same as PlayableCard but using newSerialCard")
+    @DisplayName("Same as PlayableCard but using the method newSerialCard")
     void testValidSerialCardCreation () throws SyntaxException {
         String [] validId = new String []{
                 "O2FFF",
@@ -102,7 +102,7 @@ public class CardFactoryTest {
     }
 
     @Test
-    @DisplayName("Same as PlayableCard but using newSerialCard")
+    @DisplayName("Same as PlayableCard but using the method newSerialCard")
     void testInvalidSerialCardCreation () throws  SyntaxException {
 
         String [] invalidId = new String [] {

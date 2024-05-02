@@ -3,6 +3,7 @@ import IS24_LB11.game.Deck;
 import IS24_LB11.game.DeckException;
 import IS24_LB11.game.utils.SyntaxException;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
@@ -19,6 +20,7 @@ public class DeckTest {
             "GEQ_EIF1QIIP__", "GE_MEIF1MIIA__", "G_EEKIF1KIIF__", "GEE_EIF2EIIIA_", "GEEE_IF2EIIIP_", "GE_EEIF2EIIIF_", "GK_E_IF3_III__", "GEM__IF3_III__", "G__QEIF3_III__", "GEE__IF5_IIIII"
     };
     @BeforeAll
+    @DisplayName("Inizialization of the ArrayList of ids also known as cards")
     static void init () throws SyntaxException {
         cards = new ArrayList<>();
 
@@ -28,6 +30,7 @@ public class DeckTest {
     }
 
     @Test
+    @DisplayName("Testing that the deck is really shuffled after the shuffle and checking by using containsSameElement that the deck contains the same elements")
     void shuffleShouldRandomlySortCards() {
 
         Deck OriginalDeck = new Deck(cards);
@@ -56,6 +59,7 @@ public class DeckTest {
 
 
     @Test
+    @DisplayName("Testing the invalid drawing of the cards using some wrong cardIndex and checking that the deck size does not change at the end")
     void drawInvalidCards() throws DeckException {
         Deck FullDeck = new Deck(cards);
 
@@ -74,6 +78,7 @@ public class DeckTest {
     }
 
     @Test
+    @DisplayName("Testing the proper functioning of the method drawCard checking if the drawn card is equal to the related card of the ArrayList cards and checking the empty deck at the end ")
     void drawValidCards() throws DeckException, SyntaxException {
         int cursor;
         Deck FullDeck = new Deck(cards);

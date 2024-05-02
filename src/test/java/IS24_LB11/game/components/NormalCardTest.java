@@ -1,5 +1,6 @@
 package IS24_LB11.game.components;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -19,6 +20,7 @@ import static IS24_LB11.game.utils.Direction.DOWN_RIGHT;
 public class NormalCardTest {
 
     @Test
+    @DisplayName("Testing the valid creation of the NormalCard")
     void testValidCardCreation() throws SyntaxException {
         String[] validId = new String[]{
                 "NFEF_FF0",
@@ -33,6 +35,7 @@ public class NormalCardTest {
     }
 
     @Test
+    @DisplayName("Testing the invalid creation of the NormalCard")
     void testInvalidCardCreation() {
         String[] invalidId = new String[]{
                 "FEF_",
@@ -49,6 +52,7 @@ public class NormalCardTest {
     }
 
     @Test
+    @DisplayName("Testing the proper functioning of the methods getCorner and hasCorner applied to NormalCard")
     void testCorners() throws SyntaxException {
         String id = "NFQE_FF0";
         NormalCard nc = (NormalCard) CardFactory.newPlayableCard(id);
@@ -62,8 +66,9 @@ public class NormalCardTest {
     }
 
     @Test
+    @DisplayName("Testing the proper functioning of the symbol counter applied to some invented NormalCard")
     void testCountersUpdate() throws SyntaxException {
-        String[] ids = {"NFQE_FF0", "NKF_AFF0", "NFIMEFF0", "NEI_IIB0"};
+        String[] ids = {"NFQQQFF0", "NKFAAFF0", "NFIMPFF0", "NEI_IIB0"};
         HashMap<Symbol, Integer> counters = new HashMap<>();
 
         for (Suit suit: Suit.values()) counters.put(suit, 0);
@@ -74,10 +79,10 @@ public class NormalCardTest {
             card.updateCounters(counters);
         }
         assert (counters.get(Suit.MUSHROOM) == 3);
-        assert (counters.get(Suit.ANIMAL) == 1);
+        assert (counters.get(Suit.ANIMAL) == 2);
         assert (counters.get(Suit.INSECT) == 2);
-        assert (counters.get(Suit.PLANT) == 0);
-        assert (counters.get(Item.QUILL) == 1);
+        assert (counters.get(Suit.PLANT) == 1);
+        assert (counters.get(Item.QUILL) == 3);
         assert (counters.get(Item.INKWELL) == 1);
         assert (counters.get(Item.MANUSCRIPT) == 1);
     }

@@ -1,6 +1,7 @@
 package IS24_LB11.game.components;
 
 import IS24_LB11.game.utils.SyntaxException;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -9,6 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class GoalCardTest {
 
     @Test
+    @DisplayName("Testing the valid creation of the GoalCard")
     void testValidCardCreation () throws SyntaxException {
 
         String [] validId = new String[] {
@@ -35,6 +37,7 @@ public class GoalCardTest {
     }
 
     @Test
+    @DisplayName("Testing the invalid creation of the GoalCard")
     void testInvalidCardCreation () throws  SyntaxException {
 
         String [] invalidId = new String [] {

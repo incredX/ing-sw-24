@@ -1,11 +1,8 @@
 package IS24_LB11.game;
 
 import IS24_LB11.game.components.CardInterface;
-import IS24_LB11.game.components.PlayableCard;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
-import java.util.Optional;
 
 public class Deck {
     private ArrayList<CardInterface> cards = new ArrayList<CardInterface>();

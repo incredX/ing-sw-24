@@ -1,4 +1,5 @@
 package IS24_LB11.game.components;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -19,7 +20,7 @@ import static IS24_LB11.game.utils.Direction.DOWN_RIGHT;
 public class StarterCardTest {
 
     @Test
-
+    @DisplayName("Testing the valid creation of the StarterCard")
     void testValidCardCreation () throws SyntaxException {
 
         String [] validId = new String[] {
@@ -36,6 +37,7 @@ public class StarterCardTest {
     }
 
     @Test
+    @DisplayName("Testing the invalid creation of the StarterCard")
     void testInvalidCardCreation () throws  SyntaxException {
 
         String [] invalidId = new String [] {
@@ -59,6 +61,7 @@ public class StarterCardTest {
 
 
     @Test
+    @DisplayName("Testing the proper functioning of the methods hasCorner and getCorner applied to the StarterCard")
     void testCorners() throws SyntaxException {
         String id = "SEPIE_F0I__FPIA" ;
         StarterCard sc = (StarterCard) CardFactory.newPlayableCard(id);
@@ -73,7 +76,8 @@ public class StarterCardTest {
     }
 
     @Test
-    void testCountersUpdate() throws SyntaxException { //da modificare e adattare alla specifica funzione
+    @DisplayName("Testing the proper functioning of the symbol counter applied to all the existing StarterCard")
+    void testCountersUpdate() throws SyntaxException {
         String[] ids = {"SAEEF_F0F__PAFI", "SAEEF_F0F__PAFI", "SEEEE_F0PF_IAFP", "SEEEE_F0AI_PIAF", "SEE___F0AIPIFPA", "SEE___F0PAFFAPI","SAEEF_B0F__PAFI", "SAEEF_B0F__PAFI", "SEEEE_B0PF_IAFP", "SEEEE_B0AI_PIAF", "SEE___B0AIPIFPA", "SEE___B0PAFFAPI"};
         HashMap<Symbol, Integer> counters = new HashMap<>();
 

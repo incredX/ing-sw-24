@@ -1,4 +1,5 @@
 package IS24_LB11.game.components;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -21,6 +22,7 @@ import static IS24_LB11.game.utils.Direction.DOWN_RIGHT;
 public class GoldenCardTest {
 
     @Test
+    @DisplayName("Testing the valid creation of the GoldenCard")
     void testValidCardCreation () throws SyntaxException {
 
         String [] validId = new String[] {
@@ -36,6 +38,7 @@ public class GoldenCardTest {
     }
 
     @Test
+    @DisplayName("Testing the invalid creation of the GoldenCard")
     void testInvalidCardCreation () throws  SyntaxException {
 
         String [] invalidId = new String [] {
@@ -58,6 +61,7 @@ public class GoldenCardTest {
 
 
     @Test
+    @DisplayName("Testing the proper functioning of the methods hasCorner and getCorner applied to GoldenCard")
     void testCorners() throws SyntaxException {
         String id = "G_EEQFF1QFFA__" ;
         GoldenCard gc = (GoldenCard) CardFactory.newPlayableCard(id);
@@ -71,8 +75,9 @@ public class GoldenCardTest {
     }
 
     @Test
+    @DisplayName("Testing the proper functioning of the symbol counter applied to some invented GoldenCard")
     void testCountersUpdate() throws SyntaxException {
-        String[] ids = {"G_EEQFF1QFFA__", "GEK_EFF1KFFP__", "GMEE_FF1MFFI__", "GEE_EFF2EFFFA_", "GEEE_FF2EFFFP_", "GEEE_IB2EIIIP_"};
+        String[] ids = {"GFMMQFF1QFFA__", "GEKAAFF1KFFP__", "GMPPPFF1MFFI__", "GKKKKFF2EFFFA_", "GPPMMFF2EFFFP_", "GEEE_IB2EIIIP_"};
         HashMap<Symbol, Integer> counters = new HashMap<>();
 
         for (Suit suit: Suit.values()) counters.put(suit, 0);
@@ -82,12 +87,12 @@ public class GoldenCardTest {
             GoldenCard card = (GoldenCard) CardFactory.newPlayableCard(id);
             card.updateCounters(counters);
         }
-        assert (counters.get(Suit.MUSHROOM) == 0);
-        assert (counters.get(Suit.ANIMAL) == 0);
+        assert (counters.get(Suit.MUSHROOM) == 1);
+        assert (counters.get(Suit.ANIMAL) == 2);
         assert (counters.get(Suit.INSECT) == 1);
-        assert (counters.get(Suit.PLANT) == 0);
+        assert (counters.get(Suit.PLANT) == 5);
         assert (counters.get(Item.QUILL) == 1);
-        assert (counters.get(Item.INKWELL) == 1);
-        assert (counters.get(Item.MANUSCRIPT) == 1);
+        assert (counters.get(Item.INKWELL) == 5);
+        assert (counters.get(Item.MANUSCRIPT) == 5);
     }
 }
