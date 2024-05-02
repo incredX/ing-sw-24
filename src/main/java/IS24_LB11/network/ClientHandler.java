@@ -129,14 +129,15 @@ public class ClientHandler implements Runnable {
             System.out.println("Closing connection for " + userName);
 
             //pass turn to another player
-            if(this.getGame() != null){
+            if(this.getGame() != null && this.getGame().getPlayers().size() >= 1){
 
-                if(this.getClientHandlers().size() >= 1) {
-                    this.getGame().getPlayers().removeIf(player -> player.name() == this.getUserName());
+                this.getGame().getPlayers().removeIf(player -> player.name() == this.getUserName());
 
+
+                if(this.getGame().getPlayers().size() > 1){
                     this.getGame().setTurn(this.getGame().getPlayers().indexOf(this.getGame().currentPlayer()));
-
                     NotifyTurnPhase.startPhase(this.getClientHandlerWithUsername(this.getGame().currentPlayer().name()));
+
                 }
             }
 
