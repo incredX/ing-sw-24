@@ -41,6 +41,6 @@ public class TurnPhase {
         clientHandler.sendMessage(response.toString());
 
 
-        NotifyTurnPhase.startPhase(clientHandler);
+        NotifyTurnPhase.startPhase(clientHandler.getClientHandlerWithUsername(clientHandler.getGame().currentPlayer().name()));
     }
 }

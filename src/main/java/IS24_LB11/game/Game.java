@@ -199,6 +199,10 @@ public class Game {
         return gameEnded;
     }
 
+    public void setTurn(int turn) {
+        this.turn = turn;
+    }
+
     public ArrayList<Player> getFinalRanking(){
         if (hasGameEnded())
             return finalRanking;

@@ -18,8 +18,7 @@ public class NotifyTurnPhase {
         // send notification to next player turn
         response.addProperty("type", "notification");
         response.addProperty("message", "It is your turn");
-        clientHandler.getClientHandlerWithUsername(clientHandler.getGame().currentPlayer().name())
-                .sendMessage(response.toString());
+        clientHandler.sendMessage(response.toString());
         response.remove("message");
 
 
@@ -41,6 +40,7 @@ public class NotifyTurnPhase {
         for (Map.Entry<String, JsonElement> entry : get3CardsFromEachDeck(clientHandler).entrySet()) {
             response.add(entry.getKey(), entry.getValue());
         }
+
         //send current player turn to every player
         clientHandler.broadcast(response.toString());
         clientHandler.sendMessage(response.toString());

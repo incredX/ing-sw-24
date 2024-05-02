@@ -4,6 +4,7 @@ import java.net.*;
 import java.util.ArrayList;
 
 import IS24_LB11.game.Game;
+import IS24_LB11.network.phases.NotifyTurnPhase;
 import com.google.gson.*;
 
 public class ClientHandler implements Runnable {
@@ -126,6 +127,19 @@ public class ClientHandler implements Runnable {
     public void exit() {
         try {
             System.out.println("Closing connection for " + userName);
+
+            //pass turn to another player
+            if(this.getGame() != null){
+
+                if(this.getClientHandlers().size() >= 1) {
+                    this.getGame().getPlayers().removeIf(player -> player.name() == this.getUserName());
+
+                    this.getGame().setTurn(this.getGame().getPlayers().indexOf(this.getGame().currentPlayer()));
+
+                    NotifyTurnPhase.startPhase(this.getClientHandlerWithUsername(this.getGame().currentPlayer().name()));
+                }
+            }
+
             connectionClosed = true;
             in.close();
             out.close();
