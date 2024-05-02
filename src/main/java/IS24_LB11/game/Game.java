@@ -1,22 +1,16 @@
 package IS24_LB11.game;
 
 import IS24_LB11.game.components.GoalCard;
-import IS24_LB11.game.components.JsonConvertable;
 import IS24_LB11.game.components.PlayableCard;
 import IS24_LB11.game.components.StarterCard;
-import IS24_LB11.game.symbol.Symbol;
 import IS24_LB11.game.tools.JsonConverter;
 import IS24_LB11.game.tools.JsonException;
 import IS24_LB11.game.utils.Color;
 import IS24_LB11.game.utils.Position;
-import IS24_LB11.game.symbol.*;
 import IS24_LB11.game.utils.SyntaxException;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.stream.Collectors;
 
 import static IS24_LB11.game.GameMessages.*;
 
@@ -36,7 +30,7 @@ public class Game {
 
     public Game(int numPlayers) throws SyntaxException, FileNotFoundException, DeckException {
         JsonConverter jsonConverter = new JsonConverter();
-        this.turn = 0;
+        this.turn = -1;
         this.numPlayers = numPlayers;
         this.goalDeck = jsonConverter.JSONToDeck('O'); // <- here we load the deck from json
         this.goldenDeck = jsonConverter.JSONToDeck('G'); // <- here we load deck from json
@@ -74,6 +68,7 @@ public class Game {
         goldenDeck.shuffle();
         normalDeck.shuffle();
         starterDeck.shuffle();
+        turn = 0;
         for (String name : playerNames)
             setupPlayer(name);
         return GameMessages.SETUP_COMPLETE;
