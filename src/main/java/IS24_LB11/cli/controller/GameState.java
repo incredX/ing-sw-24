@@ -4,6 +4,7 @@ import IS24_LB11.cli.Debugger;
 import IS24_LB11.cli.Scoreboard;
 import IS24_LB11.cli.Table;
 import IS24_LB11.cli.event.server.ServerNewTurnEvent;
+import IS24_LB11.cli.event.server.ServerPlayerDisconnectEvent;
 import IS24_LB11.cli.notification.NotificationStack;
 import IS24_LB11.cli.popup.*;
 import IS24_LB11.cli.view.stage.GameStage;
@@ -36,12 +37,11 @@ import java.util.ArrayList;
 //TODO : close everything if the input listener is closed
 //NOTE : MEDIUM PRIORITY
 //TODO : change message when you place a card and its not your turn
-//TODO : add letter for hide like "h" for hand and "d" for deck
 //TODO : organize popups with a priorityQueue
 //TODO : error popup
 //TODO : chatBox (new popup)
 //NOTE : LOW PRIORITY
-//TODO : add letter loike "h"for hand that shows a popup with symbols counter
+//TODO : add letter like "h" for hand that shows a popup with symbols counter
 //TODO : sowly remove resize from viewhub and assign to notification their views to resize
 //TODO : refactor viewhub as a cliBox's queue consumer. (maybe?)
 //TODO : add boolean edited in cliBox (on in drawAll & set to off in print)
@@ -124,6 +124,9 @@ public class GameState extends ClientState implements PlayerStateInterface {
                 table.update(newTurnEvent);
                 popManager.getPopup("decks").update();
                 popManager.getPopup("table").update();
+            }
+            case ServerPlayerDisconnectEvent disconnectEvent -> {
+                table.getScoreboard().removePlayerFromScoreboard(disconnectEvent.player());
             }
             default -> processResult(Result.Error("received unknown server event"));
         }

@@ -81,6 +81,10 @@ public class ServerEventFactory {
                                     )
                             )
                     );
+            //CHECK
+            case "DISCONNECTED" ->  extractString(data, "player")
+                    .map(playerName -> new ServerPlayerDisconnectEvent(playerName));
+            //UNTIL HERE
             default -> Error("unknown server event", "received <"+type+">");
         };
     }

@@ -42,6 +42,7 @@ public class ClientHandler implements Runnable {
                             out.println(heartbeat.toString());
 
                             Thread.sleep(HEARTBEAT_INTERVAL);
+                            System.out.println(userName + "   " + (System.currentTimeMillis() - lastHeartbeatTime));
                             if (System.currentTimeMillis() - lastHeartbeatTime > HEARTBEAT_INTERVAL*2.2) {
                                 System.out.println("Heartbeat timed out for " + userName);
 
@@ -132,7 +133,6 @@ public class ClientHandler implements Runnable {
         if(!connectionClosed) {
             try {
                 System.out.println("Closing connection for " + userName);
-
                 // notify all that client disconnected
                 JsonObject clientDisconnected = new JsonObject();
                 clientDisconnected.addProperty("type", "disconnected");
