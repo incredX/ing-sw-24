@@ -14,7 +14,7 @@ public class ClientHandler implements Runnable {
     private String userName = null;
     private Server server;
     private boolean connectionClosed = false;
-    private int HEARTBEAT_INTERVAL = 2000;
+    private int HEARTBEAT_INTERVAL = 5000;
     private long lastHeartbeatTime;
 
     private ArrayList<Thread> allStartedThreads = new ArrayList<>();
@@ -37,9 +37,12 @@ public class ClientHandler implements Runnable {
                 public void run() {
                     while (!connectionClosed) {
                         try {
+                            JsonObject heartbeat = new JsonObject();
+                            heartbeat.addProperty("type", "heartbeat");
+                            out.println(heartbeat.toString());
+
                             Thread.sleep(HEARTBEAT_INTERVAL);
-                            long currentTime = System.currentTimeMillis();
-                            if (currentTime - lastHeartbeatTime > HEARTBEAT_INTERVAL * 2) {
+                            if (System.currentTimeMillis() - lastHeartbeatTime > HEARTBEAT_INTERVAL) {
                                 System.out.println("Heartbeat timed out for " + userName);
 
                                 JsonObject response = new JsonObject();
@@ -51,9 +54,7 @@ public class ClientHandler implements Runnable {
                                 exit();
                                 break;
                             }
-                            JsonObject heartbeat = new JsonObject();
-                            heartbeat.addProperty("type", "heartbeat");
-                            out.println(heartbeat.toString());
+
 
                         } catch (InterruptedException e) {
                             exit();
@@ -136,11 +137,20 @@ public class ClientHandler implements Runnable {
 
 
                     if (this.getGame().getPlayers().size() > 1) {
-                        System.out.printf(String.valueOf(this.getGame().getPlayers().indexOf(this.getGame().currentPlayer())));
                         this.getGame().setTurn(this.getGame().getPlayers().indexOf(this.getGame().currentPlayer()));
-                        NotifyTurnPhase.startPhase(this.getClientHandlerWithUsername(this.getGame().currentPlayer().name()));
+
+                        //don't send notification turn when in setup phase
+                        if(this.getGame().getTurn() >= 0) {
+                            NotifyTurnPhase.startPhase(this.getClientHandlerWithUsername(this.getGame().currentPlayer().name()));
+                        }
                     }
                 }
+
+                // notify all that client disconnected
+                JsonObject clientDisconnected = new JsonObject();
+                clientDisconnected.addProperty("type", "disconnected");
+                clientDisconnected.addProperty("player", this.getUserName());
+                this.broadcast(clientDisconnected.toString());
 
                 connectionClosed = true;
                 in.close();
