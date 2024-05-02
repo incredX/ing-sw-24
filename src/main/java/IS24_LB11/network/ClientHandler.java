@@ -42,7 +42,7 @@ public class ClientHandler implements Runnable {
                             out.println(heartbeat.toString());
 
                             Thread.sleep(HEARTBEAT_INTERVAL);
-                            if (System.currentTimeMillis() - lastHeartbeatTime > HEARTBEAT_INTERVAL) {
+                            if (System.currentTimeMillis() - lastHeartbeatTime > HEARTBEAT_INTERVAL*1.1) {
                                 System.out.println("Heartbeat timed out for " + userName);
 
                                 JsonObject response = new JsonObject();
@@ -62,12 +62,15 @@ public class ClientHandler implements Runnable {
                     }
                 }
             });
-            heartbeatThread.start();
-            addToStartedThreads(heartbeatThread);
+
 
             // wait for inputs from client
             in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             out = new PrintWriter(clientSocket.getOutputStream(), true);
+
+            heartbeatThread.start();
+            addToStartedThreads(heartbeatThread);
+
             String inputLine;
             while (!connectionClosed && (inputLine = in.readLine()) != null) {
                 // Handle the received JSON data
