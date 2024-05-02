@@ -3,6 +3,7 @@ package IS24_LB11.cli.controller;
 import IS24_LB11.cli.Scoreboard;
 import IS24_LB11.cli.Table;
 import IS24_LB11.cli.event.server.ServerEvent;
+import IS24_LB11.cli.event.server.ServerPlayerDisconnectEvent;
 import IS24_LB11.cli.event.server.ServerPlayerSetupEvent;
 import IS24_LB11.cli.popup.DecksPopup;
 import IS24_LB11.cli.popup.HandPopup;
@@ -54,6 +55,9 @@ public class SetupState extends ClientState implements PlayerStateInterface {
         switch (serverEvent) {
             case ServerPlayerSetupEvent playerSetupEvent -> {
                 processResult(Result.Error("Invalid server event", "can't accept a new player setup"));
+            }
+            case ServerPlayerDisconnectEvent disconnectEvent -> {
+                table.getScoreboard().removePlayerFromScoreboard(disconnectEvent.player());
             }
             default -> processResult(Result.Error("received unknown server event"));
         }

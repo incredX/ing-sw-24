@@ -4,6 +4,7 @@ import IS24_LB11.cli.Debugger;
 import IS24_LB11.cli.Scoreboard;
 import IS24_LB11.cli.Table;
 import IS24_LB11.cli.event.server.ServerNewTurnEvent;
+import IS24_LB11.cli.event.server.ServerPlayerDisconnectEvent;
 import IS24_LB11.cli.notification.NotificationStack;
 import IS24_LB11.cli.popup.*;
 import IS24_LB11.cli.view.stage.GameStage;
@@ -123,6 +124,9 @@ public class GameState extends ClientState implements PlayerStateInterface {
                 table.update(newTurnEvent);
                 popManager.getPopup("decks").update();
                 popManager.getPopup("table").update();
+            }
+            case ServerPlayerDisconnectEvent disconnectEvent -> {
+                table.getScoreboard().removePlayerFromScoreboard(disconnectEvent.player());
             }
             default -> processResult(Result.Error("received unknown server event"));
         }

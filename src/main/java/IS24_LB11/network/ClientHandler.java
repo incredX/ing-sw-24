@@ -14,7 +14,7 @@ public class ClientHandler implements Runnable {
     private String userName = null;
     private Server server;
     private boolean connectionClosed = false;
-    private int HEARTBEAT_INTERVAL = 5000;
+    private int HEARTBEAT_INTERVAL = 2000;
     private long lastHeartbeatTime;
 
     private ArrayList<Thread> allStartedThreads = new ArrayList<>();
@@ -42,7 +42,8 @@ public class ClientHandler implements Runnable {
                             out.println(heartbeat.toString());
 
                             Thread.sleep(HEARTBEAT_INTERVAL);
-                            if (System.currentTimeMillis() - lastHeartbeatTime > HEARTBEAT_INTERVAL) {
+                            System.out.println(userName + "   " + (System.currentTimeMillis() - lastHeartbeatTime));
+                            if (System.currentTimeMillis() - lastHeartbeatTime > HEARTBEAT_INTERVAL*2.2) {
                                 System.out.println("Heartbeat timed out for " + userName);
 
                                 JsonObject response = new JsonObject();
@@ -62,12 +63,14 @@ public class ClientHandler implements Runnable {
                     }
                 }
             });
-            heartbeatThread.start();
-            addToStartedThreads(heartbeatThread);
 
             // wait for inputs from client
             in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             out = new PrintWriter(clientSocket.getOutputStream(), true);
+
+            heartbeatThread.start();
+            addToStartedThreads(heartbeatThread);
+
             String inputLine;
             while (!connectionClosed && (inputLine = in.readLine()) != null) {
                 // Handle the received JSON data
@@ -129,6 +132,11 @@ public class ClientHandler implements Runnable {
         if(!connectionClosed) {
             try {
                 System.out.println("Closing connection for " + userName);
+                // notify all that client disconnected
+                JsonObject clientDisconnected = new JsonObject();
+                clientDisconnected.addProperty("type", "disconnected");
+                clientDisconnected.addProperty("player", this.getUserName());
+                this.broadcast(clientDisconnected.toString());
 
                 //pass turn to another player
                 if (this.getGame() != null && this.getGame().getPlayers().size() >= 1) {
@@ -146,11 +154,6 @@ public class ClientHandler implements Runnable {
                     }
                 }
 
-                // notify all that client disconnected
-                JsonObject clientDisconnected = new JsonObject();
-                clientDisconnected.addProperty("type", "disconnected");
-                clientDisconnected.addProperty("player", this.getUserName());
-                this.broadcast(clientDisconnected.toString());
 
                 connectionClosed = true;
                 in.close();
