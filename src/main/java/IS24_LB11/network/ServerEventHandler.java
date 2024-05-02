@@ -112,7 +112,7 @@ public class ServerEventHandler {
 
         // check if this is the last player, so the game can start
         if(clientHandler.getAllUsernames().size() > 1 &&
-                clientHandler.getAllUsernames().size() == clientHandler.getMaxPlayers()) {
+                clientHandler.getAllUsernames().size() == clientHandler.getGame().getPlayers().size()) {
             response = new JsonObject();
             response.addProperty("type", "notification");
             response.addProperty("message", "Last player logged in successfully! GAME IS STARTING NOW");
@@ -122,7 +122,7 @@ public class ServerEventHandler {
 
             // start game setup
             new Thread(() -> {
-                GameInitPhase.startPhase(clientHandler, clientHandler.getGame(), clientHandler.getMaxPlayers());
+                GameInitPhase.startPhase(clientHandler, clientHandler.getGame(), clientHandler.getGame().getPlayers().size());
             }).start();
         }
     }
@@ -198,7 +198,7 @@ public class ServerEventHandler {
                 pickedStarterCards.add((StarterCard) CardFactory.newSerialCard(event.get("starterCard").getAsString()));
 
                 // start notify turn phase
-                if (pickedGoalCards.size() == clientHandler.getMaxPlayers()) {
+                if (pickedGoalCards.size() == clientHandler.getGame().getPlayers().size()) {
                     // choose goals for each player
                     clientHandler.getGame().chooseGoalPhase(pickedGoalCards, pickedStarterCards);
 

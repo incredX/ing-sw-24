@@ -133,6 +133,13 @@ public class ClientHandler implements Runnable {
             try {
                 System.out.println("Closing connection for " + userName);
 
+                // notify all that client disconnected
+                JsonObject clientDisconnected = new JsonObject();
+                clientDisconnected.addProperty("type", "disconnected");
+                clientDisconnected.addProperty("player", this.getUserName());
+                this.broadcast(clientDisconnected.toString());
+
+
                 //pass turn to another player
                 if (this.getGame() != null && this.getGame().getPlayers().size() >= 1) {
 
@@ -149,11 +156,6 @@ public class ClientHandler implements Runnable {
                     }
                 }
 
-                // notify all that client disconnected
-                JsonObject clientDisconnected = new JsonObject();
-                clientDisconnected.addProperty("type", "disconnected");
-                clientDisconnected.addProperty("player", this.getUserName());
-                this.broadcast(clientDisconnected.toString());
 
                 connectionClosed = true;
                 in.close();
@@ -172,10 +174,6 @@ public class ClientHandler implements Runnable {
     public void setMaxPlayers(int maxPlayers) {
         server.maxPlayers = maxPlayers;
         System.out.println("num max players set to "+server.maxPlayers);
-    }
-
-    public int getMaxPlayers() {
-        return server.maxPlayers;
     }
 
     public Game getGame() {
