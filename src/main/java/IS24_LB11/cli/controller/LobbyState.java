@@ -65,7 +65,7 @@ public class LobbyState extends ClientState {
             }
             case "CONNECT" -> {
                 if (tokens.length == 2) {
-
+                    processCommandConnect(tokens[1]);
                 }
                 else notificationStack.addUrgent("ERROR", MISSING_ARG.apply(tokens[0]));
             }
@@ -125,7 +125,7 @@ public class LobbyState extends ClientState {
         else try {
             int serverPort = Integer.parseInt(tokens[1]);
             sendToServer("quit");
-            serverHandler.shutdown();
+//            serverHandler.shutdown();
             serverHandler = new ServerHandler(this, tokens[0], serverPort);
             new Thread(serverHandler).start();
         } catch (NumberFormatException e) {
