@@ -33,7 +33,7 @@ public class ServerEventHandler {
                 handleLoginEvent(event);
                 break;
             case "quit":
-                handleQuitEvent(event);
+                handleQuitEvent();
                 break;
             case "message":
                 handleMessageEvent(event);
@@ -174,11 +174,12 @@ public class ServerEventHandler {
     }
 
     // Method to handle quit event
-    private static void handleQuitEvent(JsonObject event) {
+    private static void handleQuitEvent() {
         JsonObject response = new JsonObject();
         response.addProperty("type", "notification");
         response.addProperty("message", "Player " + clientHandler.getUserName() + " left the game");
         System.out.println(response);
+
         clientHandler.broadcast(response.toString());
 
         clientHandler.exit();
@@ -197,12 +198,12 @@ public class ServerEventHandler {
                 pickedStarterCards.add((StarterCard) CardFactory.newSerialCard(event.get("starterCard").getAsString()));
 
                 // start notify turn phase
-                if (pickedGoalCards.size() == clientHandler.getMaxPlayers()) {
+                if (pickedGoalCards.size() == clientHandler.getGame().getPlayers().size()) {
                     // choose goals for each player
                     clientHandler.getGame().chooseGoalPhase(pickedGoalCards, pickedStarterCards);
 
                     new Thread(() ->{
-                        NotifyTurnPhase.startPhase(clientHandler);
+                        NotifyTurnPhase.startPhase(clientHandler.getClientHandlerWithUsername(clientHandler.getGame().currentPlayer().name()));
                     }).start();
                 }
             } catch (SyntaxException e) {

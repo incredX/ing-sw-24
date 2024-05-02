@@ -64,6 +64,10 @@ public class PopupManager {
         else popup.hide();
     }
 
+    public void hideAllPopups(){
+        popups.forEach((string, popup) -> popup.hide());
+    }
+
     public void hideFocusedPopup() {
         if (focusedPopup != null)
             focusedPopup.hide();

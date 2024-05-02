@@ -83,7 +83,7 @@ public class CommandLine {
     public void consumeKeyStroke(ClientState state, KeyStroke keyStroke) {
         Debugger.print(String.format("%s <%c> (shift:%s, ctrl:%s)\n", keyStroke.getKeyType(), keyStroke.getCharacter(),
                 keyStroke.isShiftDown(), keyStroke.isCtrlDown()));
-        if (keyStroke.isCtrlDown() || keyStroke.isCtrlDown()) {
+        if (keyStroke.isCtrlDown() || keyStroke.isAltDown()) {
             if (!toggle(state, keyStroke)) return;
         } else if (keyStroke.getKeyType() == KeyType.F1) {
             toggle();
@@ -115,11 +115,11 @@ public class CommandLine {
             case 'h','H' -> state.togglePopup("hand");
             case 'd','D' -> state.togglePopup("decks");
             case 't','T' -> state.togglePopup("table");
+            case 'w','W' -> state.hideAllPopups();
             default -> { return false; }
         }
         return true;
     }
-
     private void toggle() {
         enabled = !enabled;
         clearLine();

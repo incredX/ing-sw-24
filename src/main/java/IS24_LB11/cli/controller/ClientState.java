@@ -19,7 +19,6 @@ import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.screen.Screen;
 
-import java.io.IOException;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
@@ -57,12 +56,12 @@ public abstract class ClientState {
         this.viewHub = viewHub;
         this.cmdLine = new CommandLine(viewHub.getCommandLineView());
         this.keyConsumed = false;
-        try {
-            this.serverHandler = new ServerHandler(this, "127.0.0.1", 54321);
-            new Thread(this.serverHandler).start();
-        } catch (IOException e) {
-            notificationStack.addUrgent("ERROR", "Connection to server failed");
-        }
+//        try {
+//            this.serverHandler = new ServerHandler(this, "127.0.0.1", 54321);
+//            new Thread(this.serverHandler).start();
+//        } catch (IOException e) {
+//            notificationStack.addUrgent("ERROR", "Connection to server failed");
+//        }
     }
 
     public ClientState(ClientState state) {
@@ -267,6 +266,10 @@ public abstract class ClientState {
             if (popup.isVisible()) popManager.hidePopup(label);
             else popManager.showPopup(label);
         });
+    }
+
+    public void hideAllPopups(){
+        popManager.hideAllPopups();
     }
 
     public void keyConsumed() {
