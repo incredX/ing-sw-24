@@ -125,32 +125,34 @@ public class ClientHandler implements Runnable {
     }
 
     public void exit() {
-        try {
-            System.out.println("Closing connection for " + userName);
+        if(!connectionClosed) {
+            try {
+                System.out.println("Closing connection for " + userName);
 
-            //pass turn to another player
-            if(this.getGame() != null && this.getGame().getPlayers().size() >= 1){
+                //pass turn to another player
+                if (this.getGame() != null && this.getGame().getPlayers().size() >= 1) {
 
-                this.getGame().getPlayers().removeIf(player -> player.name() == this.getUserName());
+                    this.getGame().getPlayers().removeIf(player -> player.name() == this.getUserName());
 
 
-                if(this.getGame().getPlayers().size() > 1){
-                    this.getGame().setTurn(this.getGame().getPlayers().indexOf(this.getGame().currentPlayer()));
-                    NotifyTurnPhase.startPhase(this.getClientHandlerWithUsername(this.getGame().currentPlayer().name()));
-
+                    if (this.getGame().getPlayers().size() > 1) {
+                        System.out.printf(String.valueOf(this.getGame().getPlayers().indexOf(this.getGame().currentPlayer())));
+                        this.getGame().setTurn(this.getGame().getPlayers().indexOf(this.getGame().currentPlayer()));
+                        NotifyTurnPhase.startPhase(this.getClientHandlerWithUsername(this.getGame().currentPlayer().name()));
+                    }
                 }
-            }
 
-            connectionClosed = true;
-            in.close();
-            out.close();
-            clientSocket.close();
-            for (Thread thread : allStartedThreads){
-                thread.interrupt();
-            }
-            server.removeClientHandler(this);
-        } catch (IOException e) {
+                connectionClosed = true;
+                in.close();
+                out.close();
+                clientSocket.close();
+                for (Thread thread : allStartedThreads) {
+                    thread.interrupt();
+                }
+                server.removeClientHandler(this);
+            } catch (IOException e) {
 
+            }
         }
     }
 
