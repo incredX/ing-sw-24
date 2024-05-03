@@ -8,7 +8,6 @@ import IS24_LB11.game.symbol.Suit;
 import IS24_LB11.game.symbol.Symbol;
 import IS24_LB11.game.utils.Direction;
 import IS24_LB11.game.utils.Position;
-import IS24_LB11.game.utils.SyntaxException;
 
 public class Board implements JsonConvertable {
     private final ArrayList<PlacedCard> placedCards;
@@ -63,14 +62,31 @@ public class Board implements JsonConvertable {
 
     private void updateSpots(Position position) {
         availableSpots.removeIf(spot -> spot.equals(position));
-        getPlayableCard(position).ifPresent(card ->
-                Direction.forEachDirection(corner -> {
-                    Position diagonal = position.withRelative(corner.relativePosition());
-                    if (card.hasCorner(corner) && !(spotAvailable(diagonal) || spotTaken(diagonal))) {
-                        availableSpots.add(diagonal);
-                    }
-                })
-        );
+        PlacedCard placedCard = placedCards.getLast();
+
+        for (int i = 0; i < 4; i++) {
+            if (placedCard.card().hasCorner(i) == true)
+                availableSpots.add(placedCard.position().withRelative(Direction.parse(i).relativePosition()));
+        }
+
+        for (PlacedCard checkingCard : placedCards) {
+            availableSpots.removeIf(position1 -> position1.equals(checkingCard.position()));
+            for (int x = 0; x < 4; x++) {
+                if (checkingCard.card().hasCorner(x) == false) {
+                    int finalX = x;
+                    availableSpots.removeIf(position1 -> position1.equals(checkingCard.position().withRelative(Direction.parse(finalX).relativePosition())));
+                }
+            }
+        }
+
+//        getPlayableCard(position).ifPresent(card ->
+//                Direction.forEachDirection(corner -> {
+//                    Position diagonal = position.withRelative(corner.relativePosition());
+//                    if (card.hasCorner(corner) && !(spotAvailable(diagonal) || spotTaken(diagonal))) {
+//                        availableSpots.add(diagonal);
+//                    }
+//                })
+//        );
     }
 
     private void updateCounters(Position position) {
