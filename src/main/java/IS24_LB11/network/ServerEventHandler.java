@@ -78,7 +78,7 @@ public class ServerEventHandler {
 
         if(!messageEventSyntax.equals("OK")) {
             response.addProperty("notification", messageEventSyntax);
-            clientHandler.sendMessage(response.getAsString());
+            clientHandler.sendMessage(response.toString());
             return;
         }
 
@@ -86,7 +86,7 @@ public class ServerEventHandler {
 
         if(clientHandler.getAllUsernames().contains(username)) {
             response.addProperty("notification", "Username is already in use");
-            clientHandler.sendMessage(response.getAsString());
+            clientHandler.sendMessage(response.toString());
             return;
         }
 
