@@ -147,15 +147,19 @@ public class ClientHandler implements Runnable {
 
 
                     if (this.getGame().getPlayers().size() > 1) {
-                        this.getGame().setTurn(this.getGame().getPlayers().indexOf(this.getGame().currentPlayer()));
-
                         //don't send notification turn when in setup phase
                         if(this.getGame().getTurn() >= 0) {
+                            this.getGame().setTurn(this.getGame().getPlayers().indexOf(this.getGame().currentPlayer()));
                             NotifyTurnPhase.startPhase(this.getClientHandlerWithUsername(this.getGame().currentPlayer().name()));
                         }
                     }
-                }
 
+                    JsonObject response = new JsonObject();
+                    response.addProperty("type", "notification");
+                    response.addProperty("message", "Player " + this.getUserName() + " disconnected");
+                    this.broadcast(response.toString());
+
+                }
 
                 connectionClosed = true;
                 in.close();
@@ -173,7 +177,7 @@ public class ClientHandler implements Runnable {
 
     public void setMaxPlayers(int maxPlayers) {
         server.maxPlayers = maxPlayers;
-        System.out.println("num max players set to "+server.maxPlayers);
+        System.out.println("num max players set to " + server.maxPlayers);
     }
 
     public Game getGame() {

@@ -41,7 +41,7 @@ import java.util.ArrayList;
 //TODO : error popup
 //TODO : chatBox (new popup)
 //NOTE : LOW PRIORITY
-//TODO : add letter like "h" for hand that shows a popup with symbols counter
+//TODO : add letter (like "h" for hand) that shows a popup with symbols counter
 //TODO : sowly remove resize from viewhub and assign to notification their views to resize
 //TODO : refactor viewhub as a cliBox's queue consumer. (maybe?)
 //TODO : add boolean edited in cliBox (on in drawAll & set to off in print)

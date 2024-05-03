@@ -72,22 +72,26 @@ public class ServerEventHandler {
         String messageEventSyntax = hasProperties(event, "username");
 
         if(clientHandler.getUserName() != null){
-            response.addProperty("error", "You already logged in");
+            response.addProperty("type", "notification");
+            response.addProperty("message", "You already logged in");
             return;
         }
 
         if(!messageEventSyntax.equals("OK")) {
-            response.addProperty("error", messageEventSyntax);
-            clientHandler.sendMessage(response.getAsString());
-            return;
-        }
-        if(clientHandler.getAllUsernames().contains(username)) {
-            response.addProperty("error", "Username is already in use");
-            clientHandler.sendMessage(response.getAsString());
+            response.addProperty("type", "notification");
+            response.addProperty("message", messageEventSyntax);
+            clientHandler.sendMessage(response.toString());
             return;
         }
 
         username = event.get("username").getAsString();
+
+        if(clientHandler.getAllUsernames().contains(username)) {
+            response.addProperty("type", "notification");
+            response.addProperty("message", "Username is already in use");
+            clientHandler.sendMessage(response.toString());
+            return;
+        }
 
         clientHandler.setUserName(username);
 
@@ -175,13 +179,6 @@ public class ServerEventHandler {
 
     // Method to handle quit event
     private static void handleQuitEvent() {
-        JsonObject response = new JsonObject();
-        response.addProperty("type", "notification");
-        response.addProperty("message", "Player " + clientHandler.getUserName() + " left the game");
-        System.out.println(response);
-
-        clientHandler.broadcast(response.toString());
-
         clientHandler.exit();
     }
 
