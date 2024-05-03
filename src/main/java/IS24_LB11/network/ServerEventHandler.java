@@ -175,13 +175,6 @@ public class ServerEventHandler {
 
     // Method to handle quit event
     private static void handleQuitEvent() {
-        JsonObject response = new JsonObject();
-        response.addProperty("type", "notification");
-        response.addProperty("message", "Player " + clientHandler.getUserName() + " left the game");
-        System.out.println(response);
-
-        clientHandler.broadcast(response.toString());
-
         clientHandler.exit();
     }
 
