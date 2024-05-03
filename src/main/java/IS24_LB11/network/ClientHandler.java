@@ -147,10 +147,9 @@ public class ClientHandler implements Runnable {
 
 
                     if (this.getGame().getPlayers().size() > 1) {
-                        this.getGame().setTurn(this.getGame().getPlayers().indexOf(this.getGame().currentPlayer()));
-
                         //don't send notification turn when in setup phase
                         if(this.getGame().getTurn() >= 0) {
+                            this.getGame().setTurn(this.getGame().getPlayers().indexOf(this.getGame().currentPlayer()));
                             NotifyTurnPhase.startPhase(this.getClientHandlerWithUsername(this.getGame().currentPlayer().name()));
                         }
                     }
