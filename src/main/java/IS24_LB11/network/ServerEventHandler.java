@@ -77,17 +77,18 @@ public class ServerEventHandler {
         }
 
         if(!messageEventSyntax.equals("OK")) {
-            response.addProperty("error", messageEventSyntax);
-            clientHandler.sendMessage(response.getAsString());
-            return;
-        }
-        if(clientHandler.getAllUsernames().contains(username)) {
-            response.addProperty("error", "Username is already in use");
+            response.addProperty("notification", messageEventSyntax);
             clientHandler.sendMessage(response.getAsString());
             return;
         }
 
         username = event.get("username").getAsString();
+
+        if(clientHandler.getAllUsernames().contains(username)) {
+            response.addProperty("notification", "Username is already in use");
+            clientHandler.sendMessage(response.getAsString());
+            return;
+        }
 
         clientHandler.setUserName(username);
 
