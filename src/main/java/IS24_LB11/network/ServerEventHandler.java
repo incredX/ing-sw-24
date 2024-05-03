@@ -72,12 +72,14 @@ public class ServerEventHandler {
         String messageEventSyntax = hasProperties(event, "username");
 
         if(clientHandler.getUserName() != null){
-            response.addProperty("error", "You already logged in");
+            response.addProperty("type", "notification");
+            response.addProperty("message", "You already logged in");
             return;
         }
 
         if(!messageEventSyntax.equals("OK")) {
-            response.addProperty("notification", messageEventSyntax);
+            response.addProperty("type", "notification");
+            response.addProperty("message", messageEventSyntax);
             clientHandler.sendMessage(response.toString());
             return;
         }
@@ -85,7 +87,8 @@ public class ServerEventHandler {
         username = event.get("username").getAsString();
 
         if(clientHandler.getAllUsernames().contains(username)) {
-            response.addProperty("notification", "Username is already in use");
+            response.addProperty("type", "notification");
+            response.addProperty("message", "Username is already in use");
             clientHandler.sendMessage(response.toString());
             return;
         }
