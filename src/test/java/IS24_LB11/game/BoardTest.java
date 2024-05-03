@@ -329,6 +329,18 @@ public class BoardTest {
 
         assert ((board.countGoalSymbols(goal)) == 4);
     }
+
+    @Test
+    void testValidPlacement() throws SyntaxException {
+        Board board = new Board();
+        JsonConverter jsonConverter = new JsonConverter();
+
+        board.start((StarterCard)CardFactory.newPlayableCard("SEE___F0PAFFAPI"));
+
+        assertEquals(true, board.placeCard((GoldenCard)CardFactory.newPlayableCard("G_EEQFB1QFFA__"),new Position(1,-1)));
+        assertEquals(true, board.placeCard((GoldenCard)CardFactory.newPlayableCard("GE_EEAB2EAAAF_"),new Position(2,0)));
+        assertEquals(false, board.placeCard((GoldenCard)CardFactory.newPlayableCard("G_EEEAB2EAAAP_"),new Position(1,1)));
+    }
 }
 
 record Placement(
