@@ -116,9 +116,13 @@ public class DecksPopup extends Popup {
     private void shiftPointer(Side side) {
         int size = getSelectedDeckSize();
         if (side.isVertical()) {
+            if (size == 0) return;
             if (side == SUD) cardIndex = (cardIndex+1) % size;
             else cardIndex = cardIndex == 0 ? size - 1 : cardIndex - 1;
-        } else deckIsNormal = !deckIsNormal;
+        } else {
+            deckIsNormal = !deckIsNormal;
+            if (getSelectedDeckSize() == 0) deckIsNormal = !deckIsNormal; // go back
+        }
         castView(decksView -> {
             decksView.updatePointerPosition(deckIsNormal, cardIndex);
             decksView.drawAll();

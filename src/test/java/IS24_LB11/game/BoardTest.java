@@ -50,7 +50,7 @@ public class BoardTest {
                 ),
                 new Placement(
                     false,
-                    new NormalCard("EAE_AB1"),
+                    new NormalCard("EAE_AF1"),
                     new Position(1, -1), // Wrong placement (can't place one card on top of the other)
                     PositionArray(new Integer[][] { {-1,-1}, {-1,1}, {1,1}, {0,-2}, {2,-2} }) // Available spots unchanged
                 ),

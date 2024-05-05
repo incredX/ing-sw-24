@@ -85,6 +85,7 @@ public class GameState extends ClientState implements PlayerStateInterface {
 
     public GameState(ViewHub viewHub, NotificationStack stack, PlayerSetup setup, Table table) throws IOException {
         super(viewHub, stack);
+        //TODO: ask why added following line
         this.player = new Player(username, setup);
         this.table = table;
         this.boardPointer = new Position(0, 0);

@@ -65,7 +65,7 @@ public class PopupManager {
     }
 
     public void hideAllPopups(){
-        popups.forEach((string, popup) -> popup.hide());
+        forEachPopup(Popup::hide);
     }
 
     public void hideFocusedPopup() {

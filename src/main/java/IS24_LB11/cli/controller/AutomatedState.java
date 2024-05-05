@@ -5,6 +5,7 @@ import IS24_LB11.cli.Table;
 import IS24_LB11.cli.ViewHub;
 import IS24_LB11.cli.automation.PlacementFunction;
 import IS24_LB11.cli.event.server.*;
+import IS24_LB11.cli.listeners.ServerHandler;
 import IS24_LB11.game.PlacedCard;
 import IS24_LB11.game.Player;
 import IS24_LB11.game.PlayerSetup;
@@ -19,6 +20,7 @@ import com.google.gson.JsonPrimitive;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.input.KeyStroke;
 
+import java.io.IOException;
 import java.util.Random;
 
 public class AutomatedState extends ClientState {
@@ -45,6 +47,13 @@ public class AutomatedState extends ClientState {
 
     @Override
     public ClientState execute() {
+        try {
+            serverHandler = new ServerHandler(this, serverAddress, serverPort);
+            new Thread(serverHandler).start();
+        } catch (IOException e) {
+            return null;
+        }
+
         if (numPlayers >= 2) {
             sendToServer("login", "username", username);
             sendToServer("numOfPlayers", "numOfPlayers", numPlayers);
