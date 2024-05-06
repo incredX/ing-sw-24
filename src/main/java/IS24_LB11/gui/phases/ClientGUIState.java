@@ -13,15 +13,9 @@ public class ClientGUIState {
     protected ServerHandlerGUI serverHandler;
     protected InputHandlerGUI inputHandlerGUI;
 
-    public ClientGUIState(){
+    public ClientGUIState( ){
         this.actualState= null;
         this.username = "";
-        this.serverHandler=serverHandler;
-        try {
-            this.inputHandlerGUI= new InputHandlerGUI(serverHandler.getWriter());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     public void setState(ClientGUIState nextState){

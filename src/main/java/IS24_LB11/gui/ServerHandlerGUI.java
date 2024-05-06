@@ -44,11 +44,12 @@ public class ServerHandlerGUI implements Runnable{
                 handleLoginEvent(serverEvent);
                 return;
             case "notification":
-                return;
-            case "setup":
+                handleNotificationEvent(serverEvent);
                 return;
             case "heartbeat":
                 heartBeatEvent(serverEvent);
+                return;
+            case "setup":
                 return;
             case "disconnected":
                 return;

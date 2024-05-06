@@ -15,6 +15,8 @@ import javafx.stage.Stage;
 
 public class LoginSceneController {
 
+    private ClientGUI clientGUI;
+
     @FXML
     private AnchorPane scenePane;
 

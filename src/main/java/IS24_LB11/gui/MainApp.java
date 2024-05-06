@@ -12,6 +12,7 @@ import javafx.stage.Stage;
 
 public class MainApp extends Application {
 
+
     @Override
     public void start(Stage stage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("/LoginPage.fxml"));
