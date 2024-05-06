@@ -1,26 +1,27 @@
 package IS24_LB11.gui;
 
-import javafx.event.ActionEvent;
+
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
+
+
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
 
 public class FXMLController {
 
     @FXML
-    private Label label;
+    private ImageView codexLoginImageView;
 
     @FXML
-    private void handleButtonAction(ActionEvent event) {
+    private Button loginButton;
 
-    }
+    @FXML
+    private Button cancelButton;
 
-    public void initialize() {
-        // TODO
-    }
+    @FXML
+    private TextField usernameTestField;
 
-    public void setUsername(ActionEvent actionEvent) {
-    }
 
-    public void clearInput(ActionEvent actionEvent) {
-    }
+
 }
