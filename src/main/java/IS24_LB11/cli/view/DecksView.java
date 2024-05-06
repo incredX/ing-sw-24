@@ -19,11 +19,11 @@ public class DecksView extends CardsBoxView {
     private ArrayList<NormalCardView> normalDeck;
     private ArrayList<GoldenCardView> goldenDeck;
 
-    public DecksView(TerminalSize parentSize, ArrayList<NormalCard> normalCards, ArrayList<GoldenCard> goldenCards) {
+    public DecksView(TerminalSize parentSize) {
         super("decks", DEFAULT_WIDTH, DEFAULT_HEIGHT,
                 (parentSize.getColumns()-DEFAULT_WIDTH)/2, (parentSize.getRows()-DEFAULT_HEIGHT)/2);
-        loadNormalDeck(normalCards);
-        loadGoldenDeck(goldenCards);
+        //loadNormalDeck(normalCards);
+        //loadGoldenDeck(goldenCards);
     }
 
     @Override

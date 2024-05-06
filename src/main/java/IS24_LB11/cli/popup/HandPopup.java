@@ -1,6 +1,5 @@
 package IS24_LB11.cli.popup;
 
-import IS24_LB11.cli.Debugger;
 import IS24_LB11.cli.ViewHub;
 import IS24_LB11.cli.controller.GameState;
 import IS24_LB11.cli.controller.PlayerStateInterface;
@@ -103,8 +102,6 @@ public class HandPopup extends Popup {
         update();
         //if (visible) castView(HandView::redraw);
         gameState.keyConsumed();
-        Debugger.print(String.format("%s <%c> (shift:%s, ctrl:%s)\n", keyStroke.getKeyType(), keyStroke.getCharacter(),
-                keyStroke.isShiftDown(), keyStroke.isCtrlDown()));
     }
 
     private void shiftPointer(Side side) {

@@ -8,7 +8,6 @@ import IS24_LB11.cli.view.DecksView;
 import IS24_LB11.game.components.PlayableCard;
 import com.googlecode.lanterna.input.KeyStroke;
 
-import java.util.ArrayList;
 import java.util.function.Consumer;
 
 import static IS24_LB11.cli.utils.Side.*;
@@ -19,7 +18,7 @@ public class DecksPopup extends Popup {
     private int cardIndex;
 
     public DecksPopup(ViewHub viewHub, PlayerStateInterface playerState) {
-        super(viewHub, new DecksView(viewHub.getScreenSize(), new ArrayList<>(), new ArrayList<>()));
+        super(viewHub, new DecksView(viewHub.getScreenSize()));
         this.playerState = playerState;
         this.deckIsNormal = true; //true = normal, false = golden
         this.cardIndex = 0;
@@ -33,7 +32,7 @@ public class DecksPopup extends Popup {
         castView(decksView -> {
             decksView.loadGoldenDeck(playerState.getGoldenDeck());
             decksView.loadNormalDeck(playerState.getNormalDeck());
-            decksView.drawAll();
+            decksView.redraw();
         });
     }
 
@@ -51,6 +50,9 @@ public class DecksPopup extends Popup {
 
     @Override
     public void enable() {
+        int size = getSelectedDeckSize();
+        if (size == 0) deckIsNormal = !deckIsNormal;
+        else cardIndex %= size;
         castView(decksView -> {
             decksView.updatePointerPosition(deckIsNormal, cardIndex);
             decksView.drawAll();
@@ -121,11 +123,13 @@ public class DecksPopup extends Popup {
             else cardIndex = cardIndex == 0 ? size - 1 : cardIndex - 1;
         } else {
             deckIsNormal = !deckIsNormal;
-            if (getSelectedDeckSize() == 0) deckIsNormal = !deckIsNormal; // go back
+            size = getSelectedDeckSize();
+            if (size > 0)cardIndex %= size;
+            else deckIsNormal = !deckIsNormal; // go back
         }
         castView(decksView -> {
             decksView.updatePointerPosition(deckIsNormal, cardIndex);
-            decksView.drawAll();
+            decksView.redraw();
         });
     }
 

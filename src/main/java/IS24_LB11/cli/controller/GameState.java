@@ -32,7 +32,6 @@ import java.util.ArrayList;
 //NOTE : HIGH PRIORITY
 //TODO : popup with final ranking
 //TODO : check if keystroke.isAltDown is implemented correctly
-//TODO : manage shortage of cards in decks popup
 //TODO : synchronize stage.buildAreas
 //TODO : close everything if the input listener is closed
 //NOTE : MEDIUM PRIORITY

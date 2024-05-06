@@ -67,7 +67,7 @@ public class ViewHub implements Runnable {
     }
 
     public void resize(TerminalSize size) {
-        Debugger.print("resize");
+        //Debugger.print("resize");
         synchronized (lock) {
             screenSize = size;
             stage.resize();

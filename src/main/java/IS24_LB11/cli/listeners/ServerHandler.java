@@ -43,7 +43,7 @@ public class ServerHandler extends Listener implements Runnable {
                         state.queueEvent(new ResultServerEvent(Error("Bad request", "json syntax error")));
                         continue;
                     }
-                    if (event.has("type") && !event.get("type").getAsString().equalsIgnoreCase("heartbeat"))
+                    if (event.has("error") || (event.has("type") && !event.get("type").getAsString().equalsIgnoreCase("heartbeat")))
                         Debugger.print("from server: "+event);
                     state.queueEvent(new ResultServerEvent(ServerEventFactory.createServerEvent(event)));
                 }

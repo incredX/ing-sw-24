@@ -55,13 +55,14 @@ public class NotifyTurnPhase {
         Deck normalDeck = clientHandler.getGame().getNormalDeck();
         Deck goldenDeck = clientHandler.getGame().getGoldenDeck();
 
-        for (int i=1; i<=3; i++) {
-            try {
-                normalCards.add(new JsonPrimitive(normalDeck.showCard(i).asString()));
-                goldenCards.add(new JsonPrimitive(goldenDeck.showCard(i).asString()));
-            }
+        for (int i=1; i<=Integer.min(3, normalDeck.size()); i++) {
+            try { normalCards.add(new JsonPrimitive(normalDeck.showCard(i).asString())); }
             catch (DeckException e) { }
 
+        }
+        for (int i=1; i<=Integer.min(3, goldenDeck.size()); i++) {
+            try { goldenCards.add(new JsonPrimitive(goldenDeck.showCard(i).asString())); }
+            catch (DeckException e) { }
         }
         obj.add("normalDeck", normalCards);
         obj.add("goldenDeck", goldenCards);

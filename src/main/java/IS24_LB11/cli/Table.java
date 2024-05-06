@@ -33,8 +33,8 @@ public class Table {
         scoreboard.setNextPlayer(newTurnEvent.player());
         normalDeck = newTurnEvent.normalDeck();
         goldenDeck = newTurnEvent.goldenDeck();
-        if (!normalDeck.getLast().isFaceDown()) normalDeck.getLast().flip();
-        if (!goldenDeck.getLast().isFaceDown()) goldenDeck.getLast().flip();
+        if (normalDeck.size() == 3 && !normalDeck.getLast().isFaceDown()) normalDeck.getLast().flip();
+        if (goldenDeck.size() == 3 && !goldenDeck.getLast().isFaceDown()) goldenDeck.getLast().flip();
     }
 
     public Scoreboard getScoreboard() {
