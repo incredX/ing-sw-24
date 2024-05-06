@@ -111,7 +111,7 @@ public class AutomatedState extends ClientState {
                         selectedCardIndex = rand.nextInt(table.getNormalDeck().size());
                 }
 
-                if (handCard.asString().startsWith("G")) handCard.flip();
+                if (handCard.asString().startsWith("G") && !handCard.isFaceDown()) handCard.flip();
                 player.placeCard(handCard, spot);
                 player.addCardToHand(fromGoldenDeck ? table.getGoldenDeck().get(selectedCardIndex) : table.getNormalDeck().get(selectedCardIndex));
                 try {
@@ -121,7 +121,7 @@ public class AutomatedState extends ClientState {
                     sendToServer("turnActions", new String[]{"placedCard", "deckType", "indexVisibleCards"},
                             new JsonElement[]{jsonPlacedCard, jsonDeckType, jsonCardIndex});
                 } catch (JsonException e) {
-                    e.printStackTrace();
+                    Debugger.print(e);
                 }
 
                 if (placementFunction.placementTerminated())
@@ -129,7 +129,7 @@ public class AutomatedState extends ClientState {
             }
             case ServerPlayerDisconnectEvent disconnectEvent -> {
                 table.getScoreboard().removePlayer(disconnectEvent.player());
-                popManager.getPopup("table").redrawView();
+                //popManager.getPopup("table").redrawView();
             }
             default -> {}
         }

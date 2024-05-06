@@ -34,13 +34,12 @@ import java.util.ArrayList;
 //TODO : close everything if the input listener is closed
 //NOTE : MEDIUM PRIORITY
 //TODO : send message "your last turn" and remove some notifications
-//TODO : final ranking popup
+//TODO : help popup
 //TODO : chatBox (new popup)
-//TODO : organize popups with a priorityQueue
 //NOTE : LOW PRIORITY
-//TODO : error popup
-//TODO : color golden cards' border
 //TODO : add letter (like "h" for hand) that shows a popup with symbols counter
+//TODO : error popup
+//TODO : organize popups with a priorityQueue
 //TODO : sowly remove resize from viewhub and assign to notification their views to resize
 //TODO : refactor viewhub as a cliBox's queue consumer. (maybe?)
 //TODO : add boolean edited in cliBox (on in drawAll & set to off in print)
@@ -113,6 +112,10 @@ public class GameState extends ClientState implements PlayerStateInterface {
         switch (serverEvent) {
             case ServerNewTurnEvent newTurnEvent -> {
                 Debugger.print("turn of "+newTurnEvent.player()+" (I'm "+username+")");
+                if (newTurnEvent.player().isEmpty()) {
+                    //set table popup as final
+                    popManager.showPopup("table");
+                }
                 if (newTurnEvent.player().equals(username)) {
                     cardPlaced = false;
                     cardPicked = false;
@@ -231,6 +234,12 @@ public class GameState extends ClientState implements PlayerStateInterface {
         else notificationStack.addUrgent("WARNING", "cannot place card");
     }
 
+    public void logout() {
+        sendToServer("quit");
+        serverHandler.shutdown();
+        setNextState(new LobbyState(viewHub));
+    }
+
     private void centerBoardPointer() {
         boardPointer = new Position(0,0);
         updateBoardPointerImage();
@@ -269,6 +278,10 @@ public class GameState extends ClientState implements PlayerStateInterface {
 
     public ArrayList<PlayableCard> getPlayerHand() {
         return player.getHand();
+    }
+
+    public Table getTable() {
+        return table;
     }
 
     public Scoreboard getScoreboard() {

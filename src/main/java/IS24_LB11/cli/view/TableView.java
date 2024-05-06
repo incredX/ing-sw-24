@@ -1,5 +1,6 @@
 package IS24_LB11.cli.view;
 
+import IS24_LB11.cli.Scoreboard;
 import IS24_LB11.cli.view.game.GoalPatternView;
 import IS24_LB11.cli.view.game.GoalSymbolView;
 import IS24_LB11.cli.view.game.GoalView;
@@ -25,6 +26,7 @@ public class TableView extends PopupView {
     private ArrayList<Integer> scores;
     private ArrayList<GoalView> goalViews;
     private int indexCurrentPlayer;
+    private int indexWinner;
 
     public TableView(TerminalSize parentSize) {
         super(DEFAULT_WIDTH, DEFAULT_HEIGHT,
@@ -34,6 +36,7 @@ public class TableView extends PopupView {
         scores = new ArrayList<>();
         goalViews = new ArrayList<>();
         indexCurrentPlayer = 0;
+        indexWinner = -1;
     }
 
     @Override
@@ -51,20 +54,11 @@ public class TableView extends PopupView {
         setPosition(new TerminalPosition(x, y));
     }
 
-    public void loadColors(ArrayList<Color> colors) {
-        this.colors = (ArrayList<TextColor>) colors.stream().map(color -> adaptColor(color)).collect(Collectors.toList());
-    }
-
-    public void loadPlayers(ArrayList<String> players) {
-        this.players = players;
-    }
-
-    public void loadScores(ArrayList<Integer> scores) {
-        this.scores = scores;
-    }
-
-    public void loadCurrentPlayer(int index) {
-        indexCurrentPlayer = index;
+    public void loadScoreboard(Scoreboard scoreboard) {
+        loadColors(scoreboard.getColors());
+        loadPlayers(scoreboard.getPlayers());
+        loadScores(scoreboard.getScores());
+        loadCurrentPlayer(scoreboard.getCurrentPlayerIndex());
     }
 
     public void loadGoals(ArrayList<GoalCard> goals) {
@@ -80,6 +74,22 @@ public class TableView extends PopupView {
             goalViews.getLast().drawAll();
             i++;
         }
+    }
+
+    private void loadColors(ArrayList<Color> colors) {
+        this.colors = (ArrayList<TextColor>) colors.stream().map(color -> adaptColor(color)).collect(Collectors.toList());
+    }
+
+    private void loadPlayers(ArrayList<String> players) {
+        this.players = players;
+    }
+
+    private void loadScores(ArrayList<Integer> scores) {
+        this.scores = scores;
+    }
+
+    private void loadCurrentPlayer(int index) {
+        indexCurrentPlayer = index;
     }
 
     private void drawScoreBoard() {
@@ -106,7 +116,12 @@ public class TableView extends PopupView {
     }
 
     private void drawStructure() {
-        fillRow(firstRow(), 1, "SCOREBOARD");
+        if (indexWinner >= 0) {
+            fillRow(firstRow(), 1, "SCOREBOARD | the winner of the game is ");
+            fillRow(firstRow(), 40, players.get(indexWinner), colors.get(indexWinner));
+        } else {
+            fillRow(firstRow(), 1, "SCOREBOARD");
+        }
         fillRow(firstRow()+1, DASHED_HORIZONTAL_SEPARATOR);
         fillRow(firstRow()+6, DASHED_HORIZONTAL_SEPARATOR);
         fillRow(firstRow()+7, 1, "PRIVATE GOAL");
@@ -129,6 +144,10 @@ public class TableView extends PopupView {
             case GREEN -> TextColor.ANSI.GREEN_BRIGHT;
             case YELLOW -> TextColor.ANSI.YELLOW_BRIGHT;
         };
+    }
+
+    public void setWinnerIndex(int indexWinner) {
+        this.indexWinner = indexWinner;
     }
 
     private static ArrayList<TextColor> defaultColors() {

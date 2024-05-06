@@ -1,10 +1,11 @@
 package IS24_LB11.cli.popup;
 
 import IS24_LB11.cli.ViewHub;
+import IS24_LB11.cli.controller.GameState;
 import IS24_LB11.cli.controller.PlayerStateInterface;
 import IS24_LB11.cli.view.TableView;
-import IS24_LB11.cli.Scoreboard;
 import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.input.KeyType;
 
 import java.util.function.Consumer;
 
@@ -22,12 +23,11 @@ public class TablePopup extends Popup {
 
     @Override
     public void update() {
-        Scoreboard scoreboard = playerState.getScoreboard();
         castView(tableView -> {
-            tableView.loadColors(scoreboard.getColors());
-            tableView.loadPlayers(scoreboard.getPlayers());
-            tableView.loadScores(scoreboard.getScores());
-            tableView.loadCurrentPlayer(scoreboard.getCurrentPlayerIndex());
+            if (playerState.getTable().isFinalRanking()) {
+                tableView.setWinnerIndex(playerState.getTable().getCurrentTopPlayerIndex());
+            }
+            tableView.loadScoreboard(playerState.getScoreboard());
             tableView.loadGoals(playerState.getGoals());
             tableView.drawAll();
         });
@@ -35,13 +35,9 @@ public class TablePopup extends Popup {
 
     @Override
     public void redrawView() {
-        Scoreboard scoreboard = playerState.getScoreboard();
         castView(tableView -> {
             tableView.clear();
-            tableView.loadColors(scoreboard.getColors());
-            tableView.loadPlayers(scoreboard.getPlayers());
-            tableView.loadScores(scoreboard.getScores());
-            tableView.loadCurrentPlayer(scoreboard.getCurrentPlayerIndex());
+            tableView.loadScoreboard(playerState.getScoreboard());
             tableView.drawAll();
         });
     }
@@ -49,7 +45,18 @@ public class TablePopup extends Popup {
     @Override
     public void consumeKeyStroke(KeyStroke keyStroke) {
         if (!enabled) return; // focus is not here
-        // cosume keyStroke here
+        switch (playerState) {
+            case GameState gameState -> consumeKeyStrokeInGame(gameState, keyStroke);
+            default -> {
+                return;
+            }
+        }
+    }
+
+    private void consumeKeyStrokeInGame(GameState gameState, KeyStroke keyStroke) {
+        if (gameState.getTable().isFinalRanking()) {
+            if (keyStroke.getKeyType() == KeyType.Enter) gameState.logout();
+        }
     }
 
     public void setPlayerState(PlayerStateInterface playerState) {

@@ -6,7 +6,7 @@
   // note: the choice of the setup is automatic.
   "cardPlacement" : "random", // define a criterion of cards placement ( the other option is "preset")
   // the following are settings for the random criterion
-  "numPlacements" : 20, // number of card placement
+  "numPlacements" : 24, // number of card placement
   "oldestSpotsRate" : 0.5, // probabilty to chose one of the 4 oldest spots
   "goldenRate" : 0.3 // probability to draw a card from the golden deck
 }
