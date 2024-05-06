@@ -44,4 +44,6 @@ public class LoginSceneController {
             stage.close();
         }
     }
+
+    //createNotificationPopUp
 }
