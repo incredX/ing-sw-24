@@ -74,6 +74,7 @@ public class ServerEventHandler {
         if(clientHandler.getUserName() != null){
             response.addProperty("type", "notification");
             response.addProperty("message", "You already logged in");
+            clientHandler.sendMessage(response.toString());
             return;
         }
 

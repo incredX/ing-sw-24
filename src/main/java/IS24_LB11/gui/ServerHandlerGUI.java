@@ -50,6 +50,7 @@ public class ServerHandlerGUI implements Runnable{
                 heartBeatEvent(serverEvent);
                 return;
             case "setup":
+                handleSetupEvent(serverEvent);
                 return;
             case "disconnected":
                 return;
@@ -59,9 +60,10 @@ public class ServerHandlerGUI implements Runnable{
             default: throw new IllegalStateException("Unexpected value: " + serverEvent.get("type"));
         }
     }
+
     private void handleLoginEvent(JsonObject serverEvent){
         if (serverEvent.has("username")){
-            actualState.setUsername(serverEvent.get("usernamne").getAsString());
+            actualState.setUsername(serverEvent.get("username").getAsString());
         }
     }
     private void handleNotificationEvent(JsonObject serverEvent){
@@ -73,6 +75,11 @@ public class ServerHandlerGUI implements Runnable{
         JsonObject message= new JsonObject();
         message.addProperty("type","heartbeat");
         write(message);
+        //TODO: handle heartbeat client-side
+    }
+
+    private void handleSetupEvent(JsonObject serverEvent) {
+
     }
 
     public void write(JsonObject object) {
