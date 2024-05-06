@@ -2,7 +2,7 @@
   "username" : "automata_01",
   "serverAddress" : "localhost",
   "serverPort" : 54321,
-  "numPlayers" : 3, // num of players to be set (if equals to 0, this step will be skipped)
+  "numPlayers" : 2, // num of players to be set (if equals to 0, this step will be skipped)
   // note: the choice of the setup is automatic.
   "cardPlacement" : "random", // define a criterion of cards placement ( the other option is "preset")
   // the following are settings for the random criterion

@@ -28,18 +28,18 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 //NOTE : URGENT PRIORITY
-//TODO : handle disconnection of a player
 //NOTE : HIGH PRIORITY
 //TODO : popup with final ranking
-//TODO : check if keystroke.isAltDown is implemented correctly
 //TODO : synchronize stage.buildAreas
 //TODO : close everything if the input listener is closed
 //NOTE : MEDIUM PRIORITY
-//TODO : change message when you place a card and its not your turn
-//TODO : organize popups with a priorityQueue
-//TODO : error popup
+//TODO : send message "your last turn" and remove some notifications
+//TODO : final ranking popup
 //TODO : chatBox (new popup)
+//TODO : organize popups with a priorityQueue
 //NOTE : LOW PRIORITY
+//TODO : error popup
+//TODO : color golden cards' border
 //TODO : add letter (like "h" for hand) that shows a popup with symbols counter
 //TODO : sowly remove resize from viewhub and assign to notification their views to resize
 //TODO : refactor viewhub as a cliBox's queue consumer. (maybe?)
@@ -84,7 +84,6 @@ public class GameState extends ClientState implements PlayerStateInterface {
 
     public GameState(ViewHub viewHub, NotificationStack stack, PlayerSetup setup, Table table) throws IOException {
         super(viewHub, stack);
-        //TODO: ask why added following line
         this.player = new Player(username, setup);
         this.table = table;
         this.boardPointer = new Position(0, 0);
@@ -100,7 +99,6 @@ public class GameState extends ClientState implements PlayerStateInterface {
         gameStage = viewHub.setGameStage(this);
         updateBoardPointerImage();
         popManager.updatePopups();
-        //gameStage.drawAll();
         cmdLine.update();
         viewHub.update();
         return super.execute();
@@ -121,6 +119,7 @@ public class GameState extends ClientState implements PlayerStateInterface {
                     playerTurn = true;
                 }
                 updateBoardPointerImage();
+                gameStage.updateBoard();
                 table.update(newTurnEvent);
                 popManager.getPopup("decks").update();
                 popManager.getPopup("table").update();
@@ -192,23 +191,23 @@ public class GameState extends ClientState implements PlayerStateInterface {
 
     public void drawCardFromDeck() {
         JsonConverter converter = new JsonConverter();
-        if (!cardPicked && cardPlaced) {
-            DecksPopup decksPopup = (DecksPopup) popManager.getPopup("decks");
-            HandPopup handPopup = (HandPopup) popManager.getPopup("hand");
-            player.addCardToHand(decksPopup.getSelectedCard());
-            handPopup.update();
-            popManager.hidePopup("decks");
-            cardPicked = true;
-            playerTurn = true;
-            try {
-                JsonObject jsonPlacedCard = (JsonObject) new JsonParser().parse(converter.objectToJSON(placedCard));
-                JsonElement jsonDeckType = new JsonPrimitive(!decksPopup.selectedNormalDeck());
-                JsonElement jsonCardIndex = new JsonPrimitive(decksPopup.getCardIndex()+1);
-                sendToServer("turnActions", new String[]{"placedCard", "deckType", "indexVisibleCards"},
-                        new JsonElement[]{jsonPlacedCard, jsonDeckType, jsonCardIndex});
-            } catch (JsonException e) {
-                e.printStackTrace();
-            }
+        if (cardPicked || !cardPlaced || !playerTurn)
+            return;
+        DecksPopup decksPopup = (DecksPopup) popManager.getPopup("decks");
+        HandPopup handPopup = (HandPopup) popManager.getPopup("hand");
+        player.addCardToHand(decksPopup.getSelectedCard());
+        handPopup.update();
+        popManager.hidePopup("decks");
+        cardPicked = true;
+        playerTurn = false;
+        try {
+            JsonObject jsonPlacedCard = (JsonObject) new JsonParser().parse(converter.objectToJSON(placedCard));
+            JsonElement jsonDeckType = new JsonPrimitive(!decksPopup.selectedNormalDeck());
+            JsonElement jsonCardIndex = new JsonPrimitive(decksPopup.getCardIndex()+1);
+            sendToServer("turnActions", new String[]{"placedCard", "deckType", "indexVisibleCards"},
+                    new JsonElement[]{jsonPlacedCard, jsonDeckType, jsonCardIndex});
+        } catch (JsonException e) {
+            Debugger.print(e);
         }
     }
 
@@ -245,10 +244,11 @@ public class GameState extends ClientState implements PlayerStateInterface {
     }
 
     private void updateBoardPointerImage() {
-        if (!playerTurn) gameStage.setPointerColor(TextColor.ANSI.BLACK_BRIGHT);
-        else if (cardPlaced) gameStage.setPointerColor(TextColor.ANSI.BLACK_BRIGHT);
-        else if (player.getBoard().spotAvailable(boardPointer)) gameStage.setPointerColor(TextColor.ANSI.GREEN_BRIGHT);
-        else gameStage.setPointerColor(TextColor.ANSI.RED_BRIGHT);
+        if (!playerTurn || (cardPlaced && cardPlaced)) gameStage.setPointerColor(TextColor.ANSI.BLACK_BRIGHT);
+        else {
+            if (player.getBoard().spotAvailable(boardPointer)) gameStage.setPointerColor(TextColor.ANSI.GREEN_BRIGHT);
+            else gameStage.setPointerColor(TextColor.ANSI.RED_BRIGHT);
+        }
     }
     
     public void flipHandCard(int cardIndex) {

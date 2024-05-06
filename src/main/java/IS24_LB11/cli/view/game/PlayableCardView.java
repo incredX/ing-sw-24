@@ -13,6 +13,7 @@ import IS24_LB11.game.utils.Direction;
 import IS24_LB11.game.utils.Position;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TerminalPosition;
+import com.googlecode.lanterna.TextColor;
 
 import static IS24_LB11.cli.utils.Side.*;
 import static IS24_LB11.game.utils.Direction.*;
@@ -83,6 +84,7 @@ public class PlayableCardView extends TerminalBox {
         final char hSep, vSep, corner;
         final int dx=4, dy=2, signX, signY;
         final TerminalPosition cornerPos = getCornerPosition(dir);
+        final TextColor color = borderStyle.getColor();
 
         if (!card.hasCorner(dir)) return;
 
@@ -104,31 +106,33 @@ public class PlayableCardView extends TerminalBox {
         }
         corner = borderStyle.getCorner(dir.opposite());
 
-        drawChar(cornerPos.withRelative(dx*signX, 0), hSep);
-        drawChar(cornerPos.withRelative(0, dy*signY), vSep);
-        drawChar(cornerPos.withRelative(dx*signX, dy*signY), corner);
+        drawChar(cornerPos.withRelative(dx*signX, 0), hSep, color);
+        drawChar(cornerPos.withRelative(0, dy*signY), vSep, color);
+        drawChar(cornerPos.withRelative(dx*signX, dy*signY), corner, color);
         drawChar(cornerPos.withRelative(2*signX, signY), SymbolAdapter.fromSymbol(symbol));
-        drawChar(cornerPos.withRelative(dx*signX, signY), borderStyle.getVLine());
+        drawChar(cornerPos.withRelative(dx*signX, signY), borderStyle.getVLine(), color);
         for (int x=1; x<dx; x++) {
-            drawChar(cornerPos.withRelative((dx-x)*signX, dy*signY), borderStyle.getHLine());
+            drawChar(cornerPos.withRelative((dx-x)*signX, dy*signY), borderStyle.getHLine(), color);
         }
     }
 
     protected void drawOpenSquare(TerminalPosition pos) {
-        drawChar(pos.withRelative(2, -1), borderStyle.getCorner(UP_RIGHT));
-        drawChar(pos.withRelative(-2, -1), borderStyle.getCorner(UP_LEFT));
-        drawChar(pos.withRelative(-2, 1), borderStyle.getCorner(DOWN_LEFT));
-        drawChar(pos.withRelative(2, 1), borderStyle.getCorner(DOWN_RIGHT));
+        final TextColor color = borderStyle.getColor();
+        drawChar(pos.withRelative(2, -1), borderStyle.getCorner(UP_RIGHT), color);
+        drawChar(pos.withRelative(-2, -1), borderStyle.getCorner(UP_LEFT), color);
+        drawChar(pos.withRelative(-2, 1), borderStyle.getCorner(DOWN_LEFT), color);
+        drawChar(pos.withRelative(2, 1), borderStyle.getCorner(DOWN_RIGHT), color);
     }
 
     protected void drawClosedSquare(TerminalPosition pos) {
+        final TextColor color = borderStyle.getColor();
         drawOpenSquare(pos);
         for (int i=-1; i<2; i++) {
-            drawChar(pos.withRelative(i, -1), borderStyle.getHLine());
-            drawChar(pos.withRelative(i, 1), borderStyle.getHLine());
+            drawChar(pos.withRelative(i, -1), borderStyle.getHLine(), color);
+            drawChar(pos.withRelative(i, 1), borderStyle.getHLine(), color);
         }
-        drawChar(pos.withRelative(-2, 0), borderStyle.getVLine());
-        drawChar(pos.withRelative(2, 0), borderStyle.getVLine());
+        drawChar(pos.withRelative(-2, 0), borderStyle.getVLine(), color);
+        drawChar(pos.withRelative(2, 0), borderStyle.getVLine(), color);
     }
 
     public void setBoardPosition(Position position) {

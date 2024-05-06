@@ -1,5 +1,6 @@
 package IS24_LB11.cli.view.game;
 
+import IS24_LB11.cli.style.SingleBorderStyle;
 import IS24_LB11.cli.utils.SymbolAdapter;
 import IS24_LB11.game.components.GoldenCard;
 import IS24_LB11.game.symbol.Empty;
@@ -10,7 +11,7 @@ import com.googlecode.lanterna.TextColor;
 
 public class GoldenCardView extends PlayableCardView {
     public GoldenCardView(GoldenCard card) {
-        super(card);
+        super(card, new SingleBorderStyle(TextColor.ANSI.YELLOW_BRIGHT));
     }
 
     public void drawAll() {
