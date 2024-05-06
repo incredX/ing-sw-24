@@ -22,7 +22,7 @@ public class LoginSceneController {
     private ImageView codexLoginImageView;
 
     @FXML
-    public Button loginButton;
+    private Button loginButton;
 
     @FXML
     private Button exitButton;

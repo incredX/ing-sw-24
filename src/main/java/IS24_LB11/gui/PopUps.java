@@ -29,7 +29,34 @@ public class PopUps {
 
             //send to server the selected number
             System.out.println("You selected: " + selectedNumber + " players.");
+
+            //da implementare nel controller perchè altrimenti non riconosce il bottone
+            //      /\
+            //      ||
+            // randomButton.setDisable(true);
         }
+    }
+
+    //da implementare nel controller perchè altrimenti non riconosce l'azione
+    //          /\
+    //          ||
+//    public void makePopUp(ActionEvent event) {
+//        popUpMaker(message);
+//    }
+    public void popUpMaker(String message) {
+        //create a new type of alert without symbol
+        Alert alert = new Alert(Alert.AlertType.NONE);
+
+        //create the button with "ok" text inside
+        ButtonType buttonTypeTwo = new ButtonType("OK");
+
+        //import the button inside the alert
+        alert.getButtonTypes().setAll(buttonTypeTwo);
+
+        //insert the received message into the alert field
+        alert.setContentText(message);
+        alert.show();
+
     }
 
 }

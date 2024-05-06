@@ -22,6 +22,7 @@ public class MainApp extends Application {
         stage.setTitle("Codex");
         stage.setScene(scene);
         stage.show();
+        stage.setResizable(false);
 
         stage.setOnCloseRequest(event -> {
             event.consume();
