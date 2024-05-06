@@ -28,7 +28,13 @@ public class LoginSceneController {
     private Button exitButton;
 
     @FXML
-    private TextField usernameTestField;
+    private TextField usernameTextField;
+
+    @FXML
+    private TextField ipTextField;
+
+    @FXML
+    private TextField portTextField;
 
     Stage stage;
 
@@ -43,6 +49,13 @@ public class LoginSceneController {
             System.out.println("You successfully logged out!");
             stage.close();
         }
+    }
+
+    public void login(ActionEvent event){
+        String username = usernameTextField.getText();
+        String serverIP = ipTextField.getText();
+        String port = portTextField.getText();
+        System.out.println(username + serverIP + port);
     }
 
     //createNotificationPopUp

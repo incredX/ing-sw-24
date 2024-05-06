@@ -10,69 +10,152 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="scenePane" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="IS24_LB11.gui.LoginSceneController">
+<AnchorPane
+        fx:id="scenePane"
+        prefHeight="720.0"
+        prefWidth="1280.0"
+        xmlns="http://javafx.com/javafx/21"
+        xmlns:fx="http://javafx.com/fxml/1"
+        fx:controller="IS24_LB11.gui.LoginSceneController">
    <children>
-      <ImageView depthTest="DISABLE" fitHeight="720.0" fitWidth="1280.0" opacity="0.89" pickOnBounds="true" smooth="false">
-         <image>
-            <Image url="@graphicResources/CodexBackground.jpg" />
-         </image>
-         <viewport>
-            <Rectangle2D />
-         </viewport>
-      </ImageView>
-      <Label layoutX="871.0" layoutY="148.0" prefHeight="38.0" prefWidth="243.0" text="Username" textFill="WHITE">
+       <ImageView depthTest="DISABLE" fitHeight="720.0" fitWidth="1280.0" opacity="0.89" pickOnBounds="true" smooth="false">
+           <image>
+               <Image url="@graphicResources/CodexBackground.jpg" />
+           </image>
+           <viewport>
+               <Rectangle2D />
+           </viewport>
+       </ImageView>
+      <Label
+              layoutX="871.0"
+              layoutY="148.0"
+              prefHeight="38.0"
+              prefWidth="243.0"
+              text="Username"
+              textFill="WHITE">
          <font>
-            <Font size="20.0" />
+            <Font
+                    size="20.0" />
          </font>
       </Label>
-      <TextField fx:id="usernameTextField" layoutX="871.0" layoutY="180.0" prefHeight="37.0" prefWidth="260.0" promptText="Username">
+      <TextField
+              fx:id="usernameTextField"
+              layoutX="871.0" layoutY="180.0"
+              prefHeight="37.0"
+              prefWidth="260.0"
+              promptText="Username">
          <font>
-            <Font size="18.0" />
+            <Font
+                    size="18.0" />
          </font>
       </TextField>
-      <Button fx:id="loginButton" layoutX="871.0" layoutY="419.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="200.0" text="Login">
+      <Button
+              fx:id="loginButton"
+              onAction="#login"
+              layoutX="871.0"
+              layoutY="419.0"
+              mnemonicParsing="false"
+              prefHeight="50.0"
+              prefWidth="200.0"
+              text="Login">
          <cursor>
-            <Cursor fx:constant="DEFAULT" />
+            <Cursor
+                    fx:constant="DEFAULT" />
          </cursor>
          <font>
-            <Font size="20.0" />
+            <Font
+                    size="20.0" />
          </font>
       </Button>
-      <Button fx:id="exitButton" layoutX="871.0" layoutY="499.0" mnemonicParsing="false" onAction="#exit" prefHeight="50.0" prefWidth="200.0" text="Exit">
+      <Button
+              fx:id="exitButton"
+              layoutX="871.0"
+              layoutY="499.0"
+              mnemonicParsing="false"
+              onAction="#exit"
+              prefHeight="50.0"
+              prefWidth="200.0"
+              text="Exit">
          <cursor>
-            <Cursor fx:constant="DEFAULT" />
+            <Cursor
+                    fx:constant="DEFAULT" />
          </cursor>
          <font>
-            <Font size="20.0" />
+            <Font
+                    size="20.0" />
          </font>
       </Button>
-      <ImageView fx:id="codexLoginImageView" fitHeight="720.0" fitWidth="1280.0" layoutX="-10.0" pickOnBounds="true" preserveRatio="true">
-         <Image url="@graphicResources/codexLogin.jpg" />
+      <ImageView
+              fx:id="codexLoginImageView"
+              fitHeight="720.0"
+              fitWidth="1280.0"
+              layoutX="-10.0"
+              pickOnBounds="true"
+              preserveRatio="true">
+         <Image
+                 url="@graphicResources/codexLogin.jpg" />
       </ImageView>
 
-      <Label contentDisplay="CENTER" layoutX="871.0" layoutY="21.0" prefHeight="75.0" prefWidth="222.0" text="Login" textFill="WHITE">
+      <Label
+              contentDisplay="CENTER"
+              layoutX="871.0"
+              layoutY="21.0"
+              prefHeight="75.0"
+              prefWidth="222.0"
+              text="Login"
+              textFill="WHITE">
          <font>
-            <Font name="SansSerif Bold" size="40.0" />
+            <Font
+                    name="SansSerif Bold"
+                    size="40.0" />
          </font>
       </Label>
-      <TextField layoutX="871.0" layoutY="250.0" prefHeight="37.0" prefWidth="260.0" promptText="IP">
+      <TextField
+              fx:id="ipTextField"
+              layoutX="871.0"
+              layoutY="250.0"
+              prefHeight="37.0"
+              prefWidth="260.0"
+              promptText="IP">
          <font>
-            <Font size="18.0" />
+            <Font
+                    size="18.0" />
          </font>
       </TextField>
-      <TextField layoutX="871.0" layoutY="320.0" prefHeight="37.0" prefWidth="260.0" promptText="Port">
+      <TextField
+              fx:id="portTextField"
+              layoutX="871.0"
+              layoutY="320.0"
+              prefHeight="37.0"
+              prefWidth="260.0"
+              promptText="Port">
          <font>
-            <Font size="18.0" />
+            <Font
+                    size="18.0" />
          </font>
       </TextField>
-      <Label layoutX="871.0" layoutY="218.0" prefHeight="38.0" prefWidth="243.0" text="IP" textFill="WHITE">
+      <Label
+              layoutX="871.0"
+              layoutY="210.0"
+              prefHeight="38.0"
+              prefWidth="243.0"
+              text="IP"
+              textFill="WHITE">
          <font>
-            <Font size="20.0" />
+            <Font
+                    size="20.0" />
          </font>
       </Label>
-      <Label layoutX="871.0" layoutY="288.0" prefHeight="38.0" prefWidth="243.0" text="Port" textFill="WHITE">
+      <Label
+              layoutX="871.0"
+              layoutY="288.0"
+              prefHeight="38.0"
+              prefWidth="243.0"
+              text="Port"
+              textFill="WHITE">
          <font>
-            <Font size="20.0" />
+            <Font
+                    size="20.0" />
          </font>
       </Label>
    </children>
