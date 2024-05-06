@@ -18,6 +18,7 @@ public class TableView extends PopupView {
     private static final int DEFAULT_WIDTH = 60;
     private static final int DEFAULT_HEIGHT = 16;
     private static final String DASHED_HORIZONTAL_SEPARATOR = "-".repeat(DEFAULT_WIDTH-4);
+    private static final String FULL_SCORE_LINE = "=".repeat(30);
 
     private ArrayList<String> players;
     private ArrayList<TextColor> colors;
@@ -39,6 +40,7 @@ public class TableView extends PopupView {
     public void drawAll() {
         drawBorders();
         drawStructure();
+        drawScoreBoard();
         drawGoals();
     }
 
@@ -55,24 +57,14 @@ public class TableView extends PopupView {
 
     public void loadPlayers(ArrayList<String> players) {
         this.players = players;
-        for (int i = 0; i < players.size(); i++) {
-            fillRow(firstRow()+2+i, 2, players.get(i), colors.get(i));
-        }
     }
 
     public void loadScores(ArrayList<Integer> scores) {
         this.scores = scores;
-        for (int i = 0; i < scores.size(); i++) {
-            String scoreLine = scores.get(i) == 0 ? "" : "=".repeat(scores.get(i)-1)+">";
-            fillRow(firstRow()+2+i, firstColumn()+19, String.format("%2d", scores.get(i)));
-            fillRow(firstRow()+2+i, firstColumn()+22, scoreLine, colors.get(i));
-        }
     }
 
     public void loadCurrentPlayer(int index) {
-        drawChar(firstColumn(), firstRow()+2+indexCurrentPlayer, ' ', TextColor.ANSI.DEFAULT);
         indexCurrentPlayer = index;
-        drawChar(firstColumn(), firstRow()+2+index, '>', TextColor.ANSI.DEFAULT);
     }
 
     public void loadGoals(ArrayList<GoalCard> goals) {
@@ -90,6 +82,29 @@ public class TableView extends PopupView {
         }
     }
 
+    private void drawScoreBoard() {
+        // players
+        for (int i = 0; i < players.size(); i++) {
+            fillRow(firstRow()+2+i, 2, players.get(i), colors.get(i));
+        }
+        // scores
+        for (int i = 0; i < scores.size(); i++) {
+            int score = scores.get(i) < 30 ? scores.get(i) : scores.get(i)-30;
+            String lineHead = scores.get(i) < 30 ? ">" : "> ";
+            String scoreLine = score == 0 ? "" : "=".repeat(score-1) + lineHead;
+            if (scores.get(i) >= 30) {
+                fillRow(firstRow()+2+i, firstColumn()+22, FULL_SCORE_LINE, colors.get(i));
+            }
+            fillRow(firstRow()+2+i, firstColumn()+22, scoreLine, colors.get(i));
+            fillRow(firstRow()+2+i, firstColumn()+19, String.format("%2d", scores.get(i)));
+        }
+        // arrow current player
+        int indexPrevPlayer = indexCurrentPlayer == 0 ? players.size()-1 : indexCurrentPlayer - 1;
+        drawChar(firstColumn(), firstRow()+2+indexPrevPlayer, ' ', TextColor.ANSI.DEFAULT);
+        drawChar(firstColumn(), firstRow()+2+indexCurrentPlayer, '>', TextColor.ANSI.DEFAULT);
+
+    }
+
     private void drawStructure() {
         fillRow(firstRow(), 1, "SCOREBOARD");
         fillRow(firstRow()+1, DASHED_HORIZONTAL_SEPARATOR);
@@ -99,6 +114,7 @@ public class TableView extends PopupView {
         fillRow(firstRow()+8, DASHED_HORIZONTAL_SEPARATOR);
         fillColumn(firstColumn()+19, 2, "||||-|-|||||");
         fillColumn(firstColumn()+23, 2, "[[[[");
+        fillColumn(lastColumn()-12, 2, "||||");
         fillColumn(lastColumn()-1, 2, "]]]]");
     }
 

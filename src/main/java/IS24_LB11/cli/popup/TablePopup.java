@@ -4,7 +4,6 @@ import IS24_LB11.cli.ViewHub;
 import IS24_LB11.cli.controller.PlayerStateInterface;
 import IS24_LB11.cli.view.TableView;
 import IS24_LB11.cli.Scoreboard;
-import IS24_LB11.game.components.GoalCard;
 import com.googlecode.lanterna.input.KeyStroke;
 
 import java.util.function.Consumer;
@@ -30,6 +29,19 @@ public class TablePopup extends Popup {
             tableView.loadScores(scoreboard.getScores());
             tableView.loadCurrentPlayer(scoreboard.getCurrentPlayerIndex());
             tableView.loadGoals(playerState.getGoals());
+            tableView.drawAll();
+        });
+    }
+
+    @Override
+    public void redrawView() {
+        Scoreboard scoreboard = playerState.getScoreboard();
+        castView(tableView -> {
+            tableView.clear();
+            tableView.loadColors(scoreboard.getColors());
+            tableView.loadPlayers(scoreboard.getPlayers());
+            tableView.loadScores(scoreboard.getScores());
+            tableView.loadCurrentPlayer(scoreboard.getCurrentPlayerIndex());
             tableView.drawAll();
         });
     }

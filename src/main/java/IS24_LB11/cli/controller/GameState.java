@@ -126,7 +126,8 @@ public class GameState extends ClientState implements PlayerStateInterface {
                 popManager.getPopup("table").update();
             }
             case ServerPlayerDisconnectEvent disconnectEvent -> {
-                table.getScoreboard().removePlayerFromScoreboard(disconnectEvent.player());
+                table.getScoreboard().removePlayer(disconnectEvent.player());
+                popManager.getPopup("table").redrawView();
             }
             default -> processResult(Result.Error("received unknown server event"));
         }

@@ -29,6 +29,10 @@ public abstract class Popup<T extends PopupView> {
 
     public abstract void setPlayerState(PlayerStateInterface playerState);
 
+    public void redrawView() {
+        popView.redraw();
+    }
+
     public void resize() {
         popView.resize(viewHub.getScreenSize().withRelative(0,-2));
         if (visible) {

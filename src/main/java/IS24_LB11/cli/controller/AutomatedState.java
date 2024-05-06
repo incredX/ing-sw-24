@@ -95,7 +95,21 @@ public class AutomatedState extends ClientState {
                 PlayableCard handCard = player.getHand().get(rand.nextInt(3));
                 PlacedCard placedCard = new PlacedCard(handCard, spot);
                 boolean fromGoldenDeck = rand.nextFloat() < goldenRate;
-                int selectedCardIndex = rand.nextInt(fromGoldenDeck ? table.getGoldenDeck().size() : table.getNormalDeck().size());
+                int selectedCardIndex;
+
+                if (fromGoldenDeck) {
+                    if (table.getGoldenDeck().isEmpty()) {
+                        fromGoldenDeck = false;
+                        selectedCardIndex = rand.nextInt(table.getNormalDeck().size());
+                    } else
+                        selectedCardIndex = rand.nextInt(table.getGoldenDeck().size());
+                } else {
+                    if (table.getNormalDeck().isEmpty()) {
+                        fromGoldenDeck = true;
+                        selectedCardIndex = rand.nextInt(table.getGoldenDeck().size());
+                    } else
+                        selectedCardIndex = rand.nextInt(table.getNormalDeck().size());
+                }
 
                 if (handCard.asString().startsWith("G")) handCard.flip();
                 player.placeCard(handCard, spot);
@@ -112,6 +126,10 @@ public class AutomatedState extends ClientState {
 
                 if (placementFunction.placementTerminated())
                     setNextState(new GameState(this));
+            }
+            case ServerPlayerDisconnectEvent disconnectEvent -> {
+                table.getScoreboard().removePlayer(disconnectEvent.player());
+                popManager.getPopup("table").redrawView();
             }
             default -> {}
         }

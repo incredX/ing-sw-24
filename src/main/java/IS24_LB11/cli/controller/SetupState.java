@@ -57,7 +57,7 @@ public class SetupState extends ClientState implements PlayerStateInterface {
                 processResult(Result.Error("Invalid server event", "can't accept a new player setup"));
             }
             case ServerPlayerDisconnectEvent disconnectEvent -> {
-                table.getScoreboard().removePlayerFromScoreboard(disconnectEvent.player());
+                table.getScoreboard().removePlayer(disconnectEvent.player());
             }
             default -> processResult(Result.Error("received unknown server event"));
         }
