@@ -27,8 +27,6 @@ import com.googlecode.lanterna.input.KeyStroke;
 import java.io.IOException;
 import java.util.ArrayList;
 
-//NOTE : URGENT PRIORITY
-//TODO : handle disconnection of a player
 //NOTE : HIGH PRIORITY
 //TODO : popup with final ranking
 //TODO : check if keystroke.isAltDown is implemented correctly

@@ -68,7 +68,6 @@ public class Game {
         goldenDeck.shuffle();
         normalDeck.shuffle();
         starterDeck.shuffle();
-        turn = 0;
         for (String name : playerNames)
             setupPlayer(name);
         return GameMessages.SETUP_COMPLETE;
@@ -87,6 +86,7 @@ public class Game {
                         player.getSetup().flipStarterCard();
             player.applySetup();
         }
+        turn = 0;
         return GOAL_PHASE_COMPLETED;
     }
 
