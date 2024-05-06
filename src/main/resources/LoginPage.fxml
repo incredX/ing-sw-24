@@ -9,61 +9,142 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="scenePane" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="IS24_LB11.gui.LoginSceneController">
+<AnchorPane
+        fx:id="scenePane"
+        prefHeight="720.0"
+        prefWidth="1280.0"
+        xmlns="http://javafx.com/javafx/21"
+        xmlns:fx="http://javafx.com/fxml/1"
+        fx:controller="IS24_LB11.gui.LoginSceneController">
    <children>
-      <Label layoutX="960.0" layoutY="128.0" prefHeight="38.0" prefWidth="243.0" text="Username">
+      <Label
+              layoutX="960.0"
+              layoutY="128.0"
+              prefHeight="38.0"
+              prefWidth="243.0"
+              text="Username">
          <font>
-            <Font size="20.0" />
+            <Font
+                    size="20.0" />
          </font>
       </Label>
-      <TextField fx:id="usernameTextField" layoutX="960.0" layoutY="160.0" prefHeight="37.0" prefWidth="260.0" promptText="Username">
+      <TextField
+              fx:id="usernameTextField"
+              layoutX="960.0" layoutY="160.0"
+              prefHeight="37.0"
+              prefWidth="260.0"
+              promptText="Username">
          <font>
-            <Font size="18.0" />
+            <Font
+                    size="18.0" />
          </font>
       </TextField>
-      <Button fx:id="loginButton" layoutX="988.0" layoutY="399.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="200.0" style="-fx-blend-mode: 11111;" text="Login">
+      <Button
+              fx:id="loginButton"
+              onAction="#login"
+              layoutX="988.0"
+              layoutY="399.0"
+              mnemonicParsing="false"
+              prefHeight="50.0"
+              prefWidth="200.0"
+              style="-fx-blend-mode: 11111;"
+              text="Login">
          <cursor>
-            <Cursor fx:constant="DEFAULT" />
+            <Cursor
+                    fx:constant="DEFAULT" />
          </cursor>
          <font>
-            <Font size="20.0" />
+            <Font
+                    size="20.0" />
          </font>
       </Button>
-      <Button fx:id="exitButton" layoutX="988.0" layoutY="479.0" mnemonicParsing="false" onAction="#exit" prefHeight="50.0" prefWidth="200.0" style="-fx-blend-mode: 11111;" text="Exit">
+      <Button
+              fx:id="exitButton"
+              layoutX="988.0"
+              layoutY="479.0"
+              mnemonicParsing="false"
+              onAction="#exit"
+              prefHeight="50.0"
+              prefWidth="200.0"
+              style="-fx-blend-mode: 11111;"
+              text="Exit">
          <cursor>
-            <Cursor fx:constant="DEFAULT" />
+            <Cursor
+                    fx:constant="DEFAULT" />
          </cursor>
          <font>
-            <Font size="20.0" />
+            <Font
+                    size="20.0" />
          </font>
       </Button>
-      <ImageView fx:id="codexLoginImageView" fitHeight="950.0" fitWidth="945.0" layoutX="-10.0" pickOnBounds="true" preserveRatio="true">
-         <Image url="@graphicResources/codexLogin.jpg" />
+      <ImageView
+              fx:id="codexLoginImageView"
+              fitHeight="950.0"
+              fitWidth="945.0"
+              layoutX="-10.0"
+              pickOnBounds="true"
+              preserveRatio="true">
+         <Image
+                 url="@graphicResources/codexLogin.jpg" />
       </ImageView>
 
-      <Label contentDisplay="CENTER" layoutX="940.0" layoutY="1.0" prefHeight="75.0" prefWidth="222.0" text="Login">
+      <Label
+              contentDisplay="CENTER"
+              layoutX="940.0"
+              layoutY="1.0"
+              prefHeight="75.0"
+              prefWidth="222.0"
+              text="Login">
          <font>
-            <Font name="SansSerif Bold" size="40.0" />
+            <Font
+                    name="SansSerif Bold"
+                    size="40.0" />
          </font>
       </Label>
-      <TextField layoutX="960.0" layoutY="230.0" prefHeight="37.0" prefWidth="260.0" promptText="IP">
+      <TextField
+              fx:id="ipTextField"
+              layoutX="960.0"
+              layoutY="230.0"
+              prefHeight="37.0"
+              prefWidth="260.0"
+              promptText="IP">
          <font>
-            <Font size="18.0" />
+            <Font
+                    size="18.0" />
          </font>
       </TextField>
-      <TextField layoutX="960.0" layoutY="300.0" prefHeight="37.0" prefWidth="260.0" promptText="Port">
+      <TextField
+              fx:id="portTextField"
+              layoutX="960.0"
+              layoutY="300.0"
+              prefHeight="37.0"
+              prefWidth="260.0"
+              promptText="Port">
          <font>
-            <Font size="18.0" />
+            <Font
+                    size="18.0" />
          </font>
       </TextField>
-      <Label layoutX="960.0" layoutY="198.0" prefHeight="38.0" prefWidth="243.0" text="IP">
+      <Label
+              layoutX="960.0"
+              layoutY="198.0"
+              prefHeight="38.0"
+              prefWidth="243.0"
+              text="IP">
          <font>
-            <Font size="20.0" />
+            <Font
+                    size="20.0" />
          </font>
       </Label>
-      <Label layoutX="960.0" layoutY="268.0" prefHeight="38.0" prefWidth="243.0" text="Port">
+      <Label
+              layoutX="960.0"
+              layoutY="268.0"
+              prefHeight="38.0"
+              prefWidth="243.0"
+              text="Port">
          <font>
-            <Font size="20.0" />
+            <Font
+                    size="20.0" />
          </font>
       </Label>
    </children>
