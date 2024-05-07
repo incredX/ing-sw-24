@@ -64,6 +64,8 @@ public class SetupGUIState extends ClientGUIState {
     }
 
     public void execute() {
+        System.out.println(choosenGoalIndex);
+        System.out.println(starterCard.asString());
         inputHandlerGUI.sendReady(privateGoals.get(choosenGoalIndex),starterCard);
     }
 }

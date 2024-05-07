@@ -93,7 +93,7 @@ public class SetupSceneController {
 
     private void flipStarterCard(){
         state.flipStarterCard();
-        //System.out.println("Flipped Starter Card: " + state.getStarterCard().asString());
+        System.out.println("Flipped Starter Card: " + state.getStarterCard().asString());
         // TODO: flip card image
     }
 

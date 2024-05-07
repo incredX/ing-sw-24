@@ -33,7 +33,7 @@
               fx:id="goalCard1"
               fitHeight="400.0"
               fitWidth="400.0"
-              layoutX="800.0"
+              layoutX="200.0"
               layoutY="300.0">
          <Image
                  url="@graphicResources/codexCards/croppedCards/croppedFront/goalFront/symbols/O2MM_.jpg" />
@@ -43,7 +43,7 @@
               fx:id="goalCard2"
               fitHeight="400.0"
               fitWidth="400.0"
-              layoutX="200.0"
+              layoutX="800.0"
               layoutY="300.0">
          <Image
                  url="@graphicResources/codexCards/croppedCards/croppedFront/goalFront/pattern/O2AAAD1.jpg" />
