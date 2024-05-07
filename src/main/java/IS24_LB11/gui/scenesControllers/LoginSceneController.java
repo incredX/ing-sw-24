@@ -1,6 +1,7 @@
 package IS24_LB11.gui.scenesControllers;
 
 
+import IS24_LB11.gui.PopUps;
 import IS24_LB11.gui.phases.ClientGUIState;
 import IS24_LB11.gui.phases.LoginGUIState;
 import javafx.fxml.FXML;
@@ -91,5 +92,20 @@ public class LoginSceneController {
         int port = Integer.valueOf(portTextField.getText());
         state.initialize(username,serverIP,port);
         state.execute();
+        state.getServerHandler().setLoginSceneController(this);
+    }
+
+    public void setPlayers(){
+        PopUps popUps = new PopUps();
+        state.setMaxPlayers(popUps.maxPlayersAlert());
+    }
+
+    public void showPopUpNotification(String message){
+        PopUps popUps = new PopUps();
+        popUps.popUpMaker(message);
+    }
+
+    public void disableLogin(){
+        loginButton.setDisable(true);
     }
 }

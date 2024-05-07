@@ -23,4 +23,13 @@ public class InputHandlerGUI {
         writer.println(message.toString());
         writer.flush();
     }
+
+    public void sendMaxPlayers(int numOfPlayers) {
+        JsonObject message = new JsonObject();
+        message.addProperty("type","numOfPlayers");
+        message.addProperty("numOfPlayers",numOfPlayers);
+
+        writer.println(message.toString());
+        writer.flush();
+    }
 }

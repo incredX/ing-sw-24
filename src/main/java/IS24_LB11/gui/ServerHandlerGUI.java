@@ -1,8 +1,11 @@
 package IS24_LB11.gui;
 
 import IS24_LB11.gui.phases.ClientGUIState;
+import IS24_LB11.gui.scenesControllers.LoginSceneController;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonStreamParser;
+import javafx.application.Platform;
+import javafx.scene.control.Alert;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -15,11 +18,14 @@ public class ServerHandlerGUI implements Runnable{
     private PrintWriter writer;
     private ClientGUIState actualState;
 
+    private LoginSceneController loginSceneController;
+
     public ServerHandlerGUI(ClientGUIState clientGUIState, String serverIP, int serverPORT) throws IOException {
         socket = new Socket(serverIP, serverPORT);
         this.actualState = clientGUIState;
         parser = new JsonStreamParser(new InputStreamReader(socket.getInputStream()));
         writer = new PrintWriter(socket.getOutputStream());
+        loginSceneController=null;
     }
 
     public void run() {
@@ -74,8 +80,21 @@ public class ServerHandlerGUI implements Runnable{
         }
     }
     private void handleNotificationEvent(JsonObject serverEvent){
+
+        // TODO: write better code
         if (serverEvent.has("message")){
-            // display message on GUI
+            if(serverEvent.get("message").getAsString().equals("Welcome " + actualState.getUsername() + "!")){
+                Platform.runLater(()-> loginSceneController.disableLogin());
+            }
+            if (serverEvent.get("message").getAsString().equals("Welcome, please log in"))
+                return;
+            if (serverEvent.get("message").getAsString().equals("Please set max number of players")){
+                Platform.runLater(() -> loginSceneController.setPlayers());
+            }
+            else{
+                Platform.runLater(() -> loginSceneController.showPopUpNotification(serverEvent.get("message").getAsString()));
+            }
+
         }
     }
     private void heartBeatEvent(JsonObject serverEvent){
@@ -103,5 +122,9 @@ public class ServerHandlerGUI implements Runnable{
 
     public PrintWriter getWriter() {
         return writer;
+    }
+
+    public void setLoginSceneController(LoginSceneController loginSceneController) {
+        this.loginSceneController = loginSceneController;
     }
 }

@@ -2,6 +2,7 @@ package IS24_LB11.gui.phases;
 
 import IS24_LB11.gui.InputHandlerGUI;
 import IS24_LB11.gui.ServerHandlerGUI;
+import IS24_LB11.gui.scenesControllers.LoginSceneController;
 
 import java.io.IOException;
 
@@ -10,10 +11,12 @@ public class LoginGUIState extends ClientGUIState implements PlayerStateInterfac
     String serverIp;
     int serverPort;
 
+    LoginSceneController loginSceneController;
     public LoginGUIState(){
         this.serverHandler = null;
         this.inputHandlerGUI = null;
         this.username = null;
+        this.loginSceneController=null;
     }
 
     public void initialize(String username, String serverIp, int serverPort) {
@@ -38,5 +41,13 @@ public class LoginGUIState extends ClientGUIState implements PlayerStateInterfac
             }
         }
         inputHandlerGUI.sendLogin(desiredUsername);
+    }
+
+    public void setLoginSceneController(LoginSceneController loginSceneController) {
+        this.loginSceneController = loginSceneController;
+    }
+
+    public void setMaxPlayers(int numOfPlayers) {
+        inputHandlerGUI.sendMaxPlayers(numOfPlayers);
     }
 }

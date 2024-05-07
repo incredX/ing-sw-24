@@ -1,12 +1,11 @@
 package IS24_LB11.gui;
 
-import javafx.event.ActionEvent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 
 public class PopUps {
 
-    public void maxPlayersAlert(ActionEvent event) {
+    public int maxPlayersAlert() {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Max Number Of Players");
         alert.setHeaderText("Please select the max number of players: ");
@@ -22,10 +21,10 @@ public class PopUps {
 
         //needed to show the alert and wait the button pressing
         ButtonType result = alert.showAndWait().orElse(null);
-
+        int selectedNumber = 0;
         if (result != null) {
             //this will take the input pressed and parse that into int
-            int selectedNumber = Integer.parseInt(result.getText());
+            selectedNumber = Integer.parseInt(result.getText());
 
             //send to server the selected number
             System.out.println("You selected: " + selectedNumber + " players.");
@@ -35,6 +34,7 @@ public class PopUps {
             //      ||
             // randomButton.setDisable(true);
         }
+        return selectedNumber;
     }
 
     //da implementare nel controller perchè altrimenti non riconosce l'azione
@@ -56,7 +56,6 @@ public class PopUps {
         //insert the received message into the alert field
         alert.setContentText(message);
         alert.show();
-
     }
 
 }

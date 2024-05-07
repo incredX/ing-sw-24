@@ -18,6 +18,7 @@ public class ClientGUI extends Application {
         this.state = new LoginGUIState();
 
         LoginSceneController loginSceneController = new LoginSceneController(this.state);
+
         loginSceneController.showStage();
 
     }
