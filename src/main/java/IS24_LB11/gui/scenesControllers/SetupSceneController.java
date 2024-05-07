@@ -1,6 +1,6 @@
 package IS24_LB11.gui.scenesControllers;
 
-import IS24_LB11.gui.PathGenerator;
+import IS24_LB11.gui.ImageLoader;
 import IS24_LB11.gui.phases.ClientGUIState;
 import IS24_LB11.gui.phases.SetupGUIState;
 import javafx.fxml.FXML;
@@ -10,7 +10,6 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.effect.ColorAdjust;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 
@@ -30,7 +29,6 @@ public class SetupSceneController {
 
     Stage stage = new Stage();
     SetupGUIState state;
-    PathGenerator pathGenerator = new PathGenerator();
 
     public SetupSceneController(ClientGUIState state){
         this.state=(SetupGUIState) state;
@@ -62,9 +60,9 @@ public class SetupSceneController {
         System.out.println("Setup initialized");
     }
     public void showStage() {
-        goalCard1.setImage(pathGenerator.getCardPath(state.getPrivateGoals().get(0).asString()));
-        goalCard2.setImage(pathGenerator.getCardPath(state.getPrivateGoals().get(1).asString()));
-        starterCard.setImage(pathGenerator.getCardPath(state.getStarterCard().asString()));
+        goalCard1.setImage(ImageLoader.getImage(state.getPrivateGoals().get(0).asString()));
+        goalCard2.setImage(ImageLoader.getImage(state.getPrivateGoals().get(1).asString()));
+        starterCard.setImage(ImageLoader.getImage(state.getStarterCard().asString()));
         this.stage.show();
     }
 
@@ -100,7 +98,7 @@ public class SetupSceneController {
     private void flipStarterCard(){
         state.flipStarterCard();
         System.out.println("Flipped Starter Card: " + state.getStarterCard().asString());
-        starterCard.setImage(pathGenerator.getCardPath(state.getStarterCard().asString()));
+        starterCard.setImage(ImageLoader.getImage(state.getStarterCard().asString()));
     }
 
     public SetupGUIState getState() {

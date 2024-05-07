@@ -53,6 +53,8 @@ public class LoginSceneController {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/LoginPage.fxml"));
         loader.setController(this);
 
+
+
         this.stage.setTitle("Codex");
         try {
             this.stage.setScene(new Scene(loader.load()));
@@ -71,6 +73,10 @@ public class LoginSceneController {
     private void initialize(){
         loginButton.setOnAction(event -> login());
         exitButton.setOnAction(event -> exit(stage));
+
+        // set default values
+        ipTextField.setText("localhost");
+        portTextField.setText("54321");
     }
 
     public void changeToSetupState(PlayerSetup playerSetup,
