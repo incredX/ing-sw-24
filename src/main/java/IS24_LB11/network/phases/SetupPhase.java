@@ -56,7 +56,7 @@ public class SetupPhase {
                 }
 
                 clHandler.sendMessage(obj.toString());
-
+                System.out.println(obj.toString());
             } catch (JsonException e) {
                 throw new RuntimeException(e);
             }

@@ -20,7 +20,6 @@ public class LoginGUIState extends ClientGUIState implements PlayerStateInterfac
     }
 
     public void initialize(String username, String serverIp, int serverPort) {
-
         this.desiredUsername = username;
         this.serverIp = serverIp;
         this.serverPort = serverPort;
@@ -33,7 +32,8 @@ public class LoginGUIState extends ClientGUIState implements PlayerStateInterfac
             try {
                 this.serverHandler=new ServerHandlerGUI(this,serverIp,serverPort);
 
-                new Thread(serverHandler).start();
+                activeThread = new Thread(serverHandler);
+                activeThread.start();
 
                 this.inputHandlerGUI=new InputHandlerGUI(serverHandler.getWriter());
             } catch (IOException e) {
@@ -50,4 +50,5 @@ public class LoginGUIState extends ClientGUIState implements PlayerStateInterfac
     public void setMaxPlayers(int numOfPlayers) {
         inputHandlerGUI.sendMaxPlayers(numOfPlayers);
     }
+
 }

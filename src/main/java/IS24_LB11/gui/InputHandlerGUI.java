@@ -1,5 +1,7 @@
 package IS24_LB11.gui;
 
+import IS24_LB11.game.components.GoalCard;
+import IS24_LB11.game.components.StarterCard;
 import com.google.gson.JsonObject;
 
 import java.io.IOException;
@@ -32,4 +34,16 @@ public class InputHandlerGUI {
         writer.println(message.toString());
         writer.flush();
     }
+
+    public void sendReady(GoalCard personalGoal, StarterCard starterCard) {
+        JsonObject message = new JsonObject();
+        message.addProperty("type","setup");
+        message.addProperty("starterCard",starterCard.asString());
+        message.addProperty("goalCard",personalGoal.asString());
+
+        writer.println(message.toString());
+        writer.flush();
+    }
+
+
 }

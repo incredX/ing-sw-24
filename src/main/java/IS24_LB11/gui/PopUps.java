@@ -28,11 +28,6 @@ public class PopUps {
 
             //send to server the selected number
             System.out.println("You selected: " + selectedNumber + " players.");
-
-            //da implementare nel controller perchè altrimenti non riconosce il bottone
-            //      /\
-            //      ||
-            // randomButton.setDisable(true);
         }
         return selectedNumber;
     }
