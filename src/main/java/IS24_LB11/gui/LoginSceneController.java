@@ -22,13 +22,19 @@ public class LoginSceneController {
     private ImageView codexLoginImageView;
 
     @FXML
-    public Button loginButton;
+    private Button loginButton;
 
     @FXML
     private Button exitButton;
 
     @FXML
-    private TextField usernameTestField;
+    private TextField usernameTextField;
+
+    @FXML
+    private TextField ipTextField;
+
+    @FXML
+    private TextField portTextField;
 
     Stage stage;
 
@@ -44,4 +50,13 @@ public class LoginSceneController {
             stage.close();
         }
     }
+
+    public void login(ActionEvent event){
+        String username = usernameTextField.getText();
+        String serverIP = ipTextField.getText();
+        String port = portTextField.getText();
+        System.out.println(username + serverIP + port);
+    }
+
+    //createNotificationPopUp
 }
