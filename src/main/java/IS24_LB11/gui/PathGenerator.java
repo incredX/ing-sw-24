@@ -1,11 +1,24 @@
 package IS24_LB11.gui;
 
 import IS24_LB11.game.utils.SyntaxException;
+import javafx.scene.image.Image;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 
 public class PathGenerator {
-    public String pathGeneratorString(String cardId) throws SyntaxException {
+    public Image getCardPath(String cardId) {
 
-        String path = "@graphicResources/codexCards/croppedCards/" ;
+        try {
+            return new Image(pathGeneratorString(cardId), true);
+        } catch (SyntaxException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private String pathGeneratorString(String cardId) throws SyntaxException {
+
+        String path = "@graphicResources/codexCards/croppedCards/";
 
         if (cardId.length() >= 8 && cardId.charAt(6) == 'F') {
             switch (cardId.charAt(0)) {
@@ -35,7 +48,7 @@ public class PathGenerator {
         } else {
             path = path + "croppedFront/goalFront/" + cardId + ".jpg";
         }
-
+        System.out.println(path);
         return path;
     }
 }

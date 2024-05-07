@@ -55,6 +55,10 @@ public class SetupGUIState extends ClientGUIState {
         return choosenGoalIndex;
     }
 
+    public ArrayList<GoalCard> getPrivateGoals() {
+        return privateGoals;
+    }
+
     public StarterCard getStarterCard() {
         return starterCard;
     }

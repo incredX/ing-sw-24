@@ -1,5 +1,6 @@
 package IS24_LB11.gui.scenesControllers;
 
+import IS24_LB11.gui.PathGenerator;
 import IS24_LB11.gui.phases.ClientGUIState;
 import IS24_LB11.gui.phases.SetupGUIState;
 import javafx.fxml.FXML;
@@ -9,6 +10,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.effect.ColorAdjust;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 
@@ -28,6 +30,8 @@ public class SetupSceneController {
 
     Stage stage = new Stage();
     SetupGUIState state;
+    PathGenerator pathGenerator = new PathGenerator();
+
     public SetupSceneController(ClientGUIState state){
         this.state=(SetupGUIState) state;
         //change page
@@ -52,13 +56,15 @@ public class SetupSceneController {
         readyButton.setOnAction(event->ready());
         goalCard1.setOnMouseClicked(mouseEvent -> chooseGoal(0));
         goalCard2.setOnMouseClicked(mouseEvent -> chooseGoal(1));
-        chooseGoal(0);
-        // TODO: load goal cards images
         starterCard.setOnMouseClicked(mouseEvent -> flipStarterCard());
+        chooseGoal(0);
         state.getServerHandler().setSetupSceneController(this);
         System.out.println("Setup initialized");
     }
     public void showStage() {
+        goalCard1.setImage(pathGenerator.getCardPath(state.getPrivateGoals().get(0).asString()));
+        goalCard2.setImage(pathGenerator.getCardPath(state.getPrivateGoals().get(1).asString()));
+        starterCard.setImage(pathGenerator.getCardPath(state.getStarterCard().asString()));
         this.stage.show();
     }
 
@@ -94,7 +100,7 @@ public class SetupSceneController {
     private void flipStarterCard(){
         state.flipStarterCard();
         System.out.println("Flipped Starter Card: " + state.getStarterCard().asString());
-        // TODO: flip card image
+        starterCard.setImage(pathGenerator.getCardPath(state.getStarterCard().asString()));
     }
 
     public SetupGUIState getState() {
