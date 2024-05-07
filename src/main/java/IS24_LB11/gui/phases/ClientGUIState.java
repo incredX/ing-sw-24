@@ -1,11 +1,7 @@
 package IS24_LB11.gui.phases;
 
-import IS24_LB11.cli.controller.ClientState;
-import IS24_LB11.cli.listeners.ServerHandler;
 import IS24_LB11.gui.InputHandlerGUI;
 import IS24_LB11.gui.ServerHandlerGUI;
-
-import java.io.IOException;
 
 public abstract class ClientGUIState {
     private ClientGUIState actualState;

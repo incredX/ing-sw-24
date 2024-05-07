@@ -3,10 +3,7 @@ package IS24_LB11.gui.scenesControllers;
 
 import IS24_LB11.gui.phases.ClientGUIState;
 import IS24_LB11.gui.phases.LoginGUIState;
-import IS24_LB11.gui.phases.PlayerStateInterface;
 import javafx.fxml.FXML;
-
-
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
