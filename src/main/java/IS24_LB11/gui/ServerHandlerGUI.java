@@ -1,6 +1,5 @@
 package IS24_LB11.gui;
 
-import IS24_LB11.cli.Debugger;
 import IS24_LB11.gui.phases.ClientGUIState;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonStreamParser;
@@ -26,39 +25,47 @@ public class ServerHandlerGUI implements Runnable{
     public void run() {
         while (true) {
             if (socket.isClosed()) break;
-
-            if (parser.hasNext()){
-                processEvent(parser.next().getAsJsonObject());
+            try {
+                synchronized (parser) {
+                    parser.wait(10);
+                }
+                if (parser.hasNext()) {
+                    processEvent(parser.next().getAsJsonObject());
+                }
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
             }
         }
         if (!socket.isClosed()) {
             try { socket.close(); }
-            catch (IOException e) { Debugger.print(e); }
+            catch (IOException e) { }
         }
     }
 
     private void processEvent(JsonObject serverEvent) {
+        if (serverEvent.has("type")) {
+            switch (serverEvent.get("type").getAsString().toLowerCase()){
+                case "setusername":
+                    handleLoginEvent(serverEvent);
+                    return;
+                case "notification":
+                    handleNotificationEvent(serverEvent);
+                    return;
+                case "heartbeat":
+                    heartBeatEvent(serverEvent);
+                    return;
+                case "setup":
+                    handleSetupEvent(serverEvent);
+                    return;
+                case "disconnected":
+                    return;
+                case "turn":
+                    return;
 
-        switch (serverEvent.get("type").getAsString().toLowerCase()){
-            case "setusername":
-                handleLoginEvent(serverEvent);
-                return;
-            case "notification":
-                handleNotificationEvent(serverEvent);
-                return;
-            case "heartbeat":
-                heartBeatEvent(serverEvent);
-                return;
-            case "setup":
-                handleSetupEvent(serverEvent);
-                return;
-            case "disconnected":
-                return;
-            case "turn":
-                return;
-
-            default: throw new IllegalStateException("Unexpected value: " + serverEvent.get("type"));
+                default: throw new IllegalStateException("Unexpected value: " + serverEvent.get("type"));
+            }
         }
+
     }
 
     private void handleLoginEvent(JsonObject serverEvent){

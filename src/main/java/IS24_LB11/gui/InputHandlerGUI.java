@@ -18,8 +18,10 @@ public class InputHandlerGUI {
 
     public void sendLogin(String username){
         JsonObject message = new JsonObject();
-        message.addProperty("type", "setUsername");
+
+        message.addProperty("type", "login");
         message.addProperty("username", username);
+
         writer.println(message.toString());
         writer.flush();
     }

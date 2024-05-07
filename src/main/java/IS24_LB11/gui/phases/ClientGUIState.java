@@ -26,4 +26,7 @@ public abstract class ClientGUIState {
         this.username = username;
     }
 
+    public ServerHandlerGUI getServerHandler() {
+        return serverHandler;
+    }
 }

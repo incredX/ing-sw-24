@@ -85,6 +85,7 @@ public class LoginSceneController {
             System.out.println("You successfully logged out!");
             stage.close();
         }
+        state.getServerHandler().shutdown();
     }
 
     public void login(){
