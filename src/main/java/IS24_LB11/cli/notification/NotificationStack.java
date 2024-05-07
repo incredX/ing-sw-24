@@ -79,6 +79,12 @@ public class NotificationStack implements KeyConsumer {
         }
     }
 
+    public void removeAllNotifications() {
+        for (Priority p: Priority.values())
+            notifications.get(p).clear();
+        viewHub.removeNotification();
+    }
+
     private boolean isEmpty() {
         return notifications.values().stream().allMatch(ArrayList::isEmpty);
     }

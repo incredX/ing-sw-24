@@ -29,7 +29,6 @@ import java.util.ArrayList;
 
 //NOTE : URGENT PRIORITY
 //NOTE : HIGH PRIORITY
-//TODO : popup with final ranking
 //TODO : synchronize stage.buildAreas
 //TODO : close everything if the input listener is closed
 //NOTE : MEDIUM PRIORITY
@@ -115,6 +114,7 @@ public class GameState extends ClientState implements PlayerStateInterface {
                 if (newTurnEvent.player().isEmpty()) {
                     //set table popup as final
                     popManager.showPopup("table");
+                    popManager.getPopup("table").enable();
                 }
                 if (newTurnEvent.player().equals(username)) {
                     cardPlaced = false;
@@ -160,6 +160,7 @@ public class GameState extends ClientState implements PlayerStateInterface {
                 gameStage.centerBoard();
                 gameStage.updateBoard();
             }
+            case "LOGOUT" -> logout();
             case "HAND", "DECKS", "TABLE" -> popManager.showPopup(tokens[0]);
             default -> {
                 notificationStack.addUrgent("ERROR", INVALID_CMD.apply(tokens[0], "game"));
@@ -235,7 +236,10 @@ public class GameState extends ClientState implements PlayerStateInterface {
     }
 
     public void logout() {
+        Debugger.print("loggin out");
         sendToServer("quit");
+        popManager.hideAllPopups();
+        notificationStack.removeAllNotifications();
         serverHandler.shutdown();
         setNextState(new LobbyState(viewHub));
     }
