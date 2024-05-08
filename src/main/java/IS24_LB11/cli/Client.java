@@ -14,6 +14,7 @@ import IS24_LB11.game.utils.SyntaxException;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,13 +34,13 @@ public class Client {
         ResizeListener resizeListener;
         HashMap<String, Thread> threadMap = new HashMap<>();
 
-//        try {
-//            Debugger.startDebugger(Debugger.DIR_NAME);
-//        } catch (FileNotFoundException e) {
-//            e.printStackTrace();
-//            return;
-//        }
-        //Debugger.print("booting client...");
+        try {
+            Debugger.startDebugger(Debugger.DIR_NAME);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return;
+        }
+        Debugger.print("booting client...");
         //Debugger.closeDebugger();
 
         try {

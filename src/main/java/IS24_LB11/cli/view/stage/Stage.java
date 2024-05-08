@@ -45,31 +45,44 @@ public class Stage extends TerminalBox implements LayerInterface {
     public void buildStage() { buildArea(rectangle); }
 
     public void buildArea(TerminalRectangle area) {
-        builtAreas.add(area);
+        synchronized (builtAreas) {
+            builtAreas.add(area);
+        }
     }
 
     public void buildRelativeArea(TerminalRectangle area) {
-        builtAreas.add(area.withRelative(getPosition()));
+        synchronized (builtAreas) {
+            builtAreas.add(area.withRelative(getPosition()));
+        }
     }
 
     public void buildRelativeArea(TerminalSize size, TerminalPosition position) {
-        builtAreas.add(new TerminalRectangle(size, position.withRelative(getPosition())));
+        synchronized (builtAreas) {
+            builtAreas.add(new TerminalRectangle(size, position.withRelative(getPosition())));
+        }
     }
 
     public void buildRelativeArea(TerminalSize size, int col, int row) {
-        builtAreas.add(new TerminalRectangle(size, new TerminalPosition(col, row).withRelative(getPosition())));
+        synchronized (builtAreas) {
+            builtAreas.add(new TerminalRectangle(size, new TerminalPosition(col, row).withRelative(getPosition())));
+        }
     }
 
     public void buildRelativeArea(int width, int height, int col, int row) {
-        builtAreas.add(new TerminalRectangle(new TerminalSize(width, height), new TerminalPosition(col, row).withRelative(getPosition())));
+        synchronized (builtAreas) {
+            builtAreas.add(new TerminalRectangle(new TerminalSize(width, height), new TerminalPosition(col, row).withRelative(getPosition())));
+        }
     }
 
     @Override
     public void print(Screen screen) {
         TextGraphics graphics = screen.newTextGraphics();
-        while (!builtAreas.isEmpty()) {
-            TerminalRectangle area = builtAreas.removeLast();
-            graphics.drawImage(area.getPosition(), image, area.getPosition(), area.getSize());
+        synchronized (builtAreas) {
+            while (!builtAreas.isEmpty()) {
+                TerminalRectangle area = builtAreas.pollLast();
+                if (area == null) continue;
+                graphics.drawImage(area.getPosition(), image, area.getPosition(), area.getSize());
+            }
         }
     }
 

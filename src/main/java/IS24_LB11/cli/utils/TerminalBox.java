@@ -104,6 +104,10 @@ public class TerminalBox {
         image.setCharacterAt(position, character);
     }
 
+    protected void drawChar(int col, int row, TextCharacter character) {
+        image.setCharacterAt(new TerminalPosition(col, row), character);
+    }
+
     protected void drawChar(TerminalPosition position, char c) {
         image.setCharacterAt(position, textChar(c));
     }

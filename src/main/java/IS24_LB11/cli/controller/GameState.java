@@ -6,6 +6,7 @@ import IS24_LB11.cli.Table;
 import IS24_LB11.cli.event.server.ServerNewTurnEvent;
 import IS24_LB11.cli.event.server.ServerPlayerDisconnectEvent;
 import IS24_LB11.cli.notification.NotificationStack;
+import IS24_LB11.cli.notification.Priority;
 import IS24_LB11.cli.popup.*;
 import IS24_LB11.cli.view.stage.GameStage;
 import IS24_LB11.cli.event.server.ServerEvent;
@@ -16,6 +17,7 @@ import IS24_LB11.game.components.GoalCard;
 import IS24_LB11.game.components.GoldenCard;
 import IS24_LB11.game.components.NormalCard;
 import IS24_LB11.game.components.PlayableCard;
+import IS24_LB11.game.symbol.Symbol;
 import IS24_LB11.game.tools.JsonConverter;
 import IS24_LB11.game.tools.JsonException;
 import IS24_LB11.game.utils.Position;
@@ -26,21 +28,16 @@ import com.googlecode.lanterna.input.KeyStroke;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import static IS24_LB11.cli.notification.Priority.MEDIUM;
 
 //NOTE : URGENT PRIORITY
 //NOTE : HIGH PRIORITY
-//TODO : synchronize stage.buildAreas
 //TODO : close everything if the input listener is closed
 //NOTE : MEDIUM PRIORITY
 //TODO : send message "your last turn" and remove some notifications
-//TODO : help popup
-//TODO : chatBox (new popup)
 //NOTE : LOW PRIORITY
-//TODO : add letter (like "h" for hand) that shows a popup with symbols counter
-//TODO : error popup
-//TODO : organize popups with a priorityQueue
 //TODO : sowly remove resize from viewhub and assign to notification their views to resize
 //TODO : refactor viewhub as a cliBox's queue consumer. (maybe?)
 //TODO : add boolean edited in cliBox (on in drawAll & set to off in print)
@@ -63,6 +60,7 @@ public class GameState extends ClientState implements PlayerStateInterface {
         this.boardPointer = new Position(0, 0);
         this.placedCard = null;
         popManager.forEachPopup(popup -> popup.setPlayerState(this));
+        popManager.addPopup(new SymbolsPopup(getViewHub(), this));
     }
 
     public GameState(AutomatedState automatedState) {
@@ -72,9 +70,12 @@ public class GameState extends ClientState implements PlayerStateInterface {
         this.boardPointer = new Position(0, 0);
         this.placedCard = null;
         this.popManager.addPopup(
+                new HelpPoup(getViewHub(), this),
                 new TablePopup(getViewHub(), this),
                 new HandPopup(getViewHub(), this),
-                new DecksPopup(getViewHub(), this));
+                new DecksPopup(getViewHub(), this),
+                new SymbolsPopup(getViewHub(), this)
+                );
     }
 
     public GameState(ViewHub viewHub, NotificationStack stack, PlayerSetup setup, Table table) throws IOException {
@@ -201,6 +202,7 @@ public class GameState extends ClientState implements PlayerStateInterface {
         } catch (JsonException e) {
             Debugger.print(e);
         }
+        notificationStack.removeNotifications(Priority.LOW);
     }
 
     public void placeCardFromHand() {
@@ -219,6 +221,7 @@ public class GameState extends ClientState implements PlayerStateInterface {
             cardPlaced = true;
             updateBoardPointerImage();
             gameStage.updateBoard();
+            popManager.getPopup("symbols").update();
         }
         else notificationStack.addUrgent("WARNING", "cannot place card");
     }
@@ -267,6 +270,8 @@ public class GameState extends ClientState implements PlayerStateInterface {
     public ArrayList<PlacedCard> getPlacedCardsInBoard() {
         return player.getBoard().getPlacedCards();
     }
+
+    public HashMap<Symbol, Integer> getSymbolsCounter() { return player.getBoard().getSymbolCounter(); }
 
     public ArrayList<PlayableCard> getPlayerHand() {
         return player.getHand();

@@ -3,7 +3,7 @@ package IS24_LB11.cli.popup;
 import IS24_LB11.cli.ViewHub;
 import IS24_LB11.cli.controller.ClientState;
 import IS24_LB11.cli.controller.PlayerStateInterface;
-import IS24_LB11.cli.view.HelpView;
+import IS24_LB11.cli.view.popup.HelpView;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
 import com.googlecode.lanterna.input.KeyStroke;
@@ -69,10 +69,11 @@ public class HelpPoup extends Popup {
         switch (keyStroke.getKeyType()) {
             case ArrowUp -> firstLine -= firstLine > 0 ? 1 : 0;
             case ArrowDown -> firstLine += firstLine < numLines - HelpView.DEFAULT_HEIGHT ? 1 : 0;
+            case ArrowLeft, ArrowRight -> {}
             default -> { return; }
         }
         update();
-        state.keyConsumed();
+        state.consumeKey();
     }
 
     public void setPlayerState(PlayerStateInterface playerState) {

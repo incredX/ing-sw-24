@@ -4,7 +4,7 @@ import IS24_LB11.cli.ViewHub;
 import IS24_LB11.cli.controller.GameState;
 import IS24_LB11.cli.controller.PlayerStateInterface;
 import IS24_LB11.cli.utils.Side;
-import IS24_LB11.cli.view.DecksView;
+import IS24_LB11.cli.view.popup.DecksView;
 import IS24_LB11.game.components.PlayableCard;
 import com.googlecode.lanterna.input.KeyStroke;
 
@@ -112,7 +112,7 @@ public class DecksPopup extends Popup {
             default -> { return; }
         }
         castView(DecksView::drawAll);
-        gameState.keyConsumed();
+        gameState.consumeKey();
     }
 
     private void shiftPointer(Side side) {

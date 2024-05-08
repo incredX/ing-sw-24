@@ -294,7 +294,7 @@ public abstract class ClientState {
         popManager.hideAllPopups();
     }
 
-    public void keyConsumed() {
+    public void consumeKey() {
         keyConsumed = true;
     }
 

@@ -2,7 +2,7 @@ package IS24_LB11.cli.popup;
 
 import IS24_LB11.cli.ViewHub;
 import IS24_LB11.cli.controller.PlayerStateInterface;
-import IS24_LB11.cli.view.TableView;
+import IS24_LB11.cli.view.popup.TableView;
 import com.googlecode.lanterna.input.KeyStroke;
 
 import java.util.function.Consumer;
@@ -14,6 +14,7 @@ public class TablePopup extends Popup {
         super(viewHub, new TableView(viewHub.getScreenSize()));
         this.playerState = playerState;
         this.overlap = true;
+        this.readOnly = true;
     }
 
     @Override

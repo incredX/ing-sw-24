@@ -103,7 +103,7 @@ public class CommandLine {
         }
         view.loadCommandLine(this);
         view.drawCommandLine();
-        state.keyConsumed();
+        state.consumeKey();
     }
 
     private boolean togglePopup(ClientState state, KeyStroke keyStroke) {
@@ -113,6 +113,7 @@ public class CommandLine {
             case 'h','H' -> state.togglePopup("hand");
             case 'd','D' -> state.togglePopup("decks");
             case 't','T' -> state.togglePopup("table");
+            case 's','S' -> state.togglePopup("symbols");
             case 'w','W' -> state.hideAllPopups();
             default -> { return false; }
         }

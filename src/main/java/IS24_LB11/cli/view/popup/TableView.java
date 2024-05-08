@@ -1,4 +1,4 @@
-package IS24_LB11.cli.view;
+package IS24_LB11.cli.view.popup;
 
 import IS24_LB11.cli.Scoreboard;
 import IS24_LB11.cli.view.game.GoalPatternView;

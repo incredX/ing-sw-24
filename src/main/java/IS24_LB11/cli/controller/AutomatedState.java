@@ -47,11 +47,17 @@ public class AutomatedState extends ClientState {
 
     @Override
     public ClientState execute() {
-        try {
-            serverHandler = new ServerHandler(this, serverAddress, serverPort);
-            new Thread(serverHandler).start();
-        } catch (IOException e) {
-            return null;
+        System.out.println("Running automated state...");
+        for (int i=0; i<3; i++) {
+            System.out.println("try num. "+i+" connecting to server");
+            try {
+                serverHandler = new ServerHandler(this, serverAddress, serverPort);
+                new Thread(serverHandler).start();
+                break;
+            } catch (IOException e) {
+                try { Thread.sleep(2000); }
+                catch (InterruptedException ie) { }
+            }
         }
 
         if (numPlayers >= 2) {

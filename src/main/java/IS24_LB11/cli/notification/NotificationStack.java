@@ -79,6 +79,12 @@ public class NotificationStack implements KeyConsumer {
         }
     }
 
+    public void removeNotifications(Priority priority) {
+        numNotifications -= notifications.get(priority).size();
+        notifications.get(priority).clear();
+        setNextNotification();
+    }
+
     public void removeAllNotifications() {
         for (Priority p: Priority.values())
             notifications.get(p).clear();

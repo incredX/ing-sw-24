@@ -4,7 +4,7 @@ import IS24_LB11.cli.ViewHub;
 import IS24_LB11.cli.controller.GameState;
 import IS24_LB11.cli.controller.PlayerStateInterface;
 import IS24_LB11.cli.utils.Side;
-import IS24_LB11.cli.view.HandView;
+import IS24_LB11.cli.view.popup.HandView;
 import IS24_LB11.game.components.PlayableCard;
 import com.googlecode.lanterna.input.KeyStroke;
 
@@ -101,7 +101,7 @@ public class HandPopup extends Popup {
         }
         update();
         //if (visible) castView(HandView::redraw);
-        gameState.keyConsumed();
+        gameState.consumeKey();
     }
 
     private void shiftPointer(Side side) {
