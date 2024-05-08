@@ -1,19 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Rectangle2D?>
-<?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.SplitPane?>
-<?import javafx.scene.control.Tab?>
-<?import javafx.scene.control.TabPane?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.text.Text?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1">
   <tabs>
     <Tab text="Board">
       <content>
@@ -27,7 +20,7 @@
                                 <items>
                                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
                                        <children>
-                                          <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="26.0" layoutY="33.0" pickOnBounds="true" preserveRatio="true">
+                                          <ImageView fx:id="handCard1" fitHeight="150.0" fitWidth="200.0" layoutX="26.0" layoutY="33.0" pickOnBounds="true" preserveRatio="true">
 
 
 
@@ -40,16 +33,14 @@
                                             <items>
                                               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
                                                    <children>
-                                                      <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="25.0" layoutY="42.0" pickOnBounds="true" preserveRatio="true">
-
-
+                                                      <ImageView fx:id="handCard2" fitHeight="150.0" fitWidth="200.0" layoutX="25.0" layoutY="42.0" pickOnBounds="true" preserveRatio="true">
 
                                                       </ImageView>
                                                    </children>
                                                 </AnchorPane>
                                               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
                                                    <children>
-                                                      <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="25.0" layoutY="42.0" pickOnBounds="true" preserveRatio="true">
+                                                      <ImageView fx:id="handCard3" fitHeight="150.0" fitWidth="200.0" layoutX="25.0" layoutY="42.0" pickOnBounds="true" preserveRatio="true">
 
 
                                                       </ImageView>
@@ -134,8 +125,8 @@
                                           <Image url="@graphicResources/codexCards/pawns/yellowPawn.png" />
                                        </image>
                                     </ImageView>
-                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Player1" textAlignment="JUSTIFY" GridPane.columnIndex="1" />
-                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Player2" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                    <Text fx:id="playerName1" strokeType="OUTSIDE" strokeWidth="0.0" text="Player1" textAlignment="JUSTIFY" GridPane.columnIndex="1" />
+                                    <Text fx:id="playerName2" strokeType="OUTSIDE" strokeWidth="0.0" text="Player2" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                                     <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Player3" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                                     <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Player4" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                                     <Text strokeType="OUTSIDE" strokeWidth="0.0" text="789" GridPane.columnIndex="2" />
@@ -159,7 +150,7 @@
                                     <Image url="@graphicResources/codexCards/pawns/greenPawn.png" />
                                  </image>
                               </ImageView>
-                              <ImageView  fx:id="yellowPion" fitHeight="25.0" fitWidth="25.0" layoutX="467.0" layoutY="562.0" pickOnBounds="true" preserveRatio="true">
+                              <ImageView fx:id="yellowPion" fitHeight="25.0" fitWidth="25.0" layoutX="467.0" layoutY="562.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
                                     <Image url="@graphicResources/codexCards/pawns/yellowPawn.png" />
                                  </image>
@@ -221,7 +212,50 @@
     </Tab>
       <Tab text="Untitled Tab">
         <content>
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+                <children>
+                    <SplitPane disable="true" dividerPositions="0.333" layoutX="6.0" layoutY="74.0" orientation="VERTICAL" prefHeight="687.0" prefWidth="253.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <items>
+                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+                                <children>
+                                    <ImageView fx:id="normalDeckCard1" fitHeight="150.0" fitWidth="200.0" layoutX="26.0" layoutY="33.0" pickOnBounds="true" preserveRatio="true">
+
+
+
+                                    </ImageView>
+                                    <ImageView fx:id="goldenDeckCard1" fitHeight="150.0" fitWidth="200.0" layoutX="200.0" layoutY="33.0" pickOnBounds="true" preserveRatio="true">
+                                    </ImageView>
+                                </children>
+                            </AnchorPane>
+                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+                                <children>
+                                    <SplitPane disable="true" dividerPositions="0.5" layoutX="34.0" layoutY="86.0" orientation="VERTICAL" prefHeight="476.0" prefWidth="251.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                        <items>
+                                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+                                                <children>
+                                                    <ImageView fx:id="normalDeckCard2" fitHeight="150.0" fitWidth="200.0" layoutX="25.0" layoutY="42.0" pickOnBounds="true" preserveRatio="true">
+
+                                                    </ImageView>
+                                                    <ImageView fx:id="goldenDeckCard2" fitHeight="150.0" fitWidth="200.0" layoutX="200.0" layoutY="42.0" pickOnBounds="true" preserveRatio="true">
+                                                    </ImageView>
+                                                </children>
+                                            </AnchorPane>
+                                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+                                                <children>
+                                                    <ImageView fx:id="normalDeckCard3" fitHeight="150.0" fitWidth="200.0" layoutX="25.0" layoutY="42.0" pickOnBounds="true" preserveRatio="true">
+                                                    </ImageView>
+                                                    <ImageView fx:id="goldenDeckCard3" fitHeight="150.0" fitWidth="200.0" layoutX="200.0" layoutY="42.0" pickOnBounds="true" preserveRatio="true">
+                                                    </ImageView>
+                                                </children>
+                                            </AnchorPane>
+                                        </items>
+                                    </SplitPane>
+                                </children>
+                            </AnchorPane>
+                        </items>
+                    </SplitPane>
+                </children>
+            </AnchorPane>
         </content>
       </Tab>
   </tabs>

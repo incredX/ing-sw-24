@@ -1,6 +1,8 @@
 package IS24_LB11.gui;
 
+import IS24_LB11.game.PlacedCard;
 import IS24_LB11.game.components.GoalCard;
+import IS24_LB11.game.components.PlayableCard;
 import IS24_LB11.game.components.StarterCard;
 import com.google.gson.JsonObject;
 
@@ -44,6 +46,13 @@ public class InputHandlerGUI {
         writer.println(message.toString());
         writer.flush();
     }
+    public void sendTurn(PlacedCard placedCard, PlayableCard cardChooseToDraw) {
+        JsonObject message = new JsonObject();
+        message.addProperty("type","turnActions");
+        message.addProperty("placedCard","turnActions");
+        message.addProperty("deckType","turnActions");
+        message.addProperty("indexVisibleCards","turnActions");
 
 
+    }
 }

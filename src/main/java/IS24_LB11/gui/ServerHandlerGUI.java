@@ -101,8 +101,7 @@ public class ServerHandlerGUI implements Runnable{
             gameTurnStateStarted=true;
             Platform.runLater(()->setupSceneController.changeToGameState());
         }
-        else
-            Platform.runLater(()->gameSceneController.updateGame(currentPlayerTurn,playerScores,normalDeck,goldenDeck));
+        Platform.runLater(()->gameSceneController.updateGame(currentPlayerTurn,playerScores,normalDeck,goldenDeck));
     }
 
     private void handleLoginEvent(JsonObject serverEvent){
