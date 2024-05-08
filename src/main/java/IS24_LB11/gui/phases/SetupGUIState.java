@@ -10,12 +10,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 public class SetupGUIState extends ClientGUIState {
-    private int choosenGoalIndex;
-    private StarterCard starterCard;
-    private ArrayList<PlayableCard> hand;
-    private ArrayList<GoalCard> publicGoals;
-    private ArrayList<GoalCard> privateGoals;
 
+    private PlayerSetup personalSetup;
+    private ArrayList<GoalCard> publicGoals;
     private ArrayList<PlayableCard> normalDeck;
     private ArrayList<PlayableCard> goldenDeck;
     private HashMap<Color, String> playersColors;
@@ -26,7 +23,6 @@ public class SetupGUIState extends ClientGUIState {
         this.username = prevState.username;
         this.inputHandlerGUI = prevState.inputHandlerGUI;
         this.setupSceneController = null;
-        choosenGoalIndex = 0;
     }
 
     public void initialize(PlayerSetup playerSetup,
@@ -34,13 +30,10 @@ public class SetupGUIState extends ClientGUIState {
                            ArrayList<PlayableCard> normalDeck,
                            ArrayList<PlayableCard> goldenDeck,
                            ArrayList<String> players) {
-        this.starterCard = playerSetup.getStarterCard();
-        this.hand = playerSetup.hand();
-        this.privateGoals = new ArrayList<>(Arrays.stream(playerSetup.getGoals()).toList());
+        this.personalSetup = playerSetup;
         this.publicGoals = publicGoals;
         this.normalDeck = normalDeck;
         this.goldenDeck = goldenDeck;
-
         this.playersColors = new HashMap<>();
         for (int i = 0; i < players.size(); i++) {
             playersColors.put(Color.fromInt(i),players.get(i));
@@ -48,28 +41,28 @@ public class SetupGUIState extends ClientGUIState {
     }
 
     public void setChoosenGoalIndex(int choosenGoalIndex) {
-        this.choosenGoalIndex = choosenGoalIndex;
+        this.personalSetup.chooseGoal(choosenGoalIndex);
     }
 
     public int getChoosenGoalIndex() {
-        return choosenGoalIndex;
+        return personalSetup.getChosenGoalIndex();
     }
 
     public ArrayList<GoalCard> getPrivateGoals() {
-        return privateGoals;
+        return new ArrayList<GoalCard>(Arrays.asList(personalSetup.getGoals()));
     }
 
     public StarterCard getStarterCard() {
-        return starterCard;
+        return personalSetup.getStarterCard();
     }
 
     public void flipStarterCard() {
-        starterCard.flip();
+        personalSetup.getStarterCard().flip();
     }
 
     public void execute() {
-        System.out.println(choosenGoalIndex);
-        System.out.println(starterCard.asString());
-        inputHandlerGUI.sendReady(privateGoals.get(choosenGoalIndex),starterCard);
+        System.out.println(personalSetup.chosenGoal().asString());
+        System.out.println(personalSetup.getStarterCard());
+        inputHandlerGUI.sendReady(personalSetup.chosenGoal(),personalSetup.getStarterCard());
     }
 }

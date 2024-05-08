@@ -25,7 +25,7 @@ public class SetupSceneController {
     @FXML
     private ImageView starterCard;
     @FXML
-            private Button readyButton;
+    private Button readyButton;
 
     Stage stage = new Stage();
     SetupGUIState state;
@@ -55,7 +55,6 @@ public class SetupSceneController {
         goalCard1.setOnMouseClicked(mouseEvent -> chooseGoal(0));
         goalCard2.setOnMouseClicked(mouseEvent -> chooseGoal(1));
         starterCard.setOnMouseClicked(mouseEvent -> flipStarterCard());
-        chooseGoal(0);
         state.getServerHandler().setSetupSceneController(this);
         System.out.println("Setup initialized");
     }
@@ -63,6 +62,7 @@ public class SetupSceneController {
         goalCard1.setImage(ImageLoader.getImage(state.getPrivateGoals().get(0).asString()));
         goalCard2.setImage(ImageLoader.getImage(state.getPrivateGoals().get(1).asString()));
         starterCard.setImage(ImageLoader.getImage(state.getStarterCard().asString()));
+        chooseGoal(0);
         this.stage.show();
     }
 
@@ -83,8 +83,8 @@ public class SetupSceneController {
         state.setChoosenGoalIndex(n);
         ColorAdjust colorAdjustChoosen = new ColorAdjust();
         ColorAdjust colorAdjustNotChoosen = new ColorAdjust();
-        colorAdjustChoosen.setBrightness(0.5);
-        colorAdjustNotChoosen.setBrightness(-0.5);
+        colorAdjustChoosen.setBrightness(0.2);
+        colorAdjustNotChoosen.setBrightness(-0.2);
         if (n==1){
             goalCard1.setEffect(colorAdjustNotChoosen);
             goalCard2.setEffect(colorAdjustChoosen);

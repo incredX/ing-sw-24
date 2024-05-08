@@ -12,13 +12,13 @@ public class ImageLoader{
         if (cardId.length() >= 8 && cardId.charAt(6) == 'F') {
             switch (cardId.charAt(0)) {
                 case 'N':
-                    path = path + "croppedFront/normalFront/" + cardId + ".jpg";
+                    path = path + "croppedFront/normalFront/" + cardId.substring(1) + ".jpg";
                     break;
                 case 'G':
-                    path = path + "croppedFront/goldenFront/" + cardId + ".jpg";
+                    path = path + "croppedFront/goldenFront/" + cardId.substring(1) + ".jpg";
                     break;
                 case 'S':
-                    path = path + "croppedFront/starterFront/" + cardId + ".jpg";
+                    path = path + "croppedFront/starterFront/" + cardId.substring(1) + ".jpg";
                     break;
 
             }
@@ -31,16 +31,17 @@ public class ImageLoader{
                     path = path + "croppedBack/G" + cardId.charAt(5) + ".jpg";
                     break;
                 case 'S':
-                    path = path + "croppedFront/" + cardId.substring(10) + ".jpg";
+                    path = path + "croppedBack/" + cardId.substring(11) + ".jpg";
                     break;
             }
         } else {
+            // goals card path
             path = path + "croppedFront/goalFront/" + cardId + ".jpg";
         }
 
         // Load the image
         Image image = new Image(new File(path).toURI().toString());
-
+        System.out.println(path);
 
         return image;
     }
