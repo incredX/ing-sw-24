@@ -89,18 +89,20 @@ public class ServerHandlerGUI implements Runnable{
     private void handleTurnEvent(JsonObject serverEvent) {
         String currentPlayerTurn = serverEvent.get("player").getAsString();
 
-        JsonArray playersScores = serverEvent.get("player").getAsJsonArray();
+        JsonArray playersScores = serverEvent.get("scores").getAsJsonArray();
         ArrayList<Integer> playerScores = extractIntegerArray(playersScores,playersScores.size());
 
         JsonArray normalDeckString = serverEvent.get("normalDeck").getAsJsonArray();
         JsonArray goldenDeckString = serverEvent.get("goldenDeck").getAsJsonArray();
         ArrayList<PlayableCard> normalDeck = (ArrayList<PlayableCard>) extractCardArray(normalDeckString,3);
         ArrayList<PlayableCard> goldenDeck = (ArrayList<PlayableCard>) extractCardArray(goldenDeckString,3);
+
         if (!gameTurnStateStarted){
             gameTurnStateStarted=true;
             Platform.runLater(()->setupSceneController.changeToGameState());
         }
-        Platform.runLater(()->gameSceneController.updateGame(currentPlayerTurn,playerScores,normalDeck,goldenDeck));
+        else
+            Platform.runLater(()->gameSceneController.updateGame(currentPlayerTurn,playerScores,normalDeck,goldenDeck));
     }
 
     private void handleLoginEvent(JsonObject serverEvent){

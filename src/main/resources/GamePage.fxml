@@ -28,9 +28,9 @@
                                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
                                        <children>
                                           <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="26.0" layoutY="33.0" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@uni/ingsw/ing-sw-24/resources/Codex%20Cards/Cropped%20Cards/Cropped%20Front/Normal%20Front/_EAAAF0.jpg" />
-                                             </image>
+
+
+
                                           </ImageView>
                                        </children>
                                     </AnchorPane>
@@ -41,18 +41,17 @@
                                               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
                                                    <children>
                                                       <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="25.0" layoutY="42.0" pickOnBounds="true" preserveRatio="true">
-                                                         <image>
-                                                            <Image url="@uni/ingsw/ing-sw-24/resources/Codex%20Cards/Cropped%20Cards/Cropped%20Front/Normal%20Front/EFE_FF1.jpg" />
-                                                         </image>
+
+
+
                                                       </ImageView>
                                                    </children>
                                                 </AnchorPane>
                                               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
                                                    <children>
                                                       <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="25.0" layoutY="42.0" pickOnBounds="true" preserveRatio="true">
-                                                         <image>
-                                                            <Image url="@uni/ingsw/ing-sw-24/resources/Codex%20Cards/Cropped%20Cards/Cropped%20Front/Normal%20Front/EFE_FF1.jpg" />
-                                                         </image>
+
+
                                                       </ImageView>
                                                    </children>
                                                 </AnchorPane>
@@ -99,7 +98,7 @@
                            <children>
                               <ImageView fitHeight="564.0" fitWidth="382.0" layoutX="388.0" layoutY="39.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@uni/ingsw/ing-sw-24/resources/Codex%20Cards/Board/PLATEAU-SCORE%20Crop.jpg" />
+                                    <Image url="@graphicResources/codexCards/board/PLATEAU-SCORE Crop.jpg" />
                                  </image>
                               </ImageView>
                               <GridPane layoutX="39.0" layoutY="96.0" prefHeight="144.0" prefWidth="330.0">
@@ -117,22 +116,22 @@
                                  <children>
                                     <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
-                                          <Image url="@uni/ingsw/ing-sw-24/resources/Codex%20Cards/Pions/CODEX_pion_rouge.png" />
+                                          <Image url="@graphicResources/codexCards/pawns/redPawn.png" />
                                        </image>
                                     </ImageView>
                                     <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" GridPane.rowIndex="1">
                                        <image>
-                                          <Image url="@uni/ingsw/ing-sw-24/resources/Codex%20Cards/Pions/CODEX_pion_vert.png" />
+                                          <Image url="@graphicResources/codexCards/pawns/greenPawn.png" />
                                        </image>
                                     </ImageView>
                                     <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" GridPane.rowIndex="2">
                                        <image>
-                                          <Image url="@uni/ingsw/ing-sw-24/resources/Codex%20Cards/Pions/CODEX_pion_bleu.png" />
+                                          <Image url="@graphicResources/codexCards/pawns/bluePawn.png" />
                                        </image>
                                     </ImageView>
                                     <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" GridPane.rowIndex="3">
                                        <image>
-                                          <Image url="@uni/ingsw/ing-sw-24/resources/Codex%20Cards/Pions/CODEX_pion_jaune.png" />
+                                          <Image url="@graphicResources/codexCards/pawns/yellowPawn.png" />
                                        </image>
                                     </ImageView>
                                     <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Player1" textAlignment="JUSTIFY" GridPane.columnIndex="1" />
@@ -145,24 +144,24 @@
                                     <Text strokeType="OUTSIDE" strokeWidth="0.0" text="0" GridPane.columnIndex="2" GridPane.rowIndex="3" />
                                  </children>
                               </GridPane>
-                              <ImageView fitHeight="25.0" fitWidth="25.0" layoutX="442.0" layoutY="537.0" pickOnBounds="true" preserveRatio="true">
+                              <ImageView fx:id="bluePion" fitHeight="25.0" fitWidth="25.0" layoutX="442.0" layoutY="537.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@uni/ingsw/ing-sw-24/resources/Codex%20Cards/Pions/CODEX_pion_bleu.png" />
+                                    <Image url="@graphicResources/codexCards/pawns/bluePawn.png" />
                                  </image>
                               </ImageView>
-                              <ImageView fitHeight="25.0" fitWidth="25.0" layoutX="442.0" layoutY="562.0" pickOnBounds="true" preserveRatio="true">
+                              <ImageView fx:id="redPion" fitHeight="25.0" fitWidth="25.0" layoutX="442.0" layoutY="562.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@uni/ingsw/ing-sw-24/resources/Codex%20Cards/Pions/CODEX_pion_rouge.png" />
+                                    <Image url="@graphicResources/codexCards/pawns/redPawn.png" />
                                  </image>
                               </ImageView>
-                              <ImageView fitHeight="25.0" fitWidth="25.0" layoutX="467.0" layoutY="537.0" pickOnBounds="true" preserveRatio="true">
+                              <ImageView fx:id="greenPion" fitHeight="25.0" fitWidth="25.0" layoutX="467.0" layoutY="537.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@uni/ingsw/ing-sw-24/resources/Codex%20Cards/Pions/CODEX_pion_vert.png" />
+                                    <Image url="@graphicResources/codexCards/pawns/greenPawn.png" />
                                  </image>
                               </ImageView>
-                              <ImageView fitHeight="25.0" fitWidth="25.0" layoutX="467.0" layoutY="562.0" pickOnBounds="true" preserveRatio="true">
+                              <ImageView  fx:id="yellowPion" fitHeight="25.0" fitWidth="25.0" layoutX="467.0" layoutY="562.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@uni/ingsw/ing-sw-24/resources/Codex%20Cards/Pions/CODEX_pion_jaune.png" />
+                                    <Image url="@graphicResources/codexCards/pawns/yellowPawn.png" />
                                  </image>
                               </ImageView>
                            </children>
@@ -173,10 +172,10 @@
                                 <items>
                                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
                                        <children>
-                                          <ImageView fitHeight="92.0" fitWidth="159.0" layoutX="148.0" layoutY="66.0" pickOnBounds="true" preserveRatio="true" style="-fx-scale-x: 100%;" AnchorPane.topAnchor="80.0">
-                                             <image>
-                                                <Image url="@uni/ingsw/ing-sw-24/resources/Codex%20Cards/Cropped%20Cards/Cropped%20Front/Goal%20Front/Pattern/O2AAAD1.jpg" />
-                                             </image>
+                                          <ImageView fx:id="goalCard1" fitHeight="92.0" fitWidth="159.0" layoutX="148.0" layoutY="66.0" pickOnBounds="true" preserveRatio="true" style="-fx-scale-x: 100%;" AnchorPane.topAnchor="80.0">
+
+
+
                                           </ImageView>
                                           <Text layoutX="179.0" layoutY="77.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Public Goal" />
                                        </children>
@@ -187,20 +186,19 @@
                                             <items>
                                               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
                                                    <children>
-                                                      <ImageView fitHeight="92.0" fitWidth="159.0" layoutX="147.0" layoutY="29.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="147.0" AnchorPane.rightAnchor="147.0" AnchorPane.topAnchor="29.0">
-                                                         <image>
-                                                            <Image url="@uni/ingsw/ing-sw-24/resources/Codex%20Cards/Cropped%20Cards/Cropped%20Front/Goal%20Front/Pattern/O2IIID0.jpg" />
-                                                         </image>
+                                                      <ImageView fx:id="goalCard2" fitHeight="92.0" fitWidth="159.0" layoutX="147.0" layoutY="29.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="147.0" AnchorPane.rightAnchor="147.0" AnchorPane.topAnchor="29.0">
+
+
+
                                                       </ImageView>
                                                       <Text layoutX="178.0" layoutY="26.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Public Goal" />
                                                    </children>
                                                 </AnchorPane>
                                               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
                                                    <children>
-                                                      <ImageView fitHeight="92.0" fitWidth="159.0" layoutX="147.0" layoutY="42.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="40.0" AnchorPane.topAnchor="40.0">
-                                                         <image>
-                                                            <Image url="@uni/ingsw/ing-sw-24/resources/Codex%20Cards/Cropped%20Cards/Cropped%20Front/Goal%20Front/Pattern/O3IPPL2.jpg" />
-                                                         </image>
+                                                      <ImageView fx:id="privateGoalCard" fitHeight="92.0" fitWidth="159.0" layoutX="147.0" layoutY="42.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="40.0" AnchorPane.topAnchor="40.0">
+
+
                                                          <viewport>
                                                             <Rectangle2D />
                                                          </viewport>

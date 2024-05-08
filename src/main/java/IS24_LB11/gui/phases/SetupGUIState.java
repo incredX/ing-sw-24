@@ -74,6 +74,10 @@ public class SetupGUIState extends ClientGUIState {
         return playersColors;
     }
 
+    public ArrayList<GoalCard> getPublicGoals() {
+        return publicGoals;
+    }
+
     public ArrayList<String> getPlayers() {
         return players;
     }
