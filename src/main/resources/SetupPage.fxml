@@ -45,7 +45,7 @@
                     y="100.0">
                <image>
                   <Image
-                          url="" />
+                          url="@graphicResources/codexCards/croppedCards/croppedFront/goalFront/O2AAAD1.jpg" />
                </image>
                <effect>
                   <DropShadow
@@ -67,7 +67,7 @@
                     y="100.0">
                <image>
                   <Image
-                          url="" />
+                          url="@graphicResources/codexCards/croppedCards/croppedFront/goalFront/O2AAA.jpg" />
                </image>
                <effect>
                   <DropShadow
@@ -78,7 +78,7 @@
                </effect>
             </ImageView>
             <ImageView
-                    fx:id="starteCard"
+                    fx:id="starterCard"
                     fitHeight="250.0"
                     fitWidth="400.0"
                     layoutX="-89.0"
@@ -89,7 +89,7 @@
                     y="415.0">
                <image>
                   <Image
-                          url="" />
+                          url="@graphicResources/codexCards/croppedCards/croppedFront/goalFront/AEEF_F0F__PAFI.jpg" />
                </image>
                <effect>
                   <DropShadow
@@ -113,6 +113,7 @@
                </font>
             </Label>
             <Button
+                    fx:id="flipButton"
                     layoutX="659.0"
                     layoutY="518.0"
                     mnemonicParsing="false"
