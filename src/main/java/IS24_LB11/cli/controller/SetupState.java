@@ -90,21 +90,10 @@ public class SetupState extends ClientState implements PlayerStateInterface {
                 setupStage.clear();
                 setNextState(new GameState(this));
             }
-            case "SHOW" -> {
-                if (tokens.length == 2) {
-                    popManager.showPopup(tokens[1]);
-                    popManager.getPopup(tokens[1]).disable();
-                }
-                else notificationStack.addUrgent("ERROR", MISSING_ARG.apply("show"));
-            }
-            case "HIDE" ->  {
-                if (tokens.length == 2) popManager.hidePopup(tokens[1]);
-                else popManager.hideFocusedPopup();
-            }
-            case "TABLE", "HAND", "DECKS" -> {
-                popManager.showPopup(tokens[0]);
-                popManager.getPopup(tokens[0]).disable();
-            }
+//            case "HELP", "TABLE", "HAND", "DECKS" -> {
+//                popManager.showPopup(tokens[0]);
+//                popManager.getPopup(tokens[0]).disable();
+//            }
             default -> notificationStack.addUrgent("ERROR", INVALID_CMD.apply(tokens[0], "game setup"));
         };
         viewHub.update();

@@ -82,23 +82,23 @@ public class CommandLine {
 
     public void consumeKeyStroke(ClientState state, KeyStroke keyStroke) {
         if (keyStroke.isCtrlDown() || keyStroke.isAltDown()) {
-            if (!toggle(state, keyStroke)) return;
+            if (!togglePopup(state, keyStroke)) return;
         } else if (keyStroke.getKeyType() == KeyType.F1) {
             toggle();
-        } else if (enabled)
-            switch (keyStroke.getKeyType()) {
+        } else if (enabled) switch (keyStroke.getKeyType()) {
             case Character -> insertChar(keyStroke.getCharacter());
             case Backspace -> deleteChar();
             case Enter -> {
                 if(!line.isEmpty()) state.tryQueueEvent(new CommandEvent(getFullLine()));
                 clearLine();
             }
+            case ArrowUp, ArrowDown -> { }
             case ArrowLeft -> moveCursor(-1);
             case ArrowRight -> moveCursor(1);
             case Escape -> state.quit();
             default -> { return; }
         } else {
-            if (!toggle(state, keyStroke))
+            if (!togglePopup(state, keyStroke))
                 return;
         }
         view.loadCommandLine(this);
@@ -106,7 +106,7 @@ public class CommandLine {
         state.keyConsumed();
     }
 
-    private boolean toggle(ClientState state, KeyStroke keyStroke) {
+    private boolean togglePopup(ClientState state, KeyStroke keyStroke) {
         if (keyStroke.getKeyType() != KeyType.Character) return false;
         switch (keyStroke.getCharacter()) {
             case ' ' -> toggle();
@@ -118,9 +118,17 @@ public class CommandLine {
         }
         return true;
     }
+
     private void toggle() {
         enabled = !enabled;
         clearLine();
+    }
+
+    public void disable() {
+        enabled = false;
+        clearLine();
+        view.loadCommandLine(this);
+        view.drawCommandLine();
     }
 
 //    private boolean isStrokeOnTime(KeyStroke keyStroke, long intervall) {

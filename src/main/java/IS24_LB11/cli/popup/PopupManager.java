@@ -88,6 +88,10 @@ public class PopupManager {
         return Optional.ofNullable(focusedPopup);
     }
 
+    public boolean hasPopup(String label) {
+        return popups.containsKey(label.toLowerCase());
+    }
+
     private boolean inOverlapping(Popup popup) {
         return popups.values().stream()
                 .filter(p -> p.visible && !(p.canOverlap() || p.label().equals(popup.label())))

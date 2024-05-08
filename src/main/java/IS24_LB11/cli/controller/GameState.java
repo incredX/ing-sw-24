@@ -27,6 +27,8 @@ import com.googlecode.lanterna.input.KeyStroke;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import static IS24_LB11.cli.notification.Priority.MEDIUM;
+
 //NOTE : URGENT PRIORITY
 //NOTE : HIGH PRIORITY
 //TODO : synchronize stage.buildAreas
@@ -49,9 +51,10 @@ public class GameState extends ClientState implements PlayerStateInterface {
     private GameStage gameStage;
     private Position boardPointer;
     private PlacedCard placedCard;
-    private boolean cardPlaced;
-    private boolean cardPicked;
-    private boolean playerTurn;
+    private boolean cardPlaced = false;
+    private boolean cardPicked = false;
+    private boolean playerTurn = false;
+    private boolean gameOver = false;
 
     public GameState(SetupState setupState) {
         super(setupState);
@@ -59,9 +62,6 @@ public class GameState extends ClientState implements PlayerStateInterface {
         this.table = setupState.getTable();
         this.boardPointer = new Position(0, 0);
         this.placedCard = null;
-        this.cardPlaced = false;
-        this.cardPicked = false;
-        this.playerTurn = false;
         popManager.forEachPopup(popup -> popup.setPlayerState(this));
     }
 
@@ -71,9 +71,6 @@ public class GameState extends ClientState implements PlayerStateInterface {
         this.table = automatedState.getTable();
         this.boardPointer = new Position(0, 0);
         this.placedCard = null;
-        this.cardPlaced = false;
-        this.cardPicked = false;
-        this.playerTurn = false;
         this.popManager.addPopup(
                 new TablePopup(getViewHub(), this),
                 new HandPopup(getViewHub(), this),
@@ -86,9 +83,6 @@ public class GameState extends ClientState implements PlayerStateInterface {
         this.table = table;
         this.boardPointer = new Position(0, 0);
         this.placedCard = null;
-        this.cardPlaced = false;
-        this.cardPicked = false;
-        this.playerTurn = false;
     }
 
     @Override
@@ -112,9 +106,10 @@ public class GameState extends ClientState implements PlayerStateInterface {
             case ServerNewTurnEvent newTurnEvent -> {
                 Debugger.print("turn of "+newTurnEvent.player()+" (I'm "+username+")");
                 if (newTurnEvent.player().isEmpty()) {
-                    //set table popup as final
+                    gameOver = true;
                     popManager.showPopup("table");
                     popManager.getPopup("table").enable();
+                    notificationStack.add(MEDIUM, "GAME ENDED", "press [ENTER] to go back to the lobby");
                 }
                 if (newTurnEvent.player().equals(username)) {
                     cardPlaced = false;
@@ -145,23 +140,13 @@ public class GameState extends ClientState implements PlayerStateInterface {
         Debugger.print("command: "+command);
         String[] tokens = command.split(" ", 2);
         switch (tokens[0].toUpperCase()) {
-            case "SHOW" -> {
-                if (tokens.length == 2) {
-                    popManager.showPopup(tokens[1]);
-                }
-                else notificationStack.addUrgent("ERROR", MISSING_ARG.apply("show"));
-            }
-            case "HIDE" -> {
-                if (tokens.length == 2) popManager.hidePopup(tokens[1]);
-                else popManager.hideFocusedPopup();
-            }
             case "HOME" -> {
                 centerBoardPointer();
                 gameStage.centerBoard();
                 gameStage.updateBoard();
             }
             case "LOGOUT" -> logout();
-            case "HAND", "DECKS", "TABLE" -> popManager.showPopup(tokens[0]);
+            //case "HELP", "TABLE", "HAND", "DECKS" -> popManager.showPopup(tokens[0]);
             default -> {
                 notificationStack.addUrgent("ERROR", INVALID_CMD.apply(tokens[0], "game"));
             }
@@ -180,6 +165,9 @@ public class GameState extends ClientState implements PlayerStateInterface {
                 case ArrowDown -> shiftBoardPointer(Side.SUD);
                 case ArrowLeft -> shiftBoardPointer(Side.WEST);
                 case ArrowRight -> shiftBoardPointer(Side.EAST);
+                case Enter -> {
+                    if (gameOver) logout();
+                }
             }
         }
         viewHub.update();

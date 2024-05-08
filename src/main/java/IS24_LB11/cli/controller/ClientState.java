@@ -169,20 +169,41 @@ public abstract class ClientState {
         switch (tokens[0].toUpperCase()) {
             case "QUIT" -> {
                 quit();
-                return true;
             }
             case "SENDTO", "@" -> {
                 if (tokens.length == 2) processCommandSendto(tokens[1]);
                 else notificationStack.addUrgent("ERROR", MISSING_ARG.apply("sendto"));
-                return true;
             }
             case "SENDTOALL", "@ALL" -> {
                 if (tokens.length == 2) processCommandSendtoall(tokens[1]);
                 else notificationStack.addUrgent("ERROR", MISSING_ARG.apply("sendtoall"));
-                return true;
+            }
+            case "SHOW" -> {
+                if (tokens.length == 2) {
+                    if (popManager.hasPopup(tokens[1])) {
+                        popManager.showPopup(tokens[1]);
+                        cmdLine.disable();
+                    }
+                    else notificationStack.addUrgent("ERROR", "unknown pop-up");
+                }
+                else notificationStack.addUrgent("ERROR", MISSING_ARG.apply("show"));
+            }
+            case "HIDE" -> {
+                if (tokens.length == 2) {
+                    if (popManager.hasPopup(tokens[1])) popManager.hidePopup(tokens[1]);
+                    else notificationStack.addUrgent("ERROR", "unknown pop-up");
+                }
+                else popManager.hideFocusedPopup();
+            }
+            default -> {
+                if (popManager.hasPopup(tokens[0])) {
+                    popManager.showPopup(tokens[0]);
+                    cmdLine.disable();
+                }
+                else return false;
             }
         };
-        return false;
+        return true;
     }
 
     protected void processCommandSendto(String argument) {

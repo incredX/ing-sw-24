@@ -6,6 +6,7 @@ import IS24_LB11.cli.event.server.ServerLoginEvent;
 import IS24_LB11.cli.event.server.ServerPlayerSetupEvent;
 import IS24_LB11.cli.ViewHub;
 import IS24_LB11.cli.listeners.ServerHandler;
+import IS24_LB11.cli.popup.HelpPoup;
 import IS24_LB11.cli.view.stage.LobbyStage;
 import IS24_LB11.game.PlayerSetup;
 import IS24_LB11.game.Result;
@@ -14,20 +15,19 @@ import com.googlecode.lanterna.input.KeyStroke;
 
 import java.io.IOException;
 
-import static IS24_LB11.cli.Client.defaultTable;
-import static IS24_LB11.cli.Client.getDefaultSetup;
-
 public class LobbyState extends ClientState {
     private LobbyStage lobbyStage;
 
     public LobbyState(ViewHub viewHub) {
         super(viewHub);
         this.username = "";
+        this.popManager.addPopup(new HelpPoup(viewHub, this));
     }
 
     @Override
     public ClientState execute() {
         lobbyStage = viewHub.setLobbyStage(this);
+        popManager.updatePopups();
         cmdLine.update();
         viewHub.update();
         return super.execute();
@@ -73,9 +73,7 @@ public class LobbyState extends ClientState {
                 if (tokens.length == 2) setProperty(tokens[1]);
                 else notificationStack.addUrgent("ERROR", MISSING_ARG.apply(tokens[0]));
             }
-            case "SETUP" -> {
-                setNextState(new SetupState(this, getDefaultSetup(), defaultTable()));
-            }
+            //case "HELP" -> popManager.showPopup(tokens[0]);
             default -> notificationStack.addUrgent("ERROR", INVALID_CMD.apply(tokens[0], "lobby"));
         };
         viewHub.update();
@@ -83,16 +81,16 @@ public class LobbyState extends ClientState {
 
     @Override
     protected void processKeyStroke(KeyStroke keyStroke) {
-        if (!notificationStack.consumeKeyStroke(keyStroke)) {
-            cmdLine.consumeKeyStroke(this, keyStroke);
-        }
+        keyConsumed = notificationStack.consumeKeyStroke(keyStroke);
+        if (!keyConsumed) cmdLine.consumeKeyStroke(this, keyStroke);
+        if (!keyConsumed) popManager.consumeKeyStroke(keyStroke);
         viewHub.update();
     }
 
     @Override
     protected void processResize(TerminalSize screenSize) {
         super.processResize(screenSize);
-        //popManager.resizePopups();
+        popManager.resizePopups();
         viewHub.update();
     }
 
