@@ -19,18 +19,24 @@ import java.util.ArrayList;
 public class GameSceneController {
     @FXML
     private ImageView goalCard1;
+
     @FXML
-            private ImageView goalCard2;
+    private ImageView goalCard2;
+
     @FXML
-            private ImageView privateGoalCard;
+    private ImageView privateGoalCard;
+
     @FXML
-            private ImageView redPion;
+    private ImageView redPion;
+
     @FXML
-            private ImageView greenPion;
+    private ImageView greenPion;
+
     @FXML
-            private ImageView bluePion;
+    private ImageView bluePion;
+
     @FXML
-            private ImageView yellowPion;
+    private ImageView yellowPion;
 
     Stage stage = new Stage();
     GameGUIState state;

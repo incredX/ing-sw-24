@@ -7,6 +7,7 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
    <children>
@@ -18,13 +19,9 @@
                      <children>
                         <SplitPane dividerPositions="0.5" prefHeight="688.5" prefWidth="1280.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                           <items>
-                              <ScrollPane prefHeight="200.0" prefWidth="200.0">
+                              <ScrollPane fx:id="scrollPane" prefHeight="200.0" prefWidth="200.0">
                                  <content>
-                                    <ImageView fitHeight="2000.0" fitWidth="2000.0" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@graphicResources/TemporaryBoard.jpg" />
-                                       </image>
-                                    </ImageView>
+                                    <Pane fx:id="playerBoard" minHeight="20000.0" minWidth="20000.0" />
                                  </content>
                               </ScrollPane>
                             <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="686.5" prefWidth="303.0">

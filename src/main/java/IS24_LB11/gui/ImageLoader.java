@@ -2,14 +2,10 @@ package IS24_LB11.gui;
 
 import javafx.scene.image.Image;
 
-import java.io.File;
-
 public class ImageLoader{
     public static Image getImage(String cardId) {
         // Provide the file path of the image
-        String path = "src/main/resources/graphicResources/codexCards/croppedCards/";
-
-        //TODO: try path (/main/resources....)
+        String path = "/graphicResources/codexCards/croppedCards/";
 
         if (cardId.length() >= 8 && cardId.charAt(6) == 'F') {
             switch (cardId.charAt(0)) {
@@ -42,7 +38,7 @@ public class ImageLoader{
         }
 
         // Load the image
-        Image image = new Image(new File(path).toURI().toString());
+        Image image = new Image(ImageLoader.class.getResourceAsStream(path));
 
         return image;
     }
