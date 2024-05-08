@@ -6,6 +6,7 @@ import IS24_LB11.game.tools.JsonConverter;
 import IS24_LB11.game.tools.JsonException;
 import IS24_LB11.game.utils.SyntaxException;
 import IS24_LB11.gui.phases.ClientGUIState;
+import IS24_LB11.gui.scenesControllers.GameSceneController;
 import IS24_LB11.gui.scenesControllers.LoginSceneController;
 import IS24_LB11.gui.scenesControllers.SetupSceneController;
 import com.google.gson.JsonArray;
@@ -24,9 +25,10 @@ public class ServerHandlerGUI implements Runnable{
     private JsonStreamParser parser;
     private PrintWriter writer;
     private ClientGUIState actualState;
-
+    private boolean gameTurnStateStarted = false;
     private LoginSceneController loginSceneController;
     private SetupSceneController setupSceneController;
+    private GameSceneController gameSceneController;
 
     public ServerHandlerGUI(ClientGUIState clientGUIState, String serverIP, int serverPORT) throws IOException {
         socket = new Socket(serverIP, serverPORT);
@@ -54,6 +56,7 @@ public class ServerHandlerGUI implements Runnable{
     }
 
     private void processEvent(JsonObject serverEvent) {
+        System.out.println(serverEvent);
         if (serverEvent.has("type")) {
             switch (serverEvent.get("type").getAsString().toLowerCase()){
                 case "setusername":
@@ -71,12 +74,30 @@ public class ServerHandlerGUI implements Runnable{
                 case "disconnected":
                     return;
                 case "turn":
+                    handleTurnEvent(serverEvent);
                     return;
 
                 default: throw new IllegalStateException("Unexpected value: " + serverEvent.get("type"));
             }
         }
 
+    }
+
+    private void handleTurnEvent(JsonObject serverEvent) {
+        String currentPlayerTurn = serverEvent.get("player").getAsString();
+
+        JsonArray playersScores = serverEvent.get("player").getAsJsonArray();
+        ArrayList<Integer> playerScores = extractIntegerArray(playersScores,playersScores.size());
+
+        JsonArray normalDeckString = serverEvent.get("normalDeck").getAsJsonArray();
+        JsonArray goldenDeckString = serverEvent.get("goldenDeck").getAsJsonArray();
+        ArrayList<PlayableCard> normalDeck = (ArrayList<PlayableCard>) extractCardArray(normalDeckString,3);
+        ArrayList<PlayableCard> goldenDeck = (ArrayList<PlayableCard>) extractCardArray(goldenDeckString,3);
+        if (!gameTurnStateStarted){
+            gameTurnStateStarted=true;
+            Platform.runLater(()->setupSceneController.changeToGameState());
+        }
+        Platform.runLater(()->gameSceneController.updateGame(currentPlayerTurn,playerScores,normalDeck,goldenDeck));
     }
 
     private void handleLoginEvent(JsonObject serverEvent){
@@ -174,6 +195,13 @@ public class ServerHandlerGUI implements Runnable{
         }
         return strings;
     }
+    public ArrayList<Integer> extractIntegerArray(JsonArray jsonArray, int size){
+        ArrayList<Integer> integers = new ArrayList<>();
+        for (int i = 0; i < size; i++) {
+            integers.add(jsonArray.get(i).getAsInt());
+        }
+        return integers;
+    }
 
     public PrintWriter getWriter() {
         return writer;
@@ -185,5 +213,9 @@ public class ServerHandlerGUI implements Runnable{
 
     public void setSetupSceneController(SetupSceneController setupSceneController) {
         this.setupSceneController = setupSceneController;
+    }
+
+    public void setGameSceneController(GameSceneController gameSceneController) {
+        this.gameSceneController = gameSceneController;
     }
 }

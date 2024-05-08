@@ -2,6 +2,7 @@ package IS24_LB11.gui.scenesControllers;
 
 import IS24_LB11.gui.ImageLoader;
 import IS24_LB11.gui.phases.ClientGUIState;
+import IS24_LB11.gui.phases.GameGUIState;
 import IS24_LB11.gui.phases.SetupGUIState;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -32,7 +33,7 @@ public class SetupSceneController {
 
     public SetupSceneController(ClientGUIState state){
         this.state=(SetupGUIState) state;
-        //change page
+
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/SetupPage.fxml"));
         loader.setController(this);
 
@@ -57,6 +58,13 @@ public class SetupSceneController {
         starterCard.setOnMouseClicked(mouseEvent -> flipStarterCard());
         state.getServerHandler().setSetupSceneController(this);
         System.out.println("Setup initialized");
+    }
+
+    public void changeToGameState(){
+        GameSceneController gameSceneController = new GameSceneController(new GameGUIState(state));
+        stage.close();
+        gameSceneController.showStage();
+
     }
     public void showStage() {
         goalCard1.setImage(ImageLoader.getImage(state.getPrivateGoals().get(0).asString()));
@@ -83,8 +91,8 @@ public class SetupSceneController {
         state.setChoosenGoalIndex(n);
         ColorAdjust colorAdjustChoosen = new ColorAdjust();
         ColorAdjust colorAdjustNotChoosen = new ColorAdjust();
-        colorAdjustChoosen.setBrightness(0.2);
-        colorAdjustNotChoosen.setBrightness(-0.2);
+        colorAdjustChoosen.setContrast(0);
+        colorAdjustNotChoosen.setContrast(-0.5);
         if (n==1){
             goalCard1.setEffect(colorAdjustNotChoosen);
             goalCard2.setEffect(colorAdjustChoosen);

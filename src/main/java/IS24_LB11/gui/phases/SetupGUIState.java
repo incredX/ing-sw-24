@@ -16,6 +16,7 @@ public class SetupGUIState extends ClientGUIState {
     private ArrayList<PlayableCard> normalDeck;
     private ArrayList<PlayableCard> goldenDeck;
     private HashMap<Color, String> playersColors;
+    private ArrayList<String> players;
     SetupSceneController setupSceneController;
 
     public SetupGUIState(LoginGUIState prevState) {
@@ -34,6 +35,7 @@ public class SetupGUIState extends ClientGUIState {
         this.publicGoals = publicGoals;
         this.normalDeck = normalDeck;
         this.goldenDeck = goldenDeck;
+        this.players=players;
         this.playersColors = new HashMap<>();
         for (int i = 0; i < players.size(); i++) {
             playersColors.put(Color.fromInt(i),players.get(i));
@@ -54,6 +56,26 @@ public class SetupGUIState extends ClientGUIState {
 
     public StarterCard getStarterCard() {
         return personalSetup.getStarterCard();
+    }
+
+    public PlayerSetup getPersonalSetup() {
+        return personalSetup;
+    }
+
+    public ArrayList<PlayableCard> getGoldenDeck() {
+        return goldenDeck;
+    }
+
+    public ArrayList<PlayableCard> getNormalDeck() {
+        return normalDeck;
+    }
+
+    public HashMap<Color, String> getPlayersColors() {
+        return playersColors;
+    }
+
+    public ArrayList<String> getPlayers() {
+        return players;
     }
 
     public void flipStarterCard() {

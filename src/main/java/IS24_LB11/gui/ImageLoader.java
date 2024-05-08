@@ -41,7 +41,6 @@ public class ImageLoader{
 
         // Load the image
         Image image = new Image(new File(path).toURI().toString());
-        System.out.println(path);
 
         return image;
     }
