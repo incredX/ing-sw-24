@@ -102,6 +102,7 @@ public abstract class ClientState {
             case KeyboardEvent keyboardEvent -> processKeyStroke(keyboardEvent.keyStroke());
             case ResizeEvent resizeEvent -> processResize(resizeEvent.size());
             case ResultServerEvent resultServerEvent -> processResult(resultServerEvent.result());
+            case ServerDownEvent serverDownEvent -> processServerDown();
             default -> Debugger.print("Unknown event: " + event.getClass().getName());
         };
         viewHub.update();
@@ -125,6 +126,10 @@ public abstract class ClientState {
     protected abstract void processCommand(String command);
 
     protected abstract void processKeyStroke(KeyStroke keyStroke);
+
+    protected void processServerDown() {
+        notificationStack.addUrgent("WARNING", "lost connection to server");
+    }
 
     protected void processResize(TerminalSize screenSize) {
         cmdLine.resize(screenSize);

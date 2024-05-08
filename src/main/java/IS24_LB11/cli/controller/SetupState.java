@@ -47,6 +47,16 @@ public class SetupState extends ClientState implements PlayerStateInterface {
         return super.execute();
     }
 
+    @Override
+    protected void processServerDown() {
+        notificationStack.removeAllNotifications();
+        popManager.hideAllPopups();
+        serverHandler.shutdown();
+        super.processServerDown();
+        setNextState(new LobbyState(viewHub));
+    }
+
+    @Override
     protected void processServerEvent(ServerEvent serverEvent) {
         if (processServerEventIfCommon(serverEvent)) return;
         switch (serverEvent) {
@@ -60,6 +70,7 @@ public class SetupState extends ClientState implements PlayerStateInterface {
         }
     }
 
+    @Override
     protected void processCommand(String command) {
         if (processCommandIfCommon(command)) return;
         String[] tokens = command.split(" ", 2);

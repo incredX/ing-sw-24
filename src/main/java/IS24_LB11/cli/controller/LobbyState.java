@@ -33,6 +33,7 @@ public class LobbyState extends ClientState {
         return super.execute();
     }
 
+    @Override
     protected void processServerEvent(ServerEvent serverEvent) {
         if (processServerEventIfCommon(serverEvent)) return;
         switch (serverEvent) {
@@ -48,6 +49,7 @@ public class LobbyState extends ClientState {
         }
     }
 
+    @Override
     protected void processCommand(String command) {
         if (processCommandIfCommon(command)) return;
         String[] tokens = command.split(" ", 2);
