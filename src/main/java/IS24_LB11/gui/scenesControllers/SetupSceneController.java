@@ -2,6 +2,7 @@ package IS24_LB11.gui.scenesControllers;
 
 import IS24_LB11.gui.ImageLoader;
 import IS24_LB11.gui.phases.ClientGUIState;
+import IS24_LB11.gui.phases.GameGUIState;
 import IS24_LB11.gui.phases.SetupGUIState;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -32,7 +33,7 @@ public class SetupSceneController {
 
     public SetupSceneController(ClientGUIState state){
         this.state=(SetupGUIState) state;
-        //change page
+
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/SetupPage.fxml"));
         loader.setController(this);
 
@@ -55,14 +56,21 @@ public class SetupSceneController {
         goalCard1.setOnMouseClicked(mouseEvent -> chooseGoal(0));
         goalCard2.setOnMouseClicked(mouseEvent -> chooseGoal(1));
         starterCard.setOnMouseClicked(mouseEvent -> flipStarterCard());
-        chooseGoal(0);
         state.getServerHandler().setSetupSceneController(this);
         System.out.println("Setup initialized");
+    }
+
+    public void changeToGameState(){
+        GameSceneController gameSceneController = new GameSceneController(new GameGUIState(state));
+        stage.close();
+        gameSceneController.showStage();
+
     }
     public void showStage() {
         goalCard1.setImage(ImageLoader.getImage(state.getPrivateGoals().get(0).asString()));
         goalCard2.setImage(ImageLoader.getImage(state.getPrivateGoals().get(1).asString()));
         starterCard.setImage(ImageLoader.getImage(state.getStarterCard().asString()));
+        chooseGoal(0);
         this.stage.show();
     }
 
@@ -83,8 +91,8 @@ public class SetupSceneController {
         state.setChoosenGoalIndex(n);
         ColorAdjust colorAdjustChoosen = new ColorAdjust();
         ColorAdjust colorAdjustNotChoosen = new ColorAdjust();
-        colorAdjustChoosen.setBrightness(0.5);
-        colorAdjustNotChoosen.setBrightness(-0.5);
+        colorAdjustChoosen.setContrast(0);
+        colorAdjustNotChoosen.setContrast(-0.5);
         if (n==1){
             goalCard1.setEffect(colorAdjustNotChoosen);
             goalCard2.setEffect(colorAdjustChoosen);

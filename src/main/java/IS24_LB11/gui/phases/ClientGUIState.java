@@ -8,7 +8,6 @@ public abstract class ClientGUIState {
     protected String username;
     protected ServerHandlerGUI serverHandler;
     protected InputHandlerGUI inputHandlerGUI;
-    protected Thread activeThread = null;
 
     public ClientGUIState() {
         this.actualState = null;
@@ -32,10 +31,8 @@ public abstract class ClientGUIState {
     }
 
     public void shutdown() {
-        if (activeThread == null)
+        if (serverHandler == null)
             return;
-        if (!activeThread.isInterrupted())
-            activeThread.interrupt();
         serverHandler.shutdown();
     }
 }
