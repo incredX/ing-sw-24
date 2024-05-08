@@ -22,7 +22,7 @@
                                  <content>
                                     <ImageView fitHeight="2000.0" fitWidth="2000.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
-                                          <Image url="@../../../../Board.jpg" />
+                                          <Image url="@graphicResources/TemporaryBoard.jpg" />
                                        </image>
                                     </ImageView>
                                  </content>
