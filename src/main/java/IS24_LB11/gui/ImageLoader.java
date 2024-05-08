@@ -9,6 +9,8 @@ public class ImageLoader{
         // Provide the file path of the image
         String path = "src/main/resources/graphicResources/codexCards/croppedCards/";
 
+        //TODO: try path (/main/resources....)
+
         if (cardId.length() >= 8 && cardId.charAt(6) == 'F') {
             switch (cardId.charAt(0)) {
                 case 'N':
