@@ -32,8 +32,7 @@ public class LoginGUIState extends ClientGUIState implements PlayerStateInterfac
             try {
                 this.serverHandler=new ServerHandlerGUI(this,serverIp,serverPort);
 
-                activeThread = new Thread(serverHandler);
-                activeThread.start();
+                new Thread(serverHandler).start();
 
                 this.inputHandlerGUI=new InputHandlerGUI(serverHandler.getWriter());
             } catch (IOException e) {
