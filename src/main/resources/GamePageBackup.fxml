@@ -78,7 +78,7 @@
                                                         <items>
                                                           <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="214.0" prefWidth="301.0">
                                                                <children>
-                                                                  <ImageView fx:id="normalCard1" fitHeight="210.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" x="0.5" y="3.5">
+                                                                  <ImageView fx:id="normalDeckCard1" fitHeight="210.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" x="0.5" y="3.5">
                                                                      <image>
                                                                         <Image url="@graphicResources/codexCards/croppedCards/croppedFront/normalFront/_IEEIF1.jpg" />
                                                                      </image>
@@ -87,7 +87,7 @@
                                                             </AnchorPane>
                                                           <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="211.0" prefWidth="301.0">
                                                                <children>
-                                                                  <ImageView fx:id="normalCard2" fitHeight="210.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" x="0.5" y="3.5">
+                                                                  <ImageView fx:id="normalDeckCard2" fitHeight="210.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" x="0.5" y="3.5">
                                                                      <image>
                                                                         <Image url="@graphicResources/codexCards/croppedCards/croppedFront/normalFront/_EAAAF0.jpg" />
                                                                      </image>
@@ -96,7 +96,7 @@
                                                             </AnchorPane>
                                                             <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="214.0" prefWidth="301.0">
                                                                <children>
-                                                                  <ImageView fx:id="normalCardBack" fitHeight="210.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" x="0.5" y="3.5">
+                                                                  <ImageView fx:id="normalDeckCard3" fitHeight="210.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" x="0.5" y="3.5">
                                                                      <image>
                                                                         <Image url="@graphicResources/codexCards/croppedCards/croppedBack/NPB.jpg" />
                                                                      </image>
@@ -117,7 +117,7 @@
                                                         <items>
                                                           <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="214.0" prefWidth="301.0">
                                                                <children>
-                                                                  <ImageView fx:id="goldenCard1" fitHeight="210.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" x="0.5" y="3.5">
+                                                                  <ImageView fx:id="goldenDeckCard1" fitHeight="210.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" x="0.5" y="3.5">
                                                                      <image>
                                                                         <Image url="@graphicResources/codexCards/croppedCards/croppedFront/goldenFront/_K_EPF3_PPP__.jpg" />
                                                                      </image>
@@ -126,7 +126,7 @@
                                                             </AnchorPane>
                                                           <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="211.0" prefWidth="301.0">
                                                                <children>
-                                                                  <ImageView fx:id="goldenCard2" fitHeight="210.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" x="0.5" y="3.5">
+                                                                  <ImageView fx:id="goldenDeckCard2" fitHeight="210.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" x="0.5" y="3.5">
                                                                      <image>
                                                                         <Image url="@graphicResources/codexCards/croppedCards/croppedFront/goldenFront/QE__FF3_FFF__.jpg" />
                                                                      </image>
@@ -135,7 +135,7 @@
                                                             </AnchorPane>
                                                             <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="214.0" prefWidth="301.0">
                                                                <children>
-                                                                  <ImageView fx:id="goldenCardBack" fitHeight="210.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" x="0.5" y="3.5">
+                                                                  <ImageView fx:id="goldenDeckCard3" fitHeight="210.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" x="0.5" y="3.5">
                                                                      <image>
                                                                         <Image url="@graphicResources/codexCards/croppedCards/croppedBack/GFB.jpg" />
                                                                      </image>
