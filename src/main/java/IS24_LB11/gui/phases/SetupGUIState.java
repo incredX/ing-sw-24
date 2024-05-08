@@ -20,8 +20,8 @@ public class SetupGUIState extends ClientGUIState {
     SetupSceneController setupSceneController;
 
     public SetupGUIState(LoginGUIState prevState) {
-        this.serverHandler = prevState.serverHandler;
-        this.username = prevState.username;
+        this.serverHandler = prevState.getServerHandler();
+        this.username = prevState.getUsername();
         this.inputHandlerGUI = prevState.inputHandlerGUI;
         this.setupSceneController = null;
     }

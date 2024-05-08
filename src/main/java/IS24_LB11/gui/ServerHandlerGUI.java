@@ -10,6 +10,7 @@ import IS24_LB11.gui.scenesControllers.GameSceneController;
 import IS24_LB11.gui.scenesControllers.LoginSceneController;
 import IS24_LB11.gui.scenesControllers.SetupSceneController;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonIOException;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonStreamParser;
 import javafx.application.Platform;
@@ -25,6 +26,8 @@ public class ServerHandlerGUI implements Runnable{
     private JsonStreamParser parser;
     private PrintWriter writer;
     private ClientGUIState actualState;
+    private boolean running = true;
+
     private boolean gameTurnStateStarted = false;
     private LoginSceneController loginSceneController;
     private SetupSceneController setupSceneController;
@@ -39,7 +42,7 @@ public class ServerHandlerGUI implements Runnable{
     }
 
     public void run() {
-        while (true) {
+        while (running) {
             if (socket.isClosed()) break;
             try {
                 synchronized (parser) {
@@ -48,8 +51,8 @@ public class ServerHandlerGUI implements Runnable{
                 if (parser.hasNext()) {
                     processEvent(parser.next().getAsJsonObject());
                 }
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+            } catch (InterruptedException | JsonIOException e) {
+
             }
         }
         Thread.currentThread().interrupt();
@@ -157,12 +160,16 @@ public class ServerHandlerGUI implements Runnable{
     }
 
     public void shutdown() {
+        this.running = false;
+        this.writer.close();
         try {
-            if (!socket.isClosed()) socket.close();
+            if (!socket.isClosed())
+                socket.close();
         }
         catch (IOException e) {
             System.out.println(e);
         }
+        Thread.currentThread().interrupt();
     }
 
     public ArrayList<PlayableCard> extractCardArray(JsonArray jsonArray, int size){
