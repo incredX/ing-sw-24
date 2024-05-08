@@ -25,7 +25,7 @@ public class SetupSceneController {
     @FXML
     private ImageView starterCard;
     @FXML
-            private Button readyButton;
+    private Button readyButton;
 
     Stage stage = new Stage();
     SetupGUIState state;

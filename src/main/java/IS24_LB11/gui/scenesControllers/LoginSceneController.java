@@ -91,6 +91,7 @@ public class LoginSceneController {
     }
 
     public void showStage() {
+        this.stage.setResizable(false);
         this.stage.show();
     }
 
