@@ -75,6 +75,7 @@ public class ServerHandlerGUI implements Runnable{
                     handleSetupEvent(serverEvent);
                     return;
                 case "disconnected":
+                    //TODO: remind to calncel the disconnected player from the scoreboard
                     return;
                 case "turn":
                     handleTurnEvent(serverEvent);

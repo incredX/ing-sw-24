@@ -105,34 +105,34 @@
                                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                 </rowConstraints>
                                  <children>
-                                    <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                                    <ImageView fx:id="playerColor1" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
                                           <Image url="@graphicResources/codexCards/pawns/redPawn.png" />
                                        </image>
                                     </ImageView>
-                                    <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" GridPane.rowIndex="1">
+                                    <ImageView fx:id="playerColor2" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" GridPane.rowIndex="1">
                                        <image>
                                           <Image url="@graphicResources/codexCards/pawns/greenPawn.png" />
                                        </image>
                                     </ImageView>
-                                    <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" GridPane.rowIndex="2">
+                                    <ImageView fx:id="playerColor3" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" GridPane.rowIndex="2">
                                        <image>
                                           <Image url="@graphicResources/codexCards/pawns/bluePawn.png" />
                                        </image>
                                     </ImageView>
-                                    <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" GridPane.rowIndex="3">
+                                    <ImageView fx:id="playerColor4" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" GridPane.rowIndex="3">
                                        <image>
                                           <Image url="@graphicResources/codexCards/pawns/yellowPawn.png" />
                                        </image>
                                     </ImageView>
                                     <Text fx:id="playerName1" strokeType="OUTSIDE" strokeWidth="0.0" text="Player1" textAlignment="JUSTIFY" GridPane.columnIndex="1" />
                                     <Text fx:id="playerName2" strokeType="OUTSIDE" strokeWidth="0.0" text="Player2" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Player3" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Player4" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="789" GridPane.columnIndex="2" />
-                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="456" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="123" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="0" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                                    <Text fx:id="playerName3" strokeType="OUTSIDE" strokeWidth="0.0" text="Player3" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                    <Text fx:id="playerName4" strokeType="OUTSIDE" strokeWidth="0.0" text="Player4" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                    <Text fx:id="playerScore1" strokeType="OUTSIDE" strokeWidth="0.0" text="789" GridPane.columnIndex="2" />
+                                    <Text fx:id="playerScore2" strokeType="OUTSIDE" strokeWidth="0.0" text="456" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                                    <Text fx:id="playerScore3" strokeType="OUTSIDE" strokeWidth="0.0" text="123" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                                    <Text fx:id="playerScore4" strokeType="OUTSIDE" strokeWidth="0.0" text="0" GridPane.columnIndex="2" GridPane.rowIndex="3" />
                                  </children>
                               </GridPane>
                               <ImageView fx:id="bluePion" fitHeight="25.0" fitWidth="25.0" layoutX="442.0" layoutY="537.0" pickOnBounds="true" preserveRatio="true">

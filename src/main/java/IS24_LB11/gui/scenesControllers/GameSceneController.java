@@ -12,7 +12,10 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.ScrollEvent;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.event.EventHandler;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -50,6 +53,30 @@ public class GameSceneController {
     private ImageView goldenDeckCard2;
     @FXML
     private ImageView goldenDeckCard3;
+    @FXML
+    private ImageView playerColor1;
+    @FXML
+    private Text playerName1;
+    @FXML
+    private Text playerScore1;
+    @FXML
+    private ImageView playerColor2;
+    @FXML
+    private Text playerName2;
+    @FXML
+    private Text playerScore2;
+    @FXML
+    private ImageView playerColor3;
+    @FXML
+    private Text playerName3;
+    @FXML
+    private Text playerScore3;
+    @FXML
+    private ImageView playerColor4;
+    @FXML
+    private Text playerName4;
+    @FXML
+    private Text playerScore4;
     Stage stage = new Stage();
     GameGUIState state;
 
@@ -76,16 +103,25 @@ public class GameSceneController {
     public void initialize(){
         state.getServerHandler().setGameSceneController(this);
         // button and image event has to be declared here
-        handCard1.setOnMouseClicked(mouseEvent ->chooseHandCard(0));
-        handCard2.setOnMouseClicked(mouseEvent ->chooseHandCard(1));
-        handCard3.setOnMouseClicked(mouseEvent ->chooseHandCard(2));
+        handCard1.setOnMouseClicked(mouseEvent -> chooseHandCard(0));
+        handCard2.setOnMouseClicked(mouseEvent -> chooseHandCard(1));
+        handCard3.setOnMouseClicked(mouseEvent -> chooseHandCard(2));
         normalDeckCard1.setOnMouseClicked(mouseEvent -> chooseDeckCard(0,false));
         normalDeckCard2.setOnMouseClicked(mouseEvent -> chooseDeckCard(1,false));
         normalDeckCard3.setOnMouseClicked(mouseEvent -> chooseDeckCard(2,false));
         goldenDeckCard1.setOnMouseClicked(mouseEvent -> chooseDeckCard(0,true));
         goldenDeckCard2.setOnMouseClicked(mouseEvent -> chooseDeckCard(1,true));
         goldenDeckCard3.setOnMouseClicked(mouseEvent -> chooseDeckCard(2,true));
-
+        if (state.getNumberOfPlayer()<=3){
+            playerColor4.setVisible(false);
+            playerName4.setVisible(false);
+            playerScore4.setVisible(false);
+        }
+        if (state.getNumberOfPlayer()<=2){
+            playerColor3.setVisible(false);
+            playerName3.setVisible(false);
+            playerScore3.setVisible(false);
+        }
     }
 
     public void showStage(){
@@ -139,24 +175,30 @@ public class GameSceneController {
     }
     public void chooseHandCard(int n){
         ColorAdjust colorAdjustNotChoosen = new ColorAdjust();
+        ColorAdjust colorAdjustChoosen = new ColorAdjust();
         colorAdjustNotChoosen.setContrast(-0.5);
+        colorAdjustChoosen.setContrast(0);
         switch (n){
             case 0:
                 state.chooseCardToPlay(state.getPlayer().getHand().get(0));
+                handCard1.setEffect(colorAdjustChoosen);
                 handCard2.setEffect(colorAdjustNotChoosen);
                 handCard3.setEffect(colorAdjustNotChoosen);
                 break;
             case 1:
                 state.chooseCardToPlay(state.getPlayer().getHand().get(1));
                 handCard1.setEffect(colorAdjustNotChoosen);
+                handCard2.setEffect(colorAdjustChoosen);
                 handCard3.setEffect(colorAdjustNotChoosen);
                 break;
             case 2:
                 state.chooseCardToPlay(state.getPlayer().getHand().get(2));
                 handCard1.setEffect(colorAdjustNotChoosen);
                 handCard2.setEffect(colorAdjustNotChoosen);
+                handCard3.setEffect(colorAdjustChoosen);
                 break;
         }
+        System.out.println("CHANGE");
     }
     public void chooseDeckCard(int n,boolean deckType){
         if (deckType)
@@ -168,5 +210,4 @@ public class GameSceneController {
     public GameGUIState getState() {
         return state;
     }
-
 }
