@@ -34,9 +34,7 @@ import static IS24_LB11.cli.notification.Priority.MEDIUM;
 
 //NOTE : URGENT PRIORITY
 //NOTE : HIGH PRIORITY
-//TODO : close everything if the input listener is closed
 //NOTE : MEDIUM PRIORITY
-//TODO : send message "your last turn" and remove some notifications
 //NOTE : LOW PRIORITY
 //TODO : sowly remove resize from viewhub and assign to notification their views to resize
 //TODO : refactor viewhub as a cliBox's queue consumer. (maybe?)
@@ -99,15 +97,13 @@ public class GameState extends ClientState implements PlayerStateInterface {
 
     @Override
     protected void processServerEvent(ServerEvent serverEvent) {
-        if (processServerEventIfCommon(serverEvent)) {
-            viewHub.update();
-            return;
-        }
+        if (processServerEventIfCommon(serverEvent)) return;
         switch (serverEvent) {
             case ServerNewTurnEvent newTurnEvent -> {
                 Debugger.print("turn of "+newTurnEvent.player()+" (I'm "+username+")");
                 if (newTurnEvent.player().isEmpty()) {
                     gameOver = true;
+                    popManager.hideAllPopups();
                     popManager.showPopup("table");
                     popManager.getPopup("table").enable();
                     notificationStack.add(MEDIUM, "GAME ENDED", "press [ENTER] to go back to the lobby");
@@ -124,20 +120,17 @@ public class GameState extends ClientState implements PlayerStateInterface {
                 popManager.getPopup("table").update();
             }
             case ServerPlayerDisconnectEvent disconnectEvent -> {
+                if (gameOver) break;
                 table.getScoreboard().removePlayer(disconnectEvent.player());
                 popManager.getPopup("table").redrawView();
             }
             default -> processResult(Result.Error("received unknown server event"));
         }
-        viewHub.update();
     }
 
     @Override
     protected void processCommand(String command) {
-        if (processCommandIfCommon(command)) {
-            viewHub.update();
-            return;
-        }
+        if (processCommandIfCommon(command)) return;
         Debugger.print("command: "+command);
         String[] tokens = command.split(" ", 2);
         switch (tokens[0].toUpperCase()) {
@@ -152,7 +145,6 @@ public class GameState extends ClientState implements PlayerStateInterface {
                 notificationStack.addUrgent("ERROR", INVALID_CMD.apply(tokens[0], "game"));
             }
         }
-        viewHub.update();
     }
 
     @Override
@@ -171,7 +163,6 @@ public class GameState extends ClientState implements PlayerStateInterface {
                 }
             }
         }
-        viewHub.update();
     }
 
     @Override
@@ -179,7 +170,6 @@ public class GameState extends ClientState implements PlayerStateInterface {
         centerBoardPointer();
         super.processResize(screenSize);
         popManager.resizePopups();
-        viewHub.update();
     }
 
     public void drawCardFromDeck() {
@@ -265,6 +255,10 @@ public class GameState extends ClientState implements PlayerStateInterface {
 
     public boolean boardValidSpot(Position position) {
         return player.getBoard().spotAvailable(position);
+    }
+
+    public boolean isGameOver() {
+        return gameOver;
     }
 
     public ArrayList<PlacedCard> getPlacedCardsInBoard() {

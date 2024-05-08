@@ -76,6 +76,7 @@ public class AutomatedState extends ClientState {
 
     @Override
     protected void processServerEvent(ServerEvent event) {
+        if (processServerEventIfCommon(event)) return;
         switch (event) {
             case ServerHeartBeatEvent heartBeatEvent -> {
                 sendToServer("heartbeat");

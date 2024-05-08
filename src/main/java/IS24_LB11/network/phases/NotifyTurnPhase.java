@@ -17,7 +17,11 @@ public class NotifyTurnPhase {
 
         // send notification to next player turn
         response.addProperty("type", "notification");
-        response.addProperty("message", "It is your turn");
+        if (clientHandler.getGame().getFinalTurn()) {
+            response.addProperty("message", "It is your FINAL turn");
+        } else {
+            response.addProperty("message", "It is your turn");
+        }
         clientHandler.sendMessage(response.toString());
         response.remove("message");
 

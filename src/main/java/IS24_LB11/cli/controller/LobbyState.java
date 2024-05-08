@@ -34,10 +34,7 @@ public class LobbyState extends ClientState {
     }
 
     protected void processServerEvent(ServerEvent serverEvent) {
-        if (processServerEventIfCommon(serverEvent)) {
-            viewHub.update();
-            return;
-        }
+        if (processServerEventIfCommon(serverEvent)) return;
         switch (serverEvent) {
             case ServerLoginEvent loginEvent -> {
                 username = loginEvent.username();
@@ -49,14 +46,10 @@ public class LobbyState extends ClientState {
             }
             default -> processResult(Result.Error("received unknown server event"));
         }
-        viewHub.update();
     }
 
     protected void processCommand(String command) {
-        if (processCommandIfCommon(command)) {
-            viewHub.update();
-            return;
-        }
+        if (processCommandIfCommon(command)) return;
         String[] tokens = command.split(" ", 2);
         switch (tokens[0].toUpperCase()) {
             case "LOGIN" -> {
@@ -76,7 +69,6 @@ public class LobbyState extends ClientState {
             //case "HELP" -> popManager.showPopup(tokens[0]);
             default -> notificationStack.addUrgent("ERROR", INVALID_CMD.apply(tokens[0], "lobby"));
         };
-        viewHub.update();
     }
 
     @Override
@@ -84,14 +76,12 @@ public class LobbyState extends ClientState {
         keyConsumed = notificationStack.consumeKeyStroke(keyStroke);
         if (!keyConsumed) cmdLine.consumeKeyStroke(this, keyStroke);
         if (!keyConsumed) popManager.consumeKeyStroke(keyStroke);
-        viewHub.update();
     }
 
     @Override
     protected void processResize(TerminalSize screenSize) {
         super.processResize(screenSize);
         popManager.resizePopups();
-        viewHub.update();
     }
 
     private void setProperty(String property) {

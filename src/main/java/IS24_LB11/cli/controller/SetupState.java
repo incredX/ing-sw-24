@@ -48,10 +48,7 @@ public class SetupState extends ClientState implements PlayerStateInterface {
     }
 
     protected void processServerEvent(ServerEvent serverEvent) {
-        if (processServerEventIfCommon(serverEvent)) {
-            viewHub.update();
-            return;
-        }
+        if (processServerEventIfCommon(serverEvent)) return;
         switch (serverEvent) {
             case ServerPlayerSetupEvent playerSetupEvent -> {
                 processResult(Result.Error("Invalid server event", "can't accept a new player setup"));
@@ -61,14 +58,10 @@ public class SetupState extends ClientState implements PlayerStateInterface {
             }
             default -> processResult(Result.Error("received unknown server event"));
         }
-        viewHub.update();
     }
 
     protected void processCommand(String command) {
-        if (processCommandIfCommon(command)) {
-            viewHub.update();
-            return;
-        }
+        if (processCommandIfCommon(command)) return;
         String[] tokens = command.split(" ", 2);
         switch (tokens[0].toUpperCase()) {
             case "GOAL", "G" -> {
@@ -90,13 +83,8 @@ public class SetupState extends ClientState implements PlayerStateInterface {
                 setupStage.clear();
                 setNextState(new GameState(this));
             }
-//            case "HELP", "TABLE", "HAND", "DECKS" -> {
-//                popManager.showPopup(tokens[0]);
-//                popManager.getPopup(tokens[0]).disable();
-//            }
             default -> notificationStack.addUrgent("ERROR", INVALID_CMD.apply(tokens[0], "game setup"));
         };
-        viewHub.update();
     }
 
     @Override
@@ -119,7 +107,6 @@ public class SetupState extends ClientState implements PlayerStateInterface {
                 }
             }
         }
-        viewHub.update();
     }
 
     @Override
@@ -127,7 +114,6 @@ public class SetupState extends ClientState implements PlayerStateInterface {
         super.processResize(screenSize);
         popManager.resizePopups();
 //        viewHub.updateStage();
-        viewHub.update();
     }
 
     private void setChosenGoal(int index) {

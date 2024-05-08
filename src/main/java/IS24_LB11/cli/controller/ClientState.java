@@ -104,6 +104,7 @@ public abstract class ClientState {
             case ResultServerEvent resultServerEvent -> processResult(resultServerEvent.result());
             default -> Debugger.print("Unknown event: " + event.getClass().getName());
         };
+        viewHub.update();
     }
 
     public void quit() {
@@ -113,6 +114,10 @@ public abstract class ClientState {
             sendToServer("quit");
             serverHandler.shutdown();
         }
+    }
+
+    public void shutdown() {
+        tryQueueEvent(new CommandEvent("quit"));
     }
 
     protected abstract void processServerEvent(ServerEvent event);
