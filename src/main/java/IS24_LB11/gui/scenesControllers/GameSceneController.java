@@ -3,12 +3,14 @@ package IS24_LB11.gui.scenesControllers;
 
 import IS24_LB11.game.components.PlayableCard;
 import IS24_LB11.gui.ImageLoader;
+import IS24_LB11.gui.PopUps;
 import IS24_LB11.gui.phases.ClientGUIState;
 import IS24_LB11.gui.phases.GameGUIState;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
@@ -76,9 +78,14 @@ public class GameSceneController {
     private Text playerName4;
     @FXML
     private Text playerScore4;
+    @FXML
+    private Button chatButton;
     Stage stage = new Stage();
+    Stage chatStage = new Stage();
     GameGUIState state;
     int numberPlayerInGame;
+
+    ChatSceneController chatSceneController;
 
     public GameSceneController(ClientGUIState state) {
         this.state=(GameGUIState) state;
@@ -93,6 +100,16 @@ public class GameSceneController {
             throw new RuntimeException(e);
         }
 
+        FXMLLoader loaderChat = new FXMLLoader(getClass().getResource("/CHatView.fxml"));
+        chatSceneController = new ChatSceneController((GameGUIState) state,chatStage);
+        loaderChat.setController(chatSceneController);
+        state.getServerHandler().setChatSceneController(chatSceneController);
+        try {
+            chatStage.setScene(new Scene(loaderChat.load()));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
         stage.setOnCloseRequest(event -> {
             event.consume();
             exit(stage);
@@ -102,6 +119,7 @@ public class GameSceneController {
     @FXML
     public void initialize(){
         state.getServerHandler().setGameSceneController(this);
+
         numberPlayerInGame=state.getNumberOfPlayer();
         // button and image event has to be declared here
         handCard1.setOnMouseClicked(mouseEvent -> chooseHandCard(0));
@@ -113,9 +131,14 @@ public class GameSceneController {
         goldenDeckCard1.setOnMouseClicked(mouseEvent -> chooseDeckCard(0,true));
         goldenDeckCard2.setOnMouseClicked(mouseEvent -> chooseDeckCard(1,true));
         goldenDeckCard3.setOnMouseClicked(mouseEvent -> chooseDeckCard(2,true));
+        chatButton.setOnMouseClicked(mouseEvent -> showChat());
         //same as disconnected
         hidePlayersInScoreboard();
         setUsernamesBoard();
+    }
+
+    private void showChat() {
+        chatStage.show();
     }
 
     private void hidePlayersInScoreboard(){
@@ -262,5 +285,10 @@ public class GameSceneController {
         hidePlayersInScoreboard();
         setUsernamesBoard();
         updateScore();
+    }
+
+    public void showPopUpNotification(String message) {
+        PopUps popUps = new PopUps();
+        popUps.popUpMaker(message);
     }
 }

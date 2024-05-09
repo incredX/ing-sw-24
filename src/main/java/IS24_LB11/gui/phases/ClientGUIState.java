@@ -1,5 +1,6 @@
 package IS24_LB11.gui.phases;
 
+import IS24_LB11.gui.Chat;
 import IS24_LB11.gui.InputHandlerGUI;
 import IS24_LB11.gui.ServerHandlerGUI;
 
@@ -9,9 +10,11 @@ public abstract class ClientGUIState {
     protected ServerHandlerGUI serverHandler;
     protected InputHandlerGUI inputHandlerGUI;
 
+    protected Chat personalChat;
     public ClientGUIState() {
         this.actualState = null;
         this.username = "";
+        personalChat = new Chat();
     }
 
     public void setState(ClientGUIState nextState) {
@@ -28,6 +31,13 @@ public abstract class ClientGUIState {
 
     public ServerHandlerGUI getServerHandler() {
         return serverHandler;
+    }
+
+    public String getPersonalChat() {
+        return personalChat.getMessages();
+    }
+    public void addMessages(String from,String mex){
+        personalChat.addMessage(from,mex);
     }
 
     public void shutdown() {
