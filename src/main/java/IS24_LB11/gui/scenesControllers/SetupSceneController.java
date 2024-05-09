@@ -120,4 +120,8 @@ public class SetupSceneController {
         readyButton.setDisable(true);
         state.execute();
     }
+
+    public void removePlayer(String playerDisconnected) {
+        state.removePlayer(playerDisconnected);
+    }
 }

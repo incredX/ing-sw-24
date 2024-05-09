@@ -27,11 +27,10 @@ public class ServerHandlerGUI implements Runnable{
     private PrintWriter writer;
     private ClientGUIState actualState;
     private boolean running = true;
-
     private boolean gameTurnStateStarted = false;
     private LoginSceneController loginSceneController;
     private SetupSceneController setupSceneController;
-    private GameSceneController gameSceneController;
+    private GameSceneController gameSceneController = null;
 
     public ServerHandlerGUI(ClientGUIState clientGUIState, String serverIP, int serverPORT) throws IOException {
         socket = new Socket(serverIP, serverPORT);
@@ -89,9 +88,14 @@ public class ServerHandlerGUI implements Runnable{
 
     private void handleDisconnectedEvent(JsonObject serverEvent) {
         String playerDisconnected = serverEvent.get("player").getAsString();
-        Platform.runLater(()->gameSceneController.removePlayer(playerDisconnected));
-        if (gameSceneController.getState().getNumberOfPlayer()==1);
+        if (gameSceneController == (null))
+            Platform.runLater(()->setupSceneController.removePlayer(playerDisconnected));
+        else {
+            Platform.runLater(() -> gameSceneController.removePlayer(playerDisconnected));
+            //TODO: popup that alert u you are alone
+            if (gameSceneController.getState().getNumberOfPlayer()==1);
             //Platform.runLater();
+        }
     }
 
     private void handleTurnEvent(JsonObject serverEvent) {

@@ -91,4 +91,8 @@ public class SetupGUIState extends ClientGUIState {
         System.out.println(personalSetup.getStarterCard());
         inputHandlerGUI.sendReady(personalSetup.chosenGoal(),personalSetup.getStarterCard());
     }
+
+    public void removePlayer(String playerDisconnected) {
+        players.remove(playerDisconnected);
+    }
 }
