@@ -59,7 +59,8 @@ public class Board extends Application {
         placedCards.add(new PlacedCard((PlayableCard) CardFactory.newSerialCard(cardStrings.get(4)), new Position(-1, 1)));
 
         for (PlacedCard p : placedCards) {
-            playerBoard.getChildren().add(getImageView(p));
+            ImageView imageView = ImageLoader.roundCorners(getImageView(p));
+            playerBoard.getChildren().add(imageView);
         }
 
         Scene scene = new Scene(root);
@@ -80,8 +81,8 @@ public class Board extends Application {
         Image image = ImageLoader.getImage(placedCard.card().asString());
         ImageView imageView = new ImageView(image);
 
-        imageView.setFitWidth(300);
-        imageView.setFitHeight(210);
+        imageView.setFitWidth(cardX);
+        imageView.setFitHeight(cardY);
 
         Coordinate positionOnBoard = getPositionOnBoard(placedCard.position().getX(), placedCard.position().getY());
 
