@@ -75,7 +75,7 @@ public class ServerHandlerGUI implements Runnable{
                     handleSetupEvent(serverEvent);
                     return;
                 case "disconnected":
-                    //TODO: remind to calncel the disconnected player from the scoreboard
+                    handleDisconnectedEvent(serverEvent);
                     return;
                 case "turn":
                     handleTurnEvent(serverEvent);
@@ -85,6 +85,13 @@ public class ServerHandlerGUI implements Runnable{
             }
         }
 
+    }
+
+    private void handleDisconnectedEvent(JsonObject serverEvent) {
+        String playerDisconnected = serverEvent.get("player").getAsString();
+        Platform.runLater(()->gameSceneController.removePlayer(playerDisconnected));
+        if (gameSceneController.getState().getNumberOfPlayer()==1);
+            //Platform.runLater();
     }
 
     private void handleTurnEvent(JsonObject serverEvent) {

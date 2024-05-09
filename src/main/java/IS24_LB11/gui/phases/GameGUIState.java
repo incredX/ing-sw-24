@@ -85,6 +85,16 @@ public class GameGUIState extends ClientGUIState {
         return player;
     }
 
+    public ArrayList<String> getPlayers() {
+        return players;
+    }
+
+    public HashMap<String, Integer> getPlayersScore() {
+        return playersScore;
+    }
+    public HashMap<Color, String> getPlayersColors() {
+        return playersColors;
+    }
     public void execute() {
         PlacedCard placedCard = new PlacedCard(cardChooseToPlay, positionPlacedCard);
         inputHandlerGUI.sendTurn(placedCard, cardChooseToDraw);
@@ -95,5 +105,11 @@ public class GameGUIState extends ClientGUIState {
     }
     public int getNumberOfPlayer(){
         return players.size();
+    }
+
+    public void removePlayer(String playerDisconnected) {
+        players.remove(playerDisconnected);
+        playersScore.remove(playerDisconnected);
+        playersColors.remove(playerDisconnected);
     }
 }
