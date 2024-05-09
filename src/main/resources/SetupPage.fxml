@@ -89,7 +89,7 @@
                     y="415.0">
                <image>
                   <Image
-                          url="@graphicResources/codexCards/croppedCards/croppedFront/goalFront/AEEF_F0F__PAFI.jpg" />
+                          url="@graphicResources/codexCards/croppedCards/croppedFront/starterFront/AEEF_F0F__PAFI.jpg" />
                </image>
                <effect>
                   <DropShadow
