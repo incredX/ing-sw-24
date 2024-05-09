@@ -59,7 +59,8 @@ public class Board extends Application {
         placedCards.add(new PlacedCard((PlayableCard) CardFactory.newSerialCard(cardStrings.get(4)), new Position(-1, 1)));
 
         for (PlacedCard p : placedCards) {
-            ImageView imageView = ImageLoader.roundCorners(getImageView(p));
+            ImageView imageView = getImageView(p);
+            ImageLoader.roundCorners(imageView);
             playerBoard.getChildren().add(imageView);
         }
 

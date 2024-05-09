@@ -49,7 +49,7 @@ public class ImageLoader{
         return image;
     }
 
-    public static ImageView roundCorners(ImageView imageView){
+    public static void roundCorners(ImageView imageView){
         // set a clip to apply rounded border to the original image.
         Rectangle clip = new Rectangle(
                 imageView.getFitWidth(), imageView.getFitHeight()
@@ -71,8 +71,6 @@ public class ImageLoader{
 
         // store the rounded image in the imageView.
         imageView.setImage(image);
-
-        return imageView;
     }
 }
 
