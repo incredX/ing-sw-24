@@ -20,7 +20,7 @@
                                 <items>
                                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
                                        <children>
-                                          <ImageView fx:id="handCard1" fitHeight="150.0" fitWidth="200.0" layoutX="26.0" layoutY="33.0" pickOnBounds="true" preserveRatio="true">
+                                          <ImageView fx:id="handCard1" fitHeight="150.0" fitWidth="200.0" layoutX="26.0" layoutY="33.0">
 
 
 
@@ -40,7 +40,7 @@
                                                 </AnchorPane>
                                               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
                                                    <children>
-                                                      <ImageView fx:id="handCard3" fitHeight="150.0" fitWidth="200.0" layoutX="25.0" layoutY="42.0" pickOnBounds="true" preserveRatio="true">
+                                                      <ImageView fx:id="handCard3" fitHeight="150.0" fitWidth="200.0" layoutX="25.0" layoutY="42.0" >
 
 
                                                       </ImageView>
