@@ -74,6 +74,8 @@ public class SetupSceneController {
         goalCard2.setImage(ImageLoader.getImage(state.getPrivateGoals().get(1).asString()));
         starterCard.setImage(ImageLoader.getImage(state.getStarterCard().asString()));
         chooseGoal(0);
+
+        this.stage.setResizable(false);
         this.stage.show();
     }
 

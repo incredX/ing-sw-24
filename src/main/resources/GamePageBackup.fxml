@@ -10,6 +10,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
@@ -24,13 +25,9 @@
                      <children>
                         <SplitPane dividerPositions="0.76" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="688.5" prefWidth="1280.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                           <items>
-                              <ScrollPane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="686.5" prefWidth="968.0">
+                              <ScrollPane fx:id="scrollPane" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="686.5" prefWidth="968.0">
                                  <content>
-                                    <ImageView fitHeight="2000.0" fitWidth="2000.0" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@graphicResources/TemporaryBoard.jpg" />
-                                       </image>
-                                    </ImageView>
+                                    <Pane fx:id="playerBoard" minHeight="20000.0" minWidth="20000.0" />
                                  </content>
                               </ScrollPane>
                             <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="686.5" prefWidth="303.0">

@@ -1,18 +1,24 @@
 package IS24_LB11.gui.scenesControllers;
 
 
+import IS24_LB11.game.PlacedCard;
+import IS24_LB11.game.components.CardFactory;
 import IS24_LB11.game.components.PlayableCard;
+import IS24_LB11.game.utils.Position;
 import IS24_LB11.gui.ImageLoader;
 import IS24_LB11.gui.phases.ClientGUIState;
 import IS24_LB11.gui.phases.GameGUIState;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
@@ -80,8 +86,27 @@ public class GameSceneController {
     GameGUIState state;
     int numberPlayerInGame;
 
+    // Board Variables
+    @FXML
+    private ScrollPane scrollPane;
+
+    @FXML
+    private Pane playerBoard;
+
+    private final int centerBoardX = 10000;
+    private final int centerBoardY = 10000;
+
+    private final int cardX = 300;
+    private final int cardY = 210;
+
+    private final int cardCornerX = 70;
+    private final int cardCornerY = 82;
+
+    private ArrayList<ImageView> availableSpotsTemporaryCards = new ArrayList<>();
+
+
     public GameSceneController(ClientGUIState state) {
-        this.state=(GameGUIState) state;
+        this.state = (GameGUIState) state;
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/GamePageBackup.fxml"));
         loader.setController(this);
@@ -99,37 +124,38 @@ public class GameSceneController {
         });
 
     }
+
     @FXML
-    public void initialize(){
+    public void initialize() {
         state.getServerHandler().setGameSceneController(this);
-        numberPlayerInGame=state.getNumberOfPlayer();
+        numberPlayerInGame = state.getNumberOfPlayer();
         // button and image event has to be declared here
         handCard1.setOnMouseClicked(mouseEvent -> chooseHandCard(0));
         handCard2.setOnMouseClicked(mouseEvent -> chooseHandCard(1));
         handCard3.setOnMouseClicked(mouseEvent -> chooseHandCard(2));
-        normalDeckCard1.setOnMouseClicked(mouseEvent -> chooseDeckCard(0,false));
-        normalDeckCard2.setOnMouseClicked(mouseEvent -> chooseDeckCard(1,false));
-        normalDeckCard3.setOnMouseClicked(mouseEvent -> chooseDeckCard(2,false));
-        goldenDeckCard1.setOnMouseClicked(mouseEvent -> chooseDeckCard(0,true));
-        goldenDeckCard2.setOnMouseClicked(mouseEvent -> chooseDeckCard(1,true));
-        goldenDeckCard3.setOnMouseClicked(mouseEvent -> chooseDeckCard(2,true));
+        normalDeckCard1.setOnMouseClicked(mouseEvent -> chooseDeckCard(0, false));
+        normalDeckCard2.setOnMouseClicked(mouseEvent -> chooseDeckCard(1, false));
+        normalDeckCard3.setOnMouseClicked(mouseEvent -> chooseDeckCard(2, false));
+        goldenDeckCard1.setOnMouseClicked(mouseEvent -> chooseDeckCard(0, true));
+        goldenDeckCard2.setOnMouseClicked(mouseEvent -> chooseDeckCard(1, true));
+        goldenDeckCard3.setOnMouseClicked(mouseEvent -> chooseDeckCard(2, true));
         //same as disconnected
         hidePlayersInScoreboard();
         setUsernamesBoard();
     }
 
-    private void hidePlayersInScoreboard(){
-        if (state.getNumberOfPlayer()<=3){
+    private void hidePlayersInScoreboard() {
+        if (state.getNumberOfPlayer() <= 3) {
             playerColor4.setVisible(false);
             playerName4.setVisible(false);
             playerScore4.setVisible(false);
         }
-        if (state.getNumberOfPlayer()<=2){
+        if (state.getNumberOfPlayer() <= 2) {
             playerColor3.setVisible(false);
             playerName3.setVisible(false);
             playerScore3.setVisible(false);
         }
-        if (state.getNumberOfPlayer()<=1){
+        if (state.getNumberOfPlayer() <= 1) {
             playerColor2.setVisible(false);
             playerName2.setVisible(false);
             playerScore2.setVisible(false);
@@ -137,36 +163,53 @@ public class GameSceneController {
     }
 
     private void setUsernamesBoard() {
-        if (numberPlayerInGame>=2){
+        if (numberPlayerInGame >= 2) {
             playerName1.setText(state.getPlayers().get(0));
             playerName2.setText(state.getPlayers().get(1));
         }
-        if (numberPlayerInGame>=3){
+        if (numberPlayerInGame >= 3) {
             playerName3.setText(state.getPlayers().get(2));
         }
-        if (numberPlayerInGame>=4){
+        if (numberPlayerInGame >= 4) {
             playerName4.setText(state.getPlayers().get(3));
         }
 
     }
-    public void showStage(){
+
+    public void showStage() {
         goalCard1.setImage(ImageLoader.getImage(state.getPublicGoals().get(0).asString()));
+        ImageLoader.roundCorners(goalCard1);
+
         goalCard2.setImage(ImageLoader.getImage(state.getPublicGoals().get(1).asString()));
+        ImageLoader.roundCorners(goalCard2);
+
         privateGoalCard.setImage(ImageLoader.getImage(state.getPlayer().getPersonalGoal().asString()));
+        ImageLoader.roundCorners(privateGoalCard);
+
+        // Place starterCard
+        moveToCenter(scrollPane);
+        ImageView starterCard =  getImageView(state.getPlayer().getBoard().getPlacedCards().getFirst());
+        ImageLoader.roundCorners(starterCard);
+        playerBoard.getChildren().add(starterCard);
+
+
+        this.stage.setResizable(false);
         this.stage.show();
     }
-    public void exit(Stage stage)  {
+
+    public void exit(Stage stage) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Exit");
         alert.setHeaderText("You are about to exit!");
         alert.setContentText("Are you sure?");
 
-        if(alert.showAndWait().get() == ButtonType.OK){
+        if (alert.showAndWait().get() == ButtonType.OK) {
             state.shutdown();
             System.out.println("You successfully logged out!");
             stage.close();
         }
     }
+
     public void updateGame(String currentPlayerTurn,
                            ArrayList<Integer> playerScores,
                            ArrayList<PlayableCard> normalDeck,
@@ -180,38 +223,65 @@ public class GameSceneController {
         updateScore();
         reloadBoard();
     }
+
     private void reloadBoard() {
 
     }
-    public void updateDeck(){
+
+    public void updateDeck() {
         normalDeckCard1.setImage(ImageLoader.getImage(state.getNormalDeck().get(0).asString()));
+        ImageLoader.roundCorners(normalDeckCard1);
+
         normalDeckCard2.setImage(ImageLoader.getImage(state.getNormalDeck().get(1).asString()));
+        ImageLoader.roundCorners(normalDeckCard2);
+
         normalDeckCard3.setImage(ImageLoader.getImage(state.getNormalDeck().get(2).asString()));
+        ImageLoader.roundCorners(normalDeckCard3);
+
         goldenDeckCard1.setImage(ImageLoader.getImage(state.getGoldenDeck().get(0).asString()));
+        ImageLoader.roundCorners(goldenDeckCard1);
+
         goldenDeckCard2.setImage(ImageLoader.getImage(state.getGoldenDeck().get(1).asString()));
+        ImageLoader.roundCorners(goldenDeckCard2);
+
         goldenDeckCard3.setImage(ImageLoader.getImage(state.getGoldenDeck().get(2).asString()));
+        ImageLoader.roundCorners(goldenDeckCard3);
+
     }
-    public void updateHand(){
+
+    public void updateHand() {
         handCard1.setImage(ImageLoader.getImage(state.getPlayer().getHand().get(0).asString()));
+        ImageLoader.roundCorners(handCard1);
+
         handCard2.setImage(ImageLoader.getImage(state.getPlayer().getHand().get(1).asString()));
+        ImageLoader.roundCorners(handCard2);
+
         handCard3.setImage(ImageLoader.getImage(state.getPlayer().getHand().get(2).asString()));
+        ImageLoader.roundCorners(handCard3);
     }
-    public void updateScore(){
-        if (numberPlayerInGame>=2){
+
+    public void updateScore() {
+        if (numberPlayerInGame >= 2) {
             playerScore1.setText(String.valueOf(state.getPlayersScore().get(playerName1.getText())));
             playerScore2.setText(String.valueOf(state.getPlayersScore().get(playerName2.getText())));
-        }if (numberPlayerInGame>=3){
+        }
+        if (numberPlayerInGame >= 3) {
             playerScore3.setText(String.valueOf(state.getPlayersScore().get(playerName3.getText())));
-        }if (numberPlayerInGame>=4){
+        }
+        if (numberPlayerInGame >= 4) {
             playerScore4.setText(String.valueOf(state.getPlayersScore().get(playerName4.getText())));
         }
     }
-    public void chooseHandCard(int n){
+
+    public void chooseHandCard(int n) {
+
+        placeTemporaryCardsOnAvailableSpots();
+
         ColorAdjust colorAdjustNotChoosen = new ColorAdjust();
         ColorAdjust colorAdjustChoosen = new ColorAdjust();
         colorAdjustNotChoosen.setContrast(-0.5);
         colorAdjustChoosen.setContrast(0);
-        switch (n){
+        switch (n) {
             case 0:
                 state.chooseCardToPlay(state.getPlayer().getHand().get(0));
                 handCard1.setEffect(colorAdjustChoosen);
@@ -232,13 +302,15 @@ public class GameSceneController {
                 break;
         }
     }
-    public void chooseDeckCard(int n,boolean deckType){
+
+    public void chooseDeckCard(int n, boolean deckType) {
         if (deckType)
-            state.chooseCardToDraw(state.getGoldenDeck().get(n),n,deckType);
+            state.chooseCardToDraw(state.getGoldenDeck().get(n), n, deckType);
         else
-            state.chooseCardToDraw(state.getNormalDeck().get(n),n,deckType);
+            state.chooseCardToDraw(state.getNormalDeck().get(n), n, deckType);
         state.execute();
     }
+
     public GameGUIState getState() {
         return state;
     }
@@ -247,20 +319,67 @@ public class GameSceneController {
         String color = state.getPlayersColors().get(playerDisconnected);
         state.removePlayer(playerDisconnected);
         numberPlayerInGame--;
-        if (playerDisconnected.equals(playerName1.getText())){
+        if (playerDisconnected.equals(playerName1.getText())) {
             playerColor1.setImage(new Image(GameSceneController.class.getResourceAsStream("/graphicResources/codexCards/pawns/greenPawn.png")));
             playerColor2.setImage(new Image(GameSceneController.class.getResourceAsStream("/graphicResources/codexCards/pawns/yellowPawn.png")));
             playerColor3.setImage(new Image(GameSceneController.class.getResourceAsStream("/graphicResources/codexCards/pawns/bluePawn.png")));
         }
-        if (playerDisconnected.equals(playerName2.getText())){
+        if (playerDisconnected.equals(playerName2.getText())) {
             playerColor2.setImage(new Image(GameSceneController.class.getResourceAsStream("/graphicResources/codexCards/pawns/yellowPawn.png")));
             playerColor3.setImage(new Image(GameSceneController.class.getResourceAsStream("/graphicResources/codexCards/pawns/bluePawn.png")));
         }
-        if (playerDisconnected.equals(playerName3.getText())){
+        if (playerDisconnected.equals(playerName3.getText())) {
             playerColor3.setImage(new Image(GameSceneController.class.getResourceAsStream("/graphicResources/codexCards/pawns/bluePawn.png")));
         }
         hidePlayersInScoreboard();
         setUsernamesBoard();
         updateScore();
     }
+
+    private void clearBoard(Pane playerBoard){
+        playerBoard.getChildren().clear();
+    }
+
+    private void clearTemporaryCardsFromBoard(Pane playerBoard){
+        //TODO: complete this
+    }
+
+    private void moveToCenter(ScrollPane scrollPane){
+        Platform.runLater(() -> {
+            scrollPane.setHvalue((double) (centerBoardX+(cardX/2)) / playerBoard.getWidth());
+            scrollPane.setVvalue((double) (centerBoardY+(cardY/2)) / playerBoard.getHeight());
+        });
+    }
+
+    private ImageView getImageView(PlacedCard placedCard){
+        Image image = ImageLoader.getImage(placedCard.card().asString());
+        ImageView imageView = new ImageView(image);
+
+        imageView.setFitWidth(cardX);
+        imageView.setFitHeight(cardY);
+
+        Position positionOnBoard = getPositionOnBoard(placedCard.position().getX(), placedCard.position().getY());
+
+        imageView.setLayoutX(positionOnBoard.getX()); // X coordinate
+        imageView.setLayoutY(positionOnBoard.getY()); // Y coordinate
+
+        return imageView;
+    }
+
+    private Position getPositionOnBoard(int x, int y){
+
+        Position pos =
+                new Position(centerBoardX+(x*(cardX-cardCornerX)), centerBoardY+(y*(cardY-cardCornerY)));
+
+        return pos;
+    }
+
+    private ArrayList<Position> getAvailableSpots(){
+        return state.getPlayer().getBoard().getAvailableSpots();
+    }
+
+    private void placeTemporaryCardsOnAvailableSpots(){
+
+    }
+
 }

@@ -68,14 +68,22 @@ public class Board extends Application {
         stage.setScene(scene);
         stage.show();
 
-        Platform.runLater(() -> {
-            scrollPane.setHvalue((double) (centerBoardX+(cardX/2)) / playerBoard.getWidth());
-            scrollPane.setVvalue((double) (centerBoardY+(cardY/2)) / playerBoard.getHeight());
-        });
+        moveToCenter(scrollPane);
     }
 
     private void clearBoard(Pane playerBoard){
         playerBoard.getChildren().clear();
+    }
+
+    private void clearTemporaryCardsFromBoard(Pane playerBoard){
+        //TODO: complete this
+    }
+
+    private void moveToCenter(ScrollPane scrollPane){
+        Platform.runLater(() -> {
+            scrollPane.setHvalue((double) (centerBoardX+(cardX/2)) / playerBoard.getWidth());
+            scrollPane.setVvalue((double) (centerBoardY+(cardY/2)) / playerBoard.getHeight());
+        });
     }
 
     private ImageView getImageView(PlacedCard placedCard){
@@ -85,7 +93,7 @@ public class Board extends Application {
         imageView.setFitWidth(cardX);
         imageView.setFitHeight(cardY);
 
-        Coordinate positionOnBoard = getPositionOnBoard(placedCard.position().getX(), placedCard.position().getY());
+        Position positionOnBoard = getPositionOnBoard(placedCard.position().getX(), placedCard.position().getY());
 
         imageView.setLayoutX(positionOnBoard.getX()); // X coordinate
         imageView.setLayoutY(positionOnBoard.getY()); // Y coordinate
@@ -93,33 +101,13 @@ public class Board extends Application {
         return imageView;
     }
 
-    private Coordinate getPositionOnBoard(int x, int y){
+    private Position getPositionOnBoard(int x, int y){
 
-        Coordinate coordinate =
-                new Coordinate(centerBoardX+(x*(cardX-cardCornerX)), centerBoardY+(y*(cardY-cardCornerY)));
+        Position pos =
+                new Position(centerBoardX+(x*(cardX-cardCornerX)), centerBoardY+(y*(cardY-cardCornerY)));
 
-
-        return coordinate;
+        return pos;
     }
-
-    class Coordinate {
-        private int x;
-        private int y;
-
-        public Coordinate(int x, int y) {
-            this.x = x;
-            this.y = y;
-        }
-
-        public int getX() {
-            return x;
-        }
-
-        public int getY() {
-            return y;
-        }
-    }
-
 
     public static void main(String[] args) {
         launch(args);
