@@ -11,6 +11,7 @@ import IS24_LB11.gui.phases.GameGUIState;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
@@ -366,6 +367,21 @@ public class GameSceneController {
         return imageView;
     }
 
+    private ImageView getImageView(String custom, int x, int y){
+        Image image = ImageLoader.getImage(custom);
+        ImageView imageView = new ImageView(image);
+
+        imageView.setFitWidth(cardX);
+        imageView.setFitHeight(cardY);
+
+        Position positionOnBoard = getPositionOnBoard(x, y);
+
+        imageView.setLayoutX(positionOnBoard.getX()); // X coordinate
+        imageView.setLayoutY(positionOnBoard.getY()); // Y coordinate
+
+        return imageView;
+    }
+
     private Position getPositionOnBoard(int x, int y){
 
         Position pos =
@@ -379,7 +395,21 @@ public class GameSceneController {
     }
 
     private void placeTemporaryCardsOnAvailableSpots(){
+        for(Position pos : getAvailableSpots()){
+            ImageView imageView = getImageView("AvailableSpot", pos.getX(), pos.getY());
+            ImageLoader.roundCorners(imageView);
+            if(!imageViewInPosition(imageView))
+                playerBoard.getChildren().add(imageView);
+        }
+    }
 
+    private boolean imageViewInPosition(ImageView imageView){
+        for(Node alreadyPlaced : playerBoard.getChildren()){
+            if(alreadyPlaced.getLayoutX() == imageView.getLayoutX() && alreadyPlaced.getLayoutY() == imageView.getLayoutY()){
+                return true;
+            }
+        }
+        return false;
     }
 
 }
