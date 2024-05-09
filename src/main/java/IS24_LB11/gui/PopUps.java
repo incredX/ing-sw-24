@@ -1,7 +1,9 @@
 package IS24_LB11.gui;
 
+import IS24_LB11.gui.phases.ClientGUIState;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.stage.Stage;
 
 public class PopUps {
 
