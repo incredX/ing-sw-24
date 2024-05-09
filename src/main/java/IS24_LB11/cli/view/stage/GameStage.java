@@ -60,7 +60,7 @@ public class GameStage extends Stage {
         if (gridShiftSide != null) {
             shiftGridBase(gridShiftSide);
             redraw();
-        }else drawPointer();
+        } else drawPointer();
     }
 
     public void updateBoard() {

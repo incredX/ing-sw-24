@@ -55,7 +55,7 @@ public class AutomatedState extends ClientState {
                 new Thread(serverHandler).start();
                 break;
             } catch (IOException e) {
-                try { Thread.sleep(2000); }
+                try { Thread.sleep(2500); }
                 catch (InterruptedException ie) { }
             }
         }

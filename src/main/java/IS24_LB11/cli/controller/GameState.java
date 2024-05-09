@@ -123,7 +123,7 @@ public class GameState extends ClientState implements PlayerStateInterface {
                     playerTurn = true;
                 }
                 updateBoardPointerImage();
-                gameStage.updateBoard();
+                gameStage.updatePointer();
                 table.update(newTurnEvent);
                 popManager.getPopup("decks").update();
                 popManager.getPopup("table").update();

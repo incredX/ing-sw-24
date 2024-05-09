@@ -108,7 +108,6 @@ public class ServerHandler extends Listener implements Runnable {
                     try {
                         timerLock.wait(timeout);
                         long diff = System.currentTimeMillis() - timeStamp;
-                        System.out.println(diff);
                         if (diff >= timeout) {
                             if (timeout > 0) state.queueEvent(new ServerDownEvent());
                             break;
