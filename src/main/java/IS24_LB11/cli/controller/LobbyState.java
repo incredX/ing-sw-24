@@ -3,9 +3,11 @@ package IS24_LB11.cli.controller;
 import IS24_LB11.cli.Table;
 import IS24_LB11.cli.event.server.ServerEvent;
 import IS24_LB11.cli.event.server.ServerLoginEvent;
+import IS24_LB11.cli.event.server.ServerPlayerDisconnectEvent;
 import IS24_LB11.cli.event.server.ServerPlayerSetupEvent;
 import IS24_LB11.cli.ViewHub;
 import IS24_LB11.cli.listeners.ServerHandler;
+import IS24_LB11.cli.popup.ChatPopup;
 import IS24_LB11.cli.popup.HelpPoup;
 import IS24_LB11.cli.view.stage.LobbyStage;
 import IS24_LB11.game.PlayerSetup;
@@ -21,7 +23,10 @@ public class LobbyState extends ClientState {
     public LobbyState(ViewHub viewHub) {
         super(viewHub);
         this.username = "";
-        this.popManager.addPopup(new HelpPoup(viewHub, this));
+        this.popManager.addPopup(
+                new HelpPoup(viewHub, this),
+                new ChatPopup(viewHub, this)
+        );
     }
 
     @Override
@@ -45,6 +50,7 @@ public class LobbyState extends ClientState {
                 Table table = new Table(setupEvent);
                 setNextState(new SetupState(this, setup, table));
             }
+            case ServerPlayerDisconnectEvent disconnectEvent -> {}
             default -> processResult(Result.Error("received unknown server event"));
         }
     }
@@ -68,7 +74,6 @@ public class LobbyState extends ClientState {
                 if (tokens.length == 2) setProperty(tokens[1]);
                 else notificationStack.addUrgent("ERROR", MISSING_ARG.apply(tokens[0]));
             }
-            //case "HELP" -> popManager.showPopup(tokens[0]);
             default -> notificationStack.addUrgent("ERROR", INVALID_CMD.apply(tokens[0], "lobby"));
         };
     }
