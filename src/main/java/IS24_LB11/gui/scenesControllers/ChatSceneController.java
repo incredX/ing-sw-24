@@ -49,33 +49,50 @@ public class ChatSceneController {
 
     public void send(){
         String[] strings = messageBox.getText().split(" ",3);
-        if(strings[0].equals("help")){
-            Text msg = new Text("Private chat command:");
-            msg.setFont(Font.font("Arial", FontWeight.BOLD,6));
-            chatPane.getItems().add(new Text("--------------------------------------------------"));
-            chatPane.getItems().add(msg);
-            msg.setText("sendto username msg");
-            chatPane.getItems().add(msg);
-            chatPane.getItems().add(new Text("--------------------------------------------------"));
-            msg.setText("Public chat command:");
-            chatPane.getItems().add(msg);
-            msg.setText("sendtoall msg");
-            chatPane.getItems().add(msg);
-            chatPane.getItems().add(new Text("--------------------------------------------------"));
+        System.out.println(strings[0]);
+        System.out.println(strings[1]);
+        System.out.println(strings[2]);
+        switch (strings[0]){
+            case "help":
+                Text help = new Text("Private chat command:");
+                help.setFont(Font.font("Arial", FontWeight.BOLD,6));
+                chatPane.getItems().add(new Text("--------------------------------------------------"));
+                chatPane.getItems().add(help);
+                help.setText("sendto username msg");
+                chatPane.getItems().add(help);
+                chatPane.getItems().add(new Text("--------------------------------------------------"));
+                help.setText("Public chat command:");
+                chatPane.getItems().add(help);
+                help.setText("sendtoall msg");
+                chatPane.getItems().add(help);
+                chatPane.getItems().add(new Text("--------------------------------------------------"));
+                break;
+
+            case "sendto":
+                state.sendMessage(strings[1], state.getUsername(), strings[2]);
+                Text sendTo = new Text(strings[2]);
+                chatPane.getItems().add(sendTo);
+                break;
+            case "sendtoall":
+                String msg = new String();
+                if (strings.length==2)
+                    msg=strings[1];
+                else
+                    msg=strings[1] + " " + strings[2];
+                Text sendToAll = new Text("<me>"+msg);
+                state.sendToAll(state.getUsername(), msg);
+                chatPane.getItems().add(sendToAll);
+                break;
         }
+        if(strings[0].equals("help")){
+
+        }
+
         if (strings[0].equals("sendto")) {
-            state.sendMessage(strings[1], state.getUsername(), strings[2]);
-            Text msg = new Text(strings[2]);
-            chatPane.getItems().add(msg);
+
         }
         else if (strings[0].equals("sendtoall")) {
-            state.sendToAll(state.getUsername(), strings[1]);
-            Text msg = new Text();
-            if (strings.length==2)
-                msg.setText(strings[1]);
-            else
-                msg.setText(strings[1] + " " + strings[2]);
-            chatPane.getItems().add(msg);
+
         }
     }
 
