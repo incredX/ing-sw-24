@@ -3,7 +3,7 @@ package IS24_LB11.cli.popup;
 import IS24_LB11.cli.ViewHub;
 import IS24_LB11.cli.controller.PlayerStateInterface;
 import IS24_LB11.cli.utils.TerminalBox;
-import IS24_LB11.cli.view.PopupView;
+import IS24_LB11.cli.view.popup.PopupView;
 import com.googlecode.lanterna.input.KeyStroke;
 
 public abstract class Popup<T extends PopupView> {
@@ -12,6 +12,7 @@ public abstract class Popup<T extends PopupView> {
     protected boolean visible;
     protected boolean enabled;
     protected boolean overlap;
+    protected boolean readOnly;
 
     public Popup(ViewHub viewHub, T popView) {
         this.viewHub = viewHub;
@@ -22,12 +23,16 @@ public abstract class Popup<T extends PopupView> {
     }
 
     public abstract String label();
-    
+
     public abstract void update();
 
     public abstract void consumeKeyStroke(KeyStroke keyStroke);
 
     public abstract void setPlayerState(PlayerStateInterface playerState);
+
+    public void redrawView() {
+        popView.redraw();
+    }
 
     public void resize() {
         popView.resize(viewHub.getScreenSize().withRelative(0,-2));
@@ -68,6 +73,10 @@ public abstract class Popup<T extends PopupView> {
 
     public boolean isEnabled() {
         return enabled;
+    }
+
+    public boolean isReadOnly() {
+        return readOnly;
     }
 
     public boolean canOverlap() { return overlap; }

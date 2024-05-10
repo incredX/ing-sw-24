@@ -29,6 +29,7 @@ public class InputListener extends Listener implements Runnable {
                 break;
             }
         }
+        if (state != null) state.shutdown();
         Debugger.print("thread terminated.");
     }
 

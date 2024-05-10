@@ -84,9 +84,9 @@ public class LoginSceneController {
                                    ArrayList<PlayableCard> normalDeck,
                                    ArrayList<PlayableCard> goldenDeck,
                                    ArrayList<String> playerNames){
-        SetupSceneController setupSceneController = new SetupSceneController(new SetupGUIState(state));
+        SetupSceneController setupSceneController = new SetupSceneController(new SetupGUIState(state), stage);
         setupSceneController.state.initialize(playerSetup,publicGoals,normalDeck,goldenDeck,playerNames);
-        stage.close();
+        //stage.close();
         setupSceneController.showStage();
     }
 

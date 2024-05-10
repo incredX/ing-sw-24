@@ -2,15 +2,13 @@ package IS24_LB11.cli.controller;
 
 import IS24_LB11.cli.CommandLine;
 import IS24_LB11.cli.Debugger;
-import IS24_LB11.cli.event.server.ServerEvent;
-import IS24_LB11.cli.event.server.ServerHeartBeatEvent;
-import IS24_LB11.cli.event.server.ServerMessageEvent;
-import IS24_LB11.cli.event.server.ServerNotificationEvent;
+import IS24_LB11.cli.event.server.*;
 import IS24_LB11.cli.event.*;
 import IS24_LB11.cli.notification.NotificationStack;
 import IS24_LB11.cli.notification.Priority;
 import IS24_LB11.cli.ViewHub;
 import IS24_LB11.cli.listeners.ServerHandler;
+import IS24_LB11.cli.popup.ChatPopup;
 import IS24_LB11.cli.popup.PopupManager;
 import IS24_LB11.game.Result;
 import com.google.gson.JsonElement;
@@ -56,12 +54,6 @@ public abstract class ClientState {
         this.viewHub = viewHub;
         this.cmdLine = new CommandLine(viewHub.getCommandLineView());
         this.keyConsumed = false;
-//        try {
-//            this.serverHandler = new ServerHandler(this, "127.0.0.1", 54321);
-//            new Thread(this.serverHandler).start();
-//        } catch (IOException e) {
-//            notificationStack.addUrgent("ERROR", "Connection to server failed");
-//        }
     }
 
     public ClientState(ClientState state) {
@@ -102,8 +94,10 @@ public abstract class ClientState {
             case KeyboardEvent keyboardEvent -> processKeyStroke(keyboardEvent.keyStroke());
             case ResizeEvent resizeEvent -> processResize(resizeEvent.size());
             case ResultServerEvent resultServerEvent -> processResult(resultServerEvent.result());
+            case ServerDownEvent serverDownEvent -> processServerDown();
             default -> Debugger.print("Unknown event: " + event.getClass().getName());
         };
+        viewHub.update();
     }
 
     public void quit() {
@@ -115,11 +109,19 @@ public abstract class ClientState {
         }
     }
 
+    public void shutdown() {
+        tryQueueEvent(new CommandEvent("quit"));
+    }
+
     protected abstract void processServerEvent(ServerEvent event);
 
     protected abstract void processCommand(String command);
 
     protected abstract void processKeyStroke(KeyStroke keyStroke);
+
+    protected void processServerDown() {
+        notificationStack.addUrgent("WARNING", "lost connection to server");
+    }
 
     protected void processResize(TerminalSize screenSize) {
         cmdLine.resize(screenSize);
@@ -132,6 +134,7 @@ public abstract class ClientState {
             text = result.getError();
             if (result.getCause() != null)
                 text += " : "+result.getCause();
+            Debugger.print("ERROR (from server) : " + text);
             notificationStack.addUrgent("ERROR (from server)", text);
             viewHub.update();
             return;
@@ -150,6 +153,8 @@ public abstract class ClientState {
                     text = String.format("%s @ all : %s", messageEvent.from(), messageEvent.message());
                 else
                     text = String.format("%s : %s", messageEvent.from(), messageEvent.message());
+                popManager.getOptionalPopup("chat")
+                        .ifPresent(popup -> ((ChatPopup)popup).newMessage(messageEvent));
                 notificationStack.add(Priority.MEDIUM, text);
             }
             case ServerHeartBeatEvent heartBeatEvent -> {
@@ -168,20 +173,50 @@ public abstract class ClientState {
         switch (tokens[0].toUpperCase()) {
             case "QUIT" -> {
                 quit();
-                return true;
             }
             case "SENDTO", "@" -> {
                 if (tokens.length == 2) processCommandSendto(tokens[1]);
                 else notificationStack.addUrgent("ERROR", MISSING_ARG.apply("sendto"));
-                return true;
             }
             case "SENDTOALL", "@ALL" -> {
                 if (tokens.length == 2) processCommandSendtoall(tokens[1]);
                 else notificationStack.addUrgent("ERROR", MISSING_ARG.apply("sendtoall"));
-                return true;
+            }
+            case "SHOW" -> {
+                if (tokens.length == 2) {
+                    if (popManager.hasPopup(tokens[1])) {
+                        popManager.showPopup(tokens[1]);
+                        cmdLine.disable();
+                    }
+                    else notificationStack.addUrgent("ERROR", "unknown pop-up");
+                }
+                else notificationStack.addUrgent("ERROR", MISSING_ARG.apply("show"));
+            }
+            case "HIDE" -> {
+                if (tokens.length == 2) {
+                    if (popManager.hasPopup(tokens[1])) popManager.hidePopup(tokens[1]);
+                    else notificationStack.addUrgent("ERROR", "unknown pop-up");
+                }
+                else popManager.hideFocusedPopup();
+            }
+            case "CHAT" -> {
+                String endUser;
+                if (!popManager.hasPopup(tokens[0])) break;
+                if (tokens.length == 1) endUser = "";
+                else endUser = tokens[1];
+                popManager.getOptionalPopup("chat")
+                        .ifPresent(popup -> ((ChatPopup)popup).setCurrentEndUser(endUser));
+                popManager.showPopup("chat");
+            }
+            default -> {
+                if (popManager.hasPopup(tokens[0])) {
+                    popManager.showPopup(tokens[0]);
+                    cmdLine.disable();
+                }
+                else return false;
             }
         };
-        return false;
+        return true;
     }
 
     protected void processCommandSendto(String argument) {
@@ -189,16 +224,24 @@ public abstract class ClientState {
         if (tokens.length == 2) {
             String[] fields = new String[] {"from", "to", "message"};
             String[] values = new String[] {username, tokens[0], tokens[1]};
-            sendToServer("message", fields, values);
+            JsonObject message = putTogether(fields, values);
+
+            popManager.getOptionalPopup("chat")
+                    .ifPresent(popup -> ((ChatPopup)popup).newMessage(message));
+            sendToServer("message", message);
         } else {
             notificationStack.addUrgent("ERROR", "syntax error in given commmand");
         }
     }
 
-    protected void processCommandSendtoall(String message) {
+    protected void processCommandSendtoall(String text) {
         String[] fields = new String[] {"from", "to", "message"};
-        String[] values = new String[] {username, "", message};
-        sendToServer("message", fields, values);
+        String[] values = new String[] {username, "", text};
+        JsonObject message = putTogether(fields, values);
+
+        popManager.getOptionalPopup("chat")
+                .ifPresent(popup -> ((ChatPopup)popup).newMessage(message));
+        sendToServer("message", message);
     }
 
     public void queueEvent(Event event) throws InterruptedException {
@@ -212,6 +255,13 @@ public abstract class ClientState {
         synchronized (queue) {
             if (queue.offer(event)) queue.notify();
         }
+    }
+
+    protected JsonObject putTogether(String[] dataFields, String[] values) {
+        JsonObject object = new JsonObject();
+        for (int i = 0; i < Integer.min(dataFields.length, values.length); i++)
+            object.addProperty(dataFields[i], values[i]);
+        return object;
     }
 
     protected void sendToServer(String type, String field, String value) {
@@ -245,12 +295,13 @@ public abstract class ClientState {
         serverHandler.write(object);
     }
 
-    protected void sendToServer(String type, String[] dataFields, String[] values) {
-        JsonObject object = new JsonObject();
+    protected void sendToServer(String type, JsonObject object) {
         object.addProperty("type", type);
-        for (int i = 0; i < Integer.min(dataFields.length, values.length); i++)
-            object.addProperty(dataFields[i], values[i]);
         serverHandler.write(object);
+    }
+
+    protected void sendToServer(String type, String[] dataFields, String[] values) {
+        sendToServer(type, putTogether(dataFields, values));
     }
 
     protected void sendToServer(String type, String[] dataFields, JsonElement[] values) {
@@ -272,7 +323,7 @@ public abstract class ClientState {
         popManager.hideAllPopups();
     }
 
-    public void keyConsumed() {
+    public void consumeKey() {
         keyConsumed = true;
     }
 
@@ -293,4 +344,8 @@ public abstract class ClientState {
     }
 
     public ServerHandler getServerHandler() { return serverHandler; }
+
+    public String getUsername() {
+        return username;
+    }
 }

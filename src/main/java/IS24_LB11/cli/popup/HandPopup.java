@@ -1,11 +1,10 @@
 package IS24_LB11.cli.popup;
 
-import IS24_LB11.cli.Debugger;
 import IS24_LB11.cli.ViewHub;
 import IS24_LB11.cli.controller.GameState;
 import IS24_LB11.cli.controller.PlayerStateInterface;
 import IS24_LB11.cli.utils.Side;
-import IS24_LB11.cli.view.HandView;
+import IS24_LB11.cli.view.popup.HandView;
 import IS24_LB11.game.components.PlayableCard;
 import com.googlecode.lanterna.input.KeyStroke;
 
@@ -102,9 +101,7 @@ public class HandPopup extends Popup {
         }
         update();
         //if (visible) castView(HandView::redraw);
-        gameState.keyConsumed();
-        Debugger.print(String.format("%s <%c> (shift:%s, ctrl:%s)\n", keyStroke.getKeyType(), keyStroke.getCharacter(),
-                keyStroke.isShiftDown(), keyStroke.isCtrlDown()));
+        gameState.consumeKey();
     }
 
     private void shiftPointer(Side side) {

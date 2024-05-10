@@ -52,7 +52,27 @@ public class InputHandlerGUI {
         message.addProperty("placedCard","turnActions");
         message.addProperty("deckType","turnActions");
         message.addProperty("indexVisibleCards","turnActions");
+        writer.println(message.toString());
+        writer.flush();
+    }
 
+    public void sendMessage(String to, String from,String mex) {
+        JsonObject message = new JsonObject();
+        message.addProperty("type","message");
+        message.addProperty("from",from);
+        message.addProperty("to",to);
+        message.addProperty("message",mex);
+        writer.println(message.toString());
+        writer.flush();
+    }
 
+    public void sendToAllMessage(String from,String mex){
+        JsonObject message = new JsonObject();
+        message.addProperty("type","message");
+        message.addProperty("from",from);
+        message.addProperty("to","");
+        message.addProperty("message",mex);
+        writer.println(message.toString());
+        writer.flush();
     }
 }

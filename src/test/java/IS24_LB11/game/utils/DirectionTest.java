@@ -1,6 +1,6 @@
 package IS24_LB11.game.utils;
 
-import IS24_LB11.game.Result;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static IS24_LB11.game.utils.Direction.*;
@@ -8,6 +8,7 @@ import static IS24_LB11.game.utils.Direction.*;
 public class DirectionTest {
 
     @Test
+    @DisplayName("esaustive test of opposite directions")
     void testOppositeDirection() {
         Direction.forEachDirection(direction -> {
             assert (direction == direction.opposite().opposite());
@@ -15,6 +16,7 @@ public class DirectionTest {
     }
 
     @Test
+    @DisplayName("esaustive test for directions' relative position")
     void testRelativePositions() {
         assert (UP_LEFT.relativePosition().equals(new Position(-1,-1)));
         assert (UP_RIGHT.relativePosition().equals(new Position(1,-1)));
@@ -23,6 +25,7 @@ public class DirectionTest {
     }
 
     @Test
+    @DisplayName("parsing of integer -> direction")
     void testParsing() {
         assert (UP_LEFT == Direction.parse(0));
         assert (UP_RIGHT == Direction.parse(1));
@@ -35,6 +38,7 @@ public class DirectionTest {
     }
 
     @Test
+    @DisplayName("valid & invalid parsing of (strings and integers) -> Optional<Direction>")
     void testTryParsing() {
         assert (UP_LEFT == Direction.tryParse("UP_LEFT").get());
         assert (UP_RIGHT == Direction.tryParse("UP_RIGHT").get());

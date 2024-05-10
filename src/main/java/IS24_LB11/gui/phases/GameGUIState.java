@@ -6,6 +6,7 @@ import IS24_LB11.game.components.GoalCard;
 import IS24_LB11.game.components.PlayableCard;
 import IS24_LB11.game.utils.Color;
 import IS24_LB11.game.utils.Position;
+import IS24_LB11.gui.Chat;
 import IS24_LB11.gui.scenesControllers.GameSceneController;
 
 import java.util.ArrayList;
@@ -17,7 +18,7 @@ public class GameGUIState extends ClientGUIState {
     private ArrayList<GoalCard> publicGoals;
     private ArrayList<PlayableCard> normalDeck;
     private ArrayList<PlayableCard> goldenDeck;
-    private HashMap<Color, String> playersColors;
+    private HashMap<String, Color> playersColors;
     private HashMap<String, Integer> playersScore;
     private ArrayList<String> players;
     GameSceneController gameSceneController;
@@ -30,6 +31,7 @@ public class GameGUIState extends ClientGUIState {
 
 
     public GameGUIState(SetupGUIState prevState) {
+        this.personalChat= new Chat();
         this.serverHandler = prevState.serverHandler;
         this.username = prevState.username;
         this.inputHandlerGUI = prevState.inputHandlerGUI;
@@ -92,7 +94,7 @@ public class GameGUIState extends ClientGUIState {
     public HashMap<String, Integer> getPlayersScore() {
         return playersScore;
     }
-    public HashMap<Color, String> getPlayersColors() {
+    public HashMap<String, Color> getPlayersColors() {
         return playersColors;
     }
     public void execute() {
@@ -112,5 +114,12 @@ public class GameGUIState extends ClientGUIState {
         players.remove(playerDisconnected);
         playersScore.remove(playerDisconnected);
         playersColors.remove(playerDisconnected);
+    }
+
+    public void sendMessage(String to, String from,String mex){
+        inputHandlerGUI.sendMessage(to,from,mex);
+    }
+    public void sendToAll (String from, String mex){
+        inputHandlerGUI.sendToAllMessage(from, mex);
     }
 }

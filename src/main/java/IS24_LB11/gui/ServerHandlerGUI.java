@@ -6,6 +6,7 @@ import IS24_LB11.game.tools.JsonConverter;
 import IS24_LB11.game.tools.JsonException;
 import IS24_LB11.game.utils.SyntaxException;
 import IS24_LB11.gui.phases.ClientGUIState;
+import IS24_LB11.gui.scenesControllers.ChatSceneController;
 import IS24_LB11.gui.scenesControllers.GameSceneController;
 import IS24_LB11.gui.scenesControllers.LoginSceneController;
 import IS24_LB11.gui.scenesControllers.SetupSceneController;
@@ -27,11 +28,11 @@ public class ServerHandlerGUI implements Runnable{
     private PrintWriter writer;
     private ClientGUIState actualState;
     private boolean running = true;
-
     private boolean gameTurnStateStarted = false;
     private LoginSceneController loginSceneController;
     private SetupSceneController setupSceneController;
-    private GameSceneController gameSceneController;
+    private GameSceneController gameSceneController = null;
+    private ChatSceneController chatSceneController = null;
 
     public ServerHandlerGUI(ClientGUIState clientGUIState, String serverIP, int serverPORT) throws IOException {
         socket = new Socket(serverIP, serverPORT);
@@ -59,7 +60,6 @@ public class ServerHandlerGUI implements Runnable{
     }
 
     private void processEvent(JsonObject serverEvent) {
-        System.out.println(serverEvent);
         if (serverEvent.has("type")) {
             switch (serverEvent.get("type").getAsString().toLowerCase()){
                 case "setusername":
@@ -80,6 +80,9 @@ public class ServerHandlerGUI implements Runnable{
                 case "turn":
                     handleTurnEvent(serverEvent);
                     return;
+                case "message":
+                    handleMessageEvent(serverEvent);
+                    break;
 
                 default: throw new IllegalStateException("Unexpected value: " + serverEvent.get("type"));
             }
@@ -87,11 +90,28 @@ public class ServerHandlerGUI implements Runnable{
 
     }
 
+    private void handleMessageEvent(JsonObject serverEvent) {
+        if (serverEvent.has("to") && serverEvent.has("from") && serverEvent.has("message")){
+            actualState.addMessages(serverEvent.get("from").getAsString(),serverEvent.get("message").getAsString());
+            if(!(gameSceneController==null))
+                Platform.runLater(() -> gameSceneController.showPopUpNotification("new Message!!"));
+            if (!(chatSceneController==null)) {
+                String msg="<" + serverEvent.get("from").getAsString() + "> " + serverEvent.get("message").getAsString();
+                Platform.runLater(() -> chatSceneController.addToChat(msg));
+            }
+        }
+    }
+
     private void handleDisconnectedEvent(JsonObject serverEvent) {
         String playerDisconnected = serverEvent.get("player").getAsString();
-        Platform.runLater(()->gameSceneController.removePlayer(playerDisconnected));
-        if (gameSceneController.getState().getNumberOfPlayer()==1);
+        if (gameSceneController == (null))
+            Platform.runLater(()->setupSceneController.removePlayer(playerDisconnected));
+        else {
+            Platform.runLater(() -> gameSceneController.removePlayer(playerDisconnected));
+            //TODO: popup that alert u you are alone
+            if (gameSceneController.getState().getNumberOfPlayer()==1);
             //Platform.runLater();
+        }
     }
 
     private void handleTurnEvent(JsonObject serverEvent) {
@@ -233,5 +253,9 @@ public class ServerHandlerGUI implements Runnable{
 
     public void setGameSceneController(GameSceneController gameSceneController) {
         this.gameSceneController = gameSceneController;
+    }
+
+    public void setChatSceneController(ChatSceneController chatSceneController) {
+        this.chatSceneController = chatSceneController;
     }
 }

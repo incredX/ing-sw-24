@@ -2,10 +2,10 @@ package IS24_LB11.gui.scenesControllers;
 
 
 import IS24_LB11.game.PlacedCard;
-import IS24_LB11.game.components.CardFactory;
 import IS24_LB11.game.components.PlayableCard;
 import IS24_LB11.game.utils.Position;
 import IS24_LB11.gui.ImageLoader;
+import IS24_LB11.gui.PopUps;
 import IS24_LB11.gui.phases.ClientGUIState;
 import IS24_LB11.gui.phases.GameGUIState;
 import javafx.application.Platform;
@@ -14,6 +14,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.effect.ColorAdjust;
@@ -83,7 +84,10 @@ public class GameSceneController {
     private Text playerName4;
     @FXML
     private Text playerScore4;
-    Stage stage = new Stage();
+    @FXML
+    private Button chatButton;
+    Stage stage;
+    Stage chatStage = new Stage();
     GameGUIState state;
     int numberPlayerInGame;
 
@@ -105,16 +109,27 @@ public class GameSceneController {
 
     private ArrayList<ImageView> availableSpotsTemporaryCards = new ArrayList<>();
 
+    ChatSceneController chatSceneController;
 
-    public GameSceneController(ClientGUIState state) {
+    public GameSceneController(ClientGUIState state, Stage stage) {
         this.state = (GameGUIState) state;
-
+        this.stage = stage;
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/GamePageBackup.fxml"));
         loader.setController(this);
 
         this.stage.setTitle("Codex");
         try {
             this.stage.setScene(new Scene(loader.load()));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        FXMLLoader loaderChat = new FXMLLoader(getClass().getResource("/CHatView.fxml"));
+        chatSceneController = new ChatSceneController((GameGUIState) state, chatStage);
+        loaderChat.setController(chatSceneController);
+        state.getServerHandler().setChatSceneController(chatSceneController);
+        try {
+            chatStage.setScene(new Scene(loaderChat.load()));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -129,6 +144,7 @@ public class GameSceneController {
     @FXML
     public void initialize() {
         state.getServerHandler().setGameSceneController(this);
+
         numberPlayerInGame = state.getNumberOfPlayer();
         // button and image event has to be declared here
         handCard1.setOnMouseClicked(mouseEvent -> chooseHandCard(0));
@@ -140,9 +156,30 @@ public class GameSceneController {
         goldenDeckCard1.setOnMouseClicked(mouseEvent -> chooseDeckCard(0, true));
         goldenDeckCard2.setOnMouseClicked(mouseEvent -> chooseDeckCard(1, true));
         goldenDeckCard3.setOnMouseClicked(mouseEvent -> chooseDeckCard(2, true));
+        chatButton.setOnMouseClicked(mouseEvent -> showChat());
         //same as disconnected
+        switch (numberPlayerInGame) {
+            case 3:
+                yellowPion.setVisible(false);
+                break;
+            case 2:
+                yellowPion.setVisible(false);
+                bluePion.setVisible(false);
+                break;
+        }
         hidePlayersInScoreboard();
         setUsernamesBoard();
+    }
+
+    private void showChat() {
+        chatStage.show();
+    }
+
+    private void hideInitialPawns() {
+        if (numberPlayerInGame <= 3)
+            yellowPion.setVisible(false);
+        if (numberPlayerInGame <= 2)
+            bluePion.setVisible(false);
     }
 
     private void hidePlayersInScoreboard() {
@@ -151,12 +188,12 @@ public class GameSceneController {
             playerName4.setVisible(false);
             playerScore4.setVisible(false);
         }
-        if (state.getNumberOfPlayer() <= 2) {
+        if (state.getNumberOfPlayer()<=2){
             playerColor3.setVisible(false);
             playerName3.setVisible(false);
             playerScore3.setVisible(false);
         }
-        if (state.getNumberOfPlayer() <= 1) {
+        if (state.getNumberOfPlayer()<=1){
             playerColor2.setVisible(false);
             playerName2.setVisible(false);
             playerScore2.setVisible(false);
@@ -284,7 +321,7 @@ public class GameSceneController {
         colorAdjustChoosen.setContrast(0);
         switch (n) {
             case 0:
-                state.chooseCardToPlay(state.getPlayer().getHand().get(0));
+                state.chooseCardToPlay(state.getPlayer().getHand().getFirst());
                 handCard1.setEffect(colorAdjustChoosen);
                 handCard2.setEffect(colorAdjustNotChoosen);
                 handCard3.setEffect(colorAdjustNotChoosen);
@@ -317,7 +354,12 @@ public class GameSceneController {
     }
 
     public void removePlayer(String playerDisconnected) {
-        String color = state.getPlayersColors().get(playerDisconnected);
+        switch (state.getPlayersColors().get(playerDisconnected)) {
+            case GREEN -> greenPion.setVisible(false);
+            case RED -> redPion.setVisible(false);
+            case BLUE -> bluePion.setVisible(false);
+            case YELLOW -> yellowPion.setVisible(false);
+        }
         state.removePlayer(playerDisconnected);
         numberPlayerInGame--;
         if (playerDisconnected.equals(playerName1.getText())) {
@@ -411,5 +453,8 @@ public class GameSceneController {
         }
         return false;
     }
-
+        public void showPopUpNotification(String message) {
+            PopUps popUps = new PopUps();
+            popUps.popUpMaker(message);
+        }
 }

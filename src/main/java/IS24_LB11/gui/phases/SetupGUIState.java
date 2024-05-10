@@ -15,7 +15,7 @@ public class SetupGUIState extends ClientGUIState {
     private ArrayList<GoalCard> publicGoals;
     private ArrayList<PlayableCard> normalDeck;
     private ArrayList<PlayableCard> goldenDeck;
-    private HashMap<Color, String> playersColors;
+    private HashMap<String, Color> playersColors;
     private ArrayList<String> players;
     SetupSceneController setupSceneController;
 
@@ -38,8 +38,9 @@ public class SetupGUIState extends ClientGUIState {
         this.players=players;
         this.playersColors = new HashMap<>();
         for (int i = 0; i < players.size(); i++) {
-            playersColors.put(Color.fromInt(i),players.get(i));
+            playersColors.put(players.get(i),Color.fromInt(i));
         }
+        System.out.println(playersColors);
     }
 
     public void setChoosenGoalIndex(int choosenGoalIndex) {
@@ -70,7 +71,7 @@ public class SetupGUIState extends ClientGUIState {
         return normalDeck;
     }
 
-    public HashMap<Color, String> getPlayersColors() {
+    public HashMap<String, Color> getPlayersColors() {
         return playersColors;
     }
 
@@ -90,5 +91,9 @@ public class SetupGUIState extends ClientGUIState {
         System.out.println(personalSetup.chosenGoal().asString());
         System.out.println(personalSetup.getStarterCard());
         inputHandlerGUI.sendReady(personalSetup.chosenGoal(),personalSetup.getStarterCard());
+    }
+
+    public void removePlayer(String playerDisconnected) {
+        players.remove(playerDisconnected);
     }
 }
