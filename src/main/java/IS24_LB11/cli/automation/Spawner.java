@@ -1,6 +1,6 @@
 package IS24_LB11.cli.automation;
 
-import IS24_LB11.cli.Client;
+import IS24_LB11.cli.CliClient;
 import IS24_LB11.cli.Debugger;
 import IS24_LB11.network.Server;
 
@@ -12,14 +12,14 @@ public class Spawner {
         }).start();
 
         Thread client1 = new Thread(() -> {
-            Client.start(new String[] { "",
+            CliClient.main(new String[] { "",
                     "{\"type\":\"login\",\"username\":\"wasd\"}",
                     "{\"type\":\"numOfPlayers\",\"numOfPlayers\":2}"
             });
         });
 
         Thread client2 = new Thread(() -> {
-            Client.start(new String[] { "",
+            CliClient.main(new String[] { "",
                     "{\"type\":\"login\",\"username\":\"loremIpsum\"}"
             });
         });

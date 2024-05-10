@@ -12,12 +12,8 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 
-public class Client {
+public class CliClient {
     public static void main(String[] args) {
-        start(args);
-    }
-
-    public static void start(String[] args) {
         ClientState state;
         ViewHub viewHub;
         InputListener inputListener;
