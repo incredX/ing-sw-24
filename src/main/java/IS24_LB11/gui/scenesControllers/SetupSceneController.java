@@ -30,12 +30,12 @@ public class SetupSceneController {
     @FXML
     private Button readyButton;
 
-    Stage stage = new Stage();
+    Stage stage;
     SetupGUIState state;
 
-    public SetupSceneController(ClientGUIState state){
+    public SetupSceneController(ClientGUIState state, Stage stage){
         this.state=(SetupGUIState) state;
-
+        this.stage=stage;
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/SetupPage.fxml"));
         loader.setController(this);
 
@@ -64,7 +64,7 @@ public class SetupSceneController {
     }
 
     public void changeToGameState(){
-        GameSceneController gameSceneController = new GameSceneController(new GameGUIState(state));
+        GameSceneController gameSceneController = new GameSceneController(new GameGUIState(state),stage);
         stage.close();
         gameSceneController.showStage();
 

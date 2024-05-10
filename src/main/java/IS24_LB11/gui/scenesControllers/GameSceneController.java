@@ -80,16 +80,16 @@ public class GameSceneController {
     private Text playerScore4;
     @FXML
     private Button chatButton;
-    Stage stage = new Stage();
+    Stage stage;
     Stage chatStage = new Stage();
     GameGUIState state;
     int numberPlayerInGame;
 
     ChatSceneController chatSceneController;
 
-    public GameSceneController(ClientGUIState state) {
-        this.state=(GameGUIState) state;
-
+    public GameSceneController(ClientGUIState state, Stage stage) {
+        this.state = (GameGUIState) state;
+        this.stage = stage;
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/GamePageBackup.fxml"));
         loader.setController(this);
 
@@ -101,7 +101,7 @@ public class GameSceneController {
         }
 
         FXMLLoader loaderChat = new FXMLLoader(getClass().getResource("/CHatView.fxml"));
-        chatSceneController = new ChatSceneController((GameGUIState) state,chatStage);
+        chatSceneController = new ChatSceneController((GameGUIState) state, chatStage);
         loaderChat.setController(chatSceneController);
         state.getServerHandler().setChatSceneController(chatSceneController);
         try {
@@ -116,24 +116,25 @@ public class GameSceneController {
         });
 
     }
+
     @FXML
-    public void initialize(){
+    public void initialize() {
         state.getServerHandler().setGameSceneController(this);
 
-        numberPlayerInGame=state.getNumberOfPlayer();
+        numberPlayerInGame = state.getNumberOfPlayer();
         // button and image event has to be declared here
         handCard1.setOnMouseClicked(mouseEvent -> chooseHandCard(0));
         handCard2.setOnMouseClicked(mouseEvent -> chooseHandCard(1));
         handCard3.setOnMouseClicked(mouseEvent -> chooseHandCard(2));
-        normalDeckCard1.setOnMouseClicked(mouseEvent -> chooseDeckCard(0,false));
-        normalDeckCard2.setOnMouseClicked(mouseEvent -> chooseDeckCard(1,false));
-        normalDeckCard3.setOnMouseClicked(mouseEvent -> chooseDeckCard(2,false));
-        goldenDeckCard1.setOnMouseClicked(mouseEvent -> chooseDeckCard(0,true));
-        goldenDeckCard2.setOnMouseClicked(mouseEvent -> chooseDeckCard(1,true));
-        goldenDeckCard3.setOnMouseClicked(mouseEvent -> chooseDeckCard(2,true));
+        normalDeckCard1.setOnMouseClicked(mouseEvent -> chooseDeckCard(0, false));
+        normalDeckCard2.setOnMouseClicked(mouseEvent -> chooseDeckCard(1, false));
+        normalDeckCard3.setOnMouseClicked(mouseEvent -> chooseDeckCard(2, false));
+        goldenDeckCard1.setOnMouseClicked(mouseEvent -> chooseDeckCard(0, true));
+        goldenDeckCard2.setOnMouseClicked(mouseEvent -> chooseDeckCard(1, true));
+        goldenDeckCard3.setOnMouseClicked(mouseEvent -> chooseDeckCard(2, true));
         chatButton.setOnMouseClicked(mouseEvent -> showChat());
         //same as disconnected
-        switch (numberPlayerInGame){
+        switch (numberPlayerInGame) {
             case 3:
                 yellowPion.setVisible(false);
                 break;
@@ -149,25 +150,26 @@ public class GameSceneController {
     private void showChat() {
         chatStage.show();
     }
-    private void hideInitialPawns(){
-        if (numberPlayerInGame<=3)
+
+    private void hideInitialPawns() {
+        if (numberPlayerInGame <= 3)
             yellowPion.setVisible(false);
-        if (numberPlayerInGame<=2)
+        if (numberPlayerInGame <= 2)
             bluePion.setVisible(false);
     }
 
-    private void hidePlayersInScoreboard(){
-        if (state.getNumberOfPlayer()<=3){
+    private void hidePlayersInScoreboard() {
+        if (state.getNumberOfPlayer() <= 3) {
             playerColor4.setVisible(false);
             playerName4.setVisible(false);
             playerScore4.setVisible(false);
         }
-        if (state.getNumberOfPlayer()<=2){
+        if (state.getNumberOfPlayer() <= 2) {
             playerColor3.setVisible(false);
             playerName3.setVisible(false);
             playerScore3.setVisible(false);
         }
-        if (state.getNumberOfPlayer()<=1){
+        if (state.getNumberOfPlayer() <= 1) {
             playerColor2.setVisible(false);
             playerName2.setVisible(false);
             playerScore2.setVisible(false);
@@ -175,36 +177,39 @@ public class GameSceneController {
     }
 
     private void setUsernamesBoard() {
-        if (numberPlayerInGame>=2){
+        if (numberPlayerInGame >= 2) {
             playerName1.setText(state.getPlayers().get(0));
             playerName2.setText(state.getPlayers().get(1));
         }
-        if (numberPlayerInGame>=3){
+        if (numberPlayerInGame >= 3) {
             playerName3.setText(state.getPlayers().get(2));
         }
-        if (numberPlayerInGame>=4){
+        if (numberPlayerInGame >= 4) {
             playerName4.setText(state.getPlayers().get(3));
         }
 
     }
-    public void showStage(){
+
+    public void showStage() {
         goalCard1.setImage(ImageLoader.getImage(state.getPublicGoals().get(0).asString()));
         goalCard2.setImage(ImageLoader.getImage(state.getPublicGoals().get(1).asString()));
         privateGoalCard.setImage(ImageLoader.getImage(state.getPlayer().getPersonalGoal().asString()));
         this.stage.show();
     }
-    public void exit(Stage stage)  {
+
+    public void exit(Stage stage) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Exit");
         alert.setHeaderText("You are about to exit!");
         alert.setContentText("Are you sure?");
 
-        if(alert.showAndWait().get() == ButtonType.OK){
+        if (alert.showAndWait().get() == ButtonType.OK) {
             state.shutdown();
             System.out.println("You successfully logged out!");
             stage.close();
         }
     }
+
     public void updateGame(String currentPlayerTurn,
                            ArrayList<Integer> playerScores,
                            ArrayList<PlayableCard> normalDeck,
@@ -218,10 +223,12 @@ public class GameSceneController {
         updateScore();
         reloadBoard();
     }
+
     private void reloadBoard() {
 
     }
-    public void updateDeck(){
+
+    public void updateDeck() {
         normalDeckCard1.setImage(ImageLoader.getImage(state.getNormalDeck().get(0).asString()));
         normalDeckCard2.setImage(ImageLoader.getImage(state.getNormalDeck().get(1).asString()));
         normalDeckCard3.setImage(ImageLoader.getImage(state.getNormalDeck().get(2).asString()));
@@ -229,27 +236,32 @@ public class GameSceneController {
         goldenDeckCard2.setImage(ImageLoader.getImage(state.getGoldenDeck().get(1).asString()));
         goldenDeckCard3.setImage(ImageLoader.getImage(state.getGoldenDeck().get(2).asString()));
     }
-    public void updateHand(){
+
+    public void updateHand() {
         handCard1.setImage(ImageLoader.getImage(state.getPlayer().getHand().get(0).asString()));
         handCard2.setImage(ImageLoader.getImage(state.getPlayer().getHand().get(1).asString()));
         handCard3.setImage(ImageLoader.getImage(state.getPlayer().getHand().get(2).asString()));
     }
-    public void updateScore(){
-        if (numberPlayerInGame>=2){
+
+    public void updateScore() {
+        if (numberPlayerInGame >= 2) {
             playerScore1.setText(String.valueOf(state.getPlayersScore().get(playerName1.getText())));
             playerScore2.setText(String.valueOf(state.getPlayersScore().get(playerName2.getText())));
-        }if (numberPlayerInGame>=3){
+        }
+        if (numberPlayerInGame >= 3) {
             playerScore3.setText(String.valueOf(state.getPlayersScore().get(playerName3.getText())));
-        }if (numberPlayerInGame>=4){
+        }
+        if (numberPlayerInGame >= 4) {
             playerScore4.setText(String.valueOf(state.getPlayersScore().get(playerName4.getText())));
         }
     }
-    public void chooseHandCard(int n){
+
+    public void chooseHandCard(int n) {
         ColorAdjust colorAdjustNotChoosen = new ColorAdjust();
         ColorAdjust colorAdjustChoosen = new ColorAdjust();
         colorAdjustNotChoosen.setContrast(-0.5);
         colorAdjustChoosen.setContrast(0);
-        switch (n){
+        switch (n) {
             case 0:
                 state.chooseCardToPlay(state.getPlayer().getHand().getFirst());
                 handCard1.setEffect(colorAdjustChoosen);
@@ -270,19 +282,21 @@ public class GameSceneController {
                 break;
         }
     }
-    public void chooseDeckCard(int n,boolean deckType){
+
+    public void chooseDeckCard(int n, boolean deckType) {
         if (deckType)
-            state.chooseCardToDraw(state.getGoldenDeck().get(n),n,deckType);
+            state.chooseCardToDraw(state.getGoldenDeck().get(n), n, deckType);
         else
-            state.chooseCardToDraw(state.getNormalDeck().get(n),n,deckType);
+            state.chooseCardToDraw(state.getNormalDeck().get(n), n, deckType);
         state.execute();
     }
+
     public GameGUIState getState() {
         return state;
     }
 
     public void removePlayer(String playerDisconnected) {
-        switch (state.getPlayersColors().get(playerDisconnected)){
+        switch (state.getPlayersColors().get(playerDisconnected)) {
             case GREEN -> greenPion.setVisible(false);
             case RED -> redPion.setVisible(false);
             case BLUE -> bluePion.setVisible(false);
@@ -290,16 +304,16 @@ public class GameSceneController {
         }
         state.removePlayer(playerDisconnected);
         numberPlayerInGame--;
-        if (playerDisconnected.equals(playerName1.getText())){
+        if (playerDisconnected.equals(playerName1.getText())) {
             playerColor1.setImage(new Image(GameSceneController.class.getResourceAsStream("/graphicResources/codexCards/pawns/greenPawn.png")));
             playerColor2.setImage(new Image(GameSceneController.class.getResourceAsStream("/graphicResources/codexCards/pawns/yellowPawn.png")));
             playerColor3.setImage(new Image(GameSceneController.class.getResourceAsStream("/graphicResources/codexCards/pawns/bluePawn.png")));
         }
-        if (playerDisconnected.equals(playerName2.getText())){
+        if (playerDisconnected.equals(playerName2.getText())) {
             playerColor2.setImage(new Image(GameSceneController.class.getResourceAsStream("/graphicResources/codexCards/pawns/yellowPawn.png")));
             playerColor3.setImage(new Image(GameSceneController.class.getResourceAsStream("/graphicResources/codexCards/pawns/bluePawn.png")));
         }
-        if (playerDisconnected.equals(playerName3.getText())){
+        if (playerDisconnected.equals(playerName3.getText())) {
             playerColor3.setImage(new Image(GameSceneController.class.getResourceAsStream("/graphicResources/codexCards/pawns/bluePawn.png")));
         }
         hidePlayersInScoreboard();
