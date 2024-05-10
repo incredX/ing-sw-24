@@ -1,7 +1,9 @@
 package IS24_LB11.gui;
 
+import IS24_LB11.gui.phases.ClientGUIState;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.stage.Stage;
 
 public class PopUps {
 
@@ -43,14 +45,33 @@ public class PopUps {
         Alert alert = new Alert(Alert.AlertType.NONE);
 
         //create the button with "ok" text inside
-        ButtonType buttonTypeTwo = new ButtonType("OK");
+        ButtonType buttonType = new ButtonType("OK");
 
         //import the button inside the alert
-        alert.getButtonTypes().setAll(buttonTypeTwo);
+        alert.getButtonTypes().setAll(buttonType);
 
         //insert the received message into the alert field
         alert.setContentText(message);
         alert.show();
+    }
+
+
+    public void lastPlayerLeft(Stage stage, ClientGUIState state) {
+
+        Alert alert = new Alert(Alert.AlertType.NONE);
+
+        ButtonType buttonType = new ButtonType("OK");
+
+        alert.getButtonTypes().setAll(buttonType);
+
+        alert.setContentText("You are the only player left! Do you want to quit?");
+
+        ButtonType result = alert.showAndWait().orElse(null);
+
+        if(result != null){
+            state.shutdown();
+            stage.close();
+        }
     }
 
 }
