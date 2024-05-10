@@ -148,7 +148,12 @@ public class ClientHandler implements Runnable {
                     this.getGame().getPlayers().removeIf(player -> player.name() == this.getUserName());
 
                     System.out.println(getGame().getTurn());
-                    if (this.getGame().getPlayers().size() > 1) {
+                    if(this.getGame().getPlayers().size() > 1){
+                        this.getGame().setGameEnded(true);
+                        this.getGame().setTurn(this.getGame().getPlayers().indexOf(this.getGame().currentPlayer()));
+                        NotifyTurnPhase.startPhase(this.getClientHandlerWithUsername(this.getGame().currentPlayer().name()));
+                    }
+                    else if (this.getGame().getPlayers().size() > 1) {
                         //don't send notification turn when in setup phase
                         if(this.getGame().getTurn() >= 0) {
                             this.getGame().setTurn(this.getGame().getPlayers().indexOf(this.getGame().currentPlayer()));
