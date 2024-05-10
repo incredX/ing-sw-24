@@ -1,7 +1,9 @@
 package IS24_LB11.gui.scenesControllers;
 
 
+import IS24_LB11.game.PlacedCard;
 import IS24_LB11.game.components.PlayableCard;
+import IS24_LB11.game.utils.Position;
 import IS24_LB11.gui.ImageLoader;
 import IS24_LB11.gui.PopUps;
 import IS24_LB11.gui.phases.ClientGUIState;
@@ -106,10 +108,6 @@ public class GameSceneController {
     private final int cardCornerY = 82;
 
     private ArrayList<ImageView> availableSpotsTemporaryCards = new ArrayList<>();
-
-
-    public GameSceneController(ClientGUIState state) {
-        this.state = (GameGUIState) state;
 
     ChatSceneController chatSceneController;
 
