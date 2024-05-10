@@ -110,10 +110,12 @@ public class CommandLine {
         if (keyStroke.getKeyType() != KeyType.Character) return false;
         switch (keyStroke.getCharacter()) {
             case ' ' -> toggle();
+            case '?' -> state.togglePopup("help");
             case 'h','H' -> state.togglePopup("hand");
             case 'd','D' -> state.togglePopup("decks");
             case 't','T' -> state.togglePopup("table");
             case 's','S' -> state.togglePopup("symbols");
+            case 'c','C' -> state.togglePopup("chat");
             case 'w','W' -> state.hideAllPopups();
             default -> { return false; }
         }

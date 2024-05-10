@@ -4,33 +4,40 @@ import IS24_LB11.cli.ClientCLI;
 import IS24_LB11.gui.ClientGUI;
 import IS24_LB11.network.Server;
 
-import java.util.Scanner;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 public class Main {
-    private static final String  INTRO = "Welcome to Codex Naturalis! What do you want to do?\n"+
-            " [1] start a Server to host the game\n"+
-            " [2] start a Client (GUI)\n"+
-            " [3] start a Client (TUI)\n"+
-            " > ";
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        System.out.print(INTRO);
-        int choice = -1;
-        while (choice < 0) {
-            String command = scanner.nextLine();
-            try {
-                choice = Integer.parseInt(command);
-                if (choice < 0 || choice > 3) throw new NumberFormatException();
-            }
-            catch (NumberFormatException e) {
-                System.out.println("Please enter a valid number between 1 and 3");
-                choice = -1;
+        Integer port = 54321;
+        String mainToStart = "g";
+
+        Iterator<String> iterArgs = Arrays.stream(args).iterator();
+
+        while (iterArgs.hasNext()) {
+            String arg = iterArgs.next();
+            switch (arg) {
+                case "-g", "--gui" -> mainToStart = "g";
+                case "-c", "--cli" -> mainToStart = "c";
+                case "-s", "--server" -> mainToStart = "s";
+                case "-p", "--port" -> {
+                    try { port = Integer.parseInt(iterArgs.next()); }
+                    catch (NumberFormatException e) {
+                        System.err.println("Invalid port number: " + iterArgs.next());
+                        return;
+                    } catch (NoSuchElementException e) {
+                        System.err.println("missing port number");
+                        return;
+                    }
+                }
             }
         }
-        switch (choice) {
-            case 1 -> new Server(54321).start();
-            case 2 -> ClientGUI.main(new String[]{});
-            case 3 -> ClientCLI.main(new String[]{});
+
+        switch (mainToStart) {
+            case "g" -> ClientGUI.main(new String[0]);
+            case "c" -> ClientCLI.main(new String[0]);
+            case "s" -> new Server(port).start();
         }
     }
 }
