@@ -49,28 +49,21 @@ public class ChatSceneController {
 
     public void send(){
         String[] strings = messageBox.getText().split(" ",3);
-        System.out.println(strings[0]);
-        System.out.println(strings[1]);
-        System.out.println(strings[2]);
         switch (strings[0]){
             case "help":
                 Text help = new Text("Private chat command:");
-                help.setFont(Font.font("Arial", FontWeight.BOLD,6));
                 chatPane.getItems().add(new Text("--------------------------------------------------"));
-                chatPane.getItems().add(help);
-                help.setText("sendto username msg");
-                chatPane.getItems().add(help);
+                chatPane.getItems().add(new Text("Private chat command:"));
+                chatPane.getItems().add(new Text("sendto username msg"));
                 chatPane.getItems().add(new Text("--------------------------------------------------"));
-                help.setText("Public chat command:");
-                chatPane.getItems().add(help);
-                help.setText("sendtoall msg");
-                chatPane.getItems().add(help);
+                chatPane.getItems().add(new Text("Public chat command:"));
+                chatPane.getItems().add(new Text("sendtoall msg"));
                 chatPane.getItems().add(new Text("--------------------------------------------------"));
                 break;
 
             case "sendto":
                 state.sendMessage(strings[1], state.getUsername(), strings[2]);
-                Text sendTo = new Text(strings[2]);
+                Text sendTo = new Text("<me>" + strings[2]);
                 chatPane.getItems().add(sendTo);
                 break;
             case "sendtoall":
@@ -83,16 +76,6 @@ public class ChatSceneController {
                 state.sendToAll(state.getUsername(), msg);
                 chatPane.getItems().add(sendToAll);
                 break;
-        }
-        if(strings[0].equals("help")){
-
-        }
-
-        if (strings[0].equals("sendto")) {
-
-        }
-        else if (strings[0].equals("sendtoall")) {
-
         }
     }
 
