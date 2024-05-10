@@ -67,7 +67,6 @@ public class SetupSceneController {
         GameSceneController gameSceneController = new GameSceneController(new GameGUIState(state),stage);
         stage.close();
         gameSceneController.showStage();
-
     }
     public void showStage() {
         goalCard1.setImage(ImageLoader.getImage(state.getPrivateGoals().get(0).asString()));

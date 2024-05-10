@@ -1,7 +1,7 @@
 package IS24_LB11;
 
-import IS24_LB11.cli.CliClient;
-import IS24_LB11.gui.MainApp;
+import IS24_LB11.cli.ClientCLI;
+import IS24_LB11.gui.ClientGUI;
 import IS24_LB11.network.Server;
 
 import java.util.Scanner;
@@ -29,8 +29,8 @@ public class Main {
         }
         switch (choice) {
             case 1 -> new Server(54321).start();
-            case 2 -> MainApp.main(new String[]{});
-            case 3 -> CliClient.main(new String[]{});
+            case 2 -> ClientGUI.main(new String[]{});
+            case 3 -> ClientCLI.main(new String[]{});
         }
     }
 }

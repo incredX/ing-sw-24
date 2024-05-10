@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 
-public class CliClient {
+public class ClientCLI {
     public static void main(String[] args) {
         ClientState state;
         ViewHub viewHub;
