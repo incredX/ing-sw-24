@@ -1,0 +1,377 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <TabPane prefHeight="720.0" prefWidth="1280.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <tabs>
+          <Tab text="Board">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <SplitPane dividerPositions="0.76" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="688.5" prefWidth="1280.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                          <items>
+                              <ScrollPane fx:id="scrollPane" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="686.5" prefWidth="968.0">
+                                 <content>
+                                    <Pane fx:id="playerBoard" minHeight="20000.0" minWidth="20000.0" />
+                                 </content>
+                              </ScrollPane>
+                            <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="686.5" prefWidth="303.0">
+                                 <children>
+                                    <TabPane prefHeight="686.5" prefWidth="252.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                      <tabs>
+                                        <Tab text="Hand">
+                                          <content>
+                                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                                   <children>
+                                                      <SplitPane dividerPositions="0.333333333333, 0.666666666666" maxHeight="-Infinity" maxWidth="-Infinity" orientation="VERTICAL" prefHeight="655.0" prefWidth="303.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                        <items>
+                                                          <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="214.0" prefWidth="301.0">
+                                                               <children>
+                                                                  <ImageView fx:id="handCard1" fitHeight="210.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" x="0.5" y="3.5">
+                                                                     <image>
+                                                                        <Image url="@graphicResources/codexCards/croppedCards/croppedFront/normalFront/_EFEFF1.jpg" />
+                                                                     </image>
+                                                                     <effect>
+                                                                        <DropShadow />
+                                                                     </effect>
+                                                                  </ImageView>
+                                                               </children>
+                                                            </AnchorPane>
+                                                          <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="211.0" prefWidth="301.0">
+                                                               <children>
+                                                                  <ImageView fx:id="handCard2" fitHeight="210.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" x="0.5" y="3.5">
+                                                                     <image>
+                                                                        <Image url="@graphicResources/codexCards/croppedCards/croppedFront/normalFront/_IQPPF0.jpg" />
+                                                                     </image>
+                                                                     <effect>
+                                                                        <DropShadow />
+                                                                     </effect>
+                                                                  </ImageView>
+                                                               </children>
+                                                            </AnchorPane>
+                                                            <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="214.0" prefWidth="301.0">
+                                                               <children>
+                                                                  <ImageView fx:id="handCard3" fitHeight="210.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" x="0.5" y="3.5">
+                                                                     <image>
+                                                                        <Image url="@graphicResources/codexCards/croppedCards/croppedFront/goldenFront/E_E_FF5_FFFFF.jpg" />
+                                                                     </image>
+                                                                     <effect>
+                                                                        <DropShadow />
+                                                                     </effect>
+                                                                  </ImageView>
+                                                               </children>
+                                                            </AnchorPane>
+                                                        </items>
+                                                      </SplitPane>
+                                                   </children>
+                                                </AnchorPane>
+                                          </content>
+                                        </Tab>
+                                        <Tab text="NormalCardDeck">
+                                          <content>
+                                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                                   <children>
+                                                      <SplitPane dividerPositions="0.33333333333333, 0.66666666666666" maxHeight="-Infinity" maxWidth="-Infinity" orientation="VERTICAL" prefHeight="655.0" prefWidth="303.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                        <items>
+                                                          <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="214.0" prefWidth="301.0">
+                                                               <children>
+                                                                  <ImageView fx:id="normalDeckCard1" fitHeight="210.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" x="0.5" y="3.5">
+                                                                     <image>
+                                                                        <Image url="@graphicResources/codexCards/croppedCards/croppedFront/normalFront/_IEEIF1.jpg" />
+                                                                     </image>
+                                                                     <effect>
+                                                                        <DropShadow />
+                                                                     </effect>
+                                                                  </ImageView>
+                                                               </children>
+                                                            </AnchorPane>
+                                                          <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="211.0" prefWidth="301.0">
+                                                               <children>
+                                                                  <ImageView fx:id="normalDeckCard2" fitHeight="210.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" x="0.5" y="3.5">
+                                                                     <image>
+                                                                        <Image url="@graphicResources/codexCards/croppedCards/croppedFront/normalFront/_EAAAF0.jpg" />
+                                                                     </image>
+                                                                     <effect>
+                                                                        <DropShadow />
+                                                                     </effect>
+                                                                  </ImageView>
+                                                               </children>
+                                                            </AnchorPane>
+                                                            <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="214.0" prefWidth="301.0">
+                                                               <children>
+                                                                  <ImageView fx:id="normalDeckCard3" fitHeight="210.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" x="0.5" y="3.5">
+                                                                     <image>
+                                                                        <Image url="@graphicResources/codexCards/croppedCards/croppedBack/NPB.jpg" />
+                                                                     </image>
+                                                                     <effect>
+                                                                        <DropShadow />
+                                                                     </effect>
+                                                                  </ImageView>
+                                                               </children>
+                                                            </AnchorPane>
+                                                        </items>
+                                                      </SplitPane>
+                                                   </children>
+                                                </AnchorPane>
+                                          </content>
+                                        </Tab>
+                                          <Tab text="GoldenCardDeck">
+                                             <content>
+                                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                                   <children>
+                                                      <SplitPane dividerPositions="0.3333333333333, 0.6666666666666" maxHeight="-Infinity" maxWidth="-Infinity" orientation="VERTICAL" prefHeight="655.0" prefWidth="303.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                        <items>
+                                                          <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="214.0" prefWidth="301.0">
+                                                               <children>
+                                                                  <ImageView fx:id="goldenDeckCard1" fitHeight="210.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" x="0.5" y="3.5">
+                                                                     <image>
+                                                                        <Image url="@graphicResources/codexCards/croppedCards/croppedFront/goldenFront/_K_EPF3_PPP__.jpg" />
+                                                                     </image>
+                                                                     <effect>
+                                                                        <DropShadow />
+                                                                     </effect>
+                                                                  </ImageView>
+                                                               </children>
+                                                            </AnchorPane>
+                                                          <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="211.0" prefWidth="301.0">
+                                                               <children>
+                                                                  <ImageView fx:id="goldenDeckCard2" fitHeight="210.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" x="0.5" y="3.5">
+                                                                     <image>
+                                                                        <Image url="@graphicResources/codexCards/croppedCards/croppedFront/goldenFront/QE__FF3_FFF__.jpg" />
+                                                                     </image>
+                                                                     <effect>
+                                                                        <DropShadow />
+                                                                     </effect>
+                                                                  </ImageView>
+                                                               </children>
+                                                            </AnchorPane>
+                                                            <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="214.0" prefWidth="301.0">
+                                                               <children>
+                                                                  <ImageView fx:id="goldenDeckCard3" fitHeight="210.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" x="0.5" y="3.5">
+                                                                     <image>
+                                                                        <Image url="@graphicResources/codexCards/croppedCards/croppedBack/GFB.jpg" />
+                                                                     </image>
+                                                                     <effect>
+                                                                        <DropShadow />
+                                                                     </effect>
+                                                                  </ImageView>
+                                                               </children>
+                                                            </AnchorPane>
+                                                        </items>
+                                                      </SplitPane>
+                                                   </children>
+                                                </AnchorPane>
+                                             </content>
+                                          </Tab>
+                                      </tabs>
+                                    </TabPane>
+                                 </children>
+                              </AnchorPane>
+                          </items>
+                        </SplitPane>
+                     </children>
+                  </AnchorPane>
+            </content>
+          </Tab>
+            <Tab text="Scoreboard">
+               <content>
+                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="720.0" prefWidth="1280.0">
+                     <children>
+                        <SplitPane dividerPositions="0.76" prefHeight="688.5" prefWidth="1280.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                          <items>
+                            <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="686.5" prefWidth="968.0">
+                                 <children>
+                                    <GridPane layoutX="27.0" layoutY="140.0" prefHeight="155.0" prefWidth="309.0">
+                                       <columnConstraints>
+                                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                       </columnConstraints>
+                                       <rowConstraints>
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                       </rowConstraints>
+                                       <children>
+                                          <ImageView fx:id="playerColor1" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@graphicResources/codexCards/pawns/redPawn.png" />
+                                             </image>
+                                             <effect>
+                                                <DropShadow />
+                                             </effect>
+                                          </ImageView>
+                                          <ImageView fx:id="playerColor2" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" GridPane.rowIndex="1">
+                                             <image>
+                                                <Image url="@graphicResources/codexCards/pawns/greenPawn.png" />
+                                             </image>
+                                             <effect>
+                                                <DropShadow />
+                                             </effect>
+                                          </ImageView>
+                                          <ImageView fx:id="playerColor3" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" GridPane.rowIndex="2">
+                                             <image>
+                                                <Image url="@graphicResources/codexCards/pawns/bluePawn.png" />
+                                             </image>
+                                             <effect>
+                                                <DropShadow />
+                                             </effect>
+                                          </ImageView>
+                                          <ImageView fx:id="playerColor4" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" GridPane.rowIndex="3">
+                                             <image>
+                                                <Image url="@graphicResources/codexCards/pawns/yellowPawn.png" />
+                                             </image>
+                                             <effect>
+                                                <DropShadow />
+                                             </effect>
+                                          </ImageView>
+                                          <Text fx:id="playerName1" strokeType="OUTSIDE" strokeWidth="0.0" text="Player1" textAlignment="JUSTIFY" GridPane.columnIndex="1">
+                                             <font>
+                                                <Font size="20.0" />
+                                             </font></Text>
+                                          <Text fx:id="playerName2" strokeType="OUTSIDE" strokeWidth="0.0" text="Player2" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                             <font>
+                                                <Font size="20.0" />
+                                             </font></Text>
+                                          <Text fx:id="playerName3" strokeType="OUTSIDE" strokeWidth="0.0" text="Player3" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                             <font>
+                                                <Font size="20.0" />
+                                             </font></Text>
+                                          <Text fx:id="playerName4" strokeType="OUTSIDE" strokeWidth="0.0" text="Player4" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                             <font>
+                                                <Font size="20.0" />
+                                             </font></Text>
+                                          <Text fx:id="playerScore1" strokeType="OUTSIDE" strokeWidth="0.0" text="789" GridPane.columnIndex="2">
+                                             <font>
+                                                <Font size="20.0" />
+                                             </font></Text>
+                                          <Text fx:id="playerScore2" strokeType="OUTSIDE" strokeWidth="0.0" text="456" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                                             <font>
+                                                <Font size="20.0" />
+                                             </font></Text>
+                                          <Text fx:id="playerScore3" strokeType="OUTSIDE" strokeWidth="0.0" text="123" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                                             <font>
+                                                <Font size="20.0" />
+                                             </font></Text>
+                                          <Text fx:id="playerScore4" strokeType="OUTSIDE" strokeWidth="0.0" text="0" GridPane.columnIndex="2" GridPane.rowIndex="3">
+                                             <font>
+                                                <Font size="20.0" />
+                                             </font></Text>
+                                       </children>
+                                    </GridPane>
+                                    <ImageView fitHeight="676.0" fitWidth="365.0" pickOnBounds="true" preserveRatio="true" x="350.0" y="5.0">
+                                       <image>
+                                          <Image url="@graphicResources/codexCards/board/PLATEAU-SCORE%20Crop.jpg" />
+                                       </image>
+                                       <effect>
+                                          <DropShadow />
+                                       </effect>
+                                    </ImageView>
+                                    <ImageView fx:id="bluePion" fitHeight="30.0" fitWidth="30.0" layoutX="415.0" layoutY="597.0" pickOnBounds="true" preserveRatio="true" x="2.0" y="3.0">
+                                       <image>
+                                          <Image url="@graphicResources/codexCards/pawns/bluePawn.png" />
+                                       </image>
+                                       <effect>
+                                          <DropShadow />
+                                       </effect>
+                                    </ImageView>
+                                    <ImageView fx:id="redPion" fitHeight="30.0" fitWidth="30.0" layoutX="415.0" layoutY="622.0" pickOnBounds="true" preserveRatio="true" x="2.0" y="3.0">
+                                       <image>
+                                          <Image url="@graphicResources/codexCards/pawns/redPawn.png" />
+                                       </image>
+                                       <effect>
+                                          <DropShadow />
+                                       </effect>
+                                    </ImageView>
+                                    <ImageView fx:id="greenPion" fitHeight="30.0" fitWidth="30.0" layoutX="440.0" layoutY="597.0" pickOnBounds="true" preserveRatio="true" x="2.0" y="3.0">
+                                       <image>
+                                          <Image url="@graphicResources/codexCards/pawns/greenPawn.png" />
+                                       </image>
+                                       <effect>
+                                          <DropShadow />
+                                       </effect>
+                                    </ImageView>
+                                    <ImageView fx:id="yellowPion" fitHeight="30.0" fitWidth="30.0" layoutX="440.0" layoutY="622.0" pickOnBounds="true" preserveRatio="true" x="2.0" y="3.0">
+                                       <image>
+                                          <Image url="@graphicResources/codexCards/pawns/yellowPawn.png" />
+                                       </image>
+                                       <effect>
+                                          <DropShadow />
+                                       </effect>
+                                    </ImageView>
+                                    <Button fx:id="chatButton" layoutX="127.0" layoutY="530.0" mnemonicParsing="false" text="Button" />
+                                 </children></AnchorPane>
+                            <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="686.5" prefWidth="303.0">
+                                 <children>
+                                    <SplitPane dividerPositions="0.33333333333, 0.6666666666" orientation="VERTICAL" prefHeight="686.5" prefWidth="303.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                      <items>
+                                        <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="225.0" prefWidth="301.0">
+                                             <children>
+                                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Public Goal 1" wrappingWidth="118.343017578125" x="90.0" y="16.0">
+                                                   <font>
+                                                      <Font size="20.0" />
+                                                   </font>
+                                                </Text>
+                                                <ImageView fx:id="goalCard1" fitHeight="195.0" fitWidth="295.0" pickOnBounds="true" preserveRatio="true" x="9.0" y="24.0">
+                                                   <image>
+                                                      <Image url="@graphicResources/codexCards/croppedCards/croppedFront/goalFront/O2FFF.jpg" />
+                                                   </image>
+                                                   <effect>
+                                                      <DropShadow />
+                                                   </effect>
+                                                </ImageView>
+                                             </children>
+                                          </AnchorPane>
+                                        <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="221.0" prefWidth="301.0">
+                                             <children>
+                                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Public Goal" x="90.0" y="16.0">
+                                                   <font>
+                                                      <Font size="20.0" />
+                                                   </font>
+                                                </Text>
+                                                <ImageView fx:id="goalCard2" fitHeight="195.0" fitWidth="295.0" pickOnBounds="true" preserveRatio="true" x="9.0" y="24.0">
+                                                   <image>
+                                                      <Image url="@graphicResources/codexCards/croppedCards/croppedFront/goalFront/O3AIIL0.jpg" />
+                                                   </image>
+                                                   <effect>
+                                                      <DropShadow />
+                                                   </effect>
+                                                </ImageView>
+                                             </children>
+                                          </AnchorPane>
+                                          <AnchorPane layoutX="10.0" layoutY="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="224.5" prefWidth="301.0">
+                                             <children>
+                                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Private Goal" x="90.0" y="16.0">
+                                                   <font>
+                                                      <Font size="20.0" />
+                                                   </font>
+                                                </Text>
+                                                <ImageView fx:id="privateGoalCard" fitHeight="195.0" fitWidth="295.0" pickOnBounds="true" preserveRatio="true" x="9.0" y="24.0">
+                                                   <image>
+                                                      <Image url="@graphicResources/codexCards/croppedCards/croppedFront/goalFront/O3QKM.jpg" />
+                                                   </image>
+                                                   <effect>
+                                                      <DropShadow />
+                                                   </effect>
+                                                </ImageView>
+                                             </children>
+                                          </AnchorPane>
+                                      </items>
+                                    </SplitPane>
+                                 </children></AnchorPane>
+                          </items>
+                        </SplitPane>
+                     </children></AnchorPane>
+               </content>
+            </Tab>
+        </tabs>
+      </TabPane>
+   </children>
+</AnchorPane>
