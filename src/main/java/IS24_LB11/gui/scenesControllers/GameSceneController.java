@@ -6,15 +6,19 @@ import IS24_LB11.gui.ImageLoader;
 import IS24_LB11.gui.PopUps;
 import IS24_LB11.gui.phases.ClientGUIState;
 import IS24_LB11.gui.phases.GameGUIState;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
@@ -84,6 +88,28 @@ public class GameSceneController {
     Stage chatStage = new Stage();
     GameGUIState state;
     int numberPlayerInGame;
+
+    // Board Variables
+    @FXML
+    private ScrollPane scrollPane;
+
+    @FXML
+    private Pane playerBoard;
+
+    private final int centerBoardX = 10000;
+    private final int centerBoardY = 10000;
+
+    private final int cardX = 300;
+    private final int cardY = 210;
+
+    private final int cardCornerX = 70;
+    private final int cardCornerY = 82;
+
+    private ArrayList<ImageView> availableSpotsTemporaryCards = new ArrayList<>();
+
+
+    public GameSceneController(ClientGUIState state) {
+        this.state = (GameGUIState) state;
 
     ChatSceneController chatSceneController;
 
@@ -164,12 +190,12 @@ public class GameSceneController {
             playerName4.setVisible(false);
             playerScore4.setVisible(false);
         }
-        if (state.getNumberOfPlayer() <= 2) {
+        if (state.getNumberOfPlayer()<=2){
             playerColor3.setVisible(false);
             playerName3.setVisible(false);
             playerScore3.setVisible(false);
         }
-        if (state.getNumberOfPlayer() <= 1) {
+        if (state.getNumberOfPlayer()<=1){
             playerColor2.setVisible(false);
             playerName2.setVisible(false);
             playerScore2.setVisible(false);
@@ -192,8 +218,22 @@ public class GameSceneController {
 
     public void showStage() {
         goalCard1.setImage(ImageLoader.getImage(state.getPublicGoals().get(0).asString()));
+        ImageLoader.roundCorners(goalCard1);
+
         goalCard2.setImage(ImageLoader.getImage(state.getPublicGoals().get(1).asString()));
+        ImageLoader.roundCorners(goalCard2);
+
         privateGoalCard.setImage(ImageLoader.getImage(state.getPlayer().getPersonalGoal().asString()));
+        ImageLoader.roundCorners(privateGoalCard);
+
+        // Place starterCard
+        moveToCenter(scrollPane);
+        ImageView starterCard =  getImageView(state.getPlayer().getBoard().getPlacedCards().getFirst());
+        ImageLoader.roundCorners(starterCard);
+        playerBoard.getChildren().add(starterCard);
+
+
+        this.stage.setResizable(false);
         this.stage.show();
     }
 
@@ -230,17 +270,34 @@ public class GameSceneController {
 
     public void updateDeck() {
         normalDeckCard1.setImage(ImageLoader.getImage(state.getNormalDeck().get(0).asString()));
+        ImageLoader.roundCorners(normalDeckCard1);
+
         normalDeckCard2.setImage(ImageLoader.getImage(state.getNormalDeck().get(1).asString()));
+        ImageLoader.roundCorners(normalDeckCard2);
+
         normalDeckCard3.setImage(ImageLoader.getImage(state.getNormalDeck().get(2).asString()));
+        ImageLoader.roundCorners(normalDeckCard3);
+
         goldenDeckCard1.setImage(ImageLoader.getImage(state.getGoldenDeck().get(0).asString()));
+        ImageLoader.roundCorners(goldenDeckCard1);
+
         goldenDeckCard2.setImage(ImageLoader.getImage(state.getGoldenDeck().get(1).asString()));
+        ImageLoader.roundCorners(goldenDeckCard2);
+
         goldenDeckCard3.setImage(ImageLoader.getImage(state.getGoldenDeck().get(2).asString()));
+        ImageLoader.roundCorners(goldenDeckCard3);
+
     }
 
     public void updateHand() {
         handCard1.setImage(ImageLoader.getImage(state.getPlayer().getHand().get(0).asString()));
+        ImageLoader.roundCorners(handCard1);
+
         handCard2.setImage(ImageLoader.getImage(state.getPlayer().getHand().get(1).asString()));
+        ImageLoader.roundCorners(handCard2);
+
         handCard3.setImage(ImageLoader.getImage(state.getPlayer().getHand().get(2).asString()));
+        ImageLoader.roundCorners(handCard3);
     }
 
     public void updateScore() {
@@ -257,6 +314,9 @@ public class GameSceneController {
     }
 
     public void chooseHandCard(int n) {
+
+        placeTemporaryCardsOnAvailableSpots();
+
         ColorAdjust colorAdjustNotChoosen = new ColorAdjust();
         ColorAdjust colorAdjustChoosen = new ColorAdjust();
         colorAdjustNotChoosen.setContrast(-0.5);
@@ -321,8 +381,82 @@ public class GameSceneController {
         updateScore();
     }
 
-    public void showPopUpNotification(String message) {
-        PopUps popUps = new PopUps();
-        popUps.popUpMaker(message);
+    private void clearBoard(Pane playerBoard){
+        playerBoard.getChildren().clear();
     }
+
+    private void clearTemporaryCardsFromBoard(Pane playerBoard){
+        //TODO: complete this
+    }
+
+    private void moveToCenter(ScrollPane scrollPane){
+        Platform.runLater(() -> {
+            scrollPane.setHvalue((double) (centerBoardX+(cardX/2)) / playerBoard.getWidth());
+            scrollPane.setVvalue((double) (centerBoardY+(cardY/2)) / playerBoard.getHeight());
+        });
+    }
+
+    private ImageView getImageView(PlacedCard placedCard){
+        Image image = ImageLoader.getImage(placedCard.card().asString());
+        ImageView imageView = new ImageView(image);
+
+        imageView.setFitWidth(cardX);
+        imageView.setFitHeight(cardY);
+
+        Position positionOnBoard = getPositionOnBoard(placedCard.position().getX(), placedCard.position().getY());
+
+        imageView.setLayoutX(positionOnBoard.getX()); // X coordinate
+        imageView.setLayoutY(positionOnBoard.getY()); // Y coordinate
+
+        return imageView;
+    }
+
+    private ImageView getImageView(String custom, int x, int y){
+        Image image = ImageLoader.getImage(custom);
+        ImageView imageView = new ImageView(image);
+
+        imageView.setFitWidth(cardX);
+        imageView.setFitHeight(cardY);
+
+        Position positionOnBoard = getPositionOnBoard(x, y);
+
+        imageView.setLayoutX(positionOnBoard.getX()); // X coordinate
+        imageView.setLayoutY(positionOnBoard.getY()); // Y coordinate
+
+        return imageView;
+    }
+
+    private Position getPositionOnBoard(int x, int y){
+
+        Position pos =
+                new Position(centerBoardX+(x*(cardX-cardCornerX)), centerBoardY+(y*(cardY-cardCornerY)));
+
+        return pos;
+    }
+
+    private ArrayList<Position> getAvailableSpots(){
+        return state.getPlayer().getBoard().getAvailableSpots();
+    }
+
+    private void placeTemporaryCardsOnAvailableSpots(){
+        for(Position pos : getAvailableSpots()){
+            ImageView imageView = getImageView("AvailableSpot", pos.getX(), pos.getY());
+            ImageLoader.roundCorners(imageView);
+            if(!imageViewInPosition(imageView))
+                playerBoard.getChildren().add(imageView);
+        }
+    }
+
+    private boolean imageViewInPosition(ImageView imageView){
+        for(Node alreadyPlaced : playerBoard.getChildren()){
+            if(alreadyPlaced.getLayoutX() == imageView.getLayoutX() && alreadyPlaced.getLayoutY() == imageView.getLayoutY()){
+                return true;
+            }
+        }
+        return false;
+    }
+        public void showPopUpNotification(String message) {
+            PopUps popUps = new PopUps();
+            popUps.popUpMaker(message);
+        }
 }

@@ -59,31 +59,41 @@ public class Board extends Application {
         placedCards.add(new PlacedCard((PlayableCard) CardFactory.newSerialCard(cardStrings.get(4)), new Position(-1, 1)));
 
         for (PlacedCard p : placedCards) {
-            playerBoard.getChildren().add(getImageView(p));
+            ImageView imageView = getImageView(p);
+            ImageLoader.roundCorners(imageView);
+            playerBoard.getChildren().add(imageView);
         }
 
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
 
-        Platform.runLater(() -> {
-            scrollPane.setHvalue((double) (centerBoardX+(cardX/2)) / playerBoard.getWidth());
-            scrollPane.setVvalue((double) (centerBoardY+(cardY/2)) / playerBoard.getHeight());
-        });
+        moveToCenter(scrollPane);
     }
 
     private void clearBoard(Pane playerBoard){
         playerBoard.getChildren().clear();
     }
 
+    private void clearTemporaryCardsFromBoard(Pane playerBoard){
+        //TODO: complete this
+    }
+
+    private void moveToCenter(ScrollPane scrollPane){
+        Platform.runLater(() -> {
+            scrollPane.setHvalue((double) (centerBoardX+(cardX/2)) / playerBoard.getWidth());
+            scrollPane.setVvalue((double) (centerBoardY+(cardY/2)) / playerBoard.getHeight());
+        });
+    }
+
     private ImageView getImageView(PlacedCard placedCard){
         Image image = ImageLoader.getImage(placedCard.card().asString());
         ImageView imageView = new ImageView(image);
 
-        imageView.setFitWidth(300);
-        imageView.setFitHeight(210);
+        imageView.setFitWidth(cardX);
+        imageView.setFitHeight(cardY);
 
-        Coordinate positionOnBoard = getPositionOnBoard(placedCard.position().getX(), placedCard.position().getY());
+        Position positionOnBoard = getPositionOnBoard(placedCard.position().getX(), placedCard.position().getY());
 
         imageView.setLayoutX(positionOnBoard.getX()); // X coordinate
         imageView.setLayoutY(positionOnBoard.getY()); // Y coordinate
@@ -91,33 +101,13 @@ public class Board extends Application {
         return imageView;
     }
 
-    private Coordinate getPositionOnBoard(int x, int y){
+    private Position getPositionOnBoard(int x, int y){
 
-        Coordinate coordinate =
-                new Coordinate(centerBoardX+(x*(cardX-cardCornerX)), centerBoardY+(y*(cardY-cardCornerY)));
+        Position pos =
+                new Position(centerBoardX+(x*(cardX-cardCornerX)), centerBoardY+(y*(cardY-cardCornerY)));
 
-
-        return coordinate;
+        return pos;
     }
-
-    class Coordinate {
-        private int x;
-        private int y;
-
-        public Coordinate(int x, int y) {
-            this.x = x;
-            this.y = y;
-        }
-
-        public int getX() {
-            return x;
-        }
-
-        public int getY() {
-            return y;
-        }
-    }
-
 
     public static void main(String[] args) {
         launch(args);

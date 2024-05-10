@@ -105,6 +105,7 @@ public class GameGUIState extends ClientGUIState {
     public void placeCard(PlacedCard placedCard){
         player.placeCard(placedCard.card(),placedCard.position());
     }
+
     public int getNumberOfPlayer(){
         return players.size();
     }
