@@ -133,12 +133,27 @@ public class GameSceneController {
         goldenDeckCard3.setOnMouseClicked(mouseEvent -> chooseDeckCard(2,true));
         chatButton.setOnMouseClicked(mouseEvent -> showChat());
         //same as disconnected
+        switch (numberPlayerInGame){
+            case 3:
+                yellowPion.setVisible(false);
+                break;
+            case 2:
+                yellowPion.setVisible(false);
+                bluePion.setVisible(false);
+                break;
+        }
         hidePlayersInScoreboard();
         setUsernamesBoard();
     }
 
     private void showChat() {
         chatStage.show();
+    }
+    private void hideInitialPawns(){
+        if (numberPlayerInGame<=3)
+            yellowPion.setVisible(false);
+        if (numberPlayerInGame<=2)
+            bluePion.setVisible(false);
     }
 
     private void hidePlayersInScoreboard(){
@@ -236,7 +251,7 @@ public class GameSceneController {
         colorAdjustChoosen.setContrast(0);
         switch (n){
             case 0:
-                state.chooseCardToPlay(state.getPlayer().getHand().get(0));
+                state.chooseCardToPlay(state.getPlayer().getHand().getFirst());
                 handCard1.setEffect(colorAdjustChoosen);
                 handCard2.setEffect(colorAdjustNotChoosen);
                 handCard3.setEffect(colorAdjustNotChoosen);
@@ -267,7 +282,12 @@ public class GameSceneController {
     }
 
     public void removePlayer(String playerDisconnected) {
-        String color = state.getPlayersColors().get(playerDisconnected);
+        switch (state.getPlayersColors().get(playerDisconnected)){
+            case GREEN -> greenPion.setVisible(false);
+            case RED -> redPion.setVisible(false);
+            case BLUE -> bluePion.setVisible(false);
+            case YELLOW -> yellowPion.setVisible(false);
+        }
         state.removePlayer(playerDisconnected);
         numberPlayerInGame--;
         if (playerDisconnected.equals(playerName1.getText())){

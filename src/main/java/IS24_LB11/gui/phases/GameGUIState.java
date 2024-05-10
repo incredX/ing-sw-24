@@ -18,7 +18,7 @@ public class GameGUIState extends ClientGUIState {
     private ArrayList<GoalCard> publicGoals;
     private ArrayList<PlayableCard> normalDeck;
     private ArrayList<PlayableCard> goldenDeck;
-    private HashMap<Color, String> playersColors;
+    private HashMap<String, Color> playersColors;
     private HashMap<String, Integer> playersScore;
     private ArrayList<String> players;
     GameSceneController gameSceneController;
@@ -94,7 +94,7 @@ public class GameGUIState extends ClientGUIState {
     public HashMap<String, Integer> getPlayersScore() {
         return playersScore;
     }
-    public HashMap<Color, String> getPlayersColors() {
+    public HashMap<String, Color> getPlayersColors() {
         return playersColors;
     }
     public void execute() {

@@ -5,9 +5,9 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
 
 public class ChatSceneController {
@@ -50,18 +50,33 @@ public class ChatSceneController {
     public void send(){
         String[] strings = messageBox.getText().split(" ",3);
         if(strings[0].equals("help")){
-            chatPane.getItems().add(new Text("Private chat command:"));
-            chatPane.getItems().add(new Text("sendto username msg"));
-            chatPane.getItems().add(new Text(""));
-
-            chatPane.getItems().add(new Text("Public chat command:"));
-            chatPane.getItems().add(new Text("sendtoall msg"));
-            chatPane.getItems().add(new Text(""));
+            Text msg = new Text("Private chat command:");
+            msg.setFont(Font.font("Arial", FontWeight.BOLD,6));
+            chatPane.getItems().add(new Text("--------------------------------------------------"));
+            chatPane.getItems().add(msg);
+            msg.setText("sendto username msg");
+            chatPane.getItems().add(msg);
+            chatPane.getItems().add(new Text("--------------------------------------------------"));
+            msg.setText("Public chat command:");
+            chatPane.getItems().add(msg);
+            msg.setText("sendtoall msg");
+            chatPane.getItems().add(msg);
+            chatPane.getItems().add(new Text("--------------------------------------------------"));
         }
-        if (strings[0].equals("sendto"))
-            state.sendMessage(strings[1],state.getUsername() ,strings[2]);
-        else if (strings[0].equals("sendtoall"))
-            state.sendToAll(state.getUsername(),strings[1]);
+        if (strings[0].equals("sendto")) {
+            state.sendMessage(strings[1], state.getUsername(), strings[2]);
+            Text msg = new Text(strings[2]);
+            chatPane.getItems().add(msg);
+        }
+        else if (strings[0].equals("sendtoall")) {
+            state.sendToAll(state.getUsername(), strings[1]);
+            Text msg = new Text();
+            if (strings.length==2)
+                msg.setText(strings[1]);
+            else
+                msg.setText(strings[1] + " " + strings[2]);
+            chatPane.getItems().add(msg);
+        }
     }
 
     public void updateMessages() {
