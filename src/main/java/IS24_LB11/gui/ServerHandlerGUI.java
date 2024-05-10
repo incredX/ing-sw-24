@@ -60,6 +60,7 @@ public class ServerHandlerGUI implements Runnable{
     }
 
     private void processEvent(JsonObject serverEvent) {
+        System.out.println(serverEvent);
         if (serverEvent.has("type")) {
             switch (serverEvent.get("type").getAsString().toLowerCase()){
                 case "setusername":
@@ -116,20 +117,25 @@ public class ServerHandlerGUI implements Runnable{
 
     private void handleTurnEvent(JsonObject serverEvent) {
         String currentPlayerTurn = serverEvent.get("player").getAsString();
+        if (currentPlayerTurn.equals(""))
+            Platform.runLater(()->gameSceneController.showExitNotification("You are the only player connected to the server"));
+        else{
+            JsonArray playersScores = serverEvent.get("scores").getAsJsonArray();
+            ArrayList<Integer> playerScores = extractIntegerArray(playersScores,playersScores.size());
 
-        JsonArray playersScores = serverEvent.get("scores").getAsJsonArray();
-        ArrayList<Integer> playerScores = extractIntegerArray(playersScores,playersScores.size());
+            JsonArray normalDeckString = serverEvent.get("normalDeck").getAsJsonArray();
+            JsonArray goldenDeckString = serverEvent.get("goldenDeck").getAsJsonArray();
+            ArrayList<PlayableCard> normalDeck = (ArrayList<PlayableCard>) extractCardArray(normalDeckString,3);
+            ArrayList<PlayableCard> goldenDeck = (ArrayList<PlayableCard>) extractCardArray(goldenDeckString,3);
 
-        JsonArray normalDeckString = serverEvent.get("normalDeck").getAsJsonArray();
-        JsonArray goldenDeckString = serverEvent.get("goldenDeck").getAsJsonArray();
-        ArrayList<PlayableCard> normalDeck = (ArrayList<PlayableCard>) extractCardArray(normalDeckString,3);
-        ArrayList<PlayableCard> goldenDeck = (ArrayList<PlayableCard>) extractCardArray(goldenDeckString,3);
-
-        if (!gameTurnStateStarted){
-            gameTurnStateStarted=true;
-            Platform.runLater(()->setupSceneController.changeToGameState());
+            if (!gameTurnStateStarted){
+                gameTurnStateStarted=true;
+                Platform.runLater(()->setupSceneController.changeToGameState());
+            }
+            Platform.runLater(()->gameSceneController.updateGame(currentPlayerTurn,playerScores,normalDeck,goldenDeck));
         }
-        Platform.runLater(()->gameSceneController.updateGame(currentPlayerTurn,playerScores,normalDeck,goldenDeck));
+
+
     }
 
     private void handleLoginEvent(JsonObject serverEvent){

@@ -501,4 +501,9 @@ public class GameSceneController {
             PopUps popUps = new PopUps();
             popUps.popUpMaker(message);
         }
+
+    public void showExitNotification(String s) {
+        PopUps popUps = new PopUps();
+        popUps.lastPlayerLeft(stage,state);
+    }
 }

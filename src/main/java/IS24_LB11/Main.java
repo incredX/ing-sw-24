@@ -12,7 +12,8 @@ public class Main {
             " [2] start a Client (GUI)\n"+
             " [3] start a Client (TUI)\n"+
             " > ";
-    public static void main(String[] args) {
+    public static void menu(String[] args) {
+
         Scanner scanner = new Scanner(System.in);
         System.out.print(INTRO);
         int choice = -1;
@@ -32,5 +33,11 @@ public class Main {
             case 2 -> ClientGUI.main(new String[]{});
             case 3 -> ClientCLI.main(new String[]{});
         }
+    }
+
+    public static void main(String[] args) {
+        if(args.length==0)
+            ;
+        menu(args);
     }
 }

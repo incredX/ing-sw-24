@@ -110,6 +110,16 @@ public class LoginSceneController {
 
     public void login(){
         String username = usernameTextField.getText();
+        if (username.isEmpty()){
+            PopUps popUps = new PopUps();
+            popUps.popUpMaker("Insert username please");
+            return;
+        }
+        if (username.contains(" ")){
+            PopUps popUps = new PopUps();
+            popUps.popUpMaker("No spaces allowed");
+            return;
+        }
         String serverIP = ipTextField.getText();
         int port = Integer.valueOf(portTextField.getText());
         state.initialize(username,serverIP,port);
