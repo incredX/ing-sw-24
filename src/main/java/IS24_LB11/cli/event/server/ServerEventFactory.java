@@ -81,7 +81,7 @@ public class ServerEventFactory {
                                     )
                             )
                     );
-            //CHECK
+            //CHECK disconnected
             case "DISCONNECTED" ->  extractString(data, "player")
                     .map(playerName -> new ServerPlayerDisconnectEvent(playerName));
             //UNTIL HERE

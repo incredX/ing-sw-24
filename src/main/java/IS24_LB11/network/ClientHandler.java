@@ -42,7 +42,7 @@ public class ClientHandler implements Runnable {
                             out.println(heartbeat.toString());
 
                             Thread.sleep(HEARTBEAT_INTERVAL);
-                            System.out.println(userName + "   " + (System.currentTimeMillis() - lastHeartbeatTime));
+                            //System.out.println(userName + "   " + (System.currentTimeMillis() - lastHeartbeatTime));
                             if (System.currentTimeMillis() - lastHeartbeatTime > HEARTBEAT_INTERVAL*2.2) {
                                 System.out.println("Heartbeat timed out for " + userName);
 
@@ -145,7 +145,7 @@ public class ClientHandler implements Runnable {
 
                     this.getGame().getPlayers().removeIf(player -> player.name() == this.getUserName());
 
-
+                    System.out.println(getGame().getTurn());
                     if (this.getGame().getPlayers().size() > 1) {
                         //don't send notification turn when in setup phase
                         if(this.getGame().getTurn() >= 0) {
