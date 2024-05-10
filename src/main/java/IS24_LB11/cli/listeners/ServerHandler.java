@@ -102,7 +102,6 @@ public class ServerHandler extends Listener implements Runnable {
     private void startEventTimer() {
         new Thread(() -> {
             long timeStamp = System.currentTimeMillis();
-            System.out.println("starting event timer");
             while (true) {
                 synchronized (timerLock) {
                     try {
