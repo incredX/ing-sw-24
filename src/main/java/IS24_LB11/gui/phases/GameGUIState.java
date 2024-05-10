@@ -91,6 +91,14 @@ public class GameGUIState extends ClientGUIState {
         return players;
     }
 
+    public PlayableCard getCardChooseToPlay() {
+        return cardChooseToPlay;
+    }
+
+    public PlayableCard getCardChooseToDraw() {
+        return cardChooseToDraw;
+    }
+
     public HashMap<String, Integer> getPlayersScore() {
         return playersScore;
     }
@@ -102,8 +110,8 @@ public class GameGUIState extends ClientGUIState {
         inputHandlerGUI.sendTurn(placedCard, cardChooseToDraw);
     }
 
-    public void placeCard(PlacedCard placedCard){
-        player.placeCard(placedCard.card(),placedCard.position());
+    public Boolean placeCard(PlacedCard placedCard){
+        return player.placeCard(placedCard.card(),placedCard.position());
     }
 
     public int getNumberOfPlayer(){

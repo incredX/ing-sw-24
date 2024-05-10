@@ -124,7 +124,7 @@ public class GameSceneController {
             throw new RuntimeException(e);
         }
 
-        FXMLLoader loaderChat = new FXMLLoader(getClass().getResource("/CHatView.fxml"));
+        FXMLLoader loaderChat = new FXMLLoader(getClass().getResource("/ChatView.fxml"));
         chatSceneController = new ChatSceneController((GameGUIState) state, chatStage);
         loaderChat.setController(chatSceneController);
         state.getServerHandler().setChatSceneController(chatSceneController);
@@ -256,10 +256,15 @@ public class GameSceneController {
                 playerScores,
                 normalDeck,
                 goldenDeck);
+        disableHandClick();
         updateDeck();
         updateHand();
         updateScore();
         reloadBoard();
+    }
+
+    private void disableHandClick() {
+       
     }
 
     private void reloadBoard() {
@@ -293,9 +298,14 @@ public class GameSceneController {
 
         handCard2.setImage(ImageLoader.getImage(state.getPlayer().getHand().get(1).asString()));
         ImageLoader.roundCorners(handCard2);
-
-        handCard3.setImage(ImageLoader.getImage(state.getPlayer().getHand().get(2).asString()));
-        ImageLoader.roundCorners(handCard3);
+        if (state.getPlayer().getHand().size()>2) {
+            handCard3.setImage(ImageLoader.getImage(state.getPlayer().getHand().get(2).asString()));
+            ImageLoader.roundCorners(handCard3);
+        }
+        else {
+            handCard3.setImage(null);
+            handCard3.setOnMouseClicked(mouseEvent -> {});
+        }
     }
 
     public void updateScore() {
@@ -384,7 +394,10 @@ public class GameSceneController {
     }
 
     private void clearTemporaryCardsFromBoard(Pane playerBoard){
-        //TODO: complete this
+        for(ImageView imageView : availableSpotsTemporaryCards){
+            playerBoard.getChildren().remove(imageView);
+        }
+        availableSpotsTemporaryCards.clear();
     }
 
     private void moveToCenter(ScrollPane scrollPane){
@@ -439,10 +452,41 @@ public class GameSceneController {
     private void placeTemporaryCardsOnAvailableSpots(){
         for(Position pos : getAvailableSpots()){
             ImageView imageView = getImageView("AvailableSpot", pos.getX(), pos.getY());
+            imageView.setOpacity(0.5);
             ImageLoader.roundCorners(imageView);
-            if(!imageViewInPosition(imageView))
+
+            imageView.setOnMouseClicked(mouseEvent -> placeCard(imageView));
+
+            if(!imageViewInPosition(imageView)){
                 playerBoard.getChildren().add(imageView);
+                availableSpotsTemporaryCards.add(imageView);
+            }
         }
+    }
+
+
+    private void placeCard(ImageView imageView){
+        Position realPosition = getRealPosition((int)imageView.getLayoutX(), (int)imageView.getLayoutY());
+
+        ImageView cardToBePlaced = getImageView(state.getCardChooseToPlay().asString(),
+                                                realPosition.getX(),
+                                                realPosition.getY());
+
+        if(state.placeCard(new PlacedCard(state.getCardChooseToPlay(), realPosition))){
+            playerBoard.getChildren().add(cardToBePlaced);
+            clearTemporaryCardsFromBoard(playerBoard);
+            updateHand();
+        }
+        else {
+            System.out.printf("\nCard can't be placed there\n");
+        }
+    }
+
+    private Position getRealPosition(int relativeX, int relativeY){
+        int realX = (relativeX - centerBoardX)/(cardX - cardCornerX);
+        int realY = (relativeY - centerBoardY)/(cardY - cardCornerY);
+
+        return new Position(realX, realY);
     }
 
     private boolean imageViewInPosition(ImageView imageView){
