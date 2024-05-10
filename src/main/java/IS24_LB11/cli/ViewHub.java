@@ -4,7 +4,7 @@ import IS24_LB11.cli.controller.ClientState;
 import IS24_LB11.cli.controller.GameState;
 import IS24_LB11.cli.controller.LobbyState;
 import IS24_LB11.cli.controller.SetupState;
-import IS24_LB11.cli.view.PopupView;
+import IS24_LB11.cli.view.popup.PopupView;
 import IS24_LB11.cli.view.CommandLineView;
 import IS24_LB11.cli.view.NotificationView;
 import IS24_LB11.cli.view.stage.GameStage;
@@ -67,7 +67,7 @@ public class ViewHub implements Runnable {
     }
 
     public void resize(TerminalSize size) {
-        Debugger.print("resize");
+        //Debugger.print("resize");
         synchronized (lock) {
             screenSize = size;
             stage.resize();

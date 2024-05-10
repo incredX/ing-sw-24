@@ -4,6 +4,7 @@ import IS24_LB11.cli.Debugger;
 import IS24_LB11.cli.controller.ClientState;
 import IS24_LB11.cli.event.ResultServerEvent;
 
+import IS24_LB11.cli.event.ServerDownEvent;
 import IS24_LB11.cli.event.server.ServerEventFactory;
 import com.google.gson.*;
 
@@ -18,6 +19,8 @@ public class ServerHandler extends Listener implements Runnable {
     private Socket socket;
     private JsonStreamParser parser;
     private PrintWriter writer;
+    private final Object timerLock = new Object();
+    private int timeout = 3000;
 
     public ServerHandler(ClientState state, String serverIP, int serverPORT) throws IOException {
         super(state);
@@ -30,12 +33,15 @@ public class ServerHandler extends Listener implements Runnable {
         Thread.currentThread().setName("server-handler");
         Debugger.print("thread started.");
 
+        startEventTimer();
+
         while (true) {
             if (socket.isClosed()) break;
             try {
-                synchronized (parser) { parser.wait(10); }
+                //synchronized (parser) { parser.wait(10); }
                 if (parser.hasNext()) {
                     JsonObject event;
+                    resetEventTimer();
                     try {
                         event = parser.next().getAsJsonObject();
                     }
@@ -43,7 +49,7 @@ public class ServerHandler extends Listener implements Runnable {
                         state.queueEvent(new ResultServerEvent(Error("Bad request", "json syntax error")));
                         continue;
                     }
-                    if (event.has("type") && !event.get("type").getAsString().equalsIgnoreCase("heartbeat"))
+                    if (event.has("error") || (event.has("type") && !event.get("type").getAsString().equalsIgnoreCase("heartbeat")))
                         Debugger.print("from server: "+event);
                     state.queueEvent(new ResultServerEvent(ServerEventFactory.createServerEvent(event)));
                 }
@@ -57,6 +63,9 @@ public class ServerHandler extends Listener implements Runnable {
             }
             catch (InterruptedException e) { break; }
         }
+
+        shutdownEventTimer();
+
         if (!socket.isClosed()) {
             try { socket.close(); }
             catch (IOException e) { Debugger.print(e); }
@@ -71,20 +80,44 @@ public class ServerHandler extends Listener implements Runnable {
         writer.flush();
     }
 
-//    public void reconnect(String serverIP, int serverPORT) {
-//        try {
-//            socket.close();
-//            socket = new Socket(serverIP, serverPORT);
-//            parser = new JsonStreamParser(new InputStreamReader(socket.getInputStream()));
-//            writer = new PrintWriter(socket.getOutputStream());
-//        } catch (IOException e) {
-//            Debugger.print(e);
-//        }
-//    }
-
     public void shutdown() {
         try {
             if (!socket.isClosed()) socket.close();
         } catch (IOException e) { Debugger.print(e); }
+    }
+
+    private void resetEventTimer() {
+        synchronized (timerLock) {
+            timerLock.notify();
+        }
+    }
+
+    private void shutdownEventTimer() {
+        synchronized (timerLock) {
+            timeout = 0;
+            timerLock.notify();
+        }
+    }
+
+    private void startEventTimer() {
+        new Thread(() -> {
+            long timeStamp = System.currentTimeMillis();
+            System.out.println("starting event timer");
+            while (true) {
+                synchronized (timerLock) {
+                    try {
+                        timerLock.wait(timeout);
+                        long diff = System.currentTimeMillis() - timeStamp;
+                        if (diff >= timeout) {
+                            if (timeout > 0) state.queueEvent(new ServerDownEvent());
+                            break;
+                        } else {
+                            timeStamp += diff;
+                        }
+                    }
+                    catch (InterruptedException e) { break; }
+                }
+            }
+        }).start();
     }
 }

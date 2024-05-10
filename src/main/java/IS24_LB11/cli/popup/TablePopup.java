@@ -2,9 +2,7 @@ package IS24_LB11.cli.popup;
 
 import IS24_LB11.cli.ViewHub;
 import IS24_LB11.cli.controller.PlayerStateInterface;
-import IS24_LB11.cli.view.TableView;
-import IS24_LB11.cli.Scoreboard;
-import IS24_LB11.game.components.GoalCard;
+import IS24_LB11.cli.view.popup.TableView;
 import com.googlecode.lanterna.input.KeyStroke;
 
 import java.util.function.Consumer;
@@ -16,6 +14,7 @@ public class TablePopup extends Popup {
         super(viewHub, new TableView(viewHub.getScreenSize()));
         this.playerState = playerState;
         this.overlap = true;
+        this.readOnly = true;
     }
 
     @Override
@@ -23,21 +22,27 @@ public class TablePopup extends Popup {
 
     @Override
     public void update() {
-        Scoreboard scoreboard = playerState.getScoreboard();
         castView(tableView -> {
-            tableView.loadColors(scoreboard.getColors());
-            tableView.loadPlayers(scoreboard.getPlayers());
-            tableView.loadScores(scoreboard.getScores());
-            tableView.loadCurrentPlayer(scoreboard.getCurrentPlayerIndex());
+            if (playerState.getTable().isFinalRanking()) {
+                tableView.setWinnerIndex(playerState.getTable().getCurrentTopPlayerIndex());
+            }
+            tableView.loadScoreboard(playerState.getScoreboard());
             tableView.loadGoals(playerState.getGoals());
             tableView.drawAll();
         });
     }
 
     @Override
+    public void redrawView() {
+        castView(tableView -> {
+            tableView.clear();
+            tableView.loadScoreboard(playerState.getScoreboard());
+            tableView.drawAll();
+        });
+    }
+
+    @Override
     public void consumeKeyStroke(KeyStroke keyStroke) {
-        if (!enabled) return; // focus is not here
-        // cosume keyStroke here
     }
 
     public void setPlayerState(PlayerStateInterface playerState) {

@@ -54,8 +54,8 @@ public class ServerEventFactory {
                             })
                     );
             case "TURN" -> extractString(data, "player")
-                    .andThen(player -> extractCardArray(data, "normalDeck", 3)
-                            .andThen(normalDeck -> extractCardArray(data,"goldenDeck", 3)
+                    .andThen(player -> extractCardArray(data, "normalDeck")
+                            .andThen(normalDeck -> extractCardArray(data,"goldenDeck")
                                     .andThen(goldenDeck -> extractIntegerArray(data, "scores")
                                             .map(scores -> new ServerNewTurnEvent( player,
                                                     (ArrayList<NormalCard>) normalDeck.stream().map(c -> (NormalCard)c).collect(Collectors.toList()),
@@ -69,8 +69,8 @@ public class ServerEventFactory {
                     .andThen(setup -> extractGoalArray(data, "publicGoals", 2)
                             .andThen(publicGoals -> extractStringArray(data, "playerNames")
                                     .andThen(players -> extractColorArray(data, "colors")
-                                            .andThen(colors -> extractCardArray(data, "normalDeck", 3)
-                                                    .andThen(normalDeck -> extractCardArray(data, "goldenDeck", 3)
+                                            .andThen(colors -> extractCardArray(data, "normalDeck")
+                                                    .andThen(normalDeck -> extractCardArray(data, "goldenDeck")
                                                             .map(goldenDeck -> new ServerPlayerSetupEvent(
                                                                     setup, publicGoals, players, colors,
                                                                     (ArrayList<NormalCard>) normalDeck.stream().map(c -> (NormalCard)c).collect(Collectors.toList()),
@@ -192,8 +192,7 @@ public class ServerEventFactory {
         return Ok(goals);
     }
 
-    private static Result<ArrayList<PlayableCard>> extractCardArray(JsonArray array, int expectedSize) {
-        if (array.size() != expectedSize) return Error(EXTRACT_ERROR, "expected " + expectedSize + " cards");
+    private static Result<ArrayList<PlayableCard>> extractCardArray(JsonArray array) {
         ArrayList<PlayableCard> cards = new ArrayList<>();
         for (int i = 0; i < array.size(); i++) {
             try { cards.add(CardFactory.newPlayableCard(array.get(i).getAsString())); }
@@ -220,7 +219,7 @@ public class ServerEventFactory {
         return extractJsonArray(object, key).andThen(array -> extractGoalArray(array, expectedSize));
     }
 
-    private static Result<ArrayList<PlayableCard>> extractCardArray(JsonObject object, String key, int expectedSize) {
-        return extractJsonArray(object, key).andThen(cards -> extractCardArray(cards, expectedSize));
+    private static Result<ArrayList<PlayableCard>> extractCardArray(JsonObject object, String key) {
+        return extractJsonArray(object, key).andThen(cards -> extractCardArray(cards));
     }
 }

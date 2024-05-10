@@ -89,19 +89,23 @@ public class TerminalBox {
     }
 
     protected void drawBorders() {
-        fillRow(borderArea.side(NORD), borderStyle.getHLine());
-        fillRow(borderArea.side(Side.SUD), borderStyle.getHLine());
-        fillColumn(borderArea.side(WEST), borderStyle.getVLine());
-        fillColumn(borderArea.side(EAST), borderStyle.getVLine());
+        fillRow(borderArea.side(NORD), borderStyle.getHLine(), borderStyle.getColor());
+        fillRow(borderArea.side(Side.SUD), borderStyle.getHLine(), borderStyle.getColor());
+        fillColumn(borderArea.side(WEST), borderStyle.getVLine(), borderStyle.getColor());
+        fillColumn(borderArea.side(EAST), borderStyle.getVLine(), borderStyle.getColor());
 
         for (int i=0; i<4; i++) {
             TerminalPosition corner = getCornerPosition(i);
-            drawChar(corner, borderStyle.getCorner(i));
+            drawChar(corner, borderStyle.getCorner(i), borderStyle.getColor());
         }
     }
 
     protected void drawChar(TerminalPosition position, TextCharacter character) {
         image.setCharacterAt(position, character);
+    }
+
+    protected void drawChar(int col, int row, TextCharacter character) {
+        image.setCharacterAt(new TerminalPosition(col, row), character);
     }
 
     protected void drawChar(TerminalPosition position, char c) {
@@ -147,10 +151,14 @@ public class TerminalBox {
         fillRow(row, 0, line);
     }
 
-    protected void fillColumn(int col, char c) {
+    protected void fillColumn(int col, char c, TextColor color) {
         for (int i=0; i<=getHeight(); i++) {
-            drawChar(new TerminalPosition(col, i), c);
+            drawChar(new TerminalPosition(col, i), c, color);
         }
+    }
+
+    protected void fillColumn(int col, char c) {
+        fillColumn(col, c, TextColor.ANSI.DEFAULT);
     }
 
     protected void fillColumn(int col, int offset, String line, TextColor color) {

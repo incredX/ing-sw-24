@@ -24,17 +24,23 @@ public class Scoreboard {
         indexPLayer = 0;
     }
 
+    public void setPlayers(ArrayList<String> players) {
+        this.players.clear();
+        this.players.addAll(players);
+    }
+
     public void setScores(ArrayList<Integer> scores) {
         for (int i = 0; i < players.size(); i++) {
             if (this.scores.get(i) != scores.get(i)) this.scores.set(i, scores.get(i));
         }
     }
 
-    public void removePlayerFromScoreboard(String player) {
+    public void removePlayer(String player) {
         int indexOfPlayerToRemove = this.players.indexOf(player);
         this.scores.remove(indexOfPlayerToRemove);
         this.players.remove(indexOfPlayerToRemove);
         this.colors.remove(indexOfPlayerToRemove);
+        this.indexPLayer %= players.size();
     }
 
     public void setNextPlayer(String playerName) {

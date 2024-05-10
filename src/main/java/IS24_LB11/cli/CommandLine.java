@@ -81,48 +81,55 @@ public class CommandLine {
     }
 
     public void consumeKeyStroke(ClientState state, KeyStroke keyStroke) {
-        Debugger.print(String.format("%s <%c> (shift:%s, ctrl:%s)\n", keyStroke.getKeyType(), keyStroke.getCharacter(),
-                keyStroke.isShiftDown(), keyStroke.isCtrlDown()));
         if (keyStroke.isCtrlDown() || keyStroke.isAltDown()) {
-            if (!toggle(state, keyStroke)) return;
+            if (!togglePopup(state, keyStroke)) return;
         } else if (keyStroke.getKeyType() == KeyType.F1) {
             toggle();
-        } else if (enabled)
-            switch (keyStroke.getKeyType()) {
+        } else if (enabled) switch (keyStroke.getKeyType()) {
             case Character -> insertChar(keyStroke.getCharacter());
             case Backspace -> deleteChar();
             case Enter -> {
                 if(!line.isEmpty()) state.tryQueueEvent(new CommandEvent(getFullLine()));
                 clearLine();
             }
+            case ArrowUp, ArrowDown -> { }
             case ArrowLeft -> moveCursor(-1);
             case ArrowRight -> moveCursor(1);
             case Escape -> state.quit();
             default -> { return; }
         } else {
-            if (!toggle(state, keyStroke))
+            if (!togglePopup(state, keyStroke))
                 return;
         }
         view.loadCommandLine(this);
         view.drawCommandLine();
-        state.keyConsumed();
+        state.consumeKey();
     }
 
-    private boolean toggle(ClientState state, KeyStroke keyStroke) {
+    private boolean togglePopup(ClientState state, KeyStroke keyStroke) {
         if (keyStroke.getKeyType() != KeyType.Character) return false;
         switch (keyStroke.getCharacter()) {
             case ' ' -> toggle();
             case 'h','H' -> state.togglePopup("hand");
             case 'd','D' -> state.togglePopup("decks");
             case 't','T' -> state.togglePopup("table");
+            case 's','S' -> state.togglePopup("symbols");
             case 'w','W' -> state.hideAllPopups();
             default -> { return false; }
         }
         return true;
     }
+
     private void toggle() {
         enabled = !enabled;
         clearLine();
+    }
+
+    public void disable() {
+        enabled = false;
+        clearLine();
+        view.loadCommandLine(this);
+        view.drawCommandLine();
     }
 
 //    private boolean isStrokeOnTime(KeyStroke keyStroke, long intervall) {
