@@ -117,8 +117,13 @@ public class ServerHandlerGUI implements Runnable{
 
     private void handleTurnEvent(JsonObject serverEvent) {
         String currentPlayerTurn = serverEvent.get("player").getAsString();
-        if (currentPlayerTurn.equals(""))
-            Platform.runLater(()->gameSceneController.showExitNotification("You are the only player connected to the server"));
+        if (currentPlayerTurn.equals("")) {
+            if (gameSceneController==null){
+                Platform.runLater(() -> setupSceneController.showExitNotification("You are the only player connected to the server"));
+                return;
+            }
+            Platform.runLater(() -> gameSceneController.showExitNotification("You are the only player connected to the server"));
+        }
         else{
             JsonArray playersScores = serverEvent.get("scores").getAsJsonArray();
             ArrayList<Integer> playerScores = extractIntegerArray(playersScores,playersScores.size());

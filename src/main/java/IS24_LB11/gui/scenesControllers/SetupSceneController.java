@@ -1,6 +1,7 @@
 package IS24_LB11.gui.scenesControllers;
 
 import IS24_LB11.gui.ImageLoader;
+import IS24_LB11.gui.PopUps;
 import IS24_LB11.gui.phases.ClientGUIState;
 import IS24_LB11.gui.phases.GameGUIState;
 import IS24_LB11.gui.phases.SetupGUIState;
@@ -124,5 +125,10 @@ public class SetupSceneController {
 
     public void removePlayer(String playerDisconnected) {
         state.removePlayer(playerDisconnected);
+    }
+
+    public void showExitNotification(String s) {
+        PopUps popUps = new PopUps();
+        popUps.lastPlayerLeft(stage,state);
     }
 }
