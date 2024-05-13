@@ -17,8 +17,6 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.effect.ColorAdjust;
-import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
@@ -157,16 +155,20 @@ public class GameSceneController {
         goldenDeckCard1.setOnMouseClicked(mouseEvent -> chooseDeckCard(0, true));
         goldenDeckCard2.setOnMouseClicked(mouseEvent -> chooseDeckCard(1, true));
         goldenDeckCard3.setOnMouseClicked(mouseEvent -> chooseDeckCard(2, true));
+
+        disableDecks(true);
+
         chatButton.setOnMouseClicked(mouseEvent -> showChat());
 
+        // load goal cards
         goalCard1.setImage(ImageLoader.getImage(state.getPublicGoals().get(0).asString()));
-        ImageLoader.roundCorners(goalCard1);
+//        ImageLoader.roundCorners(goalCard1);
 
         goalCard2.setImage(ImageLoader.getImage(state.getPublicGoals().get(1).asString()));
-        ImageLoader.roundCorners(goalCard2);
+//        ImageLoader.roundCorners(goalCard2);
 
         privateGoalCard.setImage(ImageLoader.getImage(state.getPlayer().getPersonalGoal().asString()));
-        ImageLoader.roundCorners(privateGoalCard);
+//        ImageLoader.roundCorners(privateGoalCard);
 
         //same as disconnected
         switch (numberPlayerInGame) {
@@ -255,11 +257,10 @@ public class GameSceneController {
                            ArrayList<PlayableCard> normalDeck,
                            ArrayList<PlayableCard> goldenDeck) {
         state.update(currentPlayerTurn, playerScores, normalDeck, goldenDeck);
-
-        disableAllCardInputs(!state.isThisPlayerTurn());
         updateDeck();
         updateHand();
         updateScore();
+        disableAllCardInputs(!state.isThisPlayerTurn());
     }
 
     private void disableHand(Boolean bool) {
@@ -284,42 +285,40 @@ public class GameSceneController {
 
     public void updateDeck() {
         normalDeckCard1.setImage(ImageLoader.getImage(state.getNormalDeck().get(0).asString()));
-        ImageLoader.roundCorners(normalDeckCard1);
-
         normalDeckCard2.setImage(ImageLoader.getImage(state.getNormalDeck().get(1).asString()));
-        ImageLoader.roundCorners(normalDeckCard2);
-
         normalDeckCard3.setImage(ImageLoader.getImage(state.getNormalDeck().get(2).asString()));
-        ImageLoader.roundCorners(normalDeckCard3);
+
+//        PlayableCard flippedNormalCard = state.getNormalDeck().get(2);
+//        flippedNormalCard.flip();
+//        normalDeckCard3.setImage(ImageLoader.getImage(flippedNormalCard.asString()));
+
 
         goldenDeckCard1.setImage(ImageLoader.getImage(state.getGoldenDeck().get(0).asString()));
-        ImageLoader.roundCorners(goldenDeckCard1);
-
         goldenDeckCard2.setImage(ImageLoader.getImage(state.getGoldenDeck().get(1).asString()));
-        ImageLoader.roundCorners(goldenDeckCard2);
-
         goldenDeckCard3.setImage(ImageLoader.getImage(state.getGoldenDeck().get(2).asString()));
-        ImageLoader.roundCorners(goldenDeckCard3);
 
+//        PlayableCard flippedGoldenCard = state.getGoldenDeck().get(2);
+//        flippedGoldenCard.flip();
+//        goldenDeckCard3.setImage(ImageLoader.getImage(flippedGoldenCard.asString()));
     }
 
     public void updateHand() {
         handCard1.setImage(ImageLoader.getImage(state.getPlayer().getHand().get(0).asString()));
-        ImageLoader.roundCorners(handCard1);
+        handCard1.setOpacity(1);
 
         handCard2.setImage(ImageLoader.getImage(state.getPlayer().getHand().get(1).asString()));
         handCard2.setOpacity(1);
-        ImageLoader.roundCorners(handCard2);
 
         if (state.getPlayer().getHand().size()>2) {
             handCard3.setDisable(false);
             handCard3.setImage(ImageLoader.getImage(state.getPlayer().getHand().get(2).asString()));
-            ImageLoader.roundCorners(handCard3);
         }
         else {
             handCard3.setImage(null);
             handCard3.setDisable(true);
         }
+        handCard3.setOpacity(1);
+
     }
 
     public void updateScore() {
