@@ -18,6 +18,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.effect.ColorAdjust;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
@@ -105,7 +106,7 @@ public class GameSceneController {
     private final int cardY = 210;
 
     private final int cardCornerX = 70;
-    private final int cardCornerY = 82;
+    private final int cardCornerY = 84;
 
     private ArrayList<ImageView> availableSpotsTemporaryCards = new ArrayList<>();
 
@@ -229,6 +230,7 @@ public class GameSceneController {
         ImageView starterCard =  getImageView(state.getPlayer().getBoard().getPlacedCards().getFirst());
         ImageLoader.roundCorners(starterCard);
         playerBoard.getChildren().add(starterCard);
+        scrollPane.setPannable(true);
 
 
         this.stage.setResizable(false);
@@ -252,23 +254,34 @@ public class GameSceneController {
                            ArrayList<Integer> playerScores,
                            ArrayList<PlayableCard> normalDeck,
                            ArrayList<PlayableCard> goldenDeck) {
-        state.update(currentPlayerTurn,
-                playerScores,
-                normalDeck,
-                goldenDeck);
-        disableHandClick();
+        state.update(currentPlayerTurn, playerScores, normalDeck, goldenDeck);
+
+        if(!state.isThisPlayerTurn()){
+            disableAllCardInputs();
+        }
         updateDeck();
         updateHand();
         updateScore();
-        reloadBoard();
     }
 
-    private void disableHandClick() {
-       
+    private void disableHand() {
+       handCard1.setDisable(true);
+       handCard2.setDisable(true);
+       handCard3.setDisable(true);
     }
 
-    private void reloadBoard() {
+    private void disableDecks() {
+        normalDeckCard1.setDisable(true);
+        normalDeckCard2.setDisable(true);
+        normalDeckCard3.setDisable(true);
+        goldenDeckCard1.setDisable(true);
+        goldenDeckCard2.setDisable(true);
+        goldenDeckCard3.setDisable(true);
+    }
 
+    private void disableAllCardInputs(){
+        disableHand();
+        disableDecks();
     }
 
     public void updateDeck() {
@@ -297,14 +310,17 @@ public class GameSceneController {
         ImageLoader.roundCorners(handCard1);
 
         handCard2.setImage(ImageLoader.getImage(state.getPlayer().getHand().get(1).asString()));
+        handCard2.setOpacity(1);
         ImageLoader.roundCorners(handCard2);
+
         if (state.getPlayer().getHand().size()>2) {
+            handCard3.setDisable(false);
             handCard3.setImage(ImageLoader.getImage(state.getPlayer().getHand().get(2).asString()));
             ImageLoader.roundCorners(handCard3);
         }
         else {
             handCard3.setImage(null);
-            handCard3.setOnMouseClicked(mouseEvent -> {});
+            handCard3.setDisable(true);
         }
     }
 
@@ -325,28 +341,24 @@ public class GameSceneController {
 
         placeTemporaryCardsOnAvailableSpots();
 
-        ColorAdjust colorAdjustNotChoosen = new ColorAdjust();
-        ColorAdjust colorAdjustChoosen = new ColorAdjust();
-        colorAdjustNotChoosen.setContrast(-0.5);
-        colorAdjustChoosen.setContrast(0);
         switch (n) {
             case 0:
                 state.chooseCardToPlay(state.getPlayer().getHand().getFirst());
-                handCard1.setEffect(colorAdjustChoosen);
-                handCard2.setEffect(colorAdjustNotChoosen);
-                handCard3.setEffect(colorAdjustNotChoosen);
+                handCard1.setOpacity(1);
+                handCard2.setOpacity(0.5);
+                handCard3.setOpacity(0.5);
                 break;
             case 1:
                 state.chooseCardToPlay(state.getPlayer().getHand().get(1));
-                handCard1.setEffect(colorAdjustNotChoosen);
-                handCard2.setEffect(colorAdjustChoosen);
-                handCard3.setEffect(colorAdjustNotChoosen);
+                handCard1.setOpacity(0.5);
+                handCard2.setOpacity(1);
+                handCard3.setOpacity(0.5);
                 break;
             case 2:
                 state.chooseCardToPlay(state.getPlayer().getHand().get(2));
-                handCard1.setEffect(colorAdjustNotChoosen);
-                handCard2.setEffect(colorAdjustNotChoosen);
-                handCard3.setEffect(colorAdjustChoosen);
+                handCard1.setOpacity(0.5);
+                handCard2.setOpacity(0.5);
+                handCard3.setOpacity(1);
                 break;
         }
     }
@@ -357,6 +369,7 @@ public class GameSceneController {
         else
             state.chooseCardToDraw(state.getNormalDeck().get(n), n, deckType);
         state.execute();
+        updateHand();
     }
 
     public GameGUIState getState() {
@@ -471,11 +484,14 @@ public class GameSceneController {
         ImageView cardToBePlaced = getImageView(state.getCardChooseToPlay().asString(),
                                                 realPosition.getX(),
                                                 realPosition.getY());
+        ImageLoader.roundCorners(cardToBePlaced);
 
         if(state.placeCard(new PlacedCard(state.getCardChooseToPlay(), realPosition))){
             playerBoard.getChildren().add(cardToBePlaced);
             clearTemporaryCardsFromBoard(playerBoard);
             updateHand();
+            disableHand();
+            state.setPositionOfPlacedCard(realPosition);
         }
         else {
             System.out.printf("\nCard can't be placed there\n");
