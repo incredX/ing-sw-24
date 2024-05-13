@@ -114,8 +114,6 @@ public class GameGUIState extends ClientGUIState {
         else
             player.addCardToHand(goldenDeck.get(indexCardDeck));
 
-        System.out.printf(String.valueOf(player.getHand()));
-
         PlacedCard placedCard = new PlacedCard(cardChooseToPlay, positionPlacedCard);
         inputHandlerGUI.sendTurn(placedCard, deckType, indexCardDeck);
     }

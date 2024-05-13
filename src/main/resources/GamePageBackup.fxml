@@ -34,9 +34,6 @@
                                                           <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="214.0" prefWidth="301.0">
                                                                <children>
                                                                   <ImageView fx:id="handCard1" fitHeight="210.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" x="0.5" y="3.5">
-                                                                     <image>
-                                                                        <Image url="@graphicResources/codexCards/croppedCards/croppedFront/normalFront/_EFEFF1.jpg" />
-                                                                     </image>
                                                                      <effect>
                                                                         <DropShadow />
                                                                      </effect>
@@ -46,9 +43,6 @@
                                                           <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="211.0" prefWidth="301.0">
                                                                <children>
                                                                   <ImageView fx:id="handCard2" fitHeight="210.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" x="0.5" y="3.5">
-                                                                     <image>
-                                                                        <Image url="@graphicResources/codexCards/croppedCards/croppedFront/normalFront/_IQPPF0.jpg" />
-                                                                     </image>
                                                                      <effect>
                                                                         <DropShadow />
                                                                      </effect>
@@ -58,9 +52,6 @@
                                                             <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="214.0" prefWidth="301.0">
                                                                <children>
                                                                   <ImageView fx:id="handCard3" fitHeight="210.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" x="0.5" y="3.5">
-                                                                     <image>
-                                                                        <Image url="@graphicResources/codexCards/croppedCards/croppedFront/goldenFront/E_E_FF5_FFFFF.jpg" />
-                                                                     </image>
                                                                      <effect>
                                                                         <DropShadow />
                                                                      </effect>
@@ -82,9 +73,6 @@
                                                           <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="214.0" prefWidth="301.0">
                                                                <children>
                                                                   <ImageView fx:id="normalDeckCard1" fitHeight="210.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" x="0.5" y="3.5">
-                                                                     <image>
-                                                                        <Image url="@graphicResources/codexCards/croppedCards/croppedFront/normalFront/_IEEIF1.jpg" />
-                                                                     </image>
                                                                      <effect>
                                                                         <DropShadow />
                                                                      </effect>
@@ -94,9 +82,6 @@
                                                           <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="211.0" prefWidth="301.0">
                                                                <children>
                                                                   <ImageView fx:id="normalDeckCard2" fitHeight="210.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" x="0.5" y="3.5">
-                                                                     <image>
-                                                                        <Image url="@graphicResources/codexCards/croppedCards/croppedFront/normalFront/_EAAAF0.jpg" />
-                                                                     </image>
                                                                      <effect>
                                                                         <DropShadow />
                                                                      </effect>
@@ -106,9 +91,6 @@
                                                             <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="214.0" prefWidth="301.0">
                                                                <children>
                                                                   <ImageView fx:id="normalDeckCard3" fitHeight="210.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" x="0.5" y="3.5">
-                                                                     <image>
-                                                                        <Image url="@graphicResources/codexCards/croppedCards/croppedBack/NPB.jpg" />
-                                                                     </image>
                                                                      <effect>
                                                                         <DropShadow />
                                                                      </effect>
@@ -130,9 +112,6 @@
                                                           <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="214.0" prefWidth="301.0">
                                                                <children>
                                                                   <ImageView fx:id="goldenDeckCard1" fitHeight="210.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" x="0.5" y="3.5">
-                                                                     <image>
-                                                                        <Image url="@graphicResources/codexCards/croppedCards/croppedFront/goldenFront/_K_EPF3_PPP__.jpg" />
-                                                                     </image>
                                                                      <effect>
                                                                         <DropShadow />
                                                                      </effect>
@@ -142,9 +121,6 @@
                                                           <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="211.0" prefWidth="301.0">
                                                                <children>
                                                                   <ImageView fx:id="goldenDeckCard2" fitHeight="210.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" x="0.5" y="3.5">
-                                                                     <image>
-                                                                        <Image url="@graphicResources/codexCards/croppedCards/croppedFront/goldenFront/QE__FF3_FFF__.jpg" />
-                                                                     </image>
                                                                      <effect>
                                                                         <DropShadow />
                                                                      </effect>
@@ -154,9 +130,6 @@
                                                             <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="214.0" prefWidth="301.0">
                                                                <children>
                                                                   <ImageView fx:id="goldenDeckCard3" fitHeight="210.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" x="0.5" y="3.5">
-                                                                     <image>
-                                                                        <Image url="@graphicResources/codexCards/croppedCards/croppedBack/GFB.jpg" />
-                                                                     </image>
                                                                      <effect>
                                                                         <DropShadow />
                                                                      </effect>
@@ -320,9 +293,6 @@
                                                    </font>
                                                 </Text>
                                                 <ImageView fx:id="goalCard1" fitHeight="195.0" fitWidth="295.0" pickOnBounds="true" preserveRatio="true" x="9.0" y="24.0">
-                                                   <image>
-                                                      <Image url="@graphicResources/codexCards/croppedCards/croppedFront/goalFront/O2FFF.jpg" />
-                                                   </image>
                                                    <effect>
                                                       <DropShadow />
                                                    </effect>
@@ -337,9 +307,6 @@
                                                    </font>
                                                 </Text>
                                                 <ImageView fx:id="goalCard2" fitHeight="195.0" fitWidth="295.0" pickOnBounds="true" preserveRatio="true" x="9.0" y="24.0">
-                                                   <image>
-                                                      <Image url="@graphicResources/codexCards/croppedCards/croppedFront/goalFront/O3AIIL0.jpg" />
-                                                   </image>
                                                    <effect>
                                                       <DropShadow />
                                                    </effect>
@@ -354,9 +321,6 @@
                                                    </font>
                                                 </Text>
                                                 <ImageView fx:id="privateGoalCard" fitHeight="195.0" fitWidth="295.0" pickOnBounds="true" preserveRatio="true" x="9.0" y="24.0">
-                                                   <image>
-                                                      <Image url="@graphicResources/codexCards/croppedCards/croppedFront/goalFront/O3QKM.jpg" />
-                                                   </image>
                                                    <effect>
                                                       <DropShadow />
                                                    </effect>

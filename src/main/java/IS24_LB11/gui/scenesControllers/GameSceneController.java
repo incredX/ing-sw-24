@@ -158,6 +158,16 @@ public class GameSceneController {
         goldenDeckCard2.setOnMouseClicked(mouseEvent -> chooseDeckCard(1, true));
         goldenDeckCard3.setOnMouseClicked(mouseEvent -> chooseDeckCard(2, true));
         chatButton.setOnMouseClicked(mouseEvent -> showChat());
+
+        goalCard1.setImage(ImageLoader.getImage(state.getPublicGoals().get(0).asString()));
+        ImageLoader.roundCorners(goalCard1);
+
+        goalCard2.setImage(ImageLoader.getImage(state.getPublicGoals().get(1).asString()));
+        ImageLoader.roundCorners(goalCard2);
+
+        privateGoalCard.setImage(ImageLoader.getImage(state.getPlayer().getPersonalGoal().asString()));
+        ImageLoader.roundCorners(privateGoalCard);
+
         //same as disconnected
         switch (numberPlayerInGame) {
             case 3:
@@ -216,22 +226,12 @@ public class GameSceneController {
     }
 
     public void showStage() {
-        goalCard1.setImage(ImageLoader.getImage(state.getPublicGoals().get(0).asString()));
-        ImageLoader.roundCorners(goalCard1);
-
-        goalCard2.setImage(ImageLoader.getImage(state.getPublicGoals().get(1).asString()));
-        ImageLoader.roundCorners(goalCard2);
-
-        privateGoalCard.setImage(ImageLoader.getImage(state.getPlayer().getPersonalGoal().asString()));
-        ImageLoader.roundCorners(privateGoalCard);
-
         // Place starterCard
         moveToCenter(scrollPane);
         ImageView starterCard =  getImageView(state.getPlayer().getBoard().getPlacedCards().getFirst());
         ImageLoader.roundCorners(starterCard);
         playerBoard.getChildren().add(starterCard);
         scrollPane.setPannable(true);
-
 
         this.stage.setResizable(false);
         this.stage.show();
@@ -256,32 +256,30 @@ public class GameSceneController {
                            ArrayList<PlayableCard> goldenDeck) {
         state.update(currentPlayerTurn, playerScores, normalDeck, goldenDeck);
 
-        if(!state.isThisPlayerTurn()){
-            disableAllCardInputs();
-        }
+        disableAllCardInputs(!state.isThisPlayerTurn());
         updateDeck();
         updateHand();
         updateScore();
     }
 
-    private void disableHand() {
-       handCard1.setDisable(true);
-       handCard2.setDisable(true);
-       handCard3.setDisable(true);
+    private void disableHand(Boolean bool) {
+       handCard1.setDisable(bool);
+       handCard2.setDisable(bool);
+       handCard3.setDisable(bool);
     }
 
-    private void disableDecks() {
-        normalDeckCard1.setDisable(true);
-        normalDeckCard2.setDisable(true);
-        normalDeckCard3.setDisable(true);
-        goldenDeckCard1.setDisable(true);
-        goldenDeckCard2.setDisable(true);
-        goldenDeckCard3.setDisable(true);
+    private void disableDecks(Boolean bool) {
+        normalDeckCard1.setDisable(bool);
+        normalDeckCard2.setDisable(bool);
+        normalDeckCard3.setDisable(bool);
+        goldenDeckCard1.setDisable(bool);
+        goldenDeckCard2.setDisable(bool);
+        goldenDeckCard3.setDisable(bool);
     }
 
-    private void disableAllCardInputs(){
-        disableHand();
-        disableDecks();
+    private void disableAllCardInputs(Boolean bool){
+        disableHand(bool);
+        disableDecks(bool);
     }
 
     public void updateDeck() {
@@ -490,7 +488,7 @@ public class GameSceneController {
             playerBoard.getChildren().add(cardToBePlaced);
             clearTemporaryCardsFromBoard(playerBoard);
             updateHand();
-            disableHand();
+            disableHand(true);
             state.setPositionOfPlacedCard(realPosition);
         }
         else {
