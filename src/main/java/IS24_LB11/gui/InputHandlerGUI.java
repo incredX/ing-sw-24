@@ -4,7 +4,11 @@ import IS24_LB11.game.PlacedCard;
 import IS24_LB11.game.components.GoalCard;
 import IS24_LB11.game.components.PlayableCard;
 import IS24_LB11.game.components.StarterCard;
+import IS24_LB11.game.tools.JsonConverter;
+import IS24_LB11.game.tools.JsonException;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -46,12 +50,21 @@ public class InputHandlerGUI {
         writer.println(message.toString());
         writer.flush();
     }
-    public void sendTurn(PlacedCard placedCard, PlayableCard cardChooseToDraw) {
+
+    public void sendTurn(PlacedCard placedCard, boolean deckType, int indexCardDeck) {
         JsonObject message = new JsonObject();
         message.addProperty("type","turnActions");
-        message.addProperty("placedCard","turnActions");
-        message.addProperty("deckType","turnActions");
-        message.addProperty("indexVisibleCards","turnActions");
+        try {
+            JsonObject placedCardJson = (JsonObject) new JsonParser().parse(new JsonConverter().objectToJSON(placedCard));
+            message.add("placedCard", placedCardJson);
+        } catch (JsonException e) {
+            throw new RuntimeException(e);
+        }
+        message.addProperty("deckType",deckType);
+        message.addProperty("indexVisibleCards",indexCardDeck+1);
+
+        System.out.printf(message.toString());
+
         writer.println(message.toString());
         writer.flush();
     }

@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class GameGUIState extends ClientGUIState {
-    boolean isThisPlayerTurn = false;
+    private boolean isThisPlayerTurn = false;
     private Player player;
     private ArrayList<GoalCard> publicGoals;
     private ArrayList<PlayableCard> normalDeck;
@@ -27,7 +27,7 @@ public class GameGUIState extends ClientGUIState {
     private Position positionPlacedCard;
     private PlayableCard cardChooseToDraw;
     private boolean deckType;
-    private int indexDeck;
+    private int indexCardDeck;
 
 
     public GameGUIState(SetupGUIState prevState) {
@@ -52,8 +52,10 @@ public class GameGUIState extends ClientGUIState {
     }
 
     public void update(String currentPlayerTurn, ArrayList<Integer> playerScores, ArrayList<PlayableCard> normalDeck, ArrayList<PlayableCard> goldenDeck) {
-        if (currentPlayerTurn == username)
+        if (currentPlayerTurn.equals(username))
             isThisPlayerTurn = true;
+        else
+            isThisPlayerTurn = false;
         this.normalDeck = normalDeck;
         this.goldenDeck = goldenDeck;
         for (int i = 0; i < playerScores.size(); i++) {
@@ -67,7 +69,7 @@ public class GameGUIState extends ClientGUIState {
 
     public void chooseCardToDraw(PlayableCard playableCard,int indexDeck,boolean deckType) {
         this.deckType=deckType;
-        this.indexDeck=indexDeck;
+        this.indexCardDeck =indexDeck;
         this.cardChooseToDraw = playableCard;
     }
 
@@ -105,9 +107,17 @@ public class GameGUIState extends ClientGUIState {
     public HashMap<String, Color> getPlayersColors() {
         return playersColors;
     }
+
     public void execute() {
+        if(!this.deckType)
+            player.addCardToHand(normalDeck.get(indexCardDeck));
+        else
+            player.addCardToHand(goldenDeck.get(indexCardDeck));
+
+        System.out.printf(String.valueOf(player.getHand()));
+
         PlacedCard placedCard = new PlacedCard(cardChooseToPlay, positionPlacedCard);
-        inputHandlerGUI.sendTurn(placedCard, cardChooseToDraw);
+        inputHandlerGUI.sendTurn(placedCard, deckType, indexCardDeck);
     }
 
     public Boolean placeCard(PlacedCard placedCard){
@@ -127,7 +137,16 @@ public class GameGUIState extends ClientGUIState {
     public void sendMessage(String to, String from,String mex){
         inputHandlerGUI.sendMessage(to,from,mex);
     }
+
     public void sendToAll (String from, String mex){
         inputHandlerGUI.sendToAllMessage(from, mex);
+    }
+
+    public boolean isThisPlayerTurn() {
+        return isThisPlayerTurn;
+    }
+
+    public void setPositionOfPlacedCard(Position positionPlacedCard){
+        this.positionPlacedCard = positionPlacedCard;
     }
 }
