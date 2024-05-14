@@ -13,6 +13,7 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
@@ -24,7 +25,7 @@
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <SplitPane dividerPositions="0.74" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="688.5" prefWidth="1280.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <SplitPane dividerPositions="0.7" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="688.5" prefWidth="1280.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                           <items>
                               <ScrollPane fx:id="scrollPane" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="686.5" prefWidth="968.0">
                                  <content>
@@ -41,33 +42,48 @@
                                                    <children>
                                                       <SplitPane dividerPositions="0.333333333333, 0.666666666666" maxHeight="-Infinity" maxWidth="-Infinity" orientation="VERTICAL" prefHeight="655.0" prefWidth="303.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                         <items>
-                                                          <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="214.0" prefWidth="301.0">
+                                                            <StackPane prefHeight="214.0" prefWidth="301.0">
                                                                <children>
                                                                   <ImageView fx:id="handCard1" fitHeight="210.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" x="0.5" y="3.5">
                                                                      <effect>
                                                                         <DropShadow />
                                                                      </effect>
                                                                   </ImageView>
+                                                                  <Button fx:id="flipHandCard1" mnemonicParsing="false" prefHeight="17.0" prefWidth="42.0" text="Flip" StackPane.alignment="TOP_RIGHT">
+                                                                     <font>
+                                                                        <Font size="10.0" />
+                                                                     </font>
+                                                                  </Button>
                                                                </children>
-                                                            </AnchorPane>
-                                                          <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="211.0" prefWidth="301.0">
+                                                            </StackPane>
+                                                            <StackPane prefHeight="211.0" prefWidth="301.0">
                                                                <children>
                                                                   <ImageView fx:id="handCard2" fitHeight="210.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" x="0.5" y="3.5">
                                                                      <effect>
                                                                         <DropShadow />
                                                                      </effect>
                                                                   </ImageView>
+                                                                  <Button fx:id="flipHandCard2" mnemonicParsing="false" prefHeight="17.0" prefWidth="42.0" text="Flip" StackPane.alignment="TOP_RIGHT">
+                                                                     <font>
+                                                                        <Font size="10.0" />
+                                                                     </font>
+                                                                  </Button>
                                                                </children>
-                                                            </AnchorPane>
-                                                            <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="214.0" prefWidth="301.0">
+                                                            </StackPane>
+                                                            <StackPane prefHeight="214.0" prefWidth="301.0">
                                                                <children>
                                                                   <ImageView fx:id="handCard3" fitHeight="210.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" x="0.5" y="3.5">
                                                                      <effect>
                                                                         <DropShadow />
                                                                      </effect>
                                                                   </ImageView>
+                                                                  <Button fx:id="flipHandCard3" mnemonicParsing="false" prefHeight="17.0" prefWidth="42.0" text="Flip" StackPane.alignment="TOP_RIGHT">
+                                                                     <font>
+                                                                        <Font size="10.0" />
+                                                                     </font>
+                                                                  </Button>
                                                                </children>
-                                                            </AnchorPane>
+                                                            </StackPane>
                                                         </items>
                                                       </SplitPane>
                                                    </children>

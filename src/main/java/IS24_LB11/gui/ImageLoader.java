@@ -36,7 +36,7 @@ public class ImageLoader{
                         path = path + "croppedBack/N" + cardId.charAt(5) + "B.jpg";
                         break;
                     case 'G':
-                        path = path + "croppedBack/G" + cardId.charAt(5) + ".jpg";
+                        path = path + "croppedBack/G" + cardId.charAt(5) + "B.jpg";
                         break;
                     case 'S':
                         path = path + "croppedBack/" + cardId.substring(11) + ".jpg";
@@ -47,6 +47,8 @@ public class ImageLoader{
                 path = path + "croppedFront/goalFront/" + cardId + ".jpg";
             }
         }
+
+        System.out.println("Loading image from " + path);
 
         // Load the image
         Image image = new Image(ImageLoader.class.getResourceAsStream(path));
