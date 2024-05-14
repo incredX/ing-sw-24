@@ -270,33 +270,80 @@ public class GameSceneController {
     }
 
     private void disableDecks(Boolean bool) {
-        normalDeckCard1.setDisable(bool);
-        normalDeckCard2.setDisable(bool);
-        normalDeckCard3.setDisable(bool);
-        goldenDeckCard1.setDisable(bool);
-        goldenDeckCard2.setDisable(bool);
-        goldenDeckCard3.setDisable(bool);
+        switch (state.getNormalDeck().size()){
+            case 0:
+                normalDeckCard1.setDisable(false);
+                normalDeckCard2.setDisable(false);
+                normalDeckCard3.setDisable(false);
+                break;
+            case 1:
+                normalDeckCard1.setDisable(bool);
+                normalDeckCard2.setDisable(false);
+                normalDeckCard3.setDisable(false);
+                break;
+            case 2:
+                normalDeckCard1.setDisable(bool);
+                normalDeckCard2.setDisable(bool);
+                normalDeckCard3.setDisable(false);
+                break;
+            default:
+                normalDeckCard1.setDisable(bool);
+                normalDeckCard2.setDisable(bool);
+                normalDeckCard3.setDisable(bool);
+                break;
+        }
+        switch (state.getGoldenDeck().size()){
+            case 0:
+                goldenDeckCard1.setDisable(false);
+                goldenDeckCard2.setDisable(false);
+                goldenDeckCard3.setDisable(false);
+                break;
+            case 1:
+                goldenDeckCard1.setDisable(bool);
+                goldenDeckCard2.setDisable(false);
+                goldenDeckCard3.setDisable(false);
+                break;
+            case 2:
+                goldenDeckCard1.setDisable(bool);
+                goldenDeckCard2.setDisable(bool);
+                goldenDeckCard3.setDisable(false);
+                break;
+            default:
+                goldenDeckCard1.setDisable(bool);
+                goldenDeckCard2.setDisable(bool);
+                goldenDeckCard3.setDisable(bool);
+                break;
+        }
     }
 
-    private void disableAllCardInputs(Boolean bool){
+        private void disableAllCardInputs(Boolean bool){
         disableHand(bool);
         disableDecks(bool);
     }
 
     public void updateDeck() {
-        normalDeckCard1.setImage(ImageLoader.getImage(state.getNormalDeck().get(0).asString()));
-        normalDeckCard2.setImage(ImageLoader.getImage(state.getNormalDeck().get(1).asString()));
-        normalDeckCard3.setImage(ImageLoader.getImage(state.getNormalDeck().get(2).asString()));
-
+        if (state.getNormalDeck().size()>=1)
+            normalDeckCard1.setImage(ImageLoader.getImage(state.getNormalDeck().get(0).asString()));
+        if (state.getNormalDeck().size()>=2)
+            normalDeckCard2.setImage(ImageLoader.getImage(state.getNormalDeck().get(1).asString()));
+        if (state.getNormalDeck().size()>=3) {
+            PlayableCard lastCardNormalDeck = state.getNormalDeck().get(2);
+            lastCardNormalDeck.flip();
+            normalDeckCard3.setImage(ImageLoader.getImage(lastCardNormalDeck.asString()));
+        }
 //        PlayableCard flippedNormalCard = state.getNormalDeck().get(2);
 //        flippedNormalCard.flip();
 //        normalDeckCard3.setImage(ImageLoader.getImage(flippedNormalCard.asString()));
 
-
-        goldenDeckCard1.setImage(ImageLoader.getImage(state.getGoldenDeck().get(0).asString()));
-        goldenDeckCard2.setImage(ImageLoader.getImage(state.getGoldenDeck().get(1).asString()));
-        goldenDeckCard3.setImage(ImageLoader.getImage(state.getGoldenDeck().get(2).asString()));
-
+        if (state.getGoldenDeck().size()>=1)
+            goldenDeckCard1.setImage(ImageLoader.getImage(state.getGoldenDeck().get(0).asString()));
+        if (state.getGoldenDeck().size()>=2)
+            goldenDeckCard2.setImage(ImageLoader.getImage(state.getGoldenDeck().get(1).asString()));
+        if (state.getGoldenDeck().size()>=3) {
+            PlayableCard lastCardGoldenDeck = state.getGoldenDeck().get(2);
+            lastCardGoldenDeck.flip();
+            goldenDeckCard3.setImage(ImageLoader.getImage(lastCardGoldenDeck.asString()));
+        }
 //        PlayableCard flippedGoldenCard = state.getGoldenDeck().get(2);
 //        flippedGoldenCard.flip();
 //        goldenDeckCard3.setImage(ImageLoader.getImage(flippedGoldenCard.asString()));
@@ -358,6 +405,8 @@ public class GameSceneController {
                 handCard3.setOpacity(1);
                 break;
         }
+        if (state.getNormalDeck().size()==0 && state.getGoldenDeck().size()==0)
+            state.execute();
     }
 
     public void chooseDeckCard(int n, boolean deckType) {
