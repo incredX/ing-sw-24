@@ -131,4 +131,9 @@ public class SetupSceneController {
         PopUps popUps = new PopUps();
         popUps.lastPlayerLeft(stage,state);
     }
+
+    public void showPopUpNotification(String message){
+        PopUps popUps = new PopUps();
+        popUps.popUpMaker(message);
+    }
 }

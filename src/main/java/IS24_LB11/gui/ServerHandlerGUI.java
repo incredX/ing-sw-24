@@ -23,6 +23,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 
 public class ServerHandlerGUI implements Runnable{
+    private long lastHeartbeatTime=0;
     private Socket socket;
     private JsonStreamParser parser;
     private PrintWriter writer;
@@ -46,14 +47,23 @@ public class ServerHandlerGUI implements Runnable{
         while (running) {
             if (socket.isClosed()) break;
             try {
-                synchronized (parser) {
-                    parser.wait(10);
+                while (!parser.hasNext()) {
+                    System.out.println(lastHeartbeatTime - System.currentTimeMillis());
+                    if (System.currentTimeMillis()-lastHeartbeatTime > 3000 && lastHeartbeatTime != 0) {
+                        if (gameSceneController != null)
+                            Platform.runLater(() -> gameSceneController.showPopUpNotification("Server crushed!!!"));
+                        else if (setupSceneController != null)
+                            Platform.runLater(() -> setupSceneController.showPopUpNotification("Server crushed!!!"));
+                        else
+                            Platform.runLater(() -> loginSceneController.showPopUpNotification("Server crushed!!!"));
+                        System.out.println("Server crushed");
+                        running=false;
+                        break;
+                    }
                 }
-                if (parser.hasNext()) {
-                    processEvent(parser.next().getAsJsonObject());
-                }
-            } catch (InterruptedException | JsonIOException e) {
+                processEvent(parser.next().getAsJsonObject());
 
+            } catch (JsonIOException e) {
             }
         }
         Thread.currentThread().interrupt();
@@ -109,9 +119,6 @@ public class ServerHandlerGUI implements Runnable{
             Platform.runLater(()->setupSceneController.removePlayer(playerDisconnected));
         else {
             Platform.runLater(() -> gameSceneController.removePlayer(playerDisconnected));
-            //TODO: popup that alert u you are alone
-            if (gameSceneController.getState().getNumberOfPlayer()==1);
-            //Platform.runLater();
         }
     }
 
@@ -169,7 +176,7 @@ public class ServerHandlerGUI implements Runnable{
         JsonObject message= new JsonObject();
         message.addProperty("type","heartbeat");
         write(message);
-        //TODO: handle heartbeat client-side
+        lastHeartbeatTime=System.currentTimeMillis();
     }
 
     private void handleSetupEvent(JsonObject serverEvent) {
