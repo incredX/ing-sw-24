@@ -315,7 +315,7 @@ public class GameSceneController extends GenericSceneController{
         }
     }
 
-        private void disableAllCardInputs(Boolean bool){
+    private void disableAllCardInputs(Boolean bool){
         disableHand(bool);
         disableDecks(bool);
     }
