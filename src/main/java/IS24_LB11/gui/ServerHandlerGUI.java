@@ -6,6 +6,7 @@ import IS24_LB11.game.tools.JsonConverter;
 import IS24_LB11.game.tools.JsonException;
 import IS24_LB11.game.utils.SyntaxException;
 import IS24_LB11.gui.phases.ClientGUIState;
+import IS24_LB11.gui.phases.LoginGUIState;
 import IS24_LB11.gui.scenesControllers.ChatSceneController;
 import IS24_LB11.gui.scenesControllers.GameSceneController;
 import IS24_LB11.gui.scenesControllers.LoginSceneController;
@@ -31,7 +32,7 @@ public class ServerHandlerGUI implements Runnable{
     private boolean running = true;
     private boolean gameTurnStateStarted = false;
     private LoginSceneController loginSceneController;
-    private SetupSceneController setupSceneController;
+    private SetupSceneController setupSceneController = null;
     private GameSceneController gameSceneController = null;
     private ChatSceneController chatSceneController = null;
 
@@ -48,21 +49,22 @@ public class ServerHandlerGUI implements Runnable{
             if (socket.isClosed()) break;
             try {
                 while (!parser.hasNext()) {
-                    System.out.println(lastHeartbeatTime - System.currentTimeMillis());
                     if (System.currentTimeMillis()-lastHeartbeatTime > 3000 && lastHeartbeatTime != 0) {
-                        if (gameSceneController != null)
-                            Platform.runLater(() -> gameSceneController.showPopUpNotification("Server crushed!!!"));
-                        else if (setupSceneController != null)
-                            Platform.runLater(() -> setupSceneController.showPopUpNotification("Server crushed!!!"));
-                        else
-                            Platform.runLater(() -> loginSceneController.showPopUpNotification("Server crushed!!!"));
-                        System.out.println("Server crushed");
+                        if (gameSceneController != null) {
+                            Platform.runLater(() -> gameSceneController.showPopUpRestartGame());
+                        }
+                        else if (setupSceneController != null) {
+                            Platform.runLater(() -> setupSceneController.showPopUpRestartGame());
+                        }
+                        else {
+                            Platform.runLater(() -> loginSceneController.showPopUpRestartGame());
+                        }
                         running=false;
                         break;
                     }
                 }
-                processEvent(parser.next().getAsJsonObject());
-
+                if (parser.hasNext())
+                    processEvent(parser.next().getAsJsonObject());
             } catch (JsonIOException e) {
             }
         }

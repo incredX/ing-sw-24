@@ -22,7 +22,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class LoginSceneController {
+public class LoginSceneController extends GenericSceneController{
 
     @FXML
     private AnchorPane scenePane;
@@ -44,12 +44,13 @@ public class LoginSceneController {
     @FXML
     private TextField portTextField;
 
-    Stage stage = new Stage();
     LoginGUIState state;
 
     public LoginSceneController(ClientGUIState state) {
-        this.state = (LoginGUIState) state;
+        this.stage=new Stage();
 
+        this.state = (LoginGUIState) state;
+        this.genericState=state;
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/LoginPage.fxml"));
         loader.setController(this);
 
@@ -84,7 +85,7 @@ public class LoginSceneController {
                                    ArrayList<PlayableCard> normalDeck,
                                    ArrayList<PlayableCard> goldenDeck,
                                    ArrayList<String> playerNames){
-        SetupSceneController setupSceneController = new SetupSceneController(new SetupGUIState(state), stage);
+        SetupSceneController setupSceneController = new SetupSceneController(new SetupGUIState(state),stage);
         setupSceneController.state.initialize(playerSetup,publicGoals,normalDeck,goldenDeck,playerNames);
         //stage.close();
         setupSceneController.showStage();
@@ -95,18 +96,7 @@ public class LoginSceneController {
         this.stage.show();
     }
 
-    public void exit(Stage stage)  {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Exit");
-        alert.setHeaderText("You are about to exit!");
-        alert.setContentText("Are you sure?");
 
-        if(alert.showAndWait().get() == ButtonType.OK){
-            state.shutdown();
-            System.out.println("You successfully logged out!");
-            stage.close();
-        }
-    }
 
     public void login(){
         String username = usernameTextField.getText();
@@ -132,12 +122,9 @@ public class LoginSceneController {
         state.setMaxPlayers(popUps.maxPlayersAlert());
     }
 
-    public void showPopUpNotification(String message){
-        PopUps popUps = new PopUps();
-        popUps.popUpMaker(message);
-    }
 
     public void disableLogin(){
         loginButton.setDisable(true);
     }
+
 }

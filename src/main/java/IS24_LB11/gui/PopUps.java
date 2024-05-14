@@ -1,6 +1,7 @@
 package IS24_LB11.gui;
 
 import IS24_LB11.gui.phases.ClientGUIState;
+import IS24_LB11.gui.scenesControllers.GenericSceneController;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
@@ -71,6 +72,26 @@ public class PopUps {
         if(result != null){
             state.shutdown();
             stage.close();
+        }
+    }
+
+    public void restartGame(ClientGUIState state, GenericSceneController genericSceneController){
+        Alert alert = new Alert(Alert.AlertType.NONE);
+
+        ButtonType buttonType = new ButtonType("OK");
+
+        alert.getButtonTypes().setAll(buttonType);
+
+        alert.setContentText("Server Crushed, press to restart Client");
+
+        ButtonType result = alert.showAndWait().orElse(null);
+
+        if(result != null){
+            try {
+                genericSceneController.restart();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 

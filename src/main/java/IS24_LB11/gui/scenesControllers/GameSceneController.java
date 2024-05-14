@@ -26,7 +26,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class GameSceneController {
+public class GameSceneController extends GenericSceneController{
     @FXML
     private ImageView goalCard1;
     @FXML
@@ -91,7 +91,6 @@ public class GameSceneController {
     private Button flipHandCard2;
     @FXML
     private Button flipHandCard3;
-    Stage stage;
     Stage chatStage = new Stage();
     GameGUIState state;
     int numberPlayerInGame;
@@ -118,6 +117,7 @@ public class GameSceneController {
 
     public GameSceneController(ClientGUIState state, Stage stage) {
         this.state = (GameGUIState) state;
+        this.genericState=state;
         this.stage = stage;
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/GamePageBackup.fxml"));
         loader.setController(this);
@@ -584,13 +584,4 @@ public class GameSceneController {
         return false;
     }
 
-    public void showPopUpNotification(String message) {
-        PopUps popUps = new PopUps();
-        popUps.popUpMaker(message);
-    }
-
-    public void showExitNotification(String s) {
-        PopUps popUps = new PopUps();
-        popUps.lastPlayerLeft(stage,state);
-    }
 }

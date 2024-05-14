@@ -17,7 +17,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-public class SetupSceneController {
+public class SetupSceneController extends GenericSceneController{
     @FXML
     private ImageView goalCard1;
 
@@ -31,11 +31,11 @@ public class SetupSceneController {
     @FXML
     private Button readyButton;
 
-    Stage stage;
     SetupGUIState state;
 
     public SetupSceneController(ClientGUIState state, Stage stage){
         this.state=(SetupGUIState) state;
+        this.genericState=state;
         this.stage=stage;
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/SetupPage.fxml"));
         loader.setController(this);
@@ -127,13 +127,6 @@ public class SetupSceneController {
         state.removePlayer(playerDisconnected);
     }
 
-    public void showExitNotification(String s) {
-        PopUps popUps = new PopUps();
-        popUps.lastPlayerLeft(stage,state);
-    }
 
-    public void showPopUpNotification(String message){
-        PopUps popUps = new PopUps();
-        popUps.popUpMaker(message);
-    }
+
 }

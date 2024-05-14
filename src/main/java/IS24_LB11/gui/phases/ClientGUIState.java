@@ -1,10 +1,12 @@
 package IS24_LB11.gui.phases;
 
 import IS24_LB11.gui.Chat;
+import IS24_LB11.gui.ClientGUI;
 import IS24_LB11.gui.InputHandlerGUI;
 import IS24_LB11.gui.ServerHandlerGUI;
 
 public abstract class ClientGUIState {
+    protected ClientGUI clientGUI;
     private ClientGUIState actualState;
     protected String username;
     protected ServerHandlerGUI serverHandler;
@@ -44,5 +46,9 @@ public abstract class ClientGUIState {
         if (serverHandler == null)
             return;
         serverHandler.shutdown();
+    }
+
+    public ClientGUI getClientGUI() {
+        return clientGUI;
     }
 }
