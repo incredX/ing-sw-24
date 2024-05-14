@@ -336,7 +336,6 @@ public class GameSceneController {
 
     public void chooseHandCard(int n) {
 
-        placeTemporaryCardsOnAvailableSpots();
 
         switch (n) {
             case 0:
@@ -344,18 +343,21 @@ public class GameSceneController {
                 handCard1.setOpacity(1);
                 handCard2.setOpacity(0.5);
                 handCard3.setOpacity(0.5);
+                placeTemporaryCardsOnAvailableSpots(handCard1);
                 break;
             case 1:
                 state.chooseCardToPlay(state.getPlayer().getHand().get(1));
                 handCard1.setOpacity(0.5);
                 handCard2.setOpacity(1);
                 handCard3.setOpacity(0.5);
+                placeTemporaryCardsOnAvailableSpots(handCard2);
                 break;
             case 2:
                 state.chooseCardToPlay(state.getPlayer().getHand().get(2));
                 handCard1.setOpacity(0.5);
                 handCard2.setOpacity(0.5);
                 handCard3.setOpacity(1);
+                placeTemporaryCardsOnAvailableSpots(handCard3);
                 break;
         }
     }
@@ -459,28 +461,30 @@ public class GameSceneController {
         return state.getPlayer().getBoard().getAvailableSpots();
     }
 
-    private void placeTemporaryCardsOnAvailableSpots(){
+    private void placeTemporaryCardsOnAvailableSpots(ImageView selectedCardFromHand){
         for(Position pos : getAvailableSpots()){
-            ImageView imageView = getImageView("AvailableSpot", pos.getX(), pos.getY());
-            imageView.setOpacity(0.5);
-            ImageLoader.roundCorners(imageView);
+            ImageView availableSpot = getImageView("AvailableSpot", pos.getX(), pos.getY());
+            availableSpot.setOpacity(0.5);
+            ImageLoader.roundCorners(availableSpot);
 
-            imageView.setOnMouseClicked(mouseEvent -> placeCard(imageView));
-
-            if(!imageViewInPosition(imageView)){
-                playerBoard.getChildren().add(imageView);
-                availableSpotsTemporaryCards.add(imageView);
+            if(!imageViewInPosition(availableSpot)){
+                playerBoard.getChildren().add(availableSpot);
+                availableSpotsTemporaryCards.add(availableSpot);
+                availableSpot.setOnMouseClicked(mouseEvent -> placeCard(availableSpot, selectedCardFromHand));
             }
         }
     }
 
 
-    private void placeCard(ImageView imageView){
-        Position realPosition = getRealPosition((int)imageView.getLayoutX(), (int)imageView.getLayoutY());
+    private void placeCard(ImageView availableSpot, ImageView selectedCardFromHand){
+        Position realPosition = getRealPosition((int)availableSpot.getLayoutX(), (int)availableSpot.getLayoutY());
 
-        ImageView cardToBePlaced = getImageView(state.getCardChooseToPlay().asString(),
-                                                realPosition.getX(),
-                                                realPosition.getY());
+        ImageView cardToBePlaced = new ImageView(selectedCardFromHand.getImage());
+        cardToBePlaced.setFitWidth(availableSpot.getFitWidth());
+        cardToBePlaced.setFitHeight(availableSpot.getFitHeight());
+        cardToBePlaced.setLayoutX(availableSpot.getLayoutX());
+        cardToBePlaced.setLayoutY(availableSpot.getLayoutY());
+
         ImageLoader.roundCorners(cardToBePlaced);
 
         if(state.placeCard(new PlacedCard(state.getCardChooseToPlay(), realPosition))){
@@ -510,10 +514,11 @@ public class GameSceneController {
         }
         return false;
     }
-        public void showPopUpNotification(String message) {
-            PopUps popUps = new PopUps();
-            popUps.popUpMaker(message);
-        }
+
+    public void showPopUpNotification(String message) {
+        PopUps popUps = new PopUps();
+        popUps.popUpMaker(message);
+    }
 
     public void showExitNotification(String s) {
         PopUps popUps = new PopUps();
