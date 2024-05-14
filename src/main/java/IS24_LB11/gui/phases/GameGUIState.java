@@ -109,13 +109,16 @@ public class GameGUIState extends ClientGUIState {
     }
 
     public void execute() {
-        if(!this.deckType)
-            player.addCardToHand(normalDeck.get(indexCardDeck));
-        else
-            player.addCardToHand(goldenDeck.get(indexCardDeck));
-
         PlacedCard placedCard = new PlacedCard(cardChooseToPlay, positionPlacedCard);
-        inputHandlerGUI.sendTurn(placedCard, deckType, indexCardDeck);
+        if (normalDeck.size()!=0 && goldenDeck.size()!=0) {
+            if (!this.deckType)
+                player.addCardToHand(normalDeck.get(indexCardDeck));
+            else
+                player.addCardToHand(goldenDeck.get(indexCardDeck));
+            inputHandlerGUI.sendTurn(placedCard, deckType, indexCardDeck);
+        }
+        else
+            inputHandlerGUI.sendTurn(placedCard);
     }
 
     public Boolean placeCard(PlacedCard placedCard){

@@ -63,7 +63,20 @@ public class InputHandlerGUI {
         message.addProperty("deckType",deckType);
         message.addProperty("indexVisibleCards",indexCardDeck+1);
 
-        System.out.printf(message.toString());
+        writer.println(message.toString());
+        writer.flush();
+    }
+    public void sendTurn(PlacedCard placedCard) {
+        JsonObject message = new JsonObject();
+        message.addProperty("type","turnActions");
+        try {
+            JsonObject placedCardJson = (JsonObject) new JsonParser().parse(new JsonConverter().objectToJSON(placedCard));
+            message.add("placedCard", placedCardJson);
+        } catch (JsonException e) {
+            throw new RuntimeException(e);
+        }
+        message.addProperty("deckType",false);
+        message.addProperty("indexVisibleCards",1);
 
         writer.println(message.toString());
         writer.flush();
