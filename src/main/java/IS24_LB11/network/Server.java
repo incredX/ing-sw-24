@@ -130,6 +130,7 @@ public class Server
             game = null;
             gameStarted = false;
             maxPlayers = 1;
+            ServerEventHandler.reset();
         }
     }
 
