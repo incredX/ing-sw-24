@@ -268,6 +268,11 @@ public class GameSceneController extends GenericSceneController{
         updateScore();
         disableAllCardInputs(!state.isThisPlayerTurn());
     }
+    public void updateGame(ArrayList<Integer> playerScores) {
+        state.update(playerScores);
+        updateScore();
+    }
+
 
     private void disableDecks(Boolean bool) {
         switch (state.getNormalDeck().size()){
@@ -403,8 +408,7 @@ public class GameSceneController extends GenericSceneController{
     }
 
     public void chooseHandCard(int n) {
-
-
+        clearTemporaryCardsFromBoard(playerBoard);
         switch (n) {
             case 0:
                 state.chooseCardToPlay(state.getPlayer().getHand().getFirst());
@@ -565,6 +569,9 @@ public class GameSceneController extends GenericSceneController{
             updateHand();
             disableHand(true);
             state.setPositionOfPlacedCard(realPosition);
+            if((state.getGoldenDeck().size() == 0 && state.getNormalDeck().size()==0) || state.isFinalTurn()){
+                state.execute();
+            }
         }
         else {
             System.out.printf("\nCard can't be placed there\n");
@@ -585,6 +592,9 @@ public class GameSceneController extends GenericSceneController{
             }
         }
         return false;
+    }
+    public void setFinalTurn(){
+        state.setIsFinalTurn(true);
     }
 
 }

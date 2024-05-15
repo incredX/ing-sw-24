@@ -11,6 +11,7 @@ public abstract class ClientGUIState {
     protected String username;
     protected ServerHandlerGUI serverHandler;
     protected InputHandlerGUI inputHandlerGUI;
+    protected Boolean isFinalTurn = false;
 
     protected Chat personalChat;
     public ClientGUIState() {
@@ -50,5 +51,13 @@ public abstract class ClientGUIState {
 
     public ClientGUI getClientGUI() {
         return clientGUI;
+    }
+
+    public Boolean isFinalTurn(){
+        return isFinalTurn;
+    }
+
+    public void setIsFinalTurn(Boolean isFinalTurn){
+        this.isFinalTurn = isFinalTurn;
     }
 }

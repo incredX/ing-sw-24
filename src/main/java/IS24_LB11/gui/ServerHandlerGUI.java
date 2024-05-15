@@ -125,8 +125,12 @@ public class ServerHandlerGUI implements Runnable{
 
     private void handleTurnEvent(JsonObject serverEvent) {
         String currentPlayerTurn = serverEvent.get("player").getAsString();
+        JsonArray playersScores = serverEvent.get("scores").getAsJsonArray();
+        ArrayList<Integer> playerScores = extractIntegerArray(playersScores,playersScores.size());
+
         if (currentPlayerTurn.equals("")) {
             if (serverEvent.has("gameFinished")) {
+                Platform.runLater(()->gameSceneController.updateGame(playerScores));
                 Platform.runLater(() -> gameSceneController.showPopUpNotification("The game is finished, check scoreboard for the winner"));
                 Platform.runLater(() -> gameSceneController.disableAllCardInputs(true));
             } else {
@@ -138,13 +142,11 @@ public class ServerHandlerGUI implements Runnable{
             }
         }
         else{
-            JsonArray playersScores = serverEvent.get("scores").getAsJsonArray();
-            ArrayList<Integer> playerScores = extractIntegerArray(playersScores,playersScores.size());
 
             JsonArray normalDeckString = serverEvent.get("normalDeck").getAsJsonArray();
             JsonArray goldenDeckString = serverEvent.get("goldenDeck").getAsJsonArray();
-            ArrayList<PlayableCard> normalDeck = (ArrayList<PlayableCard>) extractCardArray(normalDeckString,3);
-            ArrayList<PlayableCard> goldenDeck = (ArrayList<PlayableCard>) extractCardArray(goldenDeckString,3);
+            ArrayList<PlayableCard> normalDeck = (ArrayList<PlayableCard>) extractCardArray(normalDeckString, normalDeckString.size());
+            ArrayList<PlayableCard> goldenDeck = (ArrayList<PlayableCard>) extractCardArray(goldenDeckString,goldenDeckString.size());
 
             if (!gameTurnStateStarted){
                 gameTurnStateStarted=true;
@@ -167,13 +169,16 @@ public class ServerHandlerGUI implements Runnable{
             if(serverEvent.get("message").getAsString().equals("Welcome " + actualState.getUsername() + "!")){
                 Platform.runLater(()-> loginSceneController.disableLogin());
             }
-            if (serverEvent.get("message").getAsString().equals("Welcome, please log in"))
+            else if (serverEvent.get("message").getAsString().equals("Welcome, please log in"))
                 return;
-            if (serverEvent.get("message").getAsString().equals("Please set max number of players")){
+            else if (serverEvent.get("message").getAsString().equals("Please set max number of players")){
                 Platform.runLater(() -> loginSceneController.setPlayers());
             }
             else{
                 Platform.runLater(() -> loginSceneController.showPopUpNotification(serverEvent.get("message").getAsString()));
+                if(serverEvent.get("message").getAsString().equals("It is your FINAL turn"))
+                    Platform.runLater(()-> gameSceneController.setFinalTurn());
+
             }
 
         }
@@ -195,8 +200,8 @@ public class ServerHandlerGUI implements Runnable{
             JsonArray playerNamesString = serverEvent.get("playerNames").getAsJsonArray();
 
             ArrayList<GoalCard> publicGoals = (ArrayList<GoalCard>) extractGoalArray(publicGoalsString,2);
-            ArrayList<PlayableCard> normalDeck = (ArrayList<PlayableCard>) extractCardArray(normalDeckString,3);
-            ArrayList<PlayableCard> goldenDeck = (ArrayList<PlayableCard>) extractCardArray(goldenDeckString,3);
+            ArrayList<PlayableCard> normalDeck = (ArrayList<PlayableCard>) extractCardArray(normalDeckString, normalDeckString.size());
+            ArrayList<PlayableCard> goldenDeck = (ArrayList<PlayableCard>) extractCardArray(goldenDeckString, goldenDeckString.size());
             ArrayList<String> playerNames = extractStringArray(playerNamesString,playerNamesString.size());
 
             Platform.runLater(()-> loginSceneController.changeToSetupState(playerSetup,publicGoals,normalDeck,goldenDeck,playerNames));

@@ -65,6 +65,12 @@ public class GameGUIState extends ClientGUIState {
         }
     }
 
+    public void update(ArrayList<Integer> playerScores){
+        for (int i = 0; i < playerScores.size(); i++) {
+            playersScore.replace(players.get(i), playerScores.get(i));
+        }
+    }
+
     public void chooseCardToPlay(PlayableCard playableCard) {
         this.cardChooseToPlay = playableCard;
     }
@@ -112,7 +118,7 @@ public class GameGUIState extends ClientGUIState {
 
     public void execute() {
         PlacedCard placedCard = new PlacedCard(cardChooseToPlay, positionPlacedCard);
-        if (normalDeck.size()!=0 && goldenDeck.size()!=0) {
+        if (normalDeck.size()!=0 && goldenDeck.size()!=0 && isFinalTurn() == false) {
             if (!this.deckType)
                 player.addCardToHand(normalDeck.get(indexCardDeck));
             else
