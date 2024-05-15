@@ -71,7 +71,6 @@ public class PopUps {
         ButtonType result = alert.showAndWait().orElse(null);
 
         if(result.equals(quit)){
-            state.shutdown();
             stage.close();
         }
         else if(result.equals(restart)) {
@@ -81,6 +80,8 @@ public class PopUps {
                 throw new RuntimeException(e);
             }
         }
+        state.shutdown();
+
     }
 
     public void restartGame(ClientGUIState state, GenericSceneController genericSceneController){
