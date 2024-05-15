@@ -6,7 +6,6 @@ import IS24_LB11.game.tools.JsonConverter;
 import IS24_LB11.game.tools.JsonException;
 import IS24_LB11.game.utils.SyntaxException;
 import IS24_LB11.gui.phases.ClientGUIState;
-import IS24_LB11.gui.phases.LoginGUIState;
 import IS24_LB11.gui.scenesControllers.ChatSceneController;
 import IS24_LB11.gui.scenesControllers.GameSceneController;
 import IS24_LB11.gui.scenesControllers.LoginSceneController;
@@ -127,11 +126,16 @@ public class ServerHandlerGUI implements Runnable{
     private void handleTurnEvent(JsonObject serverEvent) {
         String currentPlayerTurn = serverEvent.get("player").getAsString();
         if (currentPlayerTurn.equals("")) {
-            if (gameSceneController==null){
-                Platform.runLater(() -> setupSceneController.showExitNotification("You are the only player connected to the server"));
-                return;
+            if (serverEvent.has("gameFinished")) {
+                Platform.runLater(() -> gameSceneController.showPopUpNotification("The game is finished, check scoreboard for the winner"));
+                Platform.runLater(() -> gameSceneController.disableAllCardInputs(true));
+            } else {
+                if (gameSceneController == null) {
+                    Platform.runLater(() -> setupSceneController.showExitNotification("You are the only player connected to the server"));
+                    return;
+                }
+                Platform.runLater(() -> gameSceneController.showExitNotification("You are the only player connected to the server"));
             }
-            Platform.runLater(() -> gameSceneController.showExitNotification("You are the only player connected to the server"));
         }
         else{
             JsonArray playersScores = serverEvent.get("scores").getAsJsonArray();

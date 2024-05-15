@@ -19,11 +19,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
@@ -320,7 +316,7 @@ public class GameSceneController extends GenericSceneController{
         }
     }
 
-    private void disableAllCardInputs(Boolean bool){
+    public void disableAllCardInputs(Boolean bool){
         disableHand(bool);
         disableDecks(bool);
     }
