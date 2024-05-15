@@ -31,6 +31,7 @@ public class SetupSceneController extends GenericSceneController{
     @FXML
     private Button readyButton;
 
+
     SetupGUIState state;
 
     public SetupSceneController(ClientGUIState state, Stage stage){
@@ -62,11 +63,17 @@ public class SetupSceneController extends GenericSceneController{
         flipButton.setOnAction(event -> flipStarterCard());
         state.getServerHandler().setSetupSceneController(this);
         System.out.println("Setup initialized");
+
+        chatBox.setOnMouseEntered(mouseEvent -> chatDisplay());
+        chatBox.setOnMouseExited(mouseEvent -> chatHide());
+        buttonSend.setOnMouseClicked(mouseEvent -> send());
+        chatHide();
+
     }
 
     public void changeToGameState(){
         GameSceneController gameSceneController = new GameSceneController(new GameGUIState(state),stage);
-        stage.close();
+        gameSceneController.updateChat(this.chat.getMessages());
         gameSceneController.showStage();
     }
     public void showStage() {
