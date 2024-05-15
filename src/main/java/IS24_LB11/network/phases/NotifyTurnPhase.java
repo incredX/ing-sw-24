@@ -27,9 +27,13 @@ public class NotifyTurnPhase {
 
 
         response.addProperty("type", "turn");
-        if(clientHandler.getGame().hasGameEnded())
+        if(clientHandler.getGame().hasGameEnded()){
             response.addProperty("player", "");
-        else
+            if(clientHandler.getGame().getPlayers().size()>1){
+                response.addProperty("gameFinished", "");
+            }
+        }
+            else
             response.addProperty("player", clientHandler.getGame().currentPlayer().name());
 
         //add player respective scores
