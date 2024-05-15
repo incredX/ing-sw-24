@@ -20,6 +20,10 @@ public class ServerEventHandler {
     private static ArrayList<GoalCard> pickedGoalCards = new ArrayList<>();
     private static ArrayList<StarterCard> pickedStarterCards = new ArrayList<>();
 
+    public static void reset() {
+        pickedGoalCards.clear();
+        pickedStarterCards.clear();
+    }
 
     // Method to handle incoming events
     public static void handleEvent(ClientHandler ch, String eventJson) {
