@@ -19,6 +19,7 @@ public class CommandLineTest {
     }
 
     @Test
+    @DisplayName("test loading of string in command line")
     void testSetLine() {
         //"Lorem ipsum."  with [...]= visible line's section, '|'= cursor :
         // ----[ ipsum.|]
@@ -32,6 +33,7 @@ public class CommandLineTest {
     }
 
     @Test
+    @DisplayName("test clearing of command line and reset of it's offsets")
     void testClearLine() {
         String input = "Lorem ipsum.";
         cmdLine.setLine(input);
@@ -92,6 +94,7 @@ public class CommandLineTest {
     }
 
     @Test
+    @DisplayName("test movement of cursor near the line boundaries")
     void testMoveCursor() {
         String input = "Lorem ipsum";
         int delta = 2;

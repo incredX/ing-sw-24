@@ -1,12 +1,14 @@
 package IS24_LB11.gui;
 
-import javafx.event.ActionEvent;
+import IS24_LB11.gui.phases.ClientGUIState;
+import IS24_LB11.gui.scenesControllers.GenericSceneController;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.stage.Stage;
 
 public class PopUps {
 
-    public void maxPlayersAlert(ActionEvent event) {
+    public int maxPlayersAlert() {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Max Number Of Players");
         alert.setHeaderText("Please select the max number of players: ");
@@ -22,19 +24,15 @@ public class PopUps {
 
         //needed to show the alert and wait the button pressing
         ButtonType result = alert.showAndWait().orElse(null);
-
+        int selectedNumber = 0;
         if (result != null) {
             //this will take the input pressed and parse that into int
-            int selectedNumber = Integer.parseInt(result.getText());
+            selectedNumber = Integer.parseInt(result.getText());
 
             //send to server the selected number
             System.out.println("You selected: " + selectedNumber + " players.");
-
-            //da implementare nel controller perchè altrimenti non riconosce il bottone
-            //      /\
-            //      ||
-            // randomButton.setDisable(true);
         }
+        return selectedNumber;
     }
 
     //da implementare nel controller perchè altrimenti non riconosce l'azione
@@ -48,15 +46,53 @@ public class PopUps {
         Alert alert = new Alert(Alert.AlertType.NONE);
 
         //create the button with "ok" text inside
-        ButtonType buttonTypeTwo = new ButtonType("OK");
+        ButtonType buttonType = new ButtonType("OK");
 
         //import the button inside the alert
-        alert.getButtonTypes().setAll(buttonTypeTwo);
+        alert.getButtonTypes().setAll(buttonType);
 
         //insert the received message into the alert field
         alert.setContentText(message);
         alert.show();
+    }
 
+
+    public void lastPlayerLeft(Stage stage, ClientGUIState state) {
+
+        Alert alert = new Alert(Alert.AlertType.NONE);
+
+        ButtonType buttonType = new ButtonType("OK");
+
+        alert.getButtonTypes().setAll(buttonType);
+
+        alert.setContentText("You are the only player left! Do you want to quit?");
+
+        ButtonType result = alert.showAndWait().orElse(null);
+
+        if(result != null){
+            state.shutdown();
+            stage.close();
+        }
+    }
+
+    public void restartGame(ClientGUIState state, GenericSceneController genericSceneController){
+        Alert alert = new Alert(Alert.AlertType.NONE);
+
+        ButtonType buttonType = new ButtonType("OK");
+
+        alert.getButtonTypes().setAll(buttonType);
+
+        alert.setContentText("Server CRASHED, press OK to restart Client");
+
+        ButtonType result = alert.showAndWait().orElse(null);
+
+        if(result != null){
+            try {
+                genericSceneController.restart();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
 }

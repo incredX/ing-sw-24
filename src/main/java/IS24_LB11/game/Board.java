@@ -12,11 +12,13 @@ import IS24_LB11.game.utils.Position;
 public class Board implements JsonConvertable {
     private final ArrayList<PlacedCard> placedCards;
     private final ArrayList<Position> availableSpots;
+    private final ArrayList<Position> closedSpots;
     private final HashMap<Symbol, Integer> symbolCounter;
 
     public Board() {
         placedCards = new ArrayList<>();
         availableSpots = new ArrayList<>();
+        closedSpots = new ArrayList<>();
         symbolCounter = new HashMap<>();
     }
 
@@ -31,7 +33,7 @@ public class Board implements JsonConvertable {
         for (Suit suit : Suit.values()) symbolCounter.put(suit, 0);
         for (Item item : Item.values()) symbolCounter.put(item, 0);
         updateCounters(start);
-        updateSpots(start);
+        updateSpots(starterCard, start);
     }
 
 
@@ -48,7 +50,7 @@ public class Board implements JsonConvertable {
         if (card.asString().charAt(0) == 'G' && !placeGoldCardCheck((GoldenCard) card) && !card.isFaceDown()) return false;
         placedCards.add(new PlacedCard(card, position));
         updateCounters(position);
-        updateSpots(position);
+        updateSpots(card, position);
         return true;
     }
 
@@ -60,25 +62,17 @@ public class Board implements JsonConvertable {
         return true;
     }
 
-    private void updateSpots(Position position) {
+    private void updateSpots(PlayableCard card, Position position) {
         availableSpots.removeIf(spot -> spot.equals(position));
-        PlacedCard placedCard = placedCards.getLast();
-
-        for (int i = 0; i < 4; i++) {
-            if (placedCard.card().hasCorner(i) == true)
-                availableSpots.add(placedCard.position().withRelative(Direction.parse(i).relativePosition()));
-        }
-
-        for (PlacedCard checkingCard : placedCards) {
-            availableSpots.removeIf(position1 -> position1.equals(checkingCard.position()));
-            for (int x = 0; x < 4; x++) {
-                if (checkingCard.card().hasCorner(x) == false) {
-                    int finalX = x;
-                    availableSpots.removeIf(position1 -> position1.equals(checkingCard.position().withRelative(Direction.parse(finalX).relativePosition())));
-                }
+        Direction.forEachDirection(dir -> {
+            Position diagonal = position.withRelative(dir.relativePosition());
+            if (!card.hasCorner(dir)) {
+                availableSpots.removeIf(spot -> spot.equals(diagonal));
+                closedSpots.add(diagonal);
+            } else if (!(spotAvailable(diagonal) || spotClosed(diagonal) || spotTaken(diagonal))) {
+                availableSpots.add(diagonal);
             }
-        }
-
+        });
 //        getPlayableCard(position).ifPresent(card ->
 //                Direction.forEachDirection(corner -> {
 //                    Position diagonal = position.withRelative(corner.relativePosition());
@@ -187,6 +181,10 @@ public class Board implements JsonConvertable {
 
     public boolean spotAvailable(Position position) {
         return availableSpots.stream().anyMatch(spot -> spot.equals(position));
+    }
+
+    public boolean spotClosed(Position position) {
+        return closedSpots.stream().anyMatch(spot -> spot.equals(position));
     }
 
     public Optional<PlacedCard> getPlacedCard(Position position) {

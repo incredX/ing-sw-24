@@ -44,9 +44,11 @@ public class PopupManager {
 
     public void showPopup(String label) {
         getOptionalPopup(label).ifPresent(popup -> {
-            if (focusedPopup != null) focusedPopup.disable();
-            focusedPopup = popup;
-            focusedPopup.show();
+            if (!popup.isReadOnly()) {
+                if (focusedPopup != null) focusedPopup.disable();
+                focusedPopup = popup;
+            }
+            popup.show();
             if (popup.canOverlap()) return;
             popups.entrySet().stream()
                     .map(e -> e.getValue())
@@ -65,13 +67,16 @@ public class PopupManager {
     }
 
     public void hideAllPopups(){
-        popups.forEach((string, popup) -> popup.hide());
+        forEachPopup(Popup::hide);
     }
 
     public void hideFocusedPopup() {
         if (focusedPopup != null)
             focusedPopup.hide();
-        focusedPopup = popups.values().stream().filter(Popup::isVisible).findFirst().orElse(null);
+        focusedPopup = popups.values().stream()
+                .filter(Popup::isVisible)
+                .filter(popup -> !popup.isReadOnly())
+                .findFirst().orElse(null);
         if (focusedPopup != null)
             focusedPopup.enable();
     }
@@ -86,6 +91,10 @@ public class PopupManager {
 
     public Optional<Popup> getFocusedPopup() {
         return Optional.ofNullable(focusedPopup);
+    }
+
+    public boolean hasPopup(String label) {
+        return popups.containsKey(label.toLowerCase());
     }
 
     private boolean inOverlapping(Popup popup) {

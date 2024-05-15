@@ -17,7 +17,11 @@ public class NotifyTurnPhase {
 
         // send notification to next player turn
         response.addProperty("type", "notification");
-        response.addProperty("message", "It is your turn");
+        if (clientHandler.getGame().getFinalTurn()) {
+            response.addProperty("message", "It is your FINAL turn");
+        } else {
+            response.addProperty("message", "It is your turn");
+        }
         clientHandler.sendMessage(response.toString());
         response.remove("message");
 
@@ -55,13 +59,14 @@ public class NotifyTurnPhase {
         Deck normalDeck = clientHandler.getGame().getNormalDeck();
         Deck goldenDeck = clientHandler.getGame().getGoldenDeck();
 
-        for (int i=1; i<=3; i++) {
-            try {
-                normalCards.add(new JsonPrimitive(normalDeck.showCard(i).asString()));
-                goldenCards.add(new JsonPrimitive(goldenDeck.showCard(i).asString()));
-            }
+        for (int i=1; i<=Integer.min(3, normalDeck.size()); i++) {
+            try { normalCards.add(new JsonPrimitive(normalDeck.showCard(i).asString())); }
             catch (DeckException e) { }
 
+        }
+        for (int i=1; i<=Integer.min(3, goldenDeck.size()); i++) {
+            try { goldenCards.add(new JsonPrimitive(goldenDeck.showCard(i).asString())); }
+            catch (DeckException e) { }
         }
         obj.add("normalDeck", normalCards);
         obj.add("goldenDeck", goldenCards);

@@ -1,38 +1,54 @@
 package IS24_LB11.gui.phases;
 
-import IS24_LB11.cli.controller.ClientState;
-import IS24_LB11.cli.listeners.ServerHandler;
+import IS24_LB11.gui.Chat;
+import IS24_LB11.gui.ClientGUI;
 import IS24_LB11.gui.InputHandlerGUI;
 import IS24_LB11.gui.ServerHandlerGUI;
 
-import java.io.IOException;
-
-public class ClientGUIState {
+public abstract class ClientGUIState {
+    protected ClientGUI clientGUI;
     private ClientGUIState actualState;
     protected String username;
     protected ServerHandlerGUI serverHandler;
     protected InputHandlerGUI inputHandlerGUI;
 
-    public ClientGUIState(){
-        this.actualState= null;
+    protected Chat personalChat;
+    public ClientGUIState() {
+        this.actualState = null;
         this.username = "";
-        this.serverHandler=serverHandler;
-        try {
-            this.inputHandlerGUI= new InputHandlerGUI(serverHandler.getWriter());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        personalChat = new Chat();
     }
 
-    public void setState(ClientGUIState nextState){
-        this.actualState=nextState;
-    }
-
-    public void execute(){
-
+    public void setState(ClientGUIState nextState) {
+        this.actualState = nextState;
     }
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public ServerHandlerGUI getServerHandler() {
+        return serverHandler;
+    }
+
+    public String getPersonalChat() {
+        return personalChat.getMessages();
+    }
+    public void addMessages(String from,String mex){
+        personalChat.addMessage(from,mex);
+    }
+
+    public void shutdown() {
+        if (serverHandler == null)
+            return;
+        serverHandler.shutdown();
+    }
+
+    public ClientGUI getClientGUI() {
+        return clientGUI;
     }
 }

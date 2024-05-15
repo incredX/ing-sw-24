@@ -194,6 +194,10 @@ public class Game {
         return gameEnded;
     }
 
+    public void setGameEnded(Boolean gameEnded) {
+        this.gameEnded = gameEnded;
+    }
+
     public void setTurn(int turn) {
         this.turn = turn;
     }
