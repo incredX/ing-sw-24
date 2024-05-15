@@ -84,7 +84,7 @@ public class PopUps {
 
         alert.getButtonTypes().setAll(buttonType);
 
-        alert.setContentText("Server Crushed, press to restart Client");
+        alert.setContentText("Server CRASHED, press OK to restart Client");
 
         ButtonType result = alert.showAndWait().orElse(null);
 
