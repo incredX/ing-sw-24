@@ -430,13 +430,14 @@ public class GameSceneController extends GenericSceneController{
     }
 
     public void chooseDeckCard(int n, boolean deckType) {
-        if(state.getPlayer().getHand().size()<3)
+        if(state.getPlayer().getHand().size()<3) {
             if (deckType)
                 state.chooseCardToDraw(state.getGoldenDeck().get(n), n, deckType);
             else
                 state.chooseCardToDraw(state.getNormalDeck().get(n), n, deckType);
             state.execute();
             updateHand();
+        }
     }
 
     public GameGUIState getState() {
