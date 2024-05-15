@@ -18,7 +18,12 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
@@ -90,30 +95,29 @@ public class GameSceneController extends GenericSceneController{
     private Button flipHandCard2;
     @FXML
     private Button flipHandCard3;
-    Stage chatStage = new Stage();
-    GameGUIState state;
-    int numberPlayerInGame;
-
     // Board Variables
     @FXML
     private ScrollPane scrollPane;
-
     @FXML
     private Pane playerBoard;
-
+    @FXML
+    private ImageView cardBackground;
+    @FXML
+    private ImageView boardBackground;
+    Stage chatStage = new Stage();
+    GameGUIState state;
+    int numberPlayerInGame;
     private final int centerBoardX = 10000;
     private final int centerBoardY = 10000;
-
     private final int cardX = 300;
     private final int cardY = 210;
-
     private final int cardCornerX = 70;
     private final int cardCornerY = 84;
-
     private ArrayList<ImageView> availableSpotsTemporaryCards = new ArrayList<>();
-
     ChatSceneController chatSceneController;
 
+    @FXML
+    private AnchorPane x;
     public GameSceneController(ClientGUIState state, Stage stage) {
         this.state = (GameGUIState) state;
         this.genericState=state;
@@ -148,8 +152,11 @@ public class GameSceneController extends GenericSceneController{
     @FXML
     public void initialize() {
         state.getServerHandler().setGameSceneController(this);
-
         numberPlayerInGame = state.getNumberOfPlayer();
+
+        scrollPane.getStyleClass().add("styles.css");
+        boardBackground.setImage(new Image(GameSceneController.class.getResourceAsStream("/graphicResources/backGround.jpeg")));
+        cardBackground.setImage(new Image(GameSceneController.class.getResourceAsStream("/graphicResources/backGround.jpeg")));
         // button and image event has to be declared here
         handCard1.setOnMouseClicked(mouseEvent -> chooseHandCard(0));
         handCard2.setOnMouseClicked(mouseEvent -> chooseHandCard(1));

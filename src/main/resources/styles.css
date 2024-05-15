@@ -1,3 +1,7 @@
-.button {
-    -fx-font-weight: bold;
+.scrollPane > .viewport {
+    -fx-background-color: transparent;
+}
+
+.scrollPane {
+    -fx-background-color: transparent;
 }
