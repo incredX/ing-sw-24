@@ -18,7 +18,7 @@
 | TUI                                       | :white_check_mark:      |
 | GUI                                       | 🚧 Work in Progress 🚧  |
 
-## Advanced Features
+## Advanced Feature Status
 | Feature     | Status             |
 |-------------|--------------------|
 | Chat        | :white_check_mark: |
