@@ -280,16 +280,23 @@ public class GameSceneController extends GenericSceneController{
                 normalDeckCard1.setDisable(true);
                 normalDeckCard2.setDisable(true);
                 normalDeckCard3.setDisable(true);
+                normalDeckCard1.setImage(null);
+                normalDeckCard2.setImage(null);
+                normalDeckCard3.setImage(null);
                 break;
             case 1:
                 normalDeckCard1.setDisable(bool);
                 normalDeckCard2.setDisable(true);
                 normalDeckCard3.setDisable(true);
+                normalDeckCard2.setImage(null);
+                normalDeckCard3.setImage(null);
                 break;
             case 2:
                 normalDeckCard1.setDisable(bool);
                 normalDeckCard2.setDisable(bool);
                 normalDeckCard3.setDisable(true);
+                normalDeckCard3.setImage(null);
+
                 break;
             default:
                 normalDeckCard1.setDisable(bool);
@@ -301,17 +308,21 @@ public class GameSceneController extends GenericSceneController{
             case 0:
                 goldenDeckCard1.setDisable(true);
                 goldenDeckCard2.setDisable(true);
-                goldenDeckCard3.setDisable(true);
+                goldenDeckCard2.setDisable(true);
+                goldenDeckCard3.setImage(null);
                 break;
             case 1:
                 goldenDeckCard1.setDisable(bool);
                 goldenDeckCard2.setDisable(true);
                 goldenDeckCard3.setDisable(true);
+                goldenDeckCard2.setImage(null);
+                goldenDeckCard3.setImage(null);
                 break;
             case 2:
                 goldenDeckCard1.setDisable(bool);
                 goldenDeckCard2.setDisable(bool);
                 goldenDeckCard3.setDisable(true);
+                goldenDeckCard3.setImage(null);
                 break;
             default:
                 goldenDeckCard1.setDisable(bool);

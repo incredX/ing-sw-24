@@ -118,7 +118,7 @@ public class GameGUIState extends ClientGUIState {
 
     public void execute() {
         PlacedCard placedCard = new PlacedCard(cardChooseToPlay, positionPlacedCard);
-        if (normalDeck.size()!=0 && goldenDeck.size()!=0 && isFinalTurn() == false) {
+        if ((normalDeck.size()!=0 || goldenDeck.size()!=0) && isFinalTurn() == false) {
             if (!this.deckType)
                 player.addCardToHand(normalDeck.get(indexCardDeck));
             else
