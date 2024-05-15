@@ -57,21 +57,29 @@ public class PopUps {
     }
 
 
-    public void lastPlayerLeft(Stage stage, ClientGUIState state) {
+    public void lastPlayerLeft(Stage stage, ClientGUIState state, GenericSceneController genericSceneController) {
 
         Alert alert = new Alert(Alert.AlertType.NONE);
 
-        ButtonType buttonType = new ButtonType("OK");
+        ButtonType quit = new ButtonType("QUIT");
+        ButtonType restart = new ButtonType("RESTART");
 
-        alert.getButtonTypes().setAll(buttonType);
+        alert.getButtonTypes().setAll(quit, restart);
 
         alert.setContentText("You are the only player left! Press OK to quit!");
 
         ButtonType result = alert.showAndWait().orElse(null);
 
-        if(result != null){
+        if(result.equals(quit)){
             state.shutdown();
             stage.close();
+        }
+        else if(result.equals(restart)) {
+            try {
+                genericSceneController.restart();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
