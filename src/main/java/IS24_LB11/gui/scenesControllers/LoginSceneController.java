@@ -101,12 +101,10 @@ public class LoginSceneController extends GenericSceneController{
     public void login(){
         String username = usernameTextField.getText();
         if (username.isEmpty()){
-            PopUps popUps = new PopUps();
             popUps.popUpMaker("Insert username please");
             return;
         }
         if (username.contains(" ")){
-            PopUps popUps = new PopUps();
             popUps.popUpMaker("No spaces allowed");
             return;
         }
@@ -118,7 +116,6 @@ public class LoginSceneController extends GenericSceneController{
     }
 
     public void setPlayers(){
-        PopUps popUps = new PopUps();
         state.setMaxPlayers(popUps.maxPlayersAlert());
     }
 
