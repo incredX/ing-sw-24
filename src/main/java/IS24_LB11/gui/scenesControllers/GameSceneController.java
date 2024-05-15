@@ -5,7 +5,6 @@ import IS24_LB11.game.PlacedCard;
 import IS24_LB11.game.components.PlayableCard;
 import IS24_LB11.game.utils.Position;
 import IS24_LB11.gui.ImageLoader;
-import IS24_LB11.gui.PopUps;
 import IS24_LB11.gui.phases.ClientGUIState;
 import IS24_LB11.gui.phases.GameGUIState;
 import javafx.application.Platform;
@@ -165,7 +164,6 @@ public class GameSceneController extends GenericSceneController{
         goldenDeckCard2.setOnMouseClicked(mouseEvent -> chooseDeckCard(1, true));
         goldenDeckCard3.setOnMouseClicked(mouseEvent -> chooseDeckCard(2, true));
 
-
         disableDecks(true);
 
         chatButton.setOnMouseClicked(mouseEvent -> showChat());
@@ -271,19 +269,19 @@ public class GameSceneController extends GenericSceneController{
     private void disableDecks(Boolean bool) {
         switch (state.getNormalDeck().size()){
             case 0:
-                normalDeckCard1.setDisable(false);
-                normalDeckCard2.setDisable(false);
-                normalDeckCard3.setDisable(false);
+                normalDeckCard1.setDisable(true);
+                normalDeckCard2.setDisable(true);
+                normalDeckCard3.setDisable(true);
                 break;
             case 1:
                 normalDeckCard1.setDisable(bool);
-                normalDeckCard2.setDisable(false);
-                normalDeckCard3.setDisable(false);
+                normalDeckCard2.setDisable(true);
+                normalDeckCard3.setDisable(true);
                 break;
             case 2:
                 normalDeckCard1.setDisable(bool);
                 normalDeckCard2.setDisable(bool);
-                normalDeckCard3.setDisable(false);
+                normalDeckCard3.setDisable(true);
                 break;
             default:
                 normalDeckCard1.setDisable(bool);
@@ -293,19 +291,19 @@ public class GameSceneController extends GenericSceneController{
         }
         switch (state.getGoldenDeck().size()){
             case 0:
-                goldenDeckCard1.setDisable(false);
-                goldenDeckCard2.setDisable(false);
-                goldenDeckCard3.setDisable(false);
+                goldenDeckCard1.setDisable(true);
+                goldenDeckCard2.setDisable(true);
+                goldenDeckCard3.setDisable(true);
                 break;
             case 1:
                 goldenDeckCard1.setDisable(bool);
-                goldenDeckCard2.setDisable(false);
-                goldenDeckCard3.setDisable(false);
+                goldenDeckCard2.setDisable(true);
+                goldenDeckCard3.setDisable(true);
                 break;
             case 2:
                 goldenDeckCard1.setDisable(bool);
                 goldenDeckCard2.setDisable(bool);
-                goldenDeckCard3.setDisable(false);
+                goldenDeckCard3.setDisable(true);
                 break;
             default:
                 goldenDeckCard1.setDisable(bool);
@@ -432,12 +430,14 @@ public class GameSceneController extends GenericSceneController{
     }
 
     public void chooseDeckCard(int n, boolean deckType) {
-        if (deckType)
-            state.chooseCardToDraw(state.getGoldenDeck().get(n), n, deckType);
-        else
-            state.chooseCardToDraw(state.getNormalDeck().get(n), n, deckType);
-        state.execute();
-        updateHand();
+        if(state.getPlayer().getHand().size()<3) {
+            if (deckType)
+                state.chooseCardToDraw(state.getGoldenDeck().get(n), n, deckType);
+            else
+                state.chooseCardToDraw(state.getNormalDeck().get(n), n, deckType);
+            state.execute();
+            updateHand();
+        }
     }
 
     public GameGUIState getState() {

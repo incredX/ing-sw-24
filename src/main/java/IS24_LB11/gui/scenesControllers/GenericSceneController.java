@@ -34,6 +34,6 @@ public class GenericSceneController {
         genericState.getClientGUI().start(stage);
     }
     public void showExitNotification(String s) {
-        popUps.lastPlayerLeft(stage,genericState);
+        popUps.lastPlayerLeft(stage,genericState, this);
     }
 }
