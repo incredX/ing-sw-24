@@ -118,7 +118,7 @@ public class GameSceneController extends GenericSceneController{
         this.state = (GameGUIState) state;
         this.genericState=state;
         this.stage = stage;
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/GamePageBackup.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/GamePage.fxml"));
         loader.setController(this);
 
         this.stage.setTitle("Codex");

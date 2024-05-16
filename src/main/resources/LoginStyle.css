@@ -4,16 +4,6 @@
     -fx-secondary : #412911;
 }
 
-
-.scrollPane > .viewport {
-    -fx-background-color: transparent;
-}
-
-.scrollPane {
-    -fx-background-color: transparent;
-}
-
-
 .root {
     -fx-background-color: -fx-primary;
 }
