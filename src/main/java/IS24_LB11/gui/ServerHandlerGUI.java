@@ -194,6 +194,11 @@ public class ServerHandlerGUI implements Runnable{
             }
             else{
                 addMessage("<Server> " + serverEvent.get("message").getAsString());
+                if (gameSceneController == (null))
+                    Platform.runLater(()->setupSceneController.chatDisplay());
+                else {
+                    Platform.runLater(() -> gameSceneController.chatDisplay());
+                }
                 if(serverEvent.get("message").getAsString().equals("It is your FINAL turn"))
                     Platform.runLater(()-> gameSceneController.setFinalTurn());
 

@@ -89,14 +89,14 @@ public class GenericSceneController {
         }
     }
 
-    protected void chatHide() {
+    public void chatHide() {
         chatBox.setPrefWidth(chatBox.getMinWidth());
         chatBox.setPrefHeight(chatBox.getMinHeight());
         chatBox.setLayoutX(10);
         chatBox.setLayoutY(600);
         messageBox.setText("");
     }
-    protected void chatDisplay() {
+    public void chatDisplay() {
         chatBox.setPrefWidth(chatBox.getMaxWidth());
         chatBox.setPrefHeight(chatBox.getMaxHeight());
         chatBox.setLayoutX(10);
@@ -115,6 +115,6 @@ public class GenericSceneController {
         }
     }
     public void clearChat(){
-        chatPane.getItems().removeAll();
+        chatPane.getItems().clear();
     }
 }
