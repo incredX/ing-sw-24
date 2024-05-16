@@ -104,12 +104,12 @@ public class ServerHandlerGUI implements Runnable{
         if (serverEvent.has("to") && serverEvent.has("from") && serverEvent.has("message")){
             String msg="<" + serverEvent.get("from").getAsString() + "> " + serverEvent.get("message").getAsString();
             if(!(setupSceneController==null)) {
-                Platform.runLater(() -> setupSceneController.showPopUpNotification("new Message!!"));
+                //Platform.runLater(() -> setupSceneController.showPopUpNotification("new Message!!"));
                 Platform.runLater(() -> setupSceneController.addMessage(msg));
 
             }
             else{
-                Platform.runLater(() -> gameSceneController.showPopUpNotification("new Message!!"));
+                //Platform.runLater(() -> gameSceneController.showPopUpNotification("new Message!!"));
                 Platform.runLater(() -> gameSceneController.addMessage(msg));
             }
         }
@@ -165,7 +165,6 @@ public class ServerHandlerGUI implements Runnable{
         }
     }
     private void handleNotificationEvent(JsonObject serverEvent){
-        // TODO: write better code
         if (serverEvent.has("message")){
             if(serverEvent.get("message").getAsString().equals("Welcome " + actualState.getUsername() + "!")){
                 Platform.runLater(()-> loginSceneController.disableLogin());
@@ -176,13 +175,21 @@ public class ServerHandlerGUI implements Runnable{
                 Platform.runLater(() -> loginSceneController.setPlayers());
             }
             else{
-                Platform.runLater(() -> loginSceneController.showPopUpNotification(serverEvent.get("message").getAsString()));
+                addMessage("<Server> " + serverEvent.get("message").getAsString());
                 if(serverEvent.get("message").getAsString().equals("It is your FINAL turn"))
                     Platform.runLater(()-> gameSceneController.setFinalTurn());
 
             }
 
         }
+    }
+    private void addMessage(String msg){
+        if (gameSceneController!=null)
+            Platform.runLater(() -> gameSceneController.addMessage(msg));
+        else if (setupSceneController!=null)
+            Platform.runLater(() -> setupSceneController.addMessage(msg));
+        else
+            Platform.runLater(() -> loginSceneController.addMessage(msg));
     }
     private void heartBeatEvent(JsonObject serverEvent){
         JsonObject message= new JsonObject();

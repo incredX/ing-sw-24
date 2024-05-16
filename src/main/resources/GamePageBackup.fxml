@@ -312,7 +312,6 @@
                                           <DropShadow />
                                        </effect>
                                     </ImageView>
-                                    <Button fx:id="chatButton" layoutX="127.0" layoutY="530.0" mnemonicParsing="false" text="Button" />
                                  </children></AnchorPane>
                             <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="686.5" prefWidth="303.0">
                                  <children>
@@ -370,7 +369,7 @@
             </Tab>
         </tabs>
       </TabPane>
-      <BorderPane fx:id="chatBox" layoutX="10.0" layoutY="600.0" maxHeight="400.0" maxWidth="300.0" minHeight="100.0" minWidth="160.0" prefHeight="100.0" prefWidth="160.0">
+      <BorderPane fx:id="chatBox" layoutX="10.0" layoutY="600.0" maxHeight="400.0" maxWidth="300.0" minHeight="100.0" minWidth="250.0" prefHeight="100.0" prefWidth="250.0">
          <center>
             <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                <children>
@@ -381,7 +380,7 @@
                   </ScrollPane>
                   <HBox fx:id="chatBoxLower" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="100.0" VBox.vgrow="NEVER">
                      <children>
-                        <TextArea fx:id="messageBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="100.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="16.0" prefWidth="698.0" promptText="Enter Message..." scaleShape="false" HBox.hgrow="ALWAYS">
+                        <TextArea fx:id="messageBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="100.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="16.0" prefWidth="698.0" promptText="Type help for commands..." scaleShape="false" HBox.hgrow="ALWAYS">
                            <font>
                               <Font name="SansSerif Regular" size="14.0" />
                            </font>

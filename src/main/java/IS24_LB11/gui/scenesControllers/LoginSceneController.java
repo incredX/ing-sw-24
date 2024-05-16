@@ -4,16 +4,13 @@ package IS24_LB11.gui.scenesControllers;
 import IS24_LB11.game.PlayerSetup;
 import IS24_LB11.game.components.GoalCard;
 import IS24_LB11.game.components.PlayableCard;
-import IS24_LB11.gui.PopUps;
 import IS24_LB11.gui.phases.ClientGUIState;
 import IS24_LB11.gui.phases.LoginGUIState;
 import IS24_LB11.gui.phases.SetupGUIState;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
@@ -86,8 +83,8 @@ public class LoginSceneController extends GenericSceneController{
                                    ArrayList<PlayableCard> goldenDeck,
                                    ArrayList<String> playerNames){
         SetupSceneController setupSceneController = new SetupSceneController(new SetupGUIState(state),stage);
+        setupSceneController.updateChat(this.chat.getMessages());
         setupSceneController.state.initialize(playerSetup,publicGoals,normalDeck,goldenDeck,playerNames);
-        //stage.close();
         setupSceneController.showStage();
     }
 

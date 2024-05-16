@@ -9,6 +9,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+import java.util.ArrayList;
+
 public class GenericSceneController {
     Chat chat = new Chat();
     @FXML
@@ -99,5 +101,11 @@ public class GenericSceneController {
         Text text = new Text(msg);
         chatPane.getItems().add(text);
         chat.addMessage(text);
+    }
+    public void updateChat(ArrayList<Text> messages) {
+        for(Text text:messages) {
+            chatPane.getItems().add(text);
+            chat.addMessage(text);
+        }
     }
 }

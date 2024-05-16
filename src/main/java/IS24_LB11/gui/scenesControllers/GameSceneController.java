@@ -15,7 +15,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
@@ -87,8 +86,7 @@ public class GameSceneController extends GenericSceneController{
     private Text playerName4;
     @FXML
     private Text playerScore4;
-    @FXML
-    private Button chatButton;
+
     @FXML
     private Button flipHandCard1;
     @FXML
@@ -104,7 +102,6 @@ public class GameSceneController extends GenericSceneController{
     private ImageView cardBackground;
     @FXML
     private ImageView boardBackground;
-    Stage chatStage = new Stage();
     GameGUIState state;
     int numberPlayerInGame;
     private final int centerBoardX = 10000;
@@ -114,8 +111,6 @@ public class GameSceneController extends GenericSceneController{
     private final int cardCornerX = 70;
     private final int cardCornerY = 84;
     private ArrayList<ImageView> availableSpotsTemporaryCards = new ArrayList<>();
-    @FXML
-    private AnchorPane x;
     public GameSceneController(ClientGUIState state, Stage stage) {
         this.state = (GameGUIState) state;
         this.genericState=state;
@@ -161,7 +156,6 @@ public class GameSceneController extends GenericSceneController{
 
         disableDecks(true);
 
-        chatButton.setOnMouseClicked(mouseEvent -> showChat());
         chatBox.setOnMouseEntered(mouseEvent -> chatDisplay());
         chatBox.setOnMouseExited(mouseEvent -> chatHide());
         buttonSend.setOnMouseClicked(mouseEvent -> send());
@@ -186,9 +180,6 @@ public class GameSceneController extends GenericSceneController{
     }
 
 
-    private void showChat() {
-        chatStage.show();
-    }
 
     private void hideInitialPawns() {
         if (numberPlayerInGame <= 3)
@@ -604,8 +595,5 @@ public class GameSceneController extends GenericSceneController{
         state.setIsFinalTurn(true);
     }
 
-    public void updateChat(ArrayList<Text> messages) {
-        for(Text text:messages)
-            chatPane.getItems().add(text);
-    }
+
 }

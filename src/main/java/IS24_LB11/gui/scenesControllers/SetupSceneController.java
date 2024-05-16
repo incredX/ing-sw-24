@@ -1,7 +1,6 @@
 package IS24_LB11.gui.scenesControllers;
 
 import IS24_LB11.gui.ImageLoader;
-import IS24_LB11.gui.PopUps;
 import IS24_LB11.gui.phases.ClientGUIState;
 import IS24_LB11.gui.phases.GameGUIState;
 import IS24_LB11.gui.phases.SetupGUIState;
@@ -74,6 +73,7 @@ public class SetupSceneController extends GenericSceneController{
     public void changeToGameState(){
         GameSceneController gameSceneController = new GameSceneController(new GameGUIState(state),stage);
         gameSceneController.updateChat(this.chat.getMessages());
+        System.out.println(this.chat.getMessages());
         gameSceneController.showStage();
     }
     public void showStage() {
