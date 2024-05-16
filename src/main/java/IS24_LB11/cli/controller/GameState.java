@@ -35,6 +35,7 @@ import static IS24_LB11.cli.notification.Priority.MEDIUM;
 //NOTE : URGENT PRIORITY
 //NOTE : HIGH PRIORITY
 //NOTE : MEDIUM PRIORITY
+//TODO : remove debugger
 //NOTE : LOW PRIORITY
 //TODO : sowly remove resize from viewhub and assign to notification their views to resize
 //TODO : refactor viewhub as a cliBox's queue consumer. (maybe?)

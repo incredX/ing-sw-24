@@ -22,6 +22,7 @@ public class ChatPopup extends Popup {
     public ChatPopup(ViewHub viewhub, ClientState state) {
         super(viewhub, new ChatView(viewhub.getScreenSize()));
         this.state = state;
+        this.overlap = true;
         chats.put("", new JsonArray());
     }
 
