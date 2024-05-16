@@ -1,5 +1,6 @@
 package IS24_LB11.gui.phases;
 
+import IS24_LB11.gui.ClientGUI;
 import IS24_LB11.gui.InputHandlerGUI;
 import IS24_LB11.gui.ServerHandlerGUI;
 import IS24_LB11.gui.scenesControllers.LoginSceneController;
@@ -12,11 +13,12 @@ public class LoginGUIState extends ClientGUIState implements PlayerStateInterfac
     int serverPort;
 
     LoginSceneController loginSceneController;
-    public LoginGUIState(){
+    public LoginGUIState(ClientGUI clientGUI){
         this.serverHandler = null;
         this.inputHandlerGUI = null;
         this.username = null;
         this.loginSceneController=null;
+        this.clientGUI=clientGUI;
     }
 
     public void initialize(String username, String serverIp, int serverPort) {

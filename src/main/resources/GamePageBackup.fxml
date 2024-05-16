@@ -1,24 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.effect.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <TabPane prefHeight="720.0" prefWidth="1280.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <TabPane prefHeight="720.0" prefWidth="1280.0" styleClass="playerBoard" stylesheets="@styles.css" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <tabs>
           <Tab text="Board">
             <content>
-              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" style="-fx-background-color: transparent;" fx:id="x">
                      <children>
-                        <SplitPane dividerPositions="0.76" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="688.5" prefWidth="1280.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                         <ImageView fx:id="boardBackground" fitHeight="686.5" fitWidth="968.0" pickOnBounds="true" />
+                         <ImageView fx:id="cardBackground" fitHeight="690.0" fitWidth="303.0" layoutX="980.0" pickOnBounds="true" preserveRatio="true" />
+                        <SplitPane dividerPositions="0.7" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="688.5" prefWidth="1280.0" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                           <items>
-                              <ScrollPane fx:id="scrollPane" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="686.5" prefWidth="968.0">
+                              <ScrollPane fx:id="scrollPane" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="686.5" prefWidth="968.0" styleClass="scrollPane" stylesheets="@styles.css">
                                  <content>
-                                    <Pane fx:id="playerBoard" minHeight="20000.0" minWidth="20000.0" />
+                                    <Pane fx:id="playerBoard" minHeight="20000.0" minWidth="20000.0" style="-fx-background-color: transparent;" stylesheets="@styles.css" />
                                  </content>
                               </ScrollPane>
                             <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="686.5" prefWidth="303.0">
@@ -31,42 +49,48 @@
                                                    <children>
                                                       <SplitPane dividerPositions="0.333333333333, 0.666666666666" maxHeight="-Infinity" maxWidth="-Infinity" orientation="VERTICAL" prefHeight="655.0" prefWidth="303.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                         <items>
-                                                          <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="214.0" prefWidth="301.0">
+                                                            <StackPane prefHeight="214.0" prefWidth="301.0">
                                                                <children>
                                                                   <ImageView fx:id="handCard1" fitHeight="210.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" x="0.5" y="3.5">
-                                                                     <image>
-                                                                        <Image url="@graphicResources/codexCards/croppedCards/croppedFront/normalFront/_EFEFF1.jpg" />
-                                                                     </image>
                                                                      <effect>
                                                                         <DropShadow />
                                                                      </effect>
                                                                   </ImageView>
+                                                                  <Button fx:id="flipHandCard1" mnemonicParsing="false" prefHeight="17.0" prefWidth="42.0" text="Flip" StackPane.alignment="TOP_RIGHT">
+                                                                     <font>
+                                                                        <Font size="10.0" />
+                                                                     </font>
+                                                                  </Button>
                                                                </children>
-                                                            </AnchorPane>
-                                                          <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="211.0" prefWidth="301.0">
+                                                            </StackPane>
+                                                            <StackPane prefHeight="211.0" prefWidth="301.0">
                                                                <children>
                                                                   <ImageView fx:id="handCard2" fitHeight="210.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" x="0.5" y="3.5">
-                                                                     <image>
-                                                                        <Image url="@graphicResources/codexCards/croppedCards/croppedFront/normalFront/_IQPPF0.jpg" />
-                                                                     </image>
                                                                      <effect>
                                                                         <DropShadow />
                                                                      </effect>
                                                                   </ImageView>
+                                                                  <Button fx:id="flipHandCard2" mnemonicParsing="false" prefHeight="17.0" prefWidth="42.0" text="Flip" StackPane.alignment="TOP_RIGHT">
+                                                                     <font>
+                                                                        <Font size="10.0" />
+                                                                     </font>
+                                                                  </Button>
                                                                </children>
-                                                            </AnchorPane>
-                                                            <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="214.0" prefWidth="301.0">
+                                                            </StackPane>
+                                                            <StackPane prefHeight="214.0" prefWidth="301.0">
                                                                <children>
                                                                   <ImageView fx:id="handCard3" fitHeight="210.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" x="0.5" y="3.5">
-                                                                     <image>
-                                                                        <Image url="@graphicResources/codexCards/croppedCards/croppedFront/goldenFront/E_E_FF5_FFFFF.jpg" />
-                                                                     </image>
                                                                      <effect>
                                                                         <DropShadow />
                                                                      </effect>
                                                                   </ImageView>
+                                                                  <Button fx:id="flipHandCard3" mnemonicParsing="false" prefHeight="17.0" prefWidth="42.0" text="Flip" StackPane.alignment="TOP_RIGHT">
+                                                                     <font>
+                                                                        <Font size="10.0" />
+                                                                     </font>
+                                                                  </Button>
                                                                </children>
-                                                            </AnchorPane>
+                                                            </StackPane>
                                                         </items>
                                                       </SplitPane>
                                                    </children>
@@ -82,9 +106,6 @@
                                                           <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="214.0" prefWidth="301.0">
                                                                <children>
                                                                   <ImageView fx:id="normalDeckCard1" fitHeight="210.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" x="0.5" y="3.5">
-                                                                     <image>
-                                                                        <Image url="@graphicResources/codexCards/croppedCards/croppedFront/normalFront/_IEEIF1.jpg" />
-                                                                     </image>
                                                                      <effect>
                                                                         <DropShadow />
                                                                      </effect>
@@ -94,9 +115,6 @@
                                                           <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="211.0" prefWidth="301.0">
                                                                <children>
                                                                   <ImageView fx:id="normalDeckCard2" fitHeight="210.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" x="0.5" y="3.5">
-                                                                     <image>
-                                                                        <Image url="@graphicResources/codexCards/croppedCards/croppedFront/normalFront/_EAAAF0.jpg" />
-                                                                     </image>
                                                                      <effect>
                                                                         <DropShadow />
                                                                      </effect>
@@ -106,9 +124,6 @@
                                                             <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="214.0" prefWidth="301.0">
                                                                <children>
                                                                   <ImageView fx:id="normalDeckCard3" fitHeight="210.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" x="0.5" y="3.5">
-                                                                     <image>
-                                                                        <Image url="@graphicResources/codexCards/croppedCards/croppedBack/NPB.jpg" />
-                                                                     </image>
                                                                      <effect>
                                                                         <DropShadow />
                                                                      </effect>
@@ -130,9 +145,6 @@
                                                           <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="214.0" prefWidth="301.0">
                                                                <children>
                                                                   <ImageView fx:id="goldenDeckCard1" fitHeight="210.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" x="0.5" y="3.5">
-                                                                     <image>
-                                                                        <Image url="@graphicResources/codexCards/croppedCards/croppedFront/goldenFront/_K_EPF3_PPP__.jpg" />
-                                                                     </image>
                                                                      <effect>
                                                                         <DropShadow />
                                                                      </effect>
@@ -142,9 +154,6 @@
                                                           <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="211.0" prefWidth="301.0">
                                                                <children>
                                                                   <ImageView fx:id="goldenDeckCard2" fitHeight="210.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" x="0.5" y="3.5">
-                                                                     <image>
-                                                                        <Image url="@graphicResources/codexCards/croppedCards/croppedFront/goldenFront/QE__FF3_FFF__.jpg" />
-                                                                     </image>
                                                                      <effect>
                                                                         <DropShadow />
                                                                      </effect>
@@ -154,9 +163,6 @@
                                                             <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="214.0" prefWidth="301.0">
                                                                <children>
                                                                   <ImageView fx:id="goldenDeckCard3" fitHeight="210.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" x="0.5" y="3.5">
-                                                                     <image>
-                                                                        <Image url="@graphicResources/codexCards/croppedCards/croppedBack/GFB.jpg" />
-                                                                     </image>
                                                                      <effect>
                                                                         <DropShadow />
                                                                      </effect>
@@ -306,7 +312,6 @@
                                           <DropShadow />
                                        </effect>
                                     </ImageView>
-                                    <Button fx:id="chatButton" layoutX="127.0" layoutY="530.0" mnemonicParsing="false" text="Button" />
                                  </children></AnchorPane>
                             <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="686.5" prefWidth="303.0">
                                  <children>
@@ -320,9 +325,6 @@
                                                    </font>
                                                 </Text>
                                                 <ImageView fx:id="goalCard1" fitHeight="195.0" fitWidth="295.0" pickOnBounds="true" preserveRatio="true" x="9.0" y="24.0">
-                                                   <image>
-                                                      <Image url="@graphicResources/codexCards/croppedCards/croppedFront/goalFront/O2FFF.jpg" />
-                                                   </image>
                                                    <effect>
                                                       <DropShadow />
                                                    </effect>
@@ -337,9 +339,6 @@
                                                    </font>
                                                 </Text>
                                                 <ImageView fx:id="goalCard2" fitHeight="195.0" fitWidth="295.0" pickOnBounds="true" preserveRatio="true" x="9.0" y="24.0">
-                                                   <image>
-                                                      <Image url="@graphicResources/codexCards/croppedCards/croppedFront/goalFront/O3AIIL0.jpg" />
-                                                   </image>
                                                    <effect>
                                                       <DropShadow />
                                                    </effect>
@@ -354,9 +353,6 @@
                                                    </font>
                                                 </Text>
                                                 <ImageView fx:id="privateGoalCard" fitHeight="195.0" fitWidth="295.0" pickOnBounds="true" preserveRatio="true" x="9.0" y="24.0">
-                                                   <image>
-                                                      <Image url="@graphicResources/codexCards/croppedCards/croppedFront/goalFront/O3QKM.jpg" />
-                                                   </image>
                                                    <effect>
                                                       <DropShadow />
                                                    </effect>
@@ -373,5 +369,31 @@
             </Tab>
         </tabs>
       </TabPane>
+      <BorderPane fx:id="chatBox" layoutX="10.0" layoutY="600.0" maxHeight="400.0" maxWidth="300.0" minHeight="100.0" minWidth="250.0" prefHeight="100.0" prefWidth="250.0">
+         <center>
+            <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+               <children>
+                  <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefHeight="496.0" vbarPolicy="ALWAYS" vmin="1.0" vvalue="1.0" VBox.vgrow="ALWAYS">
+                     <content>
+                        <ListView fx:id="chatPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="200.0" />
+                     </content>
+                  </ScrollPane>
+                  <HBox fx:id="chatBoxLower" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="100.0" VBox.vgrow="NEVER">
+                     <children>
+                        <TextArea fx:id="messageBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="100.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="16.0" prefWidth="698.0" promptText="Type help for commands..." scaleShape="false" HBox.hgrow="ALWAYS">
+                           <font>
+                              <Font name="SansSerif Regular" size="14.0" />
+                           </font>
+                        </TextArea>
+                        <Button fx:id="buttonSend" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="43.0" prefWidth="60.0" scaleShape="false" text="Send" textAlignment="CENTER" HBox.hgrow="NEVER" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+         </center>
+         <left>
+            <VBox maxHeight="1.7976931348623157E308" BorderPane.alignment="CENTER" />
+         </left>
+      </BorderPane>
    </children>
 </AnchorPane>

@@ -15,7 +15,7 @@ public class ClientGUI extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        this.state = new LoginGUIState();
+        this.state = new LoginGUIState(this);
 
         LoginSceneController loginSceneController = new LoginSceneController(this.state);
 

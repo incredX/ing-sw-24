@@ -16,7 +16,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-public class SetupSceneController {
+public class SetupSceneController extends GenericSceneController{
     @FXML
     private ImageView goalCard1;
 
@@ -30,11 +30,12 @@ public class SetupSceneController {
     @FXML
     private Button readyButton;
 
-    Stage stage;
+
     SetupGUIState state;
 
     public SetupSceneController(ClientGUIState state, Stage stage){
         this.state=(SetupGUIState) state;
+        this.genericState=state;
         this.stage=stage;
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/SetupPage.fxml"));
         loader.setController(this);
@@ -61,11 +62,18 @@ public class SetupSceneController {
         flipButton.setOnAction(event -> flipStarterCard());
         state.getServerHandler().setSetupSceneController(this);
         System.out.println("Setup initialized");
+
+        chatBox.setOnMouseEntered(mouseEvent -> chatDisplay());
+        chatBox.setOnMouseExited(mouseEvent -> chatHide());
+        buttonSend.setOnMouseClicked(mouseEvent -> send());
+        chatHide();
+
     }
 
     public void changeToGameState(){
         GameSceneController gameSceneController = new GameSceneController(new GameGUIState(state),stage);
-        stage.close();
+        gameSceneController.updateChat(this.chat.getMessages());
+        System.out.println(this.chat.getMessages());
         gameSceneController.showStage();
     }
     public void showStage() {
@@ -125,4 +133,7 @@ public class SetupSceneController {
     public void removePlayer(String playerDisconnected) {
         state.removePlayer(playerDisconnected);
     }
+
+
+
 }

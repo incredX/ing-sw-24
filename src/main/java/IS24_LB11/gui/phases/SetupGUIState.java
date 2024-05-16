@@ -3,6 +3,7 @@ package IS24_LB11.gui.phases;
 import IS24_LB11.game.PlayerSetup;
 import IS24_LB11.game.components.*;
 import IS24_LB11.game.utils.Color;
+import IS24_LB11.gui.ClientGUI;
 import IS24_LB11.gui.scenesControllers.SetupSceneController;
 
 import java.util.ArrayList;
@@ -24,6 +25,7 @@ public class SetupGUIState extends ClientGUIState {
         this.username = prevState.getUsername();
         this.inputHandlerGUI = prevState.inputHandlerGUI;
         this.setupSceneController = null;
+        this.clientGUI=prevState.getClientGUI();
     }
 
     public void initialize(PlayerSetup playerSetup,

@@ -6,7 +6,6 @@ import IS24_LB11.game.tools.JsonConverter;
 import IS24_LB11.game.tools.JsonException;
 import IS24_LB11.game.utils.SyntaxException;
 import IS24_LB11.gui.phases.ClientGUIState;
-import IS24_LB11.gui.scenesControllers.ChatSceneController;
 import IS24_LB11.gui.scenesControllers.GameSceneController;
 import IS24_LB11.gui.scenesControllers.LoginSceneController;
 import IS24_LB11.gui.scenesControllers.SetupSceneController;
@@ -23,6 +22,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 
 public class ServerHandlerGUI implements Runnable{
+    private long lastHeartbeatTime=0;
     private Socket socket;
     private JsonStreamParser parser;
     private PrintWriter writer;
@@ -30,9 +30,8 @@ public class ServerHandlerGUI implements Runnable{
     private boolean running = true;
     private boolean gameTurnStateStarted = false;
     private LoginSceneController loginSceneController;
-    private SetupSceneController setupSceneController;
+    private SetupSceneController setupSceneController = null;
     private GameSceneController gameSceneController = null;
-    private ChatSceneController chatSceneController = null;
 
     public ServerHandlerGUI(ClientGUIState clientGUIState, String serverIP, int serverPORT) throws IOException {
         socket = new Socket(serverIP, serverPORT);
@@ -46,20 +45,31 @@ public class ServerHandlerGUI implements Runnable{
         while (running) {
             if (socket.isClosed()) break;
             try {
-                synchronized (parser) {
-                    parser.wait(10);
+                while (!parser.hasNext()) {
+                    if (System.currentTimeMillis()-lastHeartbeatTime > 3000 && lastHeartbeatTime != 0) {
+                        if (gameSceneController != null) {
+                            Platform.runLater(() -> gameSceneController.showPopUpRestartGame());
+                        }
+                        else if (setupSceneController != null) {
+                            Platform.runLater(() -> setupSceneController.showPopUpRestartGame());
+                        }
+                        else {
+                            Platform.runLater(() -> loginSceneController.showPopUpRestartGame());
+                        }
+                        running=false;
+                        break;
+                    }
                 }
-                if (parser.hasNext()) {
+                if (parser.hasNext())
                     processEvent(parser.next().getAsJsonObject());
-                }
-            } catch (InterruptedException | JsonIOException e) {
-
+            } catch (JsonIOException e) {
             }
         }
         Thread.currentThread().interrupt();
     }
 
     private void processEvent(JsonObject serverEvent) {
+        System.out.println(serverEvent);
         if (serverEvent.has("type")) {
             switch (serverEvent.get("type").getAsString().toLowerCase()){
                 case "setusername":
@@ -92,12 +102,15 @@ public class ServerHandlerGUI implements Runnable{
 
     private void handleMessageEvent(JsonObject serverEvent) {
         if (serverEvent.has("to") && serverEvent.has("from") && serverEvent.has("message")){
-            actualState.addMessages(serverEvent.get("from").getAsString(),serverEvent.get("message").getAsString());
-            if(!(gameSceneController==null))
-                Platform.runLater(() -> gameSceneController.showPopUpNotification("new Message!!"));
-            if (!(chatSceneController==null)) {
-                String msg="<" + serverEvent.get("from").getAsString() + "> " + serverEvent.get("message").getAsString();
-                Platform.runLater(() -> chatSceneController.addToChat(msg));
+            String msg="<" + serverEvent.get("from").getAsString() + "> " + serverEvent.get("message").getAsString();
+            if(!(setupSceneController==null)) {
+                //Platform.runLater(() -> setupSceneController.showPopUpNotification("new Message!!"));
+                Platform.runLater(() -> setupSceneController.addMessage(msg));
+
+            }
+            else{
+                //Platform.runLater(() -> gameSceneController.showPopUpNotification("new Message!!"));
+                Platform.runLater(() -> gameSceneController.addMessage(msg));
             }
         }
     }
@@ -108,28 +121,42 @@ public class ServerHandlerGUI implements Runnable{
             Platform.runLater(()->setupSceneController.removePlayer(playerDisconnected));
         else {
             Platform.runLater(() -> gameSceneController.removePlayer(playerDisconnected));
-            //TODO: popup that alert u you are alone
-            if (gameSceneController.getState().getNumberOfPlayer()==1);
-            //Platform.runLater();
         }
     }
 
     private void handleTurnEvent(JsonObject serverEvent) {
         String currentPlayerTurn = serverEvent.get("player").getAsString();
-
         JsonArray playersScores = serverEvent.get("scores").getAsJsonArray();
         ArrayList<Integer> playerScores = extractIntegerArray(playersScores,playersScores.size());
 
-        JsonArray normalDeckString = serverEvent.get("normalDeck").getAsJsonArray();
-        JsonArray goldenDeckString = serverEvent.get("goldenDeck").getAsJsonArray();
-        ArrayList<PlayableCard> normalDeck = (ArrayList<PlayableCard>) extractCardArray(normalDeckString,3);
-        ArrayList<PlayableCard> goldenDeck = (ArrayList<PlayableCard>) extractCardArray(goldenDeckString,3);
-
-        if (!gameTurnStateStarted){
-            gameTurnStateStarted=true;
-            Platform.runLater(()->setupSceneController.changeToGameState());
+        if (currentPlayerTurn.equals("")) {
+            if (serverEvent.has("gameFinished")) {
+                Platform.runLater(()->gameSceneController.updateGame(playerScores));
+                Platform.runLater(() -> gameSceneController.showPopUpNotification("The game is finished, check scoreboard for the winner"));
+                Platform.runLater(() -> gameSceneController.disableAllCardInputs(true));
+            } else {
+                if (gameSceneController == null) {
+                    Platform.runLater(() -> setupSceneController.showExitNotification("You are the only player connected to the server"));
+                    return;
+                }
+                Platform.runLater(() -> gameSceneController.showExitNotification("You are the only player connected to the server"));
+            }
         }
-        Platform.runLater(()->gameSceneController.updateGame(currentPlayerTurn,playerScores,normalDeck,goldenDeck));
+        else{
+
+            JsonArray normalDeckString = serverEvent.get("normalDeck").getAsJsonArray();
+            JsonArray goldenDeckString = serverEvent.get("goldenDeck").getAsJsonArray();
+            ArrayList<PlayableCard> normalDeck = (ArrayList<PlayableCard>) extractCardArray(normalDeckString, normalDeckString.size());
+            ArrayList<PlayableCard> goldenDeck = (ArrayList<PlayableCard>) extractCardArray(goldenDeckString,goldenDeckString.size());
+
+            if (!gameTurnStateStarted){
+                gameTurnStateStarted=true;
+                Platform.runLater(()->setupSceneController.changeToGameState());
+            }
+            Platform.runLater(()->gameSceneController.updateGame(currentPlayerTurn,playerScores,normalDeck,goldenDeck));
+        }
+
+
     }
 
     private void handleLoginEvent(JsonObject serverEvent){
@@ -138,27 +165,37 @@ public class ServerHandlerGUI implements Runnable{
         }
     }
     private void handleNotificationEvent(JsonObject serverEvent){
-        // TODO: write better code
         if (serverEvent.has("message")){
             if(serverEvent.get("message").getAsString().equals("Welcome " + actualState.getUsername() + "!")){
                 Platform.runLater(()-> loginSceneController.disableLogin());
             }
-            if (serverEvent.get("message").getAsString().equals("Welcome, please log in"))
+            else if (serverEvent.get("message").getAsString().equals("Welcome, please log in"))
                 return;
-            if (serverEvent.get("message").getAsString().equals("Please set max number of players")){
+            else if (serverEvent.get("message").getAsString().equals("Please set max number of players")){
                 Platform.runLater(() -> loginSceneController.setPlayers());
             }
             else{
-                Platform.runLater(() -> loginSceneController.showPopUpNotification(serverEvent.get("message").getAsString()));
+                addMessage("<Server> " + serverEvent.get("message").getAsString());
+                if(serverEvent.get("message").getAsString().equals("It is your FINAL turn"))
+                    Platform.runLater(()-> gameSceneController.setFinalTurn());
+
             }
 
         }
+    }
+    private void addMessage(String msg){
+        if (gameSceneController!=null)
+            Platform.runLater(() -> gameSceneController.addMessage(msg));
+        else if (setupSceneController!=null)
+            Platform.runLater(() -> setupSceneController.addMessage(msg));
+        else
+            Platform.runLater(() -> loginSceneController.addMessage(msg));
     }
     private void heartBeatEvent(JsonObject serverEvent){
         JsonObject message= new JsonObject();
         message.addProperty("type","heartbeat");
         write(message);
-        //TODO: handle heartbeat client-side
+        lastHeartbeatTime=System.currentTimeMillis();
     }
 
     private void handleSetupEvent(JsonObject serverEvent) {
@@ -171,8 +208,8 @@ public class ServerHandlerGUI implements Runnable{
             JsonArray playerNamesString = serverEvent.get("playerNames").getAsJsonArray();
 
             ArrayList<GoalCard> publicGoals = (ArrayList<GoalCard>) extractGoalArray(publicGoalsString,2);
-            ArrayList<PlayableCard> normalDeck = (ArrayList<PlayableCard>) extractCardArray(normalDeckString,3);
-            ArrayList<PlayableCard> goldenDeck = (ArrayList<PlayableCard>) extractCardArray(goldenDeckString,3);
+            ArrayList<PlayableCard> normalDeck = (ArrayList<PlayableCard>) extractCardArray(normalDeckString, normalDeckString.size());
+            ArrayList<PlayableCard> goldenDeck = (ArrayList<PlayableCard>) extractCardArray(goldenDeckString, goldenDeckString.size());
             ArrayList<String> playerNames = extractStringArray(playerNamesString,playerNamesString.size());
 
             Platform.runLater(()-> loginSceneController.changeToSetupState(playerSetup,publicGoals,normalDeck,goldenDeck,playerNames));
@@ -253,9 +290,5 @@ public class ServerHandlerGUI implements Runnable{
 
     public void setGameSceneController(GameSceneController gameSceneController) {
         this.gameSceneController = gameSceneController;
-    }
-
-    public void setChatSceneController(ChatSceneController chatSceneController) {
-        this.chatSceneController = chatSceneController;
     }
 }

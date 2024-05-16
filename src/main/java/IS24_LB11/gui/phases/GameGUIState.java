@@ -7,13 +7,14 @@ import IS24_LB11.game.components.PlayableCard;
 import IS24_LB11.game.utils.Color;
 import IS24_LB11.game.utils.Position;
 import IS24_LB11.gui.Chat;
+import IS24_LB11.gui.ClientGUI;
 import IS24_LB11.gui.scenesControllers.GameSceneController;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class GameGUIState extends ClientGUIState {
-    boolean isThisPlayerTurn = false;
+    private boolean isThisPlayerTurn = false;
     private Player player;
     private ArrayList<GoalCard> publicGoals;
     private ArrayList<PlayableCard> normalDeck;
@@ -27,10 +28,11 @@ public class GameGUIState extends ClientGUIState {
     private Position positionPlacedCard;
     private PlayableCard cardChooseToDraw;
     private boolean deckType;
-    private int indexDeck;
+    private int indexCardDeck;
 
 
     public GameGUIState(SetupGUIState prevState) {
+        this.clientGUI=prevState.getClientGUI();
         this.personalChat= new Chat();
         this.serverHandler = prevState.serverHandler;
         this.username = prevState.username;
@@ -52,10 +54,18 @@ public class GameGUIState extends ClientGUIState {
     }
 
     public void update(String currentPlayerTurn, ArrayList<Integer> playerScores, ArrayList<PlayableCard> normalDeck, ArrayList<PlayableCard> goldenDeck) {
-        if (currentPlayerTurn == username)
+        if (currentPlayerTurn.equals(username))
             isThisPlayerTurn = true;
+        else
+            isThisPlayerTurn = false;
         this.normalDeck = normalDeck;
         this.goldenDeck = goldenDeck;
+        for (int i = 0; i < playerScores.size(); i++) {
+            playersScore.replace(players.get(i), playerScores.get(i));
+        }
+    }
+
+    public void update(ArrayList<Integer> playerScores){
         for (int i = 0; i < playerScores.size(); i++) {
             playersScore.replace(players.get(i), playerScores.get(i));
         }
@@ -67,7 +77,7 @@ public class GameGUIState extends ClientGUIState {
 
     public void chooseCardToDraw(PlayableCard playableCard,int indexDeck,boolean deckType) {
         this.deckType=deckType;
-        this.indexDeck=indexDeck;
+        this.indexCardDeck =indexDeck;
         this.cardChooseToDraw = playableCard;
     }
 
@@ -105,9 +115,18 @@ public class GameGUIState extends ClientGUIState {
     public HashMap<String, Color> getPlayersColors() {
         return playersColors;
     }
+
     public void execute() {
         PlacedCard placedCard = new PlacedCard(cardChooseToPlay, positionPlacedCard);
-        inputHandlerGUI.sendTurn(placedCard, cardChooseToDraw);
+        if ((normalDeck.size()!=0 || goldenDeck.size()!=0) && isFinalTurn() == false) {
+            if (!this.deckType)
+                player.addCardToHand(normalDeck.get(indexCardDeck));
+            else
+                player.addCardToHand(goldenDeck.get(indexCardDeck));
+            inputHandlerGUI.sendTurn(placedCard, deckType, indexCardDeck);
+        }
+        else
+            inputHandlerGUI.sendTurn(placedCard);
     }
 
     public Boolean placeCard(PlacedCard placedCard){
@@ -123,11 +142,11 @@ public class GameGUIState extends ClientGUIState {
         playersScore.remove(playerDisconnected);
         playersColors.remove(playerDisconnected);
     }
-
-    public void sendMessage(String to, String from,String mex){
-        inputHandlerGUI.sendMessage(to,from,mex);
+    public boolean isThisPlayerTurn() {
+        return isThisPlayerTurn;
     }
-    public void sendToAll (String from, String mex){
-        inputHandlerGUI.sendToAllMessage(from, mex);
+
+    public void setPositionOfPlacedCard(Position positionPlacedCard){
+        this.positionPlacedCard = positionPlacedCard;
     }
 }

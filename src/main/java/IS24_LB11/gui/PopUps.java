@@ -1,9 +1,12 @@
 package IS24_LB11.gui;
 
 import IS24_LB11.gui.phases.ClientGUIState;
+import IS24_LB11.gui.scenesControllers.GenericSceneController;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
+
+import java.util.ArrayList;
 
 public class PopUps {
 
@@ -56,21 +59,50 @@ public class PopUps {
     }
 
 
-    public void lastPlayerLeft(Stage stage, ClientGUIState state) {
+    public void lastPlayerLeft(Stage stage, ClientGUIState state, GenericSceneController genericSceneController) {
 
+        Alert alert = new Alert(Alert.AlertType.NONE);
+
+        ButtonType quit = new ButtonType("QUIT");
+        ButtonType restart = new ButtonType("RESTART");
+
+        alert.getButtonTypes().setAll(quit, restart);
+
+        alert.setContentText("You are the only player left! Press OK to quit!");
+
+        ButtonType result = alert.showAndWait().orElse(null);
+
+        if(result.equals(quit)){
+            stage.close();
+        }
+        else if(result.equals(restart)) {
+            try {
+                genericSceneController.restart();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+        state.shutdown();
+
+    }
+
+    public void restartGame(ClientGUIState state, GenericSceneController genericSceneController){
         Alert alert = new Alert(Alert.AlertType.NONE);
 
         ButtonType buttonType = new ButtonType("OK");
 
         alert.getButtonTypes().setAll(buttonType);
 
-        alert.setContentText("You are the only player left! Do you want to quit?");
+        alert.setContentText("Server CRASHED, press OK to restart Client");
 
         ButtonType result = alert.showAndWait().orElse(null);
 
         if(result != null){
-            state.shutdown();
-            stage.close();
+            try {
+                genericSceneController.restart();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
