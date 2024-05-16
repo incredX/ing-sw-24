@@ -7,7 +7,6 @@ import IS24_LB11.cli.event.server.ServerPlayerDisconnectEvent;
 import IS24_LB11.cli.event.server.ServerPlayerSetupEvent;
 import IS24_LB11.cli.ViewHub;
 import IS24_LB11.cli.listeners.ServerHandler;
-import IS24_LB11.cli.popup.ChatPopup;
 import IS24_LB11.cli.popup.HelpPoup;
 import IS24_LB11.cli.view.stage.LobbyStage;
 import IS24_LB11.game.PlayerSetup;
@@ -24,8 +23,7 @@ public class LobbyState extends ClientState {
         super(viewHub);
         this.username = "";
         this.popManager.addPopup(
-                new HelpPoup(viewHub, this),
-                new ChatPopup(viewHub, this)
+                new HelpPoup(viewHub, this)
         );
     }
 

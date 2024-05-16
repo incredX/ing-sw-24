@@ -12,13 +12,10 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.ScrollPane;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -28,7 +25,13 @@ import java.util.ArrayList;
 
 public class GameSceneController extends GenericSceneController{
     @FXML
-    private ImageView goalCard1;
+    protected BorderPane chatBox;
+    @FXML
+    protected TextArea messageBox;
+    @FXML
+    protected Button buttonSend;
+    @FXML
+    protected ImageView goalCard1;
     @FXML
     private ImageView goalCard2;
     @FXML
@@ -83,8 +86,7 @@ public class GameSceneController extends GenericSceneController{
     private Text playerName4;
     @FXML
     private Text playerScore4;
-    @FXML
-    private Button chatButton;
+
     @FXML
     private Button flipHandCard1;
     @FXML
@@ -100,7 +102,6 @@ public class GameSceneController extends GenericSceneController{
     private ImageView cardBackground;
     @FXML
     private ImageView boardBackground;
-    Stage chatStage = new Stage();
     GameGUIState state;
     int numberPlayerInGame;
     private final int centerBoardX = 10000;
@@ -110,10 +111,6 @@ public class GameSceneController extends GenericSceneController{
     private final int cardCornerX = 70;
     private final int cardCornerY = 84;
     private ArrayList<ImageView> availableSpotsTemporaryCards = new ArrayList<>();
-    ChatSceneController chatSceneController;
-
-    @FXML
-    private AnchorPane x;
     public GameSceneController(ClientGUIState state, Stage stage) {
         this.state = (GameGUIState) state;
         this.genericState=state;
@@ -124,16 +121,6 @@ public class GameSceneController extends GenericSceneController{
         this.stage.setTitle("Codex");
         try {
             this.stage.setScene(new Scene(loader.load()));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        FXMLLoader loaderChat = new FXMLLoader(getClass().getResource("/ChatView.fxml"));
-        chatSceneController = new ChatSceneController((GameGUIState) state, chatStage);
-        loaderChat.setController(chatSceneController);
-        state.getServerHandler().setChatSceneController(chatSceneController);
-        try {
-            chatStage.setScene(new Scene(loaderChat.load()));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -169,8 +156,10 @@ public class GameSceneController extends GenericSceneController{
 
         disableDecks(true);
 
-        chatButton.setOnMouseClicked(mouseEvent -> showChat());
-
+        chatBox.setOnMouseEntered(mouseEvent -> chatDisplay());
+        chatBox.setOnMouseExited(mouseEvent -> chatHide());
+        buttonSend.setOnMouseClicked(mouseEvent -> send());
+        chatHide();
         // load goal cards
         goalCard1.setImage(ImageLoader.getImage(state.getPublicGoals().get(0).asString()));
         goalCard2.setImage(ImageLoader.getImage(state.getPublicGoals().get(1).asString()));
@@ -190,9 +179,7 @@ public class GameSceneController extends GenericSceneController{
         setUsernamesBoard();
     }
 
-    private void showChat() {
-        chatStage.show();
-    }
+
 
     private void hideInitialPawns() {
         if (numberPlayerInGame <= 3)
@@ -607,5 +594,6 @@ public class GameSceneController extends GenericSceneController{
     public void setFinalTurn(){
         state.setIsFinalTurn(true);
     }
+
 
 }

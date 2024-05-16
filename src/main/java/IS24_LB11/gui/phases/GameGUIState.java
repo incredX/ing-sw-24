@@ -142,15 +142,6 @@ public class GameGUIState extends ClientGUIState {
         playersScore.remove(playerDisconnected);
         playersColors.remove(playerDisconnected);
     }
-
-    public void sendMessage(String to, String from,String mex){
-        inputHandlerGUI.sendMessage(to,from,mex);
-    }
-
-    public void sendToAll (String from, String mex){
-        inputHandlerGUI.sendToAllMessage(from, mex);
-    }
-
     public boolean isThisPlayerTurn() {
         return isThisPlayerTurn;
     }

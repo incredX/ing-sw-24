@@ -6,7 +6,6 @@ import IS24_LB11.game.tools.JsonConverter;
 import IS24_LB11.game.tools.JsonException;
 import IS24_LB11.game.utils.SyntaxException;
 import IS24_LB11.gui.phases.ClientGUIState;
-import IS24_LB11.gui.scenesControllers.ChatSceneController;
 import IS24_LB11.gui.scenesControllers.GameSceneController;
 import IS24_LB11.gui.scenesControllers.LoginSceneController;
 import IS24_LB11.gui.scenesControllers.SetupSceneController;
@@ -33,7 +32,6 @@ public class ServerHandlerGUI implements Runnable{
     private LoginSceneController loginSceneController;
     private SetupSceneController setupSceneController = null;
     private GameSceneController gameSceneController = null;
-    private ChatSceneController chatSceneController = null;
 
     public ServerHandlerGUI(ClientGUIState clientGUIState, String serverIP, int serverPORT) throws IOException {
         socket = new Socket(serverIP, serverPORT);
@@ -104,12 +102,15 @@ public class ServerHandlerGUI implements Runnable{
 
     private void handleMessageEvent(JsonObject serverEvent) {
         if (serverEvent.has("to") && serverEvent.has("from") && serverEvent.has("message")){
-            actualState.addMessages(serverEvent.get("from").getAsString(),serverEvent.get("message").getAsString());
-            if(!(gameSceneController==null))
-                Platform.runLater(() -> gameSceneController.showPopUpNotification("new Message!!"));
-            if (!(chatSceneController==null)) {
-                String msg="<" + serverEvent.get("from").getAsString() + "> " + serverEvent.get("message").getAsString();
-                Platform.runLater(() -> chatSceneController.addToChat(msg));
+            String msg="<" + serverEvent.get("from").getAsString() + "> " + serverEvent.get("message").getAsString();
+            if(!(setupSceneController==null)) {
+                //Platform.runLater(() -> setupSceneController.showPopUpNotification("new Message!!"));
+                Platform.runLater(() -> setupSceneController.addMessage(msg));
+
+            }
+            else{
+                //Platform.runLater(() -> gameSceneController.showPopUpNotification("new Message!!"));
+                Platform.runLater(() -> gameSceneController.addMessage(msg));
             }
         }
     }
@@ -164,7 +165,6 @@ public class ServerHandlerGUI implements Runnable{
         }
     }
     private void handleNotificationEvent(JsonObject serverEvent){
-        // TODO: write better code
         if (serverEvent.has("message")){
             if(serverEvent.get("message").getAsString().equals("Welcome " + actualState.getUsername() + "!")){
                 Platform.runLater(()-> loginSceneController.disableLogin());
@@ -175,13 +175,21 @@ public class ServerHandlerGUI implements Runnable{
                 Platform.runLater(() -> loginSceneController.setPlayers());
             }
             else{
-                Platform.runLater(() -> loginSceneController.showPopUpNotification(serverEvent.get("message").getAsString()));
+                addMessage("<Server> " + serverEvent.get("message").getAsString());
                 if(serverEvent.get("message").getAsString().equals("It is your FINAL turn"))
                     Platform.runLater(()-> gameSceneController.setFinalTurn());
 
             }
 
         }
+    }
+    private void addMessage(String msg){
+        if (gameSceneController!=null)
+            Platform.runLater(() -> gameSceneController.addMessage(msg));
+        else if (setupSceneController!=null)
+            Platform.runLater(() -> setupSceneController.addMessage(msg));
+        else
+            Platform.runLater(() -> loginSceneController.addMessage(msg));
     }
     private void heartBeatEvent(JsonObject serverEvent){
         JsonObject message= new JsonObject();
@@ -282,9 +290,5 @@ public class ServerHandlerGUI implements Runnable{
 
     public void setGameSceneController(GameSceneController gameSceneController) {
         this.gameSceneController = gameSceneController;
-    }
-
-    public void setChatSceneController(ChatSceneController chatSceneController) {
-        this.chatSceneController = chatSceneController;
     }
 }

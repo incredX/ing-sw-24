@@ -1,7 +1,6 @@
 package IS24_LB11.gui.scenesControllers;
 
 import IS24_LB11.gui.ImageLoader;
-import IS24_LB11.gui.PopUps;
 import IS24_LB11.gui.phases.ClientGUIState;
 import IS24_LB11.gui.phases.GameGUIState;
 import IS24_LB11.gui.phases.SetupGUIState;
@@ -30,6 +29,7 @@ public class SetupSceneController extends GenericSceneController{
     private Button flipButton;
     @FXML
     private Button readyButton;
+
 
     SetupGUIState state;
 
@@ -62,11 +62,18 @@ public class SetupSceneController extends GenericSceneController{
         flipButton.setOnAction(event -> flipStarterCard());
         state.getServerHandler().setSetupSceneController(this);
         System.out.println("Setup initialized");
+
+        chatBox.setOnMouseEntered(mouseEvent -> chatDisplay());
+        chatBox.setOnMouseExited(mouseEvent -> chatHide());
+        buttonSend.setOnMouseClicked(mouseEvent -> send());
+        chatHide();
+
     }
 
     public void changeToGameState(){
         GameSceneController gameSceneController = new GameSceneController(new GameGUIState(state),stage);
-        stage.close();
+        gameSceneController.updateChat(this.chat.getMessages());
+        System.out.println(this.chat.getMessages());
         gameSceneController.showStage();
     }
     public void showStage() {
