@@ -30,7 +30,6 @@ public class Scoreboard {
     }
 
     public void setScores(ArrayList<Integer> scores) {
-        System.out.println(scores);
         for (int i = 0; i < Integer.min(scores.size(), players.size()); i++) {
             if (this.scores.get(i) != scores.get(i)) this.scores.set(i, scores.get(i));
         }
