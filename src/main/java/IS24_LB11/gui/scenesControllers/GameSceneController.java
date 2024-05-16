@@ -558,6 +558,12 @@ public class GameSceneController extends GenericSceneController{
 
 
     private void placeCard(ImageView availableSpot, ImageView selectedCardFromHand){
+
+        if(this.state.getPlayer().name().equals("Jonh") && this.state.getPlayer().name().equals("John") &&
+                this.state.getPlayer().name().equals("john") && this.state.getPlayer().name().equals("jonh"))
+            boardBackground.setImage(new Image(GameSceneController.class.getResourceAsStream("/graphicResources/codexCards/croppedCards/croppedBack/GXB.png")));
+
+
         Position realPosition = getRealPosition((int)availableSpot.getLayoutX(), (int)availableSpot.getLayoutY());
 
         ImageView cardToBePlaced = new ImageView(selectedCardFromHand.getImage());
