@@ -112,11 +112,13 @@ public class GameState extends ClientState implements PlayerStateInterface {
             case ServerNewTurnEvent newTurnEvent -> {
                 Debugger.print("turn of "+newTurnEvent.player()+" (I'm "+username+")");
                 if (newTurnEvent.player().isEmpty()) {
-                    gameOver = true;
-                    popManager.hideAllPopups();
-                    popManager.showPopup("table");
-                    popManager.getPopup("table").enable();
-                    notificationStack.add(MEDIUM, "GAME ENDED", "press [ENTER] to go back to the lobby");
+                    if (newTurnEvent.endOfGame()) {
+                        gameOver = true;
+                        popManager.hideAllPopups();
+                        popManager.showPopup("table");
+                        popManager.getPopup("table").enable();
+                        notificationStack.add(MEDIUM, "GAME ENDED", "press [ENTER] to go back to the lobby");
+                    } else logout();
                 }
                 if (newTurnEvent.player().equals(username)) {
                     cardPlaced = false;

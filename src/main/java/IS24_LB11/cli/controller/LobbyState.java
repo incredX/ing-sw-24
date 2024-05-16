@@ -108,7 +108,11 @@ public class LobbyState extends ClientState {
     }
 
     private void processCommandLogin(String username) {
-        sendToServer("login", "username", username);
+        if (username.contains(" ")) {
+            notificationStack.addUrgent("ERROR", INVALID_ARG.apply(username, "login"));
+        } else {
+            sendToServer("login", "username", username);
+        }
     }
 
     private void processCommandConnect(String argument) {
