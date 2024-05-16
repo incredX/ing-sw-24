@@ -51,5 +51,8 @@ public class LoginGUIState extends ClientGUIState implements PlayerStateInterfac
     public void setMaxPlayers(int numOfPlayers) {
         inputHandlerGUI.sendMaxPlayers(numOfPlayers);
     }
-
+    public void resetServerHandler(){
+        serverHandler=null;
+        inputHandlerGUI=null;
+    }
 }

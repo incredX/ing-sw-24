@@ -65,7 +65,7 @@ public class GenericSceneController {
 
             case "sendto":
                 genericState.sendMessage(strings[1], genericState.getUsername(), strings[2]);
-                Text sendTo = new Text("<me>" + strings[2]);
+                Text sendTo = new Text("<me> " + strings[2]);
                 chatPane.getItems().add(sendTo);
                 chat.addMessage(sendTo);
                 break;
@@ -75,10 +75,16 @@ public class GenericSceneController {
                     msg=strings[1];
                 else
                     msg=strings[1] + " " + strings[2];
-                Text sendToAll = new Text("<me>"+msg);
+                Text sendToAll = new Text("<me> "+msg);
                 genericState.sendToAll(genericState.getUsername(), msg);
                 chatPane.getItems().add(sendToAll);
                 chat.addMessage(sendToAll);
+                break;
+            case "clear":
+                clearChat();
+                break;
+            default:
+                chatPane.getItems().add("Invalid input");
                 break;
         }
     }
@@ -107,5 +113,8 @@ public class GenericSceneController {
             chatPane.getItems().add(text);
             chat.addMessage(text);
         }
+    }
+    public void clearChat(){
+        chatPane.getItems().removeAll();
     }
 }
