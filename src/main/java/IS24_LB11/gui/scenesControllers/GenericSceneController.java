@@ -98,5 +98,6 @@ public class GenericSceneController {
     public void addMessage(String msg){
         Text text = new Text(msg);
         chatPane.getItems().add(text);
+        chat.addMessage(text);
     }
 }
