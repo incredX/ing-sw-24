@@ -15,8 +15,6 @@ public class ScoreboardController implements Initializable {
     @FXML
     public AnchorPane pane;
     @FXML
-    public ImageView myImage;
-    @FXML
     public ImageView yellowPion;
     @FXML
     public ImageView greenPion;
