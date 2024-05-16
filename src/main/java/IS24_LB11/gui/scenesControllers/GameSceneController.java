@@ -572,7 +572,7 @@ public class GameSceneController extends GenericSceneController{
             }
         }
         else {
-            System.out.printf("\nCard can't be placed there\n");
+            this.addMessage("Card can't be placed there");
         }
     }
 
@@ -594,6 +594,4 @@ public class GameSceneController extends GenericSceneController{
     public void setFinalTurn(){
         state.setIsFinalTurn(true);
     }
-
-
 }

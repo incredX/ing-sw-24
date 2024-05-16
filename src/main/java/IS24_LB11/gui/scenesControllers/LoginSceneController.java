@@ -115,6 +115,9 @@ public class LoginSceneController extends GenericSceneController{
     public void setPlayers(){
         state.setMaxPlayers(popUps.maxPlayersAlert());
     }
+    public void resetServerHandler(){
+        state.resetServerHandler();
+    }
 
 
     public void disableLogin(){
