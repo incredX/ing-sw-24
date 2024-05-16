@@ -112,11 +112,14 @@ public class GameState extends ClientState implements PlayerStateInterface {
             case ServerNewTurnEvent newTurnEvent -> {
                 Debugger.print("turn of "+newTurnEvent.player()+" (I'm "+username+")");
                 if (newTurnEvent.player().isEmpty()) {
-                    gameOver = true;
-                    popManager.hideAllPopups();
-                    popManager.showPopup("table");
-                    popManager.getPopup("table").enable();
-                    notificationStack.add(MEDIUM, "GAME ENDED", "press [ENTER] to go back to the lobby");
+                    if (newTurnEvent.endOfGame()) {
+                        System.out.println("GAMEOVER");
+                        gameOver = true;
+                        popManager.hideAllPopups();
+                        popManager.showPopup("table");
+                        popManager.getPopup("table").enable();
+                        notificationStack.add(MEDIUM, "GAME ENDED", "press [ENTER] to go back to the lobby");
+                    } else logout();
                 }
                 if (newTurnEvent.player().equals(username)) {
                     cardPlaced = false;
@@ -126,8 +129,8 @@ public class GameState extends ClientState implements PlayerStateInterface {
                 updateBoardPointerImage();
                 gameStage.updatePointer();
                 table.update(newTurnEvent);
-                popManager.getPopup("decks").update();
-                popManager.getPopup("table").update();
+                popManager.getOptionalPopup("decks").ifPresent(Popup::update);
+                popManager.getOptionalPopup("table").ifPresent(Popup::update);
             }
             case ServerPlayerDisconnectEvent disconnectEvent -> {
                 if (gameOver) break;

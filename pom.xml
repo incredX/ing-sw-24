@@ -73,7 +73,7 @@
                 <configuration>
                     <jlinkImageName>hellofx</jlinkImageName>
                     <launcher>launcher</launcher>
-                    <mainClass>ing-sw-24/IS24_LB11.gui.ClientGUI</mainClass>
+                    <mainClass>ing-sw-24/IS24_LB11.Main</mainClass>
                 </configuration>
             </plugin>
         </plugins>
