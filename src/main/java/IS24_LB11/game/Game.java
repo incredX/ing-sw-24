@@ -68,6 +68,11 @@ public class Game {
         goldenDeck.shuffle();
         normalDeck.shuffle();
         starterDeck.shuffle();
+        //TODO: Make game start from a certain point
+        //        for(int i=0; i<33; i++){
+//            goldenDeck.drawCard();
+//            normalDeck.drawCard();
+//        }
         for (String name : playerNames)
             setupPlayer(name);
         return GameMessages.SETUP_COMPLETE;

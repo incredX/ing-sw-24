@@ -48,8 +48,6 @@ public class ImageLoader{
             }
         }
 
-        System.out.println("Loading image from " + path);
-
         // Load the image
         Image image = new Image(ImageLoader.class.getResourceAsStream(path));
 
