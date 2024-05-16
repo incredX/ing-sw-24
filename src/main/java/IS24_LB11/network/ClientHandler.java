@@ -1,11 +1,17 @@
 package IS24_LB11.network;
-import java.io.*;
-import java.net.*;
-import java.util.ArrayList;
 
 import IS24_LB11.game.Game;
+import IS24_LB11.game.Player;
 import IS24_LB11.network.phases.NotifyTurnPhase;
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
+import java.util.ArrayList;
 
 public class ClientHandler implements Runnable {
     private Socket clientSocket;
@@ -144,21 +150,24 @@ public class ClientHandler implements Runnable {
 
                 //pass turn to another player
                 if (this.getGame() != null && this.getGame().getPlayers().size() >= 1) {
+                    Player currentPlayerReal;
 
-                    this.getGame().getPlayers().removeIf(player -> player.name() == this.getUserName());
+                    if (this.getUserName().equals(this.getGame().currentPlayer().name())){
+                        this.getGame().setTurn(this.getGame().getTurn()+1);
+                        currentPlayerReal = this.getGame().currentPlayer();
+                    }
+                    else{
+                        currentPlayerReal = this.getGame().currentPlayer();
+                    }
 
-                    System.out.println(getGame().getTurn());
+                    this.getGame().getPlayers().removeIf(player -> player.name().equals(this.getUserName()));
+                    this.getGame().setTurn(this.getGame().getPlayers().indexOf(currentPlayerReal));
+
                     if(this.getGame().getPlayers().size() == 1){
                         this.getGame().setGameEnded(true);
-                        this.getGame().setTurn(this.getGame().getPlayers().indexOf(this.getGame().currentPlayer()));
                         NotifyTurnPhase.startPhase(this.getClientHandlerWithUsername(this.getGame().currentPlayer().name()));
-                    }
-                    else if (this.getGame().getPlayers().size() > 1) {
-                        //don't send notification turn when in setup phase
-                        if(this.getGame().getTurn() >= 0) {
-                            this.getGame().setTurn(this.getGame().getPlayers().indexOf(this.getGame().currentPlayer()));
+                    }else if (this.getGame().getPlayers().size() > 1 && this.getGame().getTurn() >= 0) {
                             NotifyTurnPhase.startPhase(this.getClientHandlerWithUsername(this.getGame().currentPlayer().name()));
-                        }
                     }
 
                     JsonObject response = new JsonObject();

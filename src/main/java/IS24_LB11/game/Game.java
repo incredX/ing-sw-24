@@ -46,6 +46,8 @@ public class Game {
 
 
     public Player currentPlayer() {
+        if (turn==-1)
+            return players.getFirst();
         return players.get(turn % players.size());
     }
 
