@@ -102,6 +102,9 @@ public class GameSceneController extends GenericSceneController{
     private ImageView cardBackground;
     @FXML
     private ImageView boardBackground;
+    @FXML
+    private Button centerBoardButton;
+
     GameGUIState state;
     int numberPlayerInGame;
     private final int centerBoardX = 10000;
@@ -136,10 +139,12 @@ public class GameSceneController extends GenericSceneController{
     public void initialize() {
         state.getServerHandler().setGameSceneController(this);
         numberPlayerInGame = state.getNumberOfPlayer();
-
         scrollPane.getStyleClass().add("styles.css");
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+
         boardBackground.setImage(new Image(GameSceneController.class.getResourceAsStream("/graphicResources/backGround.jpeg")));
-        cardBackground.setImage(new Image(GameSceneController.class.getResourceAsStream("/graphicResources/backGround.jpeg")));
+//        cardBackground.setImage(new Image(GameSceneController.class.getResourceAsStream("/graphicResources/backGround.jpeg")));
         // button and image event has to be declared here
         handCard1.setOnMouseClicked(mouseEvent -> chooseHandCard(0));
         handCard2.setOnMouseClicked(mouseEvent -> chooseHandCard(1));
@@ -155,6 +160,8 @@ public class GameSceneController extends GenericSceneController{
         goldenDeckCard3.setOnMouseClicked(mouseEvent -> chooseDeckCard(2, true));
 
         disableDecks(true);
+
+        centerBoardButton.setOnAction(mouseEvent -> moveToCenter(scrollPane));
 
         chatBox.setOnMouseEntered(mouseEvent -> chatDisplay());
         chatBox.setOnMouseExited(mouseEvent -> chatHide());
@@ -538,7 +545,7 @@ public class GameSceneController extends GenericSceneController{
     private void placeTemporaryCardsOnAvailableSpots(ImageView selectedCardFromHand){
         for(Position pos : getAvailableSpots()){
             ImageView availableSpot = getImageView("AvailableSpot", pos.getX(), pos.getY());
-            availableSpot.setOpacity(0.5);
+            availableSpot.setOpacity(0.7);
             ImageLoader.roundCorners(availableSpot);
 
             if(!imageViewInPosition(availableSpot)){

@@ -181,6 +181,7 @@
                               </AnchorPane>
                           </items>
                         </SplitPane>
+                        <Button fx:id="centerBoardButton" alignment="BOTTOM_LEFT" mnemonicParsing="false" text="Center Board" AnchorPane.bottomAnchor="15.0" AnchorPane.rightAnchor="325.0" />
                      </children>
                   </AnchorPane>
             </content>
