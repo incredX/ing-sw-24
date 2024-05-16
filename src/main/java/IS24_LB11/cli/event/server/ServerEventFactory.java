@@ -58,7 +58,7 @@ public class ServerEventFactory {
                             .andThen(normalDeck -> extractCardArray(data,"goldenDeck")
                                     .andThen(goldenDeck -> extractIntegerArray(data, "scores")
                                             .map(scores -> new ServerNewTurnEvent( player,
-                                                    data.has("game finished"),
+                                                    data.has("gameFinished"),
                                                     (ArrayList<NormalCard>) normalDeck.stream().map(c -> (NormalCard)c).collect(Collectors.toList()),
                                                     (ArrayList<GoldenCard>) goldenDeck.stream().map(c -> (GoldenCard)c).collect(Collectors.toList()),
                                                     scores)

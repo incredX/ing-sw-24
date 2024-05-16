@@ -23,6 +23,12 @@ public class PopupManager {
         }
     }
 
+    public void removePopup(String... labels) {
+        for (String label : labels) {
+            this.popups.remove(label);
+        }
+    }
+
     public void forEachPopup(Consumer<Popup> consumer) {
         for (Popup popup : popups.values()) consumer.accept(popup);
     }

@@ -27,6 +27,11 @@ public class LobbyState extends ClientState {
         );
     }
 
+//    public LobbyState(ClientState other) {
+//        super(other);
+//        popManager.removePopup("chat", "table", "hand", "decks");
+//    }
+
     @Override
     public ClientState execute() {
         lobbyStage = viewHub.setLobbyStage(this);
