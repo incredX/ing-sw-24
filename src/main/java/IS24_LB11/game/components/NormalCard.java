@@ -104,4 +104,11 @@ public class NormalCard implements PlayableCard {
     }
 
     public boolean isFaceDown() { return faceDown; }
+
+    @Override
+    public boolean equals(PlayableCard other) {
+        String id = asString().replace('B', 'F');
+        String otherId = other.asString().replace('B', 'F');
+        return id.equals(otherId);
+    }
 }

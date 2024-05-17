@@ -36,12 +36,8 @@ public class Player implements JsonConvertable {
     }
 
     public boolean placeCard(PlayableCard card, Position position) {
-//        it doesn't work when the card has been flipped by the client
-//        if (hand.stream().filter(x -> x.asString().compareTo(card.asString()) == 0).count() == 0) {
-//            return false;
-//        }
         if (board.placeCard(card, position)) {
-            hand.removeIf(carhand -> carhand.asString().compareTo(card.asString()) == 0);
+            hand.removeIf(carhand -> carhand.equals(card));
             return true;
         } else {
             return false;

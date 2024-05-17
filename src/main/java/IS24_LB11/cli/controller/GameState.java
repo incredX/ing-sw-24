@@ -70,6 +70,7 @@ public class GameState extends ClientState implements PlayerStateInterface {
         this.placedCard = null;
         this.popManager.addPopup(
                 new HelpPoup(getViewHub(), this),
+                new ChatPopup(getViewHub(), this),
                 new TablePopup(getViewHub(), this),
                 new HandPopup(getViewHub(), this),
                 new DecksPopup(getViewHub(), this),
@@ -113,7 +114,6 @@ public class GameState extends ClientState implements PlayerStateInterface {
                 Debugger.print("turn of "+newTurnEvent.player()+" (I'm "+username+")");
                 if (newTurnEvent.player().isEmpty()) {
                     if (newTurnEvent.endOfGame()) {
-                        System.out.println("GAMEOVER");
                         gameOver = true;
                         popManager.hideAllPopups();
                         popManager.showPopup("table");
