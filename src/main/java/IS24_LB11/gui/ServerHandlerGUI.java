@@ -69,7 +69,8 @@ public class ServerHandlerGUI implements Runnable{
     }
 
     private void processEvent(JsonObject serverEvent) {
-        System.out.println(serverEvent);
+        if (serverEvent.has("type") && !(serverEvent.get("type").getAsString().equals("heartbeat")))
+            System.out.println(serverEvent);
         if (serverEvent.has("error"))
             handleErrorEvent(serverEvent);
         if (serverEvent.has("type")) {

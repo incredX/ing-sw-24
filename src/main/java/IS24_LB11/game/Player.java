@@ -47,21 +47,30 @@ public class Player implements JsonConvertable {
             return false;
         }
     }
-    public void personalGoalScore(){
+    public void personalGoalScore(Boolean increment){
+        int scoreGoal;
         if (personalGoal.asString().length()==5)
-            incrementScore(board.countGoalSymbols((GoalSymbol) personalGoal));
+            scoreGoal=(board.countGoalSymbols((GoalSymbol) personalGoal));
         else
-            incrementScore(board.countGoalPatterns((GoalPattern) personalGoal));
+            scoreGoal=(board.countGoalPatterns((GoalPattern) personalGoal));
+        if (increment)
+            incrementScore(scoreGoal);
+        System.out.println(name + "-Personal Goal: " + scoreGoal);
     }
 
-    public void publicGoalScore(ArrayList<GoalCard> publicGoals){
+    public void publicGoalScore(ArrayList<GoalCard> publicGoals, Boolean increment){
+        int scoreGoal;
         for (GoalCard goalCard: publicGoals){
             if (goalCard.asString().length()==5) {
-                incrementScore(board.countGoalSymbols((GoalSymbol) goalCard));
+                scoreGoal=(board.countGoalSymbols((GoalSymbol) goalCard));
             }
             else
-                incrementScore(board.countGoalPatterns((GoalPattern) goalCard));
+                scoreGoal=(board.countGoalPatterns((GoalPattern) goalCard));
+            if (increment)
+                incrementScore(scoreGoal);
+            System.out.println(name + "-Public Goal: " + scoreGoal);
         }
+        
     }
     public void incrementScoreLastCardPlaced() {
         score += board.calculateScoreOnLastPlacedCard();

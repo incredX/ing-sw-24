@@ -49,7 +49,7 @@ public class ClientHandler implements Runnable {
 
                             Thread.sleep(HEARTBEAT_INTERVAL);
 
-                            System.out.println(userName + "   " + (System.currentTimeMillis() - lastHeartbeatTime));
+                            //System.out.println(userName + "   " + (System.currentTimeMillis() - lastHeartbeatTime));
 
                             if (System.currentTimeMillis() - lastHeartbeatTime > HEARTBEAT_INTERVAL*5.5) {
                                 System.out.println("Heartbeat timed out for " + userName);

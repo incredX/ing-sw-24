@@ -123,7 +123,14 @@ public class Game {
             player.addCardToHand((PlayableCard) normalDeck.drawCard(indexDeck));
         else if (deckType)
             player.addCardToHand((PlayableCard) goldenDeck.drawCard(indexDeck));
+
         turn++;
+
+        System.out.println("\nTURN IS :" + turn);
+        player.personalGoalScore(false);
+        player.publicGoalScore(publicGoals,false);
+
+
         //controllo se turno finale lo faccio solo sull'ultima persona controllando tutti i punteggi
         if (!finalTurn)
             isFinalTurn();
@@ -167,8 +174,8 @@ public class Game {
     private ArrayList<Player> finalGamePhase() throws SyntaxException {
         ArrayList<Player> ranking = players;
         for (Player player: ranking) {
-            player.personalGoalScore();
-            player.publicGoalScore(publicGoals);
+            player.personalGoalScore(true);
+            player.publicGoalScore(publicGoals,true);
         }
         ranking.sort((a,b)->Integer.compare(b.getScore(), a.getScore()));
         return ranking;
