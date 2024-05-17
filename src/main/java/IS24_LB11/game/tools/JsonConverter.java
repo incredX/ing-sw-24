@@ -6,7 +6,6 @@ import IS24_LB11.game.utils.Color;
 import IS24_LB11.game.utils.Position;
 import IS24_LB11.game.utils.SyntaxException;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -285,7 +284,8 @@ public class JsonConverter {
      * @throws SyntaxException if there is a syntax error in the JSON input.
      */
     public Deck JSONToDeck(Character character) throws SyntaxException, FileNotFoundException {
-        Scanner scFile = new Scanner(new File("resources/Cards.json"));
+//        Scanner scFile = new Scanner(new File("resources/Cards.json"));
+        Scanner scFile = new Scanner(JsonConverter.class.getResourceAsStream("/Cards.json"));
         String text = "";
         while (scFile.hasNextLine())
             text = text.concat(scFile.nextLine());
