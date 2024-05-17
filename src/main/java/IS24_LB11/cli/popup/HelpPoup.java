@@ -1,5 +1,6 @@
 package IS24_LB11.cli.popup;
 
+import IS24_LB11.cli.Debugger;
 import IS24_LB11.cli.ViewHub;
 import IS24_LB11.cli.controller.ClientState;
 import IS24_LB11.cli.controller.PlayerStateInterface;
@@ -8,12 +9,11 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
 import com.googlecode.lanterna.input.KeyStroke;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.InputStreamReader;
 import java.util.function.Consumer;
 
 public class HelpPoup extends Popup {
-    private static final String FILE_NAME = "resources/commands.json";
+    private static final String FILE_NAME = "/commands.json";
 
     private final JsonArray commandList;
     private ClientState state;
@@ -24,9 +24,9 @@ public class HelpPoup extends Popup {
         super(viewhub, new HelpView(viewhub.getScreenSize()));
         JsonArray commandList;
         try {
-            commandList = new JsonParser().parse(new FileReader(FILE_NAME)).getAsJsonArray();
-        } catch (FileNotFoundException e) {
-            System.err.println("Failed to load command list");
+            commandList = new JsonParser().parse(new InputStreamReader(getClass().getResourceAsStream(FILE_NAME))).getAsJsonArray();
+        } catch (NullPointerException e) {
+            Debugger.print(e);
             commandList = new JsonArray();
         }
         this.state = state;
@@ -37,7 +37,6 @@ public class HelpPoup extends Popup {
             numLines = helpView.getNumLines();
         });
         this.firstLine = 0;
-        //this.numLines = ((HelpView)this.popView).getNumLines();
     }
 
     @Override

@@ -6,7 +6,6 @@ import IS24_LB11.game.tools.JsonConverter;
 import IS24_LB11.game.tools.JsonException;
 import IS24_LB11.game.utils.SyntaxException;
 import IS24_LB11.gui.phases.ClientGUIState;
-import IS24_LB11.gui.scenesControllers.ChatSceneController;
 import IS24_LB11.gui.scenesControllers.GameSceneController;
 import IS24_LB11.gui.scenesControllers.LoginSceneController;
 import IS24_LB11.gui.scenesControllers.SetupSceneController;
@@ -33,7 +32,6 @@ public class ServerHandlerGUI implements Runnable{
     private LoginSceneController loginSceneController;
     private SetupSceneController setupSceneController = null;
     private GameSceneController gameSceneController = null;
-    private ChatSceneController chatSceneController = null;
 
     public ServerHandlerGUI(ClientGUIState clientGUIState, String serverIP, int serverPORT) throws IOException {
         socket = new Socket(serverIP, serverPORT);
@@ -72,6 +70,8 @@ public class ServerHandlerGUI implements Runnable{
 
     private void processEvent(JsonObject serverEvent) {
         System.out.println(serverEvent);
+        if (serverEvent.has("error"))
+            handleErrorEvent(serverEvent);
         if (serverEvent.has("type")) {
             switch (serverEvent.get("type").getAsString().toLowerCase()){
                 case "setusername":
@@ -95,22 +95,41 @@ public class ServerHandlerGUI implements Runnable{
                 case "message":
                     handleMessageEvent(serverEvent);
                     break;
-
                 default: throw new IllegalStateException("Unexpected value: " + serverEvent.get("type"));
             }
         }
 
     }
 
+    private void handleErrorEvent(JsonObject serverEvent) {
+        if (serverEvent.get("error").getAsString().equals("Server full, try again later.")){
+                Platform.runLater(()-> {
+                    System.out.println("Bella fra");
+                    loginSceneController.resetServerHandler();
+                    try {
+                        loginSceneController.restart();
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+            shutdown();
+        }
+        else {
+            String msg = serverEvent.get("error").getAsString();
+            if(!(gameSceneController==null))
+                Platform.runLater(() -> gameSceneController.addMessage(msg));
+            else
+                Platform.runLater(() -> setupSceneController.addMessage(msg));
+        }
+    }
+
     private void handleMessageEvent(JsonObject serverEvent) {
         if (serverEvent.has("to") && serverEvent.has("from") && serverEvent.has("message")){
-            actualState.addMessages(serverEvent.get("from").getAsString(),serverEvent.get("message").getAsString());
+            String msg="<" + serverEvent.get("from").getAsString() + "> " + serverEvent.get("message").getAsString();
             if(!(gameSceneController==null))
-                Platform.runLater(() -> gameSceneController.showPopUpNotification("new Message!!"));
-            if (!(chatSceneController==null)) {
-                String msg="<" + serverEvent.get("from").getAsString() + "> " + serverEvent.get("message").getAsString();
-                Platform.runLater(() -> chatSceneController.addToChat(msg));
-            }
+                Platform.runLater(() -> gameSceneController.addMessage(msg));
+            else
+                Platform.runLater(() -> setupSceneController.addMessage(msg));
         }
     }
 
@@ -126,7 +145,7 @@ public class ServerHandlerGUI implements Runnable{
     private void handleTurnEvent(JsonObject serverEvent) {
         String currentPlayerTurn = serverEvent.get("player").getAsString();
         JsonArray playersScores = serverEvent.get("scores").getAsJsonArray();
-        ArrayList<Integer> playerScores = extractIntegerArray(playersScores,playersScores.size());
+        ArrayList<Integer> playerScores = extractIntegerArray(playersScores);
 
         if (currentPlayerTurn.equals("")) {
             if (serverEvent.has("gameFinished")) {
@@ -145,8 +164,8 @@ public class ServerHandlerGUI implements Runnable{
 
             JsonArray normalDeckString = serverEvent.get("normalDeck").getAsJsonArray();
             JsonArray goldenDeckString = serverEvent.get("goldenDeck").getAsJsonArray();
-            ArrayList<PlayableCard> normalDeck = (ArrayList<PlayableCard>) extractCardArray(normalDeckString, normalDeckString.size());
-            ArrayList<PlayableCard> goldenDeck = (ArrayList<PlayableCard>) extractCardArray(goldenDeckString,goldenDeckString.size());
+            ArrayList<PlayableCard> normalDeck = (ArrayList<PlayableCard>) extractCardArray(normalDeckString);
+            ArrayList<PlayableCard> goldenDeck = (ArrayList<PlayableCard>) extractCardArray(goldenDeckString);
 
             if (!gameTurnStateStarted){
                 gameTurnStateStarted=true;
@@ -164,7 +183,6 @@ public class ServerHandlerGUI implements Runnable{
         }
     }
     private void handleNotificationEvent(JsonObject serverEvent){
-        // TODO: write better code
         if (serverEvent.has("message")){
             if(serverEvent.get("message").getAsString().equals("Welcome " + actualState.getUsername() + "!")){
                 Platform.runLater(()-> loginSceneController.disableLogin());
@@ -175,13 +193,27 @@ public class ServerHandlerGUI implements Runnable{
                 Platform.runLater(() -> loginSceneController.setPlayers());
             }
             else{
-                Platform.runLater(() -> loginSceneController.showPopUpNotification(serverEvent.get("message").getAsString()));
-                if(serverEvent.get("message").getAsString().equals("It is your FINAL turn"))
-                    Platform.runLater(()-> gameSceneController.setFinalTurn());
-
+                addMessage("<Server> " + serverEvent.get("message").getAsString());
+                if (gameSceneController == (null)) {
+                    if (!(setupSceneController == null))
+                        Platform.runLater(() -> setupSceneController.chatDisplay());
+                }
+                else {
+                    Platform.runLater(() -> gameSceneController.chatDisplay());
+                    if(serverEvent.get("message").getAsString().equals("It is your FINAL turn"))
+                        Platform.runLater(()-> gameSceneController.setFinalTurn());
+                }
             }
 
         }
+    }
+    private void addMessage(String msg){
+        if (gameSceneController!=null)
+            Platform.runLater(() -> gameSceneController.addMessage(msg));
+        else if (setupSceneController!=null)
+            Platform.runLater(() -> setupSceneController.addMessage(msg));
+        else
+            Platform.runLater(() -> loginSceneController.addMessage(msg));
     }
     private void heartBeatEvent(JsonObject serverEvent){
         JsonObject message= new JsonObject();
@@ -199,10 +231,10 @@ public class ServerHandlerGUI implements Runnable{
             JsonArray goldenDeckString = serverEvent.get("goldenDeck").getAsJsonArray();
             JsonArray playerNamesString = serverEvent.get("playerNames").getAsJsonArray();
 
-            ArrayList<GoalCard> publicGoals = (ArrayList<GoalCard>) extractGoalArray(publicGoalsString,2);
-            ArrayList<PlayableCard> normalDeck = (ArrayList<PlayableCard>) extractCardArray(normalDeckString, normalDeckString.size());
-            ArrayList<PlayableCard> goldenDeck = (ArrayList<PlayableCard>) extractCardArray(goldenDeckString, goldenDeckString.size());
-            ArrayList<String> playerNames = extractStringArray(playerNamesString,playerNamesString.size());
+            ArrayList<GoalCard> publicGoals = (ArrayList<GoalCard>) extractGoalArray(publicGoalsString);
+            ArrayList<PlayableCard> normalDeck = (ArrayList<PlayableCard>) extractCardArray(normalDeckString);
+            ArrayList<PlayableCard> goldenDeck = (ArrayList<PlayableCard>) extractCardArray(goldenDeckString);
+            ArrayList<String> playerNames = extractStringArray(playerNamesString);
 
             Platform.runLater(()-> loginSceneController.changeToSetupState(playerSetup,publicGoals,normalDeck,goldenDeck,playerNames));
         } catch (JsonException e) {
@@ -230,9 +262,9 @@ public class ServerHandlerGUI implements Runnable{
         Thread.currentThread().interrupt();
     }
 
-    public ArrayList<PlayableCard> extractCardArray(JsonArray jsonArray, int size){
+    public ArrayList<PlayableCard> extractCardArray(JsonArray jsonArray){
         ArrayList<PlayableCard> cards = new ArrayList<>();
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < jsonArray.size(); i++) {
             try {
                 cards.add(CardFactory.newPlayableCard(jsonArray.get(i).getAsString()));
             } catch (SyntaxException e) {
@@ -241,9 +273,9 @@ public class ServerHandlerGUI implements Runnable{
         }
         return cards;
     }
-    public ArrayList<GoalCard> extractGoalArray(JsonArray jsonArray, int size){
+    public ArrayList<GoalCard> extractGoalArray(JsonArray jsonArray){
         ArrayList<GoalCard> cards = new ArrayList<>();
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < jsonArray.size(); i++) {
             try {
                 cards.add((GoalCard) CardFactory.newSerialCard(jsonArray.get(i).getAsString()));
             } catch (SyntaxException e) {
@@ -253,18 +285,16 @@ public class ServerHandlerGUI implements Runnable{
         return cards;
     }
 
-    public ArrayList<String> extractStringArray(JsonArray jsonArray, int size){
+    public ArrayList<String> extractStringArray(JsonArray jsonArray){
         ArrayList<String> strings = new ArrayList<>();
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < jsonArray.size(); i++)
             strings.add(jsonArray.get(i).getAsString());
-        }
         return strings;
     }
-    public ArrayList<Integer> extractIntegerArray(JsonArray jsonArray, int size){
+    public ArrayList<Integer> extractIntegerArray(JsonArray jsonArray){
         ArrayList<Integer> integers = new ArrayList<>();
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < jsonArray.size(); i++)
             integers.add(jsonArray.get(i).getAsInt());
-        }
         return integers;
     }
 
@@ -282,9 +312,5 @@ public class ServerHandlerGUI implements Runnable{
 
     public void setGameSceneController(GameSceneController gameSceneController) {
         this.gameSceneController = gameSceneController;
-    }
-
-    public void setChatSceneController(ChatSceneController chatSceneController) {
-        this.chatSceneController = chatSceneController;
     }
 }

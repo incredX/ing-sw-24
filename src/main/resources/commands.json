@@ -1,0 +1,105 @@
+[
+  {
+    "command" : "quit",
+    "description" : "close the application"
+  },
+  {
+    "command" : "help",
+    "description" : "show di popup"
+  },
+  {
+    "command" : "@",
+    "argument(s)" : [
+      ["username", "user to whom the message is intended"],
+      ["message", "text to send"]
+    ],
+    "description" : "send the given message to the user (if exists)"
+  },
+  {
+    "command" : "@all",
+    "argument(s)" : [
+      ["message", "text to send"]
+    ],
+    "description" : "send the given message to all the users"
+  },
+  {
+    "command" : "show",
+    "keyboard-shortcut" : "first letter of the label",
+    "commandline-shortcut" : "the command <show> can be omitted",
+    "argument(s)" : [
+      ["label", "pop-up to show"]
+    ],
+    "description" : "show (if able) the requested pop-up"
+  },
+  {
+    "command" : "hide",
+    "keyboard-shortcut" : "first letter of the label",
+    "commandline-shortcut" : "the command <hide> can be omitted",
+    "argument(s)" : [
+      ["label", "pop-up to hide"]
+    ],
+    "description" : "hide (if able) the requested pop-up (if no argument was\ngiven the last shown pop-up will be hidden)"
+  },
+  {
+    "command" : "connect",
+    "location" : "lobby",
+    "argument(s)" : [
+      ["address", "server's ip address"],
+      ["port", "server's port (positive integer)"]
+    ],
+    "description" : "connect to the server at the given ip address and listening\nat the given port"
+  },
+  {
+    "command" : "login",
+    "location" : "lobby",
+    "argument(s)" : [
+      ["usrname", "string to identify the user"]
+    ],
+    "description" : "login with the given username (if not already in use)"
+  },
+  {
+    "command" : "players",
+    "location" : "lobby",
+    "argument(s)" : [
+      ["num_players", "integer (accepted values are 2, 3 or 4)"]
+    ],
+    "description" : "if first player to login, set the number of players for the\ngame"
+  },
+  {
+    "command" : "goal",
+    "location" : "setup",
+    "keyboard-shortcut" : "[SUPER+ARROWS]",
+    "commandline-shortcut" : "[G]",
+    "argument(s)" : [
+      ["goal", "[a] or [b]"]
+    ],
+    "description" : "set the private goal"
+  },
+  {
+    "command" : "ready",
+    "location" : "setup",
+    "description" : "confirm the chosen setup and boot own board"
+  },
+  {
+    "command" : "loguot",
+    "location" : "game",
+    "description" : "exit from the game and go back to the lobby"
+  },
+  {
+    "command" : "home",
+    "location" : "game",
+    "description" : "center the board over the starter card"
+  },
+  {
+    "command" : "[movement of board's pointer]",
+    "location" : "game",
+    "commandline-shortcut" : "[ARROWS] or [SHIFT+ARROWS]",
+    "description" : "move the pointer of board.\nNote:\n - the commandline needs to deactivated\n - if there is a pop-up, [SHIFT] is needed to move the\n   pointer"
+  },
+  {
+    "command" : "[movement of popup's pointer]",
+    "location" : "game",
+    "commandline-shortcut" : "[ARROWS]",
+    "description" : "move the pointer inside the pop-up"
+  }
+]
