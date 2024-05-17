@@ -4,16 +4,6 @@
     -fx-secondary : #412911;
 }
 
-
-.scrollPane > .viewport {
-    -fx-background-color: transparent;
-}
-
-.scrollPane {
-    -fx-background-color: transparent;
-}
-
-
 .root {
     -fx-background-color: -fx-primary;
     -fx-border-color: -fx-secondary;
@@ -37,23 +27,9 @@
     -fx-text-fill: -fx-primary;
 }
 
-.custom-text-field {
-    -fx-text-fill: -fx-secondary;
-    -fx-font-size: 15pt;
-    -fx-font-family: 'Georgia';
-    -fx-background-color: transparent;
-    -fx-border-width: 0 0 3 0;
-    -fx-border-color: -fx-secondary;
-    -fx-padding: 0 0 5 0;
-    -fx-prompt-text-fill: #B2A131;
-}
-
-.custom-text-field .text-input {
-    -fx-fill: -fx-secondary;
-}
-
 .label {
     -fx-font-family: 'Georgia';
-    -fx-font-size: 72pt;
+    -fx-font-size: 36pt;
     -fx-text-fill: -fx-secondary;
 }
+
