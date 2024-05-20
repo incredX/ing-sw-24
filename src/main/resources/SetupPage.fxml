@@ -70,7 +70,7 @@
             </Button>
          </children>
       </Pane>
-      <BorderPane fx:id="chatBox" layoutX="20.0" layoutY="610.0" maxHeight="400.0" maxWidth="300.0" minHeight="100.0" minWidth="160.0" prefHeight="100.0" prefWidth="160.0">
+      <BorderPane fx:id="chatBox" layoutX="20.0" layoutY="610.0" maxHeight="400.0" maxWidth="300.0" minHeight="100.0" minWidth="250.0" prefHeight="100.0" prefWidth="250.0">
          <center>
             <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                <children>

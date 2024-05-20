@@ -66,6 +66,7 @@ public class SetupSceneController extends GenericSceneController{
         chatBox.setOnMouseEntered(mouseEvent -> chatDisplay());
         chatBox.setOnMouseExited(mouseEvent -> chatHide());
         buttonSend.setOnMouseClicked(mouseEvent -> send());
+        addMessage("Type help for commands");
         chatHide();
 
     }

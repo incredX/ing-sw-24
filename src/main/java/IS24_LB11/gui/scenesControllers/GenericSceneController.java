@@ -61,6 +61,9 @@ public class GenericSceneController {
                 chatPane.getItems().add(new Text("Public chat command:"));
                 chatPane.getItems().add(new Text("sendtoall msg"));
                 chatPane.getItems().add(new Text("--------------------------------------------------"));
+                chatPane.getItems().add(new Text("Clear messages chat command:"));
+                chatPane.getItems().add(new Text("clear"));
+                chatPane.getItems().add(new Text("--------------------------------------------------"));
                 break;
 
             case "sendto":
@@ -87,6 +90,7 @@ public class GenericSceneController {
                 chatPane.getItems().add("Invalid input");
                 break;
         }
+        messageBox.setText("");
     }
 
     public void chatHide() {
@@ -94,7 +98,6 @@ public class GenericSceneController {
         chatBox.setPrefHeight(chatBox.getMinHeight());
         chatBox.setLayoutX(10);
         chatBox.setLayoutY(600);
-        messageBox.setText("");
     }
     public void chatDisplay() {
         chatBox.setPrefWidth(chatBox.getMaxWidth());
