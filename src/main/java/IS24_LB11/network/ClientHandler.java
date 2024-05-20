@@ -21,7 +21,7 @@ public class ClientHandler implements Runnable {
     private Server server;
     private boolean connectionClosed = false;
     //TODO:RESET THIS
-    private int HEARTBEAT_INTERVAL = 500;
+    private int HEARTBEAT_INTERVAL = 1500;
     private long lastHeartbeatTime;
 
     private ArrayList<Thread> allStartedThreads = new ArrayList<>();
@@ -46,8 +46,9 @@ public class ClientHandler implements Runnable {
                         try {
                             JsonObject heartbeat = new JsonObject();
                             heartbeat.addProperty("type", "heartbeat");
-                            out.println(heartbeat.toString());
-
+                            sendMessage(heartbeat.toString());
+                            //out.println(heartbeat.toString());
+                            //out.flush();
                             Thread.sleep(HEARTBEAT_INTERVAL);
 
                             //System.out.println(userName + "   " + (System.currentTimeMillis() - lastHeartbeatTime));
@@ -76,7 +77,7 @@ public class ClientHandler implements Runnable {
 
             // wait for inputs from client
             in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            out = new PrintWriter(clientSocket.getOutputStream(), true);
+            out = new PrintWriter(clientSocket.getOutputStream());
 
             heartbeatThread.start();
             addToStartedThreads(heartbeatThread);
@@ -95,8 +96,10 @@ public class ClientHandler implements Runnable {
 
     // Method to send a message to the client from external components
     public void sendMessage(String message) {
-        out.println(message);
-        out.flush();
+        synchronized (out){
+            out.println(message);
+            out.flush();
+        }
     }
 
     public void broadcast(String message) {

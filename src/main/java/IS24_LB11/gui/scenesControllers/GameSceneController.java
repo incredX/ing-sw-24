@@ -157,7 +157,7 @@ public class GameSceneController extends GenericSceneController{
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
-        boardBackground.setImage(new Image(GameSceneController.class.getResourceAsStream("/graphicResources/backgroundResize.jpg")));
+        boardBackground.setImage(new Image(GameSceneController.class.getResourceAsStream("/graphicResources/TemporaryBoard.jpg")));
 //        cardBackground.setImage(new Image(GameSceneController.class.getResourceAsStream("/graphicResources/backGround.jpeg")));
         // button and image event has to be declared here
         handCard1.setOnMouseClicked(mouseEvent -> chooseHandCard(0));
