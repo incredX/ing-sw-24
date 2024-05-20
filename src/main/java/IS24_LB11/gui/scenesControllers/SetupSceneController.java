@@ -26,9 +26,11 @@ public class SetupSceneController extends GenericSceneController{
     @FXML
     private ImageView starterCard;
     @FXML
-    private Button flipButton;
-    @FXML
     private Button readyButton;
+    @FXML
+    private ImageView publicGoal1;
+    @FXML
+    private ImageView publicGoal2;
 
 
     SetupGUIState state;
@@ -59,7 +61,6 @@ public class SetupSceneController extends GenericSceneController{
         goalCard1.setOnMouseClicked(mouseEvent -> chooseGoal(0));
         goalCard2.setOnMouseClicked(mouseEvent -> chooseGoal(1));
         starterCard.setOnMouseClicked(mouseEvent -> flipStarterCard());
-        flipButton.setOnAction(event -> flipStarterCard());
         state.getServerHandler().setSetupSceneController(this);
         System.out.println("Setup initialized");
 
@@ -83,6 +84,8 @@ public class SetupSceneController extends GenericSceneController{
         goalCard1.setImage(ImageLoader.getImage(state.getPrivateGoals().get(0).asString()));
         goalCard2.setImage(ImageLoader.getImage(state.getPrivateGoals().get(1).asString()));
         starterCard.setImage(ImageLoader.getImage(state.getStarterCard().asString()));
+        publicGoal1.setImage(ImageLoader.getImage(state.getPublicGoals().get(0).asString()));
+        publicGoal2.setImage(ImageLoader.getImage(state.getPublicGoals().get(1).asString()));
         chooseGoal(0);
 
         this.stage.setResizable(false);
@@ -118,7 +121,6 @@ public class SetupSceneController extends GenericSceneController{
         goalCard1.setDisable(true);
         goalCard2.setDisable(true);
         starterCard.setDisable(true);
-        flipButton.setDisable(true);
         readyButton.setDisable(true);
         state.execute();
     }

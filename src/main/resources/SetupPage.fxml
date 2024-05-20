@@ -21,50 +21,47 @@
    <children>
       <Pane prefHeight="720.0" prefWidth="1285.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <ImageView fx:id="goalCard1" fitHeight="220.0" fitWidth="330.0" layoutX="120.0" layoutY="-20.0" pickOnBounds="true" preserveRatio="true" x="50.0" y="80.0">
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="TRANSPARENT" height="282.0" layoutX="316.0" layoutY="404.0" stroke="#412911" strokeType="INSIDE" strokeWidth="3.0" width="368.0" y="-21.0" />
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="TRANSPARENT" height="296.0" layoutX="111.0" layoutY="50.0" stroke="#412911" strokeType="INSIDE" strokeWidth="3.0" width="772.0" y="-21.0" />
+            <ImageView fx:id="goalCard1" fitHeight="220.0" fitWidth="330.0" layoutX="80.0" pickOnBounds="true" preserveRatio="true" x="50.0" y="80.0">
                <image>
                   <Image url="@graphicResources/codexCards/croppedCards/croppedFront/goalFront/O2AAAD1.jpg" />
                </image>
                <effect>
-                  <DropShadow blurType="TWO_PASS_BOX" height="80.0" radius="39.5" spread="0.4" width="80.0">
+                  <DropShadow blurType="TWO_PASS_BOX" height="60.0" radius="29.5" spread="0.3" width="60.0">
                      <color>
                         <Color red="0.2549019753932953" green="0.16078431904315948" blue="0.06666667014360428" />
                      </color></DropShadow>
                </effect>
             </ImageView>
-            <ImageView fx:id="goalCard2" fitHeight="220.0" fitWidth="330.0" layoutX="100.0" layoutY="-20.0" pickOnBounds="true" preserveRatio="true" x="450.0" y="80.0">
+            <ImageView fx:id="goalCard2" fitHeight="220.0" fitWidth="330.0" layoutX="95.0" pickOnBounds="true" preserveRatio="true" x="450.0" y="80.0">
                <image>
                   <Image url="@graphicResources/codexCards/croppedCards/croppedFront/goalFront/O2AAA.jpg" />
                </image>
                <effect>
-                  <DropShadow blurType="TWO_PASS_BOX" height="80.0" radius="39.5" spread="0.4" width="80.0">
+                  <DropShadow blurType="TWO_PASS_BOX" height="60.0" radius="29.5" spread="0.3" width="60.0">
                      <color>
                         <Color red="0.2549019753932953" green="0.16078431904315948" blue="0.06666667014360428" />
                      </color></DropShadow>
                </effect>
             </ImageView>
-            <ImageView fx:id="starterCard" fitHeight="220.0" fitWidth="330.0" layoutX="140.0" layoutY="-20.0" pickOnBounds="true" preserveRatio="true" x="200.0" y="395.0">
+            <ImageView fx:id="starterCard" fitHeight="220.0" fitWidth="330.0" layoutX="140.0" pickOnBounds="true" preserveRatio="true" x="200.0" y="420.0">
                <image>
                   <Image url="@graphicResources/codexCards/croppedCards/croppedFront/starterFront/AEEF_F0F__PAFI.jpg" />
                </image>
                <effect>
-                  <DropShadow blurType="TWO_PASS_BOX" height="80.0" radius="39.5" spread="0.4" width="80.0">
+                  <DropShadow blurType="TWO_PASS_BOX" height="60.0" radius="29.5" spread="0.3" width="60.0">
                      <color>
                         <Color red="0.2549019753932953" green="0.16078431904315948" blue="0.06666667014360428" />
                      </color></DropShadow>
                </effect>
             </ImageView>
-            <Label fx:id="flipStarterCardLabel" layoutX="700.0" layoutY="400.0" prefHeight="116.0" prefWidth="464.0" text="Press this button to flip the starter card!" textFill="WHITE" wrapText="true">
+            <Label fx:id="flipStarterCardLabel" layoutX="730.0" layoutY="450.0" prefHeight="116.0" prefWidth="299.0" text="Press the starter card to flip it!" textAlignment="JUSTIFY" textFill="WHITE" wrapText="true">
                <font>
                   <Font size="35.0" />
                </font>
             </Label>
-            <Button fx:id="flipButton" layoutX="850.0" layoutY="520.0" mnemonicParsing="false" prefHeight="51.0" prefWidth="102.0" text="Flip" textAlignment="CENTER">
-               <font>
-                  <Font size="20.0" />
-               </font>
-            </Button>
-            <Label fx:id="choseGoalCardLabel" layoutX="200.0" prefHeight="43.0" prefWidth="564.0" text="Choose your goal card:" textFill="WHITE">
+            <Label fx:id="choseGoalCardLabel" layoutX="295.0" layoutY="10.0" prefHeight="46.0" prefWidth="404.0" text="Choose your goal card" textFill="WHITE">
                <font>
                   <Font size="35.0" />
                </font>
@@ -74,12 +71,10 @@
                   <Font size="20.0" />
                </font>
             </Button>
-            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="TRANSPARENT" height="355.0" layoutX="940.0" layoutY="60.0" stroke="#412911" strokeType="INSIDE" strokeWidth="3.0" width="222.0" y="-21.0" />
-            <Label fx:id="publicGoalLabel" layoutX="965.0" layoutY="20.0" prefHeight="39.0" prefWidth="173.0" style="-fx-background-color: #EDE2BB;" text="Public Goal" />
-            <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="950.0" layoutY="90.0" pickOnBounds="true" preserveRatio="true" y="-21.0">
-               <image>
-                  <Image url="@graphicResources/codexCards/croppedCards/croppedFront/goalFront/O2MM_.jpg" />
-               </image>
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="TRANSPARENT" height="369.0" layoutX="934.0" layoutY="50.0" stroke="#412911" strokeType="INSIDE" strokeWidth="3.0" width="234.0" y="-21.0" />
+            <Label fx:id="publicGoalLabel" layoutX="960.0" layoutY="10.0" prefHeight="39.0" prefWidth="181.0" style="-fx-background-color: #EDE2BB;" text="Public Goal" />
+            <ImageView fx:id="publicGoal1" fitHeight="150.0" fitWidth="200.0" layoutX="950.0" layoutY="90.0" pickOnBounds="true" preserveRatio="true" y="-21.0">
+
                <effect>
                   <DropShadow blurType="TWO_PASS_BOX" height="80.0" radius="39.5" spread="0.3" width="80.0">
                      <color>
@@ -88,10 +83,7 @@
                   </DropShadow>
                </effect>
             </ImageView>
-            <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="950.0" layoutY="263.0" pickOnBounds="true" preserveRatio="true" y="-21.0">
-               <image>
-                  <Image url="@graphicResources/codexCards/croppedCards/croppedFront/goalFront/O3AIIL0.jpg" />
-               </image>
+            <ImageView fx:id="publicGoal2" fitHeight="150.0" fitWidth="200.0" layoutX="950.0" layoutY="263.0" pickOnBounds="true" preserveRatio="true" y="-21.0">
                <effect>
                   <DropShadow blurType="TWO_PASS_BOX" height="70.0" radius="34.5" spread="0.3" width="70.0">
                      <color>
@@ -100,6 +92,11 @@
                   </DropShadow>
                </effect>
             </ImageView>
+            <Label fx:id="choseGoalCardLabel1" layoutX="395.0" layoutY="360.0" prefHeight="33.0" prefWidth="204.0" text=" Starter card " textAlignment="CENTER" textFill="WHITE">
+               <font>
+                  <Font size="35.0" />
+               </font>
+            </Label>
          </children>
       </Pane>
       <BorderPane fx:id="chatBox" layoutX="35.0" layoutY="595.0" maxHeight="400.0" maxWidth="300.0" minHeight="100.0" minWidth="250.0" prefHeight="100.0" prefWidth="250.0">

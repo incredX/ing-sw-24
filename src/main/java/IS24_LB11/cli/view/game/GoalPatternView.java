@@ -30,7 +30,7 @@ public class GoalPatternView extends GoalView {
             }
         } else {
             int c0 = firstColumn() + 6;
-            int col = (goal.getDir()%3 == 0) ? lastColumn()-4 : c0;
+            int col = ((goal.getDir()&1) == 0) ? c0 : lastColumn()-4;
             int row = (goal.getDir() <= 1) ? firstRow() : lastRow();
             int dy = (goal.getDir() <= 1) ? 1 : -1;
             int i = 0;
