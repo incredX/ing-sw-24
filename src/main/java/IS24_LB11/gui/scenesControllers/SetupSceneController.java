@@ -66,9 +66,10 @@ public class SetupSceneController extends GenericSceneController{
         chatBox.setOnMouseEntered(mouseEvent -> chatDisplay());
         chatBox.setOnMouseExited(mouseEvent -> chatHide());
         buttonSend.setOnMouseClicked(mouseEvent -> send());
+        addMessage("Enter with mouse the chat to expand the chat");
+        addMessage("Exit with mouse the chat to minimze the chat");
         addMessage("Type help for commands");
         chatHide();
-
     }
 
     public void changeToGameState(){
@@ -78,6 +79,7 @@ public class SetupSceneController extends GenericSceneController{
         gameSceneController.showStage();
     }
     public void showStage() {
+        chatDisplay();
         goalCard1.setImage(ImageLoader.getImage(state.getPrivateGoals().get(0).asString()));
         goalCard2.setImage(ImageLoader.getImage(state.getPrivateGoals().get(1).asString()));
         starterCard.setImage(ImageLoader.getImage(state.getStarterCard().asString()));

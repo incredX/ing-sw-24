@@ -98,14 +98,19 @@ public class GenericSceneController {
     public void chatHide() {
         chatBox.setPrefWidth(chatBox.getMinWidth());
         chatBox.setPrefHeight(chatBox.getMinHeight());
-        chatBox.setLayoutX(10);
+        chatBox.setLayoutX(20);
         chatBox.setLayoutY(600);
     }
     public void chatDisplay() {
         chatBox.setPrefWidth(chatBox.getMaxWidth());
         chatBox.setPrefHeight(chatBox.getMaxHeight());
-        chatBox.setLayoutX(10);
+        chatBox.setLayoutX(20);
         chatBox.setLayoutY(300);
+    }
+    public void chatHideLogin(){
+        chatHide();
+        chatBox.setLayoutX(-500);
+        chatBox.setLayoutY(-500);
     }
 
     public void addMessage(String msg){
