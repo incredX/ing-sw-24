@@ -48,7 +48,7 @@ public class GameGUIState extends ClientGUIState {
         this.playersColors = prevState.getPlayersColors();
         this.players = prevState.getPlayers();
         this.playersScore = new HashMap<>();
-        for (int i = 0; i < playersColors.size(); i++) {
+        for (int i = 0; i < players.size(); i++) {
             playersScore.put(players.get(i), 0);
         }
     }

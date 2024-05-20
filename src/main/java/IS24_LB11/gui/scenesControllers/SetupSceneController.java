@@ -7,9 +7,7 @@ import IS24_LB11.gui.phases.SetupGUIState;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
@@ -68,7 +66,7 @@ public class SetupSceneController extends GenericSceneController{
         chatBox.setOnMouseExited(mouseEvent -> chatHide());
         buttonSend.setOnMouseClicked(mouseEvent -> send());
         addMessage("Enter with mouse the chat to expand the chat");
-        addMessage("Exit with mouse the chat to minimze the chat");
+        addMessage("Exit with mouse the chat to minimize the chat");
         addMessage("Type help for commands");
         chatHide();
     }

@@ -50,6 +50,7 @@ public class Player implements JsonConvertable {
             scoreGoal=(board.countGoalSymbols((GoalSymbol) personalGoal));
         else
             scoreGoal=(board.countGoalPatterns((GoalPattern) personalGoal));
+        System.out.println(name + " Personal Goal Score: " + scoreGoal);
         incrementScore(scoreGoal);
     }
 
@@ -61,6 +62,7 @@ public class Player implements JsonConvertable {
             }
             else
                 scoreGoal=(board.countGoalPatterns((GoalPattern) goalCard));
+            System.out.println(name + "Private Goal Score: " + scoreGoal);
             incrementScore(scoreGoal);
         }
         

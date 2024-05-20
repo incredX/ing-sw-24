@@ -168,7 +168,6 @@ public class Game {
         }
     }
     private void finalGamePhase() throws SyntaxException {
-
         for (Player player: players) {
             player.personalGoalScore();
             player.publicGoalScore(publicGoals);

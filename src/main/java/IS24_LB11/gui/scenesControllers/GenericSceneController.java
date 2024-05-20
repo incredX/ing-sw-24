@@ -107,11 +107,6 @@ public class GenericSceneController {
         chatBox.setLayoutX(20);
         chatBox.setLayoutY(300);
     }
-    public void chatHideLogin(){
-        chatHide();
-        chatBox.setLayoutX(-500);
-        chatBox.setLayoutY(-500);
-    }
 
     public void addMessage(String msg){
         Text text = new Text(msg);
