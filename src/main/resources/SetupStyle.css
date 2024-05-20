@@ -10,7 +10,7 @@
     -fx-border-width: 20;
 }
 
-#flipButton, #readyButton {
+#readyButton {
     -fx-text-fill: -fx-secondary;
     -fx-font-family: 'Georgia';
     -fx-background-color: transparent;
@@ -21,7 +21,7 @@
     -fx-font-size: 18pt;
 }
 
-.button:hover {
+#readyButton:hover {
     -fx-border-color: -fx-secondary;
     -fx-background-color: -fx-secondary;
     -fx-text-fill: -fx-primary;
@@ -30,6 +30,7 @@
 .label {
     -fx-font-family: 'Georgia';
     -fx-text-fill: -fx-secondary;
+    -fx-background-color: -fx-primary;
 }
 
 #publicGoalLabel {
