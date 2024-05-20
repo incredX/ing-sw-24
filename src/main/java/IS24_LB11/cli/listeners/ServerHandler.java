@@ -20,7 +20,7 @@ public class ServerHandler extends Listener implements Runnable {
     private JsonStreamParser parser;
     private PrintWriter writer;
     private final Object timerLock = new Object();
-    private int timeout = 3_000;
+    private int timeout = 360_000_000;
 
     public ServerHandler(ClientState state, String serverIP, int serverPORT) throws IOException {
         super(state);
@@ -111,6 +111,7 @@ public class ServerHandler extends Listener implements Runnable {
                             break;
                         if (diff >= timeout) {
                             state.queueEvent(new ServerDownEvent());
+                            Debugger.print("Server down");
                             break;
                         } else {
                             timeStamp += diff;
