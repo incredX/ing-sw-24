@@ -99,12 +99,13 @@ public class Game {
 
     //Check if is not player turn
     public String executeTurn(String playerName, Position position, PlayableCard playableCard, boolean deckType, int indexDeck) throws JsonException, DeckException, SyntaxException {
-        if (playerName.compareTo(currentPlayer().name()) != 0) return NOT_PLAYER_TURN;
+        if (!playerName.equals(currentPlayer().name())) return NOT_PLAYER_TURN;
         if (hasGameEnded()) return GAME_ENDED;
         return finalTurn ? executeFinalTurn(position,playableCard) : executeNormalTurn(position, playableCard, deckType, indexDeck);
     }
 
     private String executeNormalTurn(Position position, PlayableCard playableCard, boolean deckType, int indexDeck) throws DeckException, JsonException, SyntaxException {
+        System.out.printf("executing turn of %s (turn %d)\n", currentPlayer().name(), turn);
         Player player = currentPlayer();
         if (normalDeck.isEmpty() && deckType == false)
             return CANT_DRAW_FROM_NORMAL_DECK_IS_EMPTY;
@@ -119,18 +120,13 @@ public class Game {
         }
         //0 for standard deck, 1 for gold deck
         //deck empty o provo a pescare una carta non esistente
-        if (!deckType)
+        if (!deckType) {
             player.addCardToHand((PlayableCard) normalDeck.drawCard(indexDeck));
-        else if (deckType)
+        } else if (deckType) {
             player.addCardToHand((PlayableCard) goldenDeck.drawCard(indexDeck));
+        }
 
         turn++;
-
-        System.out.println("\nTURN IS :" + turn);
-        player.personalGoalScore(false);
-        player.publicGoalScore(publicGoals,false);
-
-
         //controllo se turno finale lo faccio solo sull'ultima persona controllando tutti i punteggi
         if (!finalTurn)
             isFinalTurn();
@@ -174,8 +170,8 @@ public class Game {
     private ArrayList<Player> finalGamePhase() throws SyntaxException {
         ArrayList<Player> ranking = players;
         for (Player player: ranking) {
-            player.personalGoalScore(true);
-            player.publicGoalScore(publicGoals,true);
+            player.personalGoalScore();
+            player.publicGoalScore(publicGoals);
         }
         ranking.sort((a,b)->Integer.compare(b.getScore(), a.getScore()));
         return ranking;

@@ -92,6 +92,8 @@ public class AutomatedState extends ClientState {
                 sendToServer("setup",
                         new String[]{"starterCard","goalCard"},
                         new String[]{playerSetup.getStarterCard().asString(), playerSetup.chosenGoal().asString()});
+                if (placementFunction.placementTerminated())
+                    setNextState(new GameState(this));
             }
             case ServerNewTurnEvent turnEvent -> {
                 table.update(turnEvent);

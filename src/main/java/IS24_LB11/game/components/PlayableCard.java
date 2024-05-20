@@ -18,4 +18,5 @@ public interface PlayableCard extends CardInterface {
     boolean hasCorner(int dir);
     boolean hasCorner(Direction dir);
     boolean isFaceDown();
+    boolean equals(PlayableCard card);
 }
