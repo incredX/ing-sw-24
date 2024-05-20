@@ -7,7 +7,6 @@ import IS24_LB11.cli.listeners.ResizeListener;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -20,12 +19,8 @@ public class ClientCLI {
         ResizeListener resizeListener;
         HashMap<String, Thread> threadMap = new HashMap<>();
 
-        try {
-            Debugger.startDebugger(Debugger.DIR_NAME);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            return;
-        }
+        Debugger.startDebugger();
+        //Debugger.closeDebugger();
         Debugger.print("booting client...");
 
         try {

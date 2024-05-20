@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 public record ServerNewTurnEvent(
         String player,
+        boolean endOfGame,
         ArrayList<NormalCard> normalDeck,
         ArrayList<GoldenCard> goldenDeck,
         ArrayList<Integer> scores)

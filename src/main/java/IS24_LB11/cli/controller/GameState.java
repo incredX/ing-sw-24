@@ -35,6 +35,7 @@ import static IS24_LB11.cli.notification.Priority.MEDIUM;
 //NOTE : URGENT PRIORITY
 //NOTE : HIGH PRIORITY
 //NOTE : MEDIUM PRIORITY
+//TODO : remove debugger
 //NOTE : LOW PRIORITY
 //TODO : sowly remove resize from viewhub and assign to notification their views to resize
 //TODO : refactor viewhub as a cliBox's queue consumer. (maybe?)
@@ -69,6 +70,7 @@ public class GameState extends ClientState implements PlayerStateInterface {
         this.placedCard = null;
         this.popManager.addPopup(
                 new HelpPoup(getViewHub(), this),
+                new ChatPopup(getViewHub(), this),
                 new TablePopup(getViewHub(), this),
                 new HandPopup(getViewHub(), this),
                 new DecksPopup(getViewHub(), this),
@@ -111,11 +113,13 @@ public class GameState extends ClientState implements PlayerStateInterface {
             case ServerNewTurnEvent newTurnEvent -> {
                 Debugger.print("turn of "+newTurnEvent.player()+" (I'm "+username+")");
                 if (newTurnEvent.player().isEmpty()) {
-                    gameOver = true;
-                    popManager.hideAllPopups();
-                    popManager.showPopup("table");
-                    popManager.getPopup("table").enable();
-                    notificationStack.add(MEDIUM, "GAME ENDED", "press [ENTER] to go back to the lobby");
+                    if (newTurnEvent.endOfGame()) {
+                        gameOver = true;
+                        popManager.hideAllPopups();
+                        popManager.showPopup("table");
+                        popManager.getPopup("table").enable();
+                        notificationStack.add(MEDIUM, "GAME ENDED", "press [ENTER] to go back to the lobby");
+                    } else logout();
                 }
                 if (newTurnEvent.player().equals(username)) {
                     cardPlaced = false;
@@ -125,8 +129,8 @@ public class GameState extends ClientState implements PlayerStateInterface {
                 updateBoardPointerImage();
                 gameStage.updatePointer();
                 table.update(newTurnEvent);
-                popManager.getPopup("decks").update();
-                popManager.getPopup("table").update();
+                popManager.getOptionalPopup("decks").ifPresent(Popup::update);
+                popManager.getOptionalPopup("table").ifPresent(Popup::update);
             }
             case ServerPlayerDisconnectEvent disconnectEvent -> {
                 if (gameOver) break;

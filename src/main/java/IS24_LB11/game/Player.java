@@ -36,32 +36,37 @@ public class Player implements JsonConvertable {
     }
 
     public boolean placeCard(PlayableCard card, Position position) {
-//        it doesn't work when the card has been flipped by the client
-//        if (hand.stream().filter(x -> x.asString().compareTo(card.asString()) == 0).count() == 0) {
-//            return false;
-//        }
         if (board.placeCard(card, position)) {
-            hand.removeIf(carhand -> carhand.asString().compareTo(card.asString()) == 0);
+            hand.removeIf(carhand -> carhand.equals(card));
             return true;
         } else {
             return false;
         }
     }
-    public void personalGoalScore(){
+    public void personalGoalScore(Boolean increment){
+        int scoreGoal;
         if (personalGoal.asString().length()==5)
-            incrementScore(board.countGoalSymbols((GoalSymbol) personalGoal));
+            scoreGoal=(board.countGoalSymbols((GoalSymbol) personalGoal));
         else
-            incrementScore(board.countGoalPatterns((GoalPattern) personalGoal));
+            scoreGoal=(board.countGoalPatterns((GoalPattern) personalGoal));
+        if (increment)
+            incrementScore(scoreGoal);
+        System.out.println(name + "-Personal Goal: " + scoreGoal);
     }
 
-    public void publicGoalScore(ArrayList<GoalCard> publicGoals){
+    public void publicGoalScore(ArrayList<GoalCard> publicGoals, Boolean increment){
+        int scoreGoal;
         for (GoalCard goalCard: publicGoals){
             if (goalCard.asString().length()==5) {
-                incrementScore(board.countGoalSymbols((GoalSymbol) goalCard));
+                scoreGoal=(board.countGoalSymbols((GoalSymbol) goalCard));
             }
             else
-                incrementScore(board.countGoalPatterns((GoalPattern) goalCard));
+                scoreGoal=(board.countGoalPatterns((GoalPattern) goalCard));
+            if (increment)
+                incrementScore(scoreGoal);
+            System.out.println(name + "-Public Goal: " + scoreGoal);
         }
+        
     }
     public void incrementScoreLastCardPlaced() {
         score += board.calculateScoreOnLastPlacedCard();

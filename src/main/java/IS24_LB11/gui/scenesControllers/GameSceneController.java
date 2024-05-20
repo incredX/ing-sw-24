@@ -12,18 +12,11 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.ScrollPane;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
@@ -32,7 +25,13 @@ import java.util.ArrayList;
 
 public class GameSceneController extends GenericSceneController{
     @FXML
-    private ImageView goalCard1;
+    protected BorderPane chatBox;
+    @FXML
+    protected TextArea messageBox;
+    @FXML
+    protected Button buttonSend;
+    @FXML
+    protected ImageView goalCard1;
     @FXML
     private ImageView goalCard2;
     @FXML
@@ -87,8 +86,7 @@ public class GameSceneController extends GenericSceneController{
     private Text playerName4;
     @FXML
     private Text playerScore4;
-    @FXML
-    private Button chatButton;
+
     @FXML
     private Button flipHandCard1;
     @FXML
@@ -104,7 +102,9 @@ public class GameSceneController extends GenericSceneController{
     private ImageView cardBackground;
     @FXML
     private ImageView boardBackground;
-    Stage chatStage = new Stage();
+    @FXML
+    private Button centerBoardButton;
+
     GameGUIState state;
     int numberPlayerInGame;
     private final int centerBoardX = 10000;
@@ -114,30 +114,16 @@ public class GameSceneController extends GenericSceneController{
     private final int cardCornerX = 70;
     private final int cardCornerY = 84;
     private ArrayList<ImageView> availableSpotsTemporaryCards = new ArrayList<>();
-    ChatSceneController chatSceneController;
-
-    @FXML
-    private AnchorPane x;
     public GameSceneController(ClientGUIState state, Stage stage) {
         this.state = (GameGUIState) state;
         this.genericState=state;
         this.stage = stage;
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/GamePageBackup.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/GamePage.fxml"));
         loader.setController(this);
 
         this.stage.setTitle("Codex");
         try {
             this.stage.setScene(new Scene(loader.load()));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        FXMLLoader loaderChat = new FXMLLoader(getClass().getResource("/ChatView.fxml"));
-        chatSceneController = new ChatSceneController((GameGUIState) state, chatStage);
-        loaderChat.setController(chatSceneController);
-        state.getServerHandler().setChatSceneController(chatSceneController);
-        try {
-            chatStage.setScene(new Scene(loaderChat.load()));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -153,10 +139,12 @@ public class GameSceneController extends GenericSceneController{
     public void initialize() {
         state.getServerHandler().setGameSceneController(this);
         numberPlayerInGame = state.getNumberOfPlayer();
-
         scrollPane.getStyleClass().add("styles.css");
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+
         boardBackground.setImage(new Image(GameSceneController.class.getResourceAsStream("/graphicResources/backGround.jpeg")));
-        cardBackground.setImage(new Image(GameSceneController.class.getResourceAsStream("/graphicResources/backGround.jpeg")));
+//        cardBackground.setImage(new Image(GameSceneController.class.getResourceAsStream("/graphicResources/backGround.jpeg")));
         // button and image event has to be declared here
         handCard1.setOnMouseClicked(mouseEvent -> chooseHandCard(0));
         handCard2.setOnMouseClicked(mouseEvent -> chooseHandCard(1));
@@ -173,8 +161,12 @@ public class GameSceneController extends GenericSceneController{
 
         disableDecks(true);
 
-        chatButton.setOnMouseClicked(mouseEvent -> showChat());
+        centerBoardButton.setOnAction(mouseEvent -> moveToCenter(scrollPane));
 
+        chatBox.setOnMouseEntered(mouseEvent -> chatDisplay());
+        chatBox.setOnMouseExited(mouseEvent -> chatHide());
+        buttonSend.setOnMouseClicked(mouseEvent -> send());
+        chatHide();
         // load goal cards
         goalCard1.setImage(ImageLoader.getImage(state.getPublicGoals().get(0).asString()));
         goalCard2.setImage(ImageLoader.getImage(state.getPublicGoals().get(1).asString()));
@@ -194,9 +186,7 @@ public class GameSceneController extends GenericSceneController{
         setUsernamesBoard();
     }
 
-    private void showChat() {
-        chatStage.show();
-    }
+
 
     private void hideInitialPawns() {
         if (numberPlayerInGame <= 3)
@@ -272,6 +262,11 @@ public class GameSceneController extends GenericSceneController{
         updateScore();
         disableAllCardInputs(!state.isThisPlayerTurn());
     }
+    public void updateGame(ArrayList<Integer> playerScores) {
+        state.update(playerScores);
+        updateScore();
+    }
+
 
     private void disableDecks(Boolean bool) {
         switch (state.getNormalDeck().size()){
@@ -279,16 +274,23 @@ public class GameSceneController extends GenericSceneController{
                 normalDeckCard1.setDisable(true);
                 normalDeckCard2.setDisable(true);
                 normalDeckCard3.setDisable(true);
+                normalDeckCard1.setImage(null);
+                normalDeckCard2.setImage(null);
+                normalDeckCard3.setImage(null);
                 break;
             case 1:
                 normalDeckCard1.setDisable(bool);
                 normalDeckCard2.setDisable(true);
                 normalDeckCard3.setDisable(true);
+                normalDeckCard2.setImage(null);
+                normalDeckCard3.setImage(null);
                 break;
             case 2:
                 normalDeckCard1.setDisable(bool);
                 normalDeckCard2.setDisable(bool);
                 normalDeckCard3.setDisable(true);
+                normalDeckCard3.setImage(null);
+
                 break;
             default:
                 normalDeckCard1.setDisable(bool);
@@ -300,17 +302,21 @@ public class GameSceneController extends GenericSceneController{
             case 0:
                 goldenDeckCard1.setDisable(true);
                 goldenDeckCard2.setDisable(true);
-                goldenDeckCard3.setDisable(true);
+                goldenDeckCard2.setDisable(true);
+                goldenDeckCard3.setImage(null);
                 break;
             case 1:
                 goldenDeckCard1.setDisable(bool);
                 goldenDeckCard2.setDisable(true);
                 goldenDeckCard3.setDisable(true);
+                goldenDeckCard2.setImage(null);
+                goldenDeckCard3.setImage(null);
                 break;
             case 2:
                 goldenDeckCard1.setDisable(bool);
                 goldenDeckCard2.setDisable(bool);
                 goldenDeckCard3.setDisable(true);
+                goldenDeckCard3.setImage(null);
                 break;
             default:
                 goldenDeckCard1.setDisable(bool);
@@ -320,7 +326,7 @@ public class GameSceneController extends GenericSceneController{
         }
     }
 
-    private void disableAllCardInputs(Boolean bool){
+    public void disableAllCardInputs(Boolean bool){
         disableHand(bool);
         disableDecks(bool);
     }
@@ -407,8 +413,7 @@ public class GameSceneController extends GenericSceneController{
     }
 
     public void chooseHandCard(int n) {
-
-
+        clearTemporaryCardsFromBoard(playerBoard);
         switch (n) {
             case 0:
                 state.chooseCardToPlay(state.getPlayer().getHand().getFirst());
@@ -540,7 +545,7 @@ public class GameSceneController extends GenericSceneController{
     private void placeTemporaryCardsOnAvailableSpots(ImageView selectedCardFromHand){
         for(Position pos : getAvailableSpots()){
             ImageView availableSpot = getImageView("AvailableSpot", pos.getX(), pos.getY());
-            availableSpot.setOpacity(0.5);
+            availableSpot.setOpacity(0.7);
             ImageLoader.roundCorners(availableSpot);
 
             if(!imageViewInPosition(availableSpot)){
@@ -553,6 +558,12 @@ public class GameSceneController extends GenericSceneController{
 
 
     private void placeCard(ImageView availableSpot, ImageView selectedCardFromHand){
+
+        if(this.state.getPlayer().name().equals("Jonh") && this.state.getPlayer().name().equals("John") &&
+                this.state.getPlayer().name().equals("john") && this.state.getPlayer().name().equals("jonh"))
+            boardBackground.setImage(new Image(GameSceneController.class.getResourceAsStream("/graphicResources/codexCards/croppedCards/croppedBack/GXB.png")));
+
+
         Position realPosition = getRealPosition((int)availableSpot.getLayoutX(), (int)availableSpot.getLayoutY());
 
         ImageView cardToBePlaced = new ImageView(selectedCardFromHand.getImage());
@@ -569,9 +580,12 @@ public class GameSceneController extends GenericSceneController{
             updateHand();
             disableHand(true);
             state.setPositionOfPlacedCard(realPosition);
+            if((state.getGoldenDeck().size() == 0 && state.getNormalDeck().size()==0) || state.isFinalTurn()){
+                state.execute();
+            }
         }
         else {
-            System.out.printf("\nCard can't be placed there\n");
+            this.addMessage("Card can't be placed there");
         }
     }
 
@@ -590,5 +604,7 @@ public class GameSceneController extends GenericSceneController{
         }
         return false;
     }
-
+    public void setFinalTurn(){
+        state.setIsFinalTurn(true);
+    }
 }

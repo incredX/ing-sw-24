@@ -5,6 +5,7 @@ import IS24_LB11.cli.Table;
 import IS24_LB11.cli.event.server.ServerEvent;
 import IS24_LB11.cli.event.server.ServerPlayerDisconnectEvent;
 import IS24_LB11.cli.event.server.ServerPlayerSetupEvent;
+import IS24_LB11.cli.popup.ChatPopup;
 import IS24_LB11.cli.popup.DecksPopup;
 import IS24_LB11.cli.popup.HandPopup;
 import IS24_LB11.cli.popup.TablePopup;
@@ -28,7 +29,9 @@ public class SetupState extends ClientState implements PlayerStateInterface {
         super(lobbyState);
         this.setup = setup;
         this.table = table;
-        popManager.addPopup(new TablePopup(getViewHub(), this),
+        popManager.addPopup(
+                new ChatPopup(getViewHub(), this),
+                new TablePopup(getViewHub(), this),
                 new HandPopup(getViewHub(), this),
                 new DecksPopup(getViewHub(), this));
     }
