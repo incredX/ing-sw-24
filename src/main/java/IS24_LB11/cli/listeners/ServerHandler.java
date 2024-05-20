@@ -20,7 +20,7 @@ public class ServerHandler extends Listener implements Runnable {
     private JsonStreamParser parser;
     private PrintWriter writer;
     private final Object timerLock = new Object();
-    private int timeout = 2_000;
+    private int timeout = 36_000_000;
 
     public ServerHandler(ClientState state, String serverIP, int serverPORT) throws IOException {
         super(state);
@@ -88,14 +88,14 @@ public class ServerHandler extends Listener implements Runnable {
 
     private void resetEventTimer() {
         synchronized (timerLock) {
-            timerLock.notify();
+            timerLock.notifyAll();
         }
     }
 
     private void shutdownEventTimer() {
         synchronized (timerLock) {
             timeout = 0;
-            timerLock.notify();
+            timerLock.notifyAll();
         }
     }
 
