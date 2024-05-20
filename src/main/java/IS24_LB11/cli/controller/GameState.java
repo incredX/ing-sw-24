@@ -92,6 +92,8 @@ public class GameState extends ClientState implements PlayerStateInterface {
         gameStage = viewHub.setGameStage(this);
         updateBoardPointerImage();
         popManager.updatePopups();
+        popManager.getPopup("table").redrawView();
+        if (table.getScoreboard().getNumPlayers() == 1) gameOver = true;
         cmdLine.update();
         viewHub.update();
         return super.execute();
@@ -135,7 +137,9 @@ public class GameState extends ClientState implements PlayerStateInterface {
             case ServerPlayerDisconnectEvent disconnectEvent -> {
                 if (gameOver) break;
                 table.getScoreboard().removePlayer(disconnectEvent.player());
+                popManager.getPopup("table").update();
                 popManager.getPopup("table").redrawView();
+                if (table.getScoreboard().getNumPlayers() == 1) gameOver = true;
             }
             default -> processResult(Result.Error("received unknown server event"));
         }
@@ -172,6 +176,7 @@ public class GameState extends ClientState implements PlayerStateInterface {
                 case ArrowLeft -> shiftBoardPointer(Side.WEST);
                 case ArrowRight -> shiftBoardPointer(Side.EAST);
                 case Enter -> {
+                    System.out.println("game over: "+gameOver);
                     if (gameOver) logout();
                 }
             }

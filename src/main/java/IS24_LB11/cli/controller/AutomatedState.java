@@ -97,6 +97,10 @@ public class AutomatedState extends ClientState {
             }
             case ServerNewTurnEvent turnEvent -> {
                 table.update(turnEvent);
+                if (turnEvent.player().isEmpty()) {
+                    quit();
+                    break;
+                }
                 if (!turnEvent.player().equals(username)) break;
 
                 JsonConverter converter = new JsonConverter();
