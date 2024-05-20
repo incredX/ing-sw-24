@@ -21,7 +21,13 @@
     -fx-font-size: 18pt;
 }
 
-.button:hover {
+#flipButton:hover {
+    -fx-border-color: -fx-secondary;
+    -fx-background-color: -fx-secondary;
+    -fx-text-fill: -fx-primary;
+}
+
+#readyButton:hover {
     -fx-border-color: -fx-secondary;
     -fx-background-color: -fx-secondary;
     -fx-text-fill: -fx-primary;
