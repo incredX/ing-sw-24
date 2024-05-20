@@ -120,10 +120,10 @@ public class Board implements JsonConvertable {
                     getPlacedCard(position.withRelative(step)).ifPresent(card -> card.setVisited(true));
             }
         }
-        if (patternsFound > 0) {
-            for (PlacedCard placedCard : placedCards.stream().skip(1).toList())
-                getPlacedCard(placedCard.position()).ifPresent(card -> card.setVisited(false));
-        }
+
+        for (PlacedCard placedCard : placedCards.stream().skip(1).toList())
+            getPlacedCard(placedCard.position()).ifPresent(card -> card.setVisited(false));
+
         return patternsFound * (goal.getPoints());
     }
 
