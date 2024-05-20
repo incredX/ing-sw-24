@@ -86,19 +86,6 @@ public class SetupSceneController extends GenericSceneController{
         this.stage.show();
     }
 
-    public void exit(Stage stage)  {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Exit");
-        alert.setHeaderText("You are about to exit!");
-        alert.setContentText("Are you sure?");
-
-        if(alert.showAndWait().get() == ButtonType.OK){
-            state.shutdown();
-            System.out.println("You successfully logged out!");
-            stage.close();
-        }
-    }
-
     private void chooseGoal(int n){
         state.setChoosenGoalIndex(n);
         ColorAdjust colorAdjustChoosen = new ColorAdjust();
@@ -117,7 +104,6 @@ public class SetupSceneController extends GenericSceneController{
 
     private void flipStarterCard(){
         state.flipStarterCard();
-        System.out.println("Flipped Starter Card: " + state.getStarterCard().asString());
         starterCard.setImage(ImageLoader.getImage(state.getStarterCard().asString()));
     }
 
@@ -126,6 +112,10 @@ public class SetupSceneController extends GenericSceneController{
     }
 
     public void ready(){
+        goalCard1.setDisable(true);
+        goalCard2.setDisable(true);
+        starterCard.setDisable(true);
+        flipButton.setDisable(true);
         readyButton.setDisable(true);
         state.execute();
     }
