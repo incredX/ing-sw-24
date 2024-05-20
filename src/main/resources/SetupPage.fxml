@@ -75,7 +75,7 @@
                </font>
             </Button>
             <Rectangle arcHeight="5.0" arcWidth="5.0" fill="TRANSPARENT" height="355.0" layoutX="940.0" layoutY="60.0" stroke="#412911" strokeType="INSIDE" strokeWidth="3.0" width="222.0" y="-21.0" />
-            <Label fx:id="publicGoalLabel" layoutX="970.0" layoutY="20.0" prefHeight="39.0" prefWidth="173.0" style="-fx-background-color: #EDE2BB;" text="Public Goal" />
+            <Label fx:id="publicGoalLabel" layoutX="965.0" layoutY="20.0" prefHeight="39.0" prefWidth="173.0" style="-fx-background-color: #EDE2BB;" text="Public Goal" />
             <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="950.0" layoutY="90.0" pickOnBounds="true" preserveRatio="true" y="-21.0">
                <image>
                   <Image url="@graphicResources/codexCards/croppedCards/croppedFront/goalFront/O2MM_.jpg" />
