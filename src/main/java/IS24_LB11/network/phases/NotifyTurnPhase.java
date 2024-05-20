@@ -31,7 +31,7 @@ public class NotifyTurnPhase {
             response.addProperty("player", "");
             response.addProperty("gameFinished", "");
         }
-            else
+        else
             response.addProperty("player", clientHandler.getGame().currentPlayer().name());
 
         //add player respective scores

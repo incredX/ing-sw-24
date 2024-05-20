@@ -119,7 +119,7 @@ public class Game {
             player.incrementScoreLastCardPlaced();
         }
         //0 for standard deck, 1 for gold deck
-        //deck empty o provo a pescare una carta non esistente
+
         if (!deckType) {
             player.addCardToHand((PlayableCard) normalDeck.drawCard(indexDeck));
         } else if (deckType) {

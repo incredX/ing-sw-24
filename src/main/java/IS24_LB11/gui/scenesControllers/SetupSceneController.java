@@ -74,7 +74,6 @@ public class SetupSceneController extends GenericSceneController{
     public void changeToGameState(){
         GameSceneController gameSceneController = new GameSceneController(new GameGUIState(state),stage);
         gameSceneController.updateChat(this.chat.getMessages());
-        System.out.println(this.chat.getMessages());
         gameSceneController.showStage();
     }
     public void showStage() {
