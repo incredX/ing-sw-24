@@ -128,11 +128,6 @@ public class Game {
 
         turn++;
 
-        System.out.println("\nTURN IS :" + turn);
-        player.personalGoalScore(false);
-        player.publicGoalScore(publicGoals,false);
-
-
         //controllo se turno finale lo faccio solo sull'ultima persona controllando tutti i punteggi
         if (!finalTurn)
             isFinalTurn();
