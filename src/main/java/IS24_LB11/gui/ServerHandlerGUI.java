@@ -7,6 +7,7 @@ import IS24_LB11.game.tools.JsonException;
 import IS24_LB11.game.utils.SyntaxException;
 import IS24_LB11.gui.phases.ClientGUIState;
 import IS24_LB11.gui.scenesControllers.GameSceneController;
+import IS24_LB11.gui.scenesControllers.GenericSceneController;
 import IS24_LB11.gui.scenesControllers.LoginSceneController;
 import IS24_LB11.gui.scenesControllers.SetupSceneController;
 import com.google.gson.JsonArray;
@@ -32,6 +33,7 @@ public class ServerHandlerGUI implements Runnable{
     private LoginSceneController loginSceneController;
     private SetupSceneController setupSceneController = null;
     private GameSceneController gameSceneController = null;
+    private GenericSceneController activeController = null;
 
     public ServerHandlerGUI(ClientGUIState clientGUIState, String serverIP, int serverPORT) throws IOException {
         socket = new Socket(serverIP, serverPORT);
@@ -47,15 +49,7 @@ public class ServerHandlerGUI implements Runnable{
             try {
                 while (!parser.hasNext()) {
                     if (System.currentTimeMillis()-lastHeartbeatTime > 3000 && lastHeartbeatTime != 0) {
-                        if (gameSceneController != null) {
-                            Platform.runLater(() -> gameSceneController.showPopUpRestartGame());
-                        }
-                        else if (setupSceneController != null) {
-                            Platform.runLater(() -> setupSceneController.showPopUpRestartGame());
-                        }
-                        else {
-                            Platform.runLater(() -> loginSceneController.showPopUpRestartGame());
-                        }
+                        Platform.runLater(() -> activeController.showPopUpRestartGame());
                         running=false;
                         break;
                     }
@@ -105,7 +99,6 @@ public class ServerHandlerGUI implements Runnable{
     private void handleErrorEvent(JsonObject serverEvent) {
         if (serverEvent.get("error").getAsString().equals("Server full, try again later.")){
                 Platform.runLater(()-> {
-                    System.out.println("Bella fra");
                     loginSceneController.resetServerHandler();
                     try {
                         loginSceneController.restart();
@@ -117,20 +110,15 @@ public class ServerHandlerGUI implements Runnable{
         }
         else {
             String msg = serverEvent.get("error").getAsString();
-            if(!(gameSceneController==null))
-                Platform.runLater(() -> gameSceneController.addMessage(msg));
-            else
-                Platform.runLater(() -> setupSceneController.addMessage(msg));
+            addMessage(msg);
         }
     }
 
     private void handleMessageEvent(JsonObject serverEvent) {
         if (serverEvent.has("to") && serverEvent.has("from") && serverEvent.has("message")){
             String msg="<" + serverEvent.get("from").getAsString() + "> " + serverEvent.get("message").getAsString();
-            if(!(gameSceneController==null))
-                Platform.runLater(() -> gameSceneController.addMessage(msg));
-            else
-                Platform.runLater(() -> setupSceneController.addMessage(msg));
+            addMessage(msg);
+
         }
     }
 
@@ -211,12 +199,7 @@ public class ServerHandlerGUI implements Runnable{
         }
     }
     private void addMessage(String msg){
-        if (gameSceneController!=null)
-            Platform.runLater(() -> gameSceneController.addMessage(msg));
-        else if (setupSceneController!=null)
-            Platform.runLater(() -> setupSceneController.addMessage(msg));
-        else
-            Platform.runLater(() -> loginSceneController.addMessage(msg));
+        Platform.runLater(() -> activeController.addMessage(msg));
     }
     private void heartBeatEvent(JsonObject serverEvent){
         JsonObject message= new JsonObject();
@@ -307,13 +290,16 @@ public class ServerHandlerGUI implements Runnable{
 
     public void setLoginSceneController(LoginSceneController loginSceneController) {
         this.loginSceneController = loginSceneController;
+        this.activeController = loginSceneController;
     }
 
     public void setSetupSceneController(SetupSceneController setupSceneController) {
         this.setupSceneController = setupSceneController;
+        this.activeController = setupSceneController;
     }
 
     public void setGameSceneController(GameSceneController gameSceneController) {
         this.gameSceneController = gameSceneController;
+        this.activeController = gameSceneController;
     }
 }
