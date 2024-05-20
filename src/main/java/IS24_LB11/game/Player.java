@@ -27,7 +27,8 @@ public class Player implements JsonConvertable {
         this.setup = setup;
         this.hand = setup.hand();
         this.personalGoal = null;
-        this.score = 0;
+        //TODO:RESET THIS
+        this.score = 12;
     }
 
     public void applySetup() {
