@@ -43,18 +43,16 @@ public class Player implements JsonConvertable {
             return false;
         }
     }
-    public void personalGoalScore(Boolean increment){
+    public void personalGoalScore(){
         int scoreGoal;
         if (personalGoal.asString().length()==5)
             scoreGoal=(board.countGoalSymbols((GoalSymbol) personalGoal));
         else
             scoreGoal=(board.countGoalPatterns((GoalPattern) personalGoal));
-        if (increment)
-            incrementScore(scoreGoal);
-        System.out.println(name + "-Personal Goal: " + scoreGoal);
+        incrementScore(scoreGoal);
     }
 
-    public void publicGoalScore(ArrayList<GoalCard> publicGoals, Boolean increment){
+    public void publicGoalScore(ArrayList<GoalCard> publicGoals){
         int scoreGoal;
         for (GoalCard goalCard: publicGoals){
             if (goalCard.asString().length()==5) {
@@ -62,9 +60,7 @@ public class Player implements JsonConvertable {
             }
             else
                 scoreGoal=(board.countGoalPatterns((GoalPattern) goalCard));
-            if (increment)
-                incrementScore(scoreGoal);
-            System.out.println(name + "-Public Goal: " + scoreGoal);
+            incrementScore(scoreGoal);
         }
         
     }
