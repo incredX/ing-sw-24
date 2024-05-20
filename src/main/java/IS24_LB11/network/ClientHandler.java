@@ -21,7 +21,7 @@ public class ClientHandler implements Runnable {
     private Server server;
     private boolean connectionClosed = false;
     //TODO:RESET THIS
-    private int HEARTBEAT_INTERVAL = 10000000;
+    private int HEARTBEAT_INTERVAL = 500;
     private long lastHeartbeatTime;
 
     private ArrayList<Thread> allStartedThreads = new ArrayList<>();
