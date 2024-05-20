@@ -7,10 +7,10 @@
 .root {
     -fx-background-color: -fx-primary;
     -fx-border-color: -fx-secondary;
-    -fx-border-width: 30;
+    -fx-border-width: 20;
 }
 
-.button {
+#readyButton {
     -fx-text-fill: -fx-secondary;
     -fx-font-family: 'Georgia';
     -fx-background-color: transparent;
@@ -21,29 +21,27 @@
     -fx-font-size: 18pt;
 }
 
-.button:hover {
+#readyButton:hover {
     -fx-border-color: -fx-secondary;
     -fx-background-color: -fx-secondary;
     -fx-text-fill: -fx-primary;
 }
 
-.custom-text-field {
-    -fx-text-fill: -fx-secondary;
-    -fx-font-size: 15pt;
-    -fx-font-family: 'Georgia';
-    -fx-background-color: transparent;
-    -fx-border-width: 0 0 3 0;
-    -fx-border-color: -fx-secondary;
-    -fx-padding: 0 0 5 0;
-    -fx-prompt-text-fill: #B2A131;
-}
-
-.custom-text-field .text-input {
-    -fx-fill: -fx-secondary;
-}
-
 .label {
     -fx-font-family: 'Georgia';
-    -fx-font-size: 72pt;
     -fx-text-fill: -fx-secondary;
+    -fx-background-color: -fx-primary;
 }
+
+#publicGoalLabel {
+    -fx-font-size: 25pt;
+}
+
+#flipStarterCardLabel{
+    -fx-font-size: 30pt;
+}
+
+#choseGoalCardLabel {
+    -fx-font-size: 30pt;
+}
+

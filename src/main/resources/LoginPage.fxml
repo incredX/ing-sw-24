@@ -10,7 +10,13 @@
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="scenePane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" style="-fx-border-color: #412911; -fx-border-width: 30;" stylesheets="@LoginStyle.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.ListView?>
+<AnchorPane fx:id="scenePane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" stylesheets="@LoginStyle.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <TextField fx:id="usernameTextField" layoutX="850.0" layoutY="230.0" prefHeight="37.0" prefWidth="260.0" promptText="Username" styleClass="custom-text-field" stylesheets="@LoginStyle.css">
          <font>
@@ -50,5 +56,31 @@
       <ImageView fx:id="codexLoginImageView" fitHeight="680.0" fitWidth="675.0" layoutX="30.0" layoutY="30.0" pickOnBounds="true" preserveRatio="true">
          <Image url="@graphicResources/codexLogin.jpg" />
       </ImageView>
+      <BorderPane fx:id="chatBox" layoutX="35.0" layoutY="595.0" maxHeight="400.0" maxWidth="300.0" minHeight="100.0" minWidth="250.0" prefHeight="100.0" prefWidth="250.0">
+         <center>
+            <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+               <children>
+                  <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefHeight="496.0" vbarPolicy="ALWAYS" vmin="1.0" vvalue="1.0" VBox.vgrow="ALWAYS">
+                     <content>
+                        <ListView fx:id="chatPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="200.0" />
+                     </content>
+                  </ScrollPane>
+                  <HBox fx:id="chatBoxLower" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="100.0" VBox.vgrow="NEVER">
+                     <children>
+                        <TextArea fx:id="messageBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="100.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="16.0" prefWidth="698.0" promptText="Enter Message..." scaleShape="false" HBox.hgrow="ALWAYS">
+                           <font>
+                              <Font name="SansSerif Regular" size="14.0" />
+                           </font>
+                        </TextArea>
+                        <Button fx:id="buttonSend" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="43.0" prefWidth="60.0" scaleShape="false" text="Send" textAlignment="CENTER" HBox.hgrow="NEVER" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+         </center>
+         <left>
+            <VBox maxHeight="1.7976931348623157E308" BorderPane.alignment="CENTER" />
+         </left>
+      </BorderPane>
    </children>
 </AnchorPane>

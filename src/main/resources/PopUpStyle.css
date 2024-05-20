@@ -1,0 +1,49 @@
+
+
+* {
+    -fx-primary : #EDE2BB;
+    -fx-secondary : #412911;
+}
+
+.dialog-pane {
+    -fx-background-color: -fx-primary; /* Background color of the dialog pane */
+    -fx-border-color: -fx-secondary; /* Border color of the dialog pane */
+    -fx-border-width: 3px;
+    -fx-background-radius: 10px;
+}
+
+.dialog-pane .header-panel {
+    -fx-font-size: 14pt;
+    -fx-background-color: -fx-primary; /* Background color of the header panel */
+    -fx-font-family: Georgia;
+    -fx-border-width: 0 0 3 0;
+    -fx-border-color: -fx-secondary;
+}
+
+.dialog-pane .content {
+    -fx-font-size: 12pt;
+    -fx-background-color: -fxprimary; /* Background color of the content area */
+    -fx-text-fill: -fx-secondary; /* Text color in the content area */
+    -fx-font-family: Georgia;
+}
+
+.dialog-pane .button-bar {
+    -fx-background-color: -fx-primary; /* Background color of the button bar */
+}
+
+.button {
+    -fx-font-size: 10pt;
+    -fx-background-color: -fx-primary; /* Background color of buttons */
+    -fx-text-fill: -fx-secondary; /* Text color of buttons */
+    -fx-border-color: -fx-secondary;
+    -fx-border-width: 2px;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+    -fx-font-family: Georgia;
+}
+
+.button:hover {
+    -fx-border-color: -fx-secondary;
+    -fx-background-color: -fx-secondary;
+    -fx-text-fill: -fx-primary;
+}

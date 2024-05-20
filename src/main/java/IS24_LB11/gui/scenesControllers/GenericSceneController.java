@@ -29,6 +29,8 @@ public class GenericSceneController {
     }
     public void exit(Stage stage)  {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.getDialogPane().getStylesheets().add("PopUpStyle.css");
+
         alert.setTitle("Exit");
         alert.setHeaderText("You are about to exit!");
         alert.setContentText("Are you sure?");
@@ -61,6 +63,9 @@ public class GenericSceneController {
                 chatPane.getItems().add(new Text("Public chat command:"));
                 chatPane.getItems().add(new Text("sendtoall msg"));
                 chatPane.getItems().add(new Text("--------------------------------------------------"));
+                chatPane.getItems().add(new Text("Clear messages chat command:"));
+                chatPane.getItems().add(new Text("clear"));
+                chatPane.getItems().add(new Text("--------------------------------------------------"));
                 break;
 
             case "sendto":
@@ -87,20 +92,25 @@ public class GenericSceneController {
                 chatPane.getItems().add("Invalid input");
                 break;
         }
+        messageBox.setText("");
     }
 
     public void chatHide() {
         chatBox.setPrefWidth(chatBox.getMinWidth());
         chatBox.setPrefHeight(chatBox.getMinHeight());
-        chatBox.setLayoutX(10);
+        chatBox.setLayoutX(20);
         chatBox.setLayoutY(600);
-        messageBox.setText("");
     }
     public void chatDisplay() {
         chatBox.setPrefWidth(chatBox.getMaxWidth());
         chatBox.setPrefHeight(chatBox.getMaxHeight());
-        chatBox.setLayoutX(10);
+        chatBox.setLayoutX(20);
         chatBox.setLayoutY(300);
+    }
+    public void chatHideLogin(){
+        chatHide();
+        chatBox.setLayoutX(-500);
+        chatBox.setLayoutY(-500);
     }
 
     public void addMessage(String msg){

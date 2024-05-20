@@ -139,7 +139,6 @@ public class GameSceneController extends GenericSceneController{
     public void initialize() {
         state.getServerHandler().setGameSceneController(this);
         numberPlayerInGame = state.getNumberOfPlayer();
-        scrollPane.getStyleClass().add("styles.css");
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
@@ -559,8 +558,8 @@ public class GameSceneController extends GenericSceneController{
 
     private void placeCard(ImageView availableSpot, ImageView selectedCardFromHand){
 
-        if(this.state.getPlayer().name().equals("Jonh") && this.state.getPlayer().name().equals("John") &&
-                this.state.getPlayer().name().equals("john") && this.state.getPlayer().name().equals("jonh"))
+        if(this.state.getPlayer().name().equals("Jonh") || this.state.getPlayer().name().equals("John") ||
+                this.state.getPlayer().name().equals("john") || this.state.getPlayer().name().equals("jonh"))
             boardBackground.setImage(new Image(GameSceneController.class.getResourceAsStream("/graphicResources/codexCards/croppedCards/croppedBack/GXB.png")));
 
 

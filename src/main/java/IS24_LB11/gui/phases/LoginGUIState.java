@@ -38,7 +38,7 @@ public class LoginGUIState extends ClientGUIState implements PlayerStateInterfac
 
                 this.inputHandlerGUI=new InputHandlerGUI(serverHandler.getWriter());
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                System.out.println("Connection refused");
             }
         }
         inputHandlerGUI.sendLogin(desiredUsername);

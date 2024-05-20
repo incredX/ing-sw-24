@@ -71,7 +71,7 @@ public class LoginSceneController extends GenericSceneController{
     private void initialize(){
         loginButton.setOnAction(event -> login());
         exitButton.setOnAction(event -> exit(stage));
-
+        chatHideLogin();
         // set default values
         ipTextField.setText("localhost");
         portTextField.setText("54321");

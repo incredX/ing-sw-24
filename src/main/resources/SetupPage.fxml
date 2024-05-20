@@ -13,64 +13,93 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="scenePane" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane fx:id="scenePane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" stylesheets="@SetupStyle.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <ImageView fitHeight="720.0" fitWidth="1286.0" opacity="0.89" pickOnBounds="true" preserveRatio="true">
-         <image>
-            <Image url="@graphicResources/CodexBackground.jpg" />
-         </image>
-      </ImageView>
       <Pane prefHeight="720.0" prefWidth="1285.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <ImageView fx:id="goalCard1" fitHeight="250.0" fitWidth="400.0" layoutY="8.0" pickOnBounds="true" preserveRatio="true" x="50.0" y="100.0">
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="TRANSPARENT" height="282.0" layoutX="316.0" layoutY="404.0" stroke="#412911" strokeType="INSIDE" strokeWidth="3.0" width="368.0" y="-21.0" />
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="TRANSPARENT" height="296.0" layoutX="111.0" layoutY="50.0" stroke="#412911" strokeType="INSIDE" strokeWidth="3.0" width="772.0" y="-21.0" />
+            <ImageView fx:id="goalCard1" fitHeight="220.0" fitWidth="330.0" layoutX="80.0" pickOnBounds="true" preserveRatio="true" x="50.0" y="80.0">
                <image>
                   <Image url="@graphicResources/codexCards/croppedCards/croppedFront/goalFront/O2AAAD1.jpg" />
                </image>
                <effect>
-                  <DropShadow height="50.0" radius="24.5" spread="0.2" width="50.0" />
+                  <DropShadow blurType="TWO_PASS_BOX" height="60.0" radius="29.5" spread="0.3" width="60.0">
+                     <color>
+                        <Color red="0.2549019753932953" green="0.16078431904315948" blue="0.06666667014360428" />
+                     </color></DropShadow>
                </effect>
             </ImageView>
-            <ImageView fx:id="goalCard2" fitHeight="250.0" fitWidth="400.0" layoutX="53.0" layoutY="8.0" pickOnBounds="true" preserveRatio="true" x="450.0" y="100.0">
+            <ImageView fx:id="goalCard2" fitHeight="220.0" fitWidth="330.0" layoutX="95.0" pickOnBounds="true" preserveRatio="true" x="450.0" y="80.0">
                <image>
                   <Image url="@graphicResources/codexCards/croppedCards/croppedFront/goalFront/O2AAA.jpg" />
                </image>
                <effect>
-                  <DropShadow height="50.0" radius="24.5" spread="0.1" width="50.0" />
+                  <DropShadow blurType="TWO_PASS_BOX" height="60.0" radius="29.5" spread="0.3" width="60.0">
+                     <color>
+                        <Color red="0.2549019753932953" green="0.16078431904315948" blue="0.06666667014360428" />
+                     </color></DropShadow>
                </effect>
             </ImageView>
-            <ImageView fx:id="starterCard" fitHeight="250.0" fitWidth="400.0" layoutX="-89.0" layoutY="-1.0" pickOnBounds="true" preserveRatio="true" x="210.0" y="415.0">
+            <ImageView fx:id="starterCard" fitHeight="220.0" fitWidth="330.0" layoutX="140.0" pickOnBounds="true" preserveRatio="true" x="200.0" y="420.0">
                <image>
                   <Image url="@graphicResources/codexCards/croppedCards/croppedFront/starterFront/AEEF_F0F__PAFI.jpg" />
                </image>
                <effect>
-                  <DropShadow height="50.0" radius="24.5" spread="0.2" width="50.0" />
+                  <DropShadow blurType="TWO_PASS_BOX" height="60.0" radius="29.5" spread="0.3" width="60.0">
+                     <color>
+                        <Color red="0.2549019753932953" green="0.16078431904315948" blue="0.06666667014360428" />
+                     </color></DropShadow>
                </effect>
             </ImageView>
-            <Label layoutX="505.0" layoutY="395.0" prefHeight="146.0" prefWidth="372.0" text="Press this button to flip the starter card." textFill="WHITE" wrapText="true">
+            <Label fx:id="flipStarterCardLabel" layoutX="730.0" layoutY="450.0" prefHeight="116.0" prefWidth="299.0" text="Press the starter card to flip it!" textAlignment="JUSTIFY" textFill="WHITE" wrapText="true">
                <font>
                   <Font size="35.0" />
                </font>
             </Label>
-            <Button fx:id="flipButton" layoutX="659.0" layoutY="518.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="81.0" text="Flip" textAlignment="CENTER">
-               <font>
-                  <Font size="20.0" />
-               </font>
-            </Button>
-            <Label layoutX="277.0" layoutY="46.0" prefHeight="43.0" prefWidth="564.0" text="Choose your goal card:" textFill="WHITE">
+            <Label fx:id="choseGoalCardLabel" layoutX="295.0" layoutY="10.0" prefHeight="46.0" prefWidth="404.0" text="Choose your goal card" textFill="WHITE">
                <font>
                   <Font size="35.0" />
                </font>
             </Label>
-            <Button fx:id="readyButton" layoutX="1050.0" layoutY="611.0" mnemonicParsing="false" prefHeight="49.0" prefWidth="211.0" text="READY!">
+            <Button fx:id="readyButton" layoutX="1000.0" layoutY="620.0" mnemonicParsing="false" prefHeight="49.0" prefWidth="211.0" text="READY!">
                <font>
                   <Font size="20.0" />
                </font>
             </Button>
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="TRANSPARENT" height="369.0" layoutX="934.0" layoutY="50.0" stroke="#412911" strokeType="INSIDE" strokeWidth="3.0" width="234.0" y="-21.0" />
+            <Label fx:id="publicGoalLabel" layoutX="960.0" layoutY="10.0" prefHeight="39.0" prefWidth="181.0" style="-fx-background-color: #EDE2BB;" text="Public Goal" />
+            <ImageView fx:id="publicGoal1" fitHeight="150.0" fitWidth="200.0" layoutX="950.0" layoutY="90.0" pickOnBounds="true" preserveRatio="true" y="-21.0">
+
+               <effect>
+                  <DropShadow blurType="TWO_PASS_BOX" height="80.0" radius="39.5" spread="0.3" width="80.0">
+                     <color>
+                        <Color red="0.2549019753932953" green="0.16078431904315948" blue="0.06666667014360428" />
+                     </color>
+                  </DropShadow>
+               </effect>
+            </ImageView>
+            <ImageView fx:id="publicGoal2" fitHeight="150.0" fitWidth="200.0" layoutX="950.0" layoutY="263.0" pickOnBounds="true" preserveRatio="true" y="-21.0">
+               <effect>
+                  <DropShadow blurType="TWO_PASS_BOX" height="70.0" radius="34.5" spread="0.3" width="70.0">
+                     <color>
+                        <Color red="0.2549019753932953" green="0.16078431904315948" blue="0.06666667014360428" />
+                     </color>
+                  </DropShadow>
+               </effect>
+            </ImageView>
+            <Label fx:id="choseGoalCardLabel1" layoutX="395.0" layoutY="360.0" prefHeight="33.0" prefWidth="204.0" text=" Starter card " textAlignment="CENTER" textFill="WHITE">
+               <font>
+                  <Font size="35.0" />
+               </font>
+            </Label>
          </children>
       </Pane>
-      <BorderPane fx:id="chatBox" layoutX="20.0" layoutY="610.0" maxHeight="400.0" maxWidth="300.0" minHeight="100.0" minWidth="160.0" prefHeight="100.0" prefWidth="160.0">
+      <BorderPane fx:id="chatBox" layoutX="35.0" layoutY="595.0" maxHeight="400.0" maxWidth="300.0" minHeight="100.0" minWidth="250.0" prefHeight="100.0" prefWidth="250.0">
          <center>
             <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                <children>

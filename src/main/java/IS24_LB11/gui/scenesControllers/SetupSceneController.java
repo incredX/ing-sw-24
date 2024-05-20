@@ -26,9 +26,11 @@ public class SetupSceneController extends GenericSceneController{
     @FXML
     private ImageView starterCard;
     @FXML
-    private Button flipButton;
-    @FXML
     private Button readyButton;
+    @FXML
+    private ImageView publicGoal1;
+    @FXML
+    private ImageView publicGoal2;
 
 
     SetupGUIState state;
@@ -59,15 +61,16 @@ public class SetupSceneController extends GenericSceneController{
         goalCard1.setOnMouseClicked(mouseEvent -> chooseGoal(0));
         goalCard2.setOnMouseClicked(mouseEvent -> chooseGoal(1));
         starterCard.setOnMouseClicked(mouseEvent -> flipStarterCard());
-        flipButton.setOnAction(event -> flipStarterCard());
         state.getServerHandler().setSetupSceneController(this);
         System.out.println("Setup initialized");
 
         chatBox.setOnMouseEntered(mouseEvent -> chatDisplay());
         chatBox.setOnMouseExited(mouseEvent -> chatHide());
         buttonSend.setOnMouseClicked(mouseEvent -> send());
+        addMessage("Enter with mouse the chat to expand the chat");
+        addMessage("Exit with mouse the chat to minimze the chat");
+        addMessage("Type help for commands");
         chatHide();
-
     }
 
     public void changeToGameState(){
@@ -77,26 +80,16 @@ public class SetupSceneController extends GenericSceneController{
         gameSceneController.showStage();
     }
     public void showStage() {
+        chatDisplay();
         goalCard1.setImage(ImageLoader.getImage(state.getPrivateGoals().get(0).asString()));
         goalCard2.setImage(ImageLoader.getImage(state.getPrivateGoals().get(1).asString()));
         starterCard.setImage(ImageLoader.getImage(state.getStarterCard().asString()));
+        publicGoal1.setImage(ImageLoader.getImage(state.getPublicGoals().get(0).asString()));
+        publicGoal2.setImage(ImageLoader.getImage(state.getPublicGoals().get(1).asString()));
         chooseGoal(0);
 
         this.stage.setResizable(false);
         this.stage.show();
-    }
-
-    public void exit(Stage stage)  {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Exit");
-        alert.setHeaderText("You are about to exit!");
-        alert.setContentText("Are you sure?");
-
-        if(alert.showAndWait().get() == ButtonType.OK){
-            state.shutdown();
-            System.out.println("You successfully logged out!");
-            stage.close();
-        }
     }
 
     private void chooseGoal(int n){
@@ -117,7 +110,6 @@ public class SetupSceneController extends GenericSceneController{
 
     private void flipStarterCard(){
         state.flipStarterCard();
-        System.out.println("Flipped Starter Card: " + state.getStarterCard().asString());
         starterCard.setImage(ImageLoader.getImage(state.getStarterCard().asString()));
     }
 
@@ -126,6 +118,9 @@ public class SetupSceneController extends GenericSceneController{
     }
 
     public void ready(){
+        goalCard1.setDisable(true);
+        goalCard2.setDisable(true);
+        starterCard.setDisable(true);
         readyButton.setDisable(true);
         state.execute();
     }
