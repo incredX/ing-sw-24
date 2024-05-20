@@ -46,11 +46,10 @@ public class ClientHandler implements Runnable {
                         try {
                             JsonObject heartbeat = new JsonObject();
                             heartbeat.addProperty("type", "heartbeat");
-                            out.println(heartbeat.toString());
+                            //out.println(heartbeat.toString());
+                            sendMessage(heartbeat.toString());
 
                             Thread.sleep(HEARTBEAT_INTERVAL);
-
-                            //System.out.println(userName + "   " + (System.currentTimeMillis() - lastHeartbeatTime));
 
                             if (System.currentTimeMillis() - lastHeartbeatTime > HEARTBEAT_INTERVAL*5.5) {
                                 System.out.println("Heartbeat timed out for " + userName);
@@ -64,7 +63,6 @@ public class ClientHandler implements Runnable {
                                 exit();
                                 break;
                             }
-
 
                         } catch (InterruptedException e) {
                             exit();
@@ -96,6 +94,7 @@ public class ClientHandler implements Runnable {
     // Method to send a message to the client from external components
     public void sendMessage(String message) {
         out.println(message);
+        out.flush();
     }
 
     public void broadcast(String message) {

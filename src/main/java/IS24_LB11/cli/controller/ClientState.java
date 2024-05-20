@@ -44,7 +44,6 @@ public abstract class ClientState {
     protected ServerHandler serverHandler;
     protected boolean keyConsumed;
 
-
     public ClientState(ViewHub viewHub, NotificationStack notificationStack) {
         this.nextState = null;
         this.username = "";
