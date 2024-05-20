@@ -150,7 +150,7 @@ public class ServerHandlerGUI implements Runnable{
 
         if (currentPlayerTurn.equals("")) {
             if (serverEvent.has("gameFinished")) {
-                Platform.runLater(()->gameSceneController.updateGame(playerScores));
+                Platform.runLater(() -> gameSceneController.updateGame(playerScores));
                 Platform.runLater(() -> gameSceneController.showPopUpNotification("The game is finished, check scoreboard for the winner"));
                 Platform.runLater(() -> gameSceneController.disableAllCardInputs(true));
             } else {
@@ -186,6 +186,8 @@ public class ServerHandlerGUI implements Runnable{
     private void handleNotificationEvent(JsonObject serverEvent){
         if (serverEvent.has("message")){
             if(serverEvent.get("message").getAsString().equals("Welcome " + actualState.getUsername() + "!")){
+                addMessage("<Server> " + serverEvent.get("message").getAsString());
+                Platform.runLater(() -> loginSceneController.chatDisplay());
                 Platform.runLater(()-> loginSceneController.disableLogin());
             }
             else if (serverEvent.get("message").getAsString().equals("Welcome, please log in"))

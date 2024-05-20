@@ -154,7 +154,8 @@ public class ClientHandler implements Runnable {
                     Player currentPlayerReal;
 
                     if (this.getUserName().equals(this.getGame().currentPlayer().name())){
-                        this.getGame().setTurn(this.getGame().getTurn()+1);
+                        if(this.getGame().getTurn() >= 0)
+                            this.getGame().setTurn(this.getGame().getTurn()+1);
                         currentPlayerReal = this.getGame().currentPlayer();
                     }
                     else{
@@ -162,13 +163,16 @@ public class ClientHandler implements Runnable {
                     }
 
                     this.getGame().getPlayers().removeIf(player -> player.name().equals(this.getUserName()));
-                    this.getGame().setTurn(this.getGame().getPlayers().indexOf(currentPlayerReal));
 
-                    if(this.getGame().getPlayers().size() == 1){
-                        this.getGame().setGameEnded(true);
-                        NotifyTurnPhase.startPhase(this.getClientHandlerWithUsername(this.getGame().currentPlayer().name()));
-                    }else if (this.getGame().getPlayers().size() > 1 && this.getGame().getTurn() >= 0) {
+                    if(this.getGame().getTurn() >= 0) {
+                        this.getGame().setTurn(this.getGame().getPlayers().indexOf(currentPlayerReal));
+
+                        if (this.getGame().getPlayers().size() == 1) {
+                            this.getGame().setGameEnded(true);
                             NotifyTurnPhase.startPhase(this.getClientHandlerWithUsername(this.getGame().currentPlayer().name()));
+                        } else if (this.getGame().getPlayers().size() > 1) {
+                            NotifyTurnPhase.startPhase(this.getClientHandlerWithUsername(this.getGame().currentPlayer().name()));
+                        }
                     }
 
                     JsonObject response = new JsonObject();

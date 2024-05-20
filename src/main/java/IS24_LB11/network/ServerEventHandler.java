@@ -134,6 +134,12 @@ public class ServerEventHandler {
                 GameInitPhase.startPhase(clientHandler, clientHandler.getGame(), clientHandler.getMaxPlayers());
             }).start();
         }
+
+        // Notify all who connected
+        JsonObject newplayer = new JsonObject();
+        newplayer.addProperty("type", "notification");
+        newplayer.addProperty("message", "Player " + clientHandler.getUserName() + " connected");
+        clientHandler.broadcast(newplayer.toString());
     }
 
 
