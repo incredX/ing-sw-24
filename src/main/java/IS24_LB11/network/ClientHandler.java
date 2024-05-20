@@ -96,6 +96,7 @@ public class ClientHandler implements Runnable {
     // Method to send a message to the client from external components
     public void sendMessage(String message) {
         out.println(message);
+        out.flush();
     }
 
     public void broadcast(String message) {
@@ -164,7 +165,7 @@ public class ClientHandler implements Runnable {
 
                     this.getGame().getPlayers().removeIf(player -> player.name().equals(this.getUserName()));
 
-                    if(this.getGame().getTurn() >= 0) {
+                    if(this.getGame().getTurn() >= 0 && !this.getGame().hasGameEnded()) {
                         this.getGame().setTurn(this.getGame().getPlayers().indexOf(currentPlayerReal));
 
                         if (this.getGame().getPlayers().size() == 1) {

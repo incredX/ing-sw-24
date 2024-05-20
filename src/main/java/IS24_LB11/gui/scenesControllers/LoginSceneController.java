@@ -51,8 +51,6 @@ public class LoginSceneController extends GenericSceneController{
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/LoginPage.fxml"));
         loader.setController(this);
 
-
-
         this.stage.setTitle("Codex");
         try {
             this.stage.setScene(new Scene(loader.load()));
@@ -105,6 +103,10 @@ public class LoginSceneController extends GenericSceneController{
         }
         if (username.contains(" ")){
             popUps.popUpMaker("No spaces allowed");
+            return;
+        }
+        if (username.length()>11){
+            popUps.popUpMaker("Username too long");
             return;
         }
         String serverIP = ipTextField.getText();
