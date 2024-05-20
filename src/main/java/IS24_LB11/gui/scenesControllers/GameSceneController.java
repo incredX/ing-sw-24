@@ -139,7 +139,6 @@ public class GameSceneController extends GenericSceneController{
     public void initialize() {
         state.getServerHandler().setGameSceneController(this);
         numberPlayerInGame = state.getNumberOfPlayer();
-        scrollPane.getStyleClass().add("styles.css");
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
