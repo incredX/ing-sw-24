@@ -76,10 +76,7 @@
             </Button>
             <Rectangle arcHeight="5.0" arcWidth="5.0" fill="TRANSPARENT" height="355.0" layoutX="940.0" layoutY="60.0" stroke="#412911" strokeType="INSIDE" strokeWidth="3.0" width="222.0" y="-21.0" />
             <Label fx:id="publicGoalLabel" layoutX="965.0" layoutY="20.0" prefHeight="39.0" prefWidth="173.0" style="-fx-background-color: #EDE2BB;" text="Public Goal" />
-            <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="950.0" layoutY="90.0" pickOnBounds="true" preserveRatio="true" y="-21.0">
-               <image>
-                  <Image url="@graphicResources/codexCards/croppedCards/croppedFront/goalFront/O2MM_.jpg" />
-               </image>
+            <ImageView fx:id="publicGoal1" fitHeight="150.0" fitWidth="200.0" layoutX="950.0" layoutY="90.0" pickOnBounds="true" preserveRatio="true" y="-21.0">
                <effect>
                   <DropShadow blurType="TWO_PASS_BOX" height="80.0" radius="39.5" spread="0.3" width="80.0">
                      <color>
@@ -88,10 +85,7 @@
                   </DropShadow>
                </effect>
             </ImageView>
-            <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="950.0" layoutY="263.0" pickOnBounds="true" preserveRatio="true" y="-21.0">
-               <image>
-                  <Image url="@graphicResources/codexCards/croppedCards/croppedFront/goalFront/O3AIIL0.jpg" />
-               </image>
+            <ImageView fx:id="publicGoal2" fitHeight="150.0" fitWidth="200.0" layoutX="950.0" layoutY="263.0" pickOnBounds="true" preserveRatio="true" y="-21.0">
                <effect>
                   <DropShadow blurType="TWO_PASS_BOX" height="70.0" radius="34.5" spread="0.3" width="70.0">
                      <color>

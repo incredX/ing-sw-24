@@ -29,6 +29,10 @@ public class SetupSceneController extends GenericSceneController{
     private Button flipButton;
     @FXML
     private Button readyButton;
+    @FXML
+    private ImageView publicGoal1;
+    @FXML
+    private ImageView publicGoal2;
 
 
     SetupGUIState state;
@@ -80,6 +84,8 @@ public class SetupSceneController extends GenericSceneController{
         goalCard1.setImage(ImageLoader.getImage(state.getPrivateGoals().get(0).asString()));
         goalCard2.setImage(ImageLoader.getImage(state.getPrivateGoals().get(1).asString()));
         starterCard.setImage(ImageLoader.getImage(state.getStarterCard().asString()));
+        publicGoal1.setImage(ImageLoader.getImage(state.getPublicGoals().get(0).asString()));
+        publicGoal2.setImage(ImageLoader.getImage(state.getPublicGoals().get(1).asString()));
         chooseGoal(0);
 
         this.stage.setResizable(false);
