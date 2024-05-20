@@ -148,7 +148,7 @@ public class Game {
 
         if(turn == lastTurn) {
             gameEnded=true;
-            finalRanking = finalGamePhase();
+            finalGamePhase();
         }
 
         return VALID_LAST_TURN;
@@ -167,14 +167,12 @@ public class Game {
                 }
         }
     }
-    private ArrayList<Player> finalGamePhase() throws SyntaxException {
-        ArrayList<Player> ranking = players;
-        for (Player player: ranking) {
+    private void finalGamePhase() throws SyntaxException {
+
+        for (Player player: players) {
             player.personalGoalScore();
             player.publicGoalScore(publicGoals);
         }
-        ranking.sort((a,b)->Integer.compare(b.getScore(), a.getScore()));
-        return ranking;
     }
     private boolean numberCharNotEqualInSamePosition(String s1, String s2){
         return s1.regionMatches(0,s2,0,6) && s1.regionMatches(7,s2,7,7);

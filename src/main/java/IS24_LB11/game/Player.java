@@ -27,7 +27,8 @@ public class Player implements JsonConvertable {
         this.setup = setup;
         this.hand = setup.hand();
         this.personalGoal = null;
-        this.score = 0;
+        //TODO:RESET THIS
+        this.score = 12;
     }
 
     public void applySetup() {
@@ -49,8 +50,7 @@ public class Player implements JsonConvertable {
             scoreGoal=(board.countGoalSymbols((GoalSymbol) personalGoal));
         else
             scoreGoal=(board.countGoalPatterns((GoalPattern) personalGoal));
-            incrementScore(scoreGoal);
-
+        incrementScore(scoreGoal);
     }
 
     public void publicGoalScore(ArrayList<GoalCard> publicGoals){
@@ -62,7 +62,6 @@ public class Player implements JsonConvertable {
             else
                 scoreGoal=(board.countGoalPatterns((GoalPattern) goalCard));
             incrementScore(scoreGoal);
-
         }
         
     }

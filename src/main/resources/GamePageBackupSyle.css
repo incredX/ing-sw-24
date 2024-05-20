@@ -1,0 +1,11 @@
+
+* {
+    -fx-primary : #EDE2BB;
+    -fx-secondary : #412911;
+}
+
+.root {
+    -fx-background-color: -fx-primary;
+    -fx-border-color: -fx-secondary;
+    -fx-border-width: 10;
+}

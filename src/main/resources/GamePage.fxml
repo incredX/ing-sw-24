@@ -22,9 +22,9 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" stylesheets="@GameStyle.css" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <TabPane prefHeight="720.0" prefWidth="1280.0" styleClass="playerBoard" stylesheets="@GameStyle.css" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <TabPane prefHeight="720.0" prefWidth="1280.0" styleClass="playerBoard" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <tabs>
           <Tab text="Board">
             <content>
@@ -34,9 +34,9 @@
                          <ImageView fx:id="cardBackground" fitHeight="690.0" fitWidth="303.0" layoutX="980.0" pickOnBounds="true" preserveRatio="true" />
                         <SplitPane dividerPositions="0.7" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="688.5" prefWidth="1280.0" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                           <items>
-                              <ScrollPane fx:id="scrollPane" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="686.5" prefWidth="968.0" styleClass="scrollPane" stylesheets="@styles.css">
+                              <ScrollPane fx:id="scrollPane" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="686.5" prefWidth="968.0" styleClass="scrollPane">
                                  <content>
-                                    <Pane fx:id="playerBoard" minHeight="20000.0" minWidth="20000.0" style="-fx-background-color: transparent;" stylesheets="@styles.css" />
+                                    <Pane fx:id="playerBoard" minHeight="20000.0" minWidth="20000.0" style="-fx-background-color: transparent;"/>
                                  </content>
                               </ScrollPane>
                             <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="686.5" prefWidth="303.0">
