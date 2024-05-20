@@ -127,7 +127,6 @@ public class Game {
         }
 
         turn++;
-
         //controllo se turno finale lo faccio solo sull'ultima persona controllando tutti i punteggi
         if (!finalTurn)
             isFinalTurn();
