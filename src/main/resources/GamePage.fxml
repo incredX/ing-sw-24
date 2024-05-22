@@ -45,7 +45,7 @@
                                  <children>
                                     <TabPane prefHeight="686.5" prefWidth="252.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                       <tabs>
-                                        <Tab text="Hand">
+                                        <Tab fx:id="handTab" text="Hand">
                                           <content>
                                             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                                    <children>

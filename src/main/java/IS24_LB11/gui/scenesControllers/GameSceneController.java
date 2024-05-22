@@ -115,6 +115,8 @@ public class GameSceneController extends GenericSceneController{
     private ImageView boardBackground;
     @FXML
     private Button centerBoardButton;
+    @FXML
+    private Tab handTab;
 
     GameGUIState state;
     int numberPlayerInGame;
@@ -473,6 +475,7 @@ public class GameSceneController extends GenericSceneController{
                 state.chooseCardToDraw(state.getNormalDeck().get(n), n, deckType);
             state.execute();
             updateHand();
+            handTab.getTabPane().getSelectionModel().select(handTab);
         }
     }
 
