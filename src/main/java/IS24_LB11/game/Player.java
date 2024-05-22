@@ -162,5 +162,4 @@ public class Player implements JsonConvertable {
     public ArrayList<PlayableCard> getHand() {
         return hand;
     }
-
 }

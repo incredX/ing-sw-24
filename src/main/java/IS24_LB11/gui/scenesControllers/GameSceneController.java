@@ -324,6 +324,8 @@ public class GameSceneController extends GenericSceneController{
                 goldenDeckCard1.setDisable(true);
                 goldenDeckCard2.setDisable(true);
                 goldenDeckCard2.setDisable(true);
+                goldenDeckCard1.setImage(null);
+                goldenDeckCard2.setImage(null);
                 goldenDeckCard3.setImage(null);
                 break;
             case 1:
@@ -363,7 +365,6 @@ public class GameSceneController extends GenericSceneController{
 
             normalDeckCard3.setImage(ImageLoader.getImage(String.valueOf(flippedCard)));
         }
-
         if (state.getGoldenDeck().size()>=1)
             goldenDeckCard1.setImage(ImageLoader.getImage(state.getGoldenDeck().get(0).asString()));
         if (state.getGoldenDeck().size()>=2)
@@ -463,8 +464,7 @@ public class GameSceneController extends GenericSceneController{
                 placeTemporaryCardsOnAvailableSpots(handCard3);
                 break;
         }
-        if (state.getNormalDeck().size()==0 && state.getGoldenDeck().size()==0)
-            state.execute();
+
     }
 
     public void chooseDeckCard(int n, boolean deckType) {
@@ -695,8 +695,6 @@ public class GameSceneController extends GenericSceneController{
                 player.setY((scoreboardPosition.get(startingPoints).getY())+7);
                 break;
         }
-
-
         return updatingScoreboard;
     }
 

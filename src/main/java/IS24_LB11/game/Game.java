@@ -79,6 +79,12 @@ public class Game {
         goldenDeck.shuffle();
         normalDeck.shuffle();
         starterDeck.shuffle();
+        for (int i = 0; i < 35; i++) {
+            goldenDeck.drawCard();
+            normalDeck.drawCard();
+        }
+        goldenDeck.drawCard();
+        goldenDeck.drawCard();
         for (String name : playerNames)
             setupPlayer(name);
         return GameMessages.SETUP_COMPLETE;
@@ -194,7 +200,8 @@ public class Game {
      * @throws SyntaxException if there is a syntax error
      */
     private String executeFinalTurn(Position position, PlayableCard playableCard) throws JsonException, SyntaxException {
-        if ((turn + 1) > lastTurn) {
+        if (hasGameEnded()) {
+            System.out.println("game finito");
             return GAME_ENDED;
         }
         Player player = players.get(turn % players.size());

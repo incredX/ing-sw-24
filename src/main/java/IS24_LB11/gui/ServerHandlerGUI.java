@@ -142,11 +142,12 @@ public class ServerHandlerGUI implements Runnable{
                 Platform.runLater(() -> gameSceneController.showPopUpNotification("The game is finished, check scoreboard for the winner"));
                 Platform.runLater(() -> gameSceneController.disableAllCardInputs(true));
             } else {
-                if (gameSceneController == null) {
-                    Platform.runLater(() -> setupSceneController.showExitNotification("You are the only player connected to the server"));
-                    return;
-                }
-                Platform.runLater(() -> gameSceneController.showExitNotification("You are the only player connected to the server"));
+                Platform.runLater(() -> activeController.showExitNotification("You are the only player connected to the server"));
+//                if (gameSceneController == null) {
+//                    Platform.runLater(() -> setupSceneController.showExitNotification("You are the only player connected to the server"));
+//                    return;
+//                }
+//                Platform.runLater(() -> gameSceneController.showExitNotification("You are the only player connected to the server"));
             }
         }
         else{
@@ -191,8 +192,10 @@ public class ServerHandlerGUI implements Runnable{
                 }
                 else {
                     Platform.runLater(() -> gameSceneController.chatDisplay());
-                    if(serverEvent.get("message").getAsString().equals("It is your FINAL turn"))
-                        Platform.runLater(()-> gameSceneController.setFinalTurn());
+                    if(serverEvent.get("message").getAsString().equals("It is your FINAL turn")) {
+                        Platform.runLater(()->gameSceneController.showPopUpNotification("It is your FINAL turn"));
+                        Platform.runLater(() -> gameSceneController.setFinalTurn());
+                    }
                 }
             }
 
