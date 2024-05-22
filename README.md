@@ -15,8 +15,8 @@
 | Model                                     | :white_check_mark:      |
 | Server/Network                            | :white_check_mark:      |
 | Controller                                | :white_check_mark:      |
-| TUI                                       | :white_check_mark:      |
-| GUI                                       | 🚧 Work in Progress 🚧  |
+| CLI                                       | :white_check_mark:      |
+| GUI                                       | :white_check_mark:  |
 
 ## Advanced Feature Status
 | Feature     | Status             |
