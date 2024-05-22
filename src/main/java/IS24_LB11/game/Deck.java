@@ -40,7 +40,6 @@ public class Deck {
         return card;
     }
 
-
     public CardInterface drawCard() throws DeckException {
 
         if (cards.isEmpty()) {

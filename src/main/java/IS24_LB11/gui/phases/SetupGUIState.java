@@ -1,9 +1,10 @@
 package IS24_LB11.gui.phases;
 
 import IS24_LB11.game.PlayerSetup;
-import IS24_LB11.game.components.*;
+import IS24_LB11.game.components.GoalCard;
+import IS24_LB11.game.components.PlayableCard;
+import IS24_LB11.game.components.StarterCard;
 import IS24_LB11.game.utils.Color;
-import IS24_LB11.gui.ClientGUI;
 import IS24_LB11.gui.scenesControllers.SetupSceneController;
 
 import java.util.ArrayList;
@@ -91,7 +92,7 @@ public class SetupGUIState extends ClientGUIState {
 
     public void execute() {
         System.out.println(personalSetup.chosenGoal().asString());
-        System.out.println(personalSetup.getStarterCard());
+        System.out.println(personalSetup.getStarterCard().asString());
         inputHandlerGUI.sendReady(personalSetup.chosenGoal(),personalSetup.getStarterCard());
     }
 

@@ -7,7 +7,6 @@ import IS24_LB11.game.components.PlayableCard;
 import IS24_LB11.game.utils.Color;
 import IS24_LB11.game.utils.Position;
 import IS24_LB11.gui.Chat;
-import IS24_LB11.gui.ClientGUI;
 import IS24_LB11.gui.scenesControllers.GameSceneController;
 
 import java.util.ArrayList;
@@ -48,7 +47,7 @@ public class GameGUIState extends ClientGUIState {
         this.playersColors = prevState.getPlayersColors();
         this.players = prevState.getPlayers();
         this.playersScore = new HashMap<>();
-        for (int i = 0; i < playersColors.size(); i++) {
+        for (int i = 0; i < players.size(); i++) {
             playersScore.put(players.get(i), 0);
         }
     }
@@ -61,7 +60,7 @@ public class GameGUIState extends ClientGUIState {
         this.normalDeck = normalDeck;
         this.goldenDeck = goldenDeck;
         for (int i = 0; i < playerScores.size(); i++) {
-            playersScore.replace(players.get(i), playerScores.get(i));
+            this.playersScore.replace(players.get(i), playerScores.get(i));
         }
     }
 

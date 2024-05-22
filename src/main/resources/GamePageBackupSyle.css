@@ -1,11 +1,119 @@
 
+
 * {
     -fx-primary : #EDE2BB;
     -fx-secondary : #412911;
 }
 
-.root {
+
+#anchorPane {
     -fx-background-color: -fx-primary;
+}
+
+
+#tabPane {
+    -fx-background-color: transparent;
+}
+
+.tab-pane .tab-header-area .tab-header-background {
+    -fx-opacity: 0;
+}
+
+
+.tab-pane .tab-content-area{
+    -fx-border-width: 3;
     -fx-border-color: -fx-secondary;
-    -fx-border-width: 10;
+    -fx-background-insets: 0.0;
+    -fx-background-radius: 0.0;
+}
+
+
+
+.tab-pane .tab {
+    -fx-background-color: -fx-primary;
+    -fx-border-width: 2;
+    -fx-border-color: -fx-secondary;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-padding: 2px;
+    -fx-border-insets: 1px;
+    -fx-background-insets: 4px;
+}
+
+.tab-pane .tab:selected {
+    -fx-background-color: -fx-secondary;
+}
+#boardTab .tab-label {
+    -fx-font-size: 17pt;
+}
+
+#scoreboardTab .tab-label {
+    -fx-font-size: 17pt;
+}
+
+.tab .tab-label {
+    -fx-alignment: CENTER;
+    -fx-text-fill: -fx-secondary;
+    -fx-font-size: 13pt;
+    -fx-font-family: Georgia;
+}
+
+.tab:selected .tab-label {
+    -fx-alignment: CENTER;
+    -fx-text-fill: -fx-primary;
+}
+
+.tab:selected .focus-indicator{
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+
+.tab-pane:top *.tab-header-area {
+    -fx-background-insets: 0, 0 0 0 0;
+    -fx-padding: 0.5 0.1 0 0;
+}
+
+
+.scrollPane > .viewport {
+    -fx-background-color: transparent;
+}
+
+.scrollPane {
+    -fx-background-color: transparent;
+}
+
+
+
+#flipHandCard1, #flipHandCard2, #flipHandCard3 {
+    -fx-text-fill: -fx-secondary;
+    -fx-font-size: 7pt;
+}
+
+.button {
+    -fx-background-color: -fx-primary;
+    -fx-border-width: 2;
+    -fx-border-color: -fx-secondary;
+    -fx-font-family: 'Georgia';
+    -fx-border-insets: 1px;
+    -fx-background-insets: 2.5px;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+}
+
+.button:hover {
+    -fx-border-color: -fx-secondary;
+    -fx-background-color: -fx-secondary;
+    -fx-text-fill: -fx-primary;
+}
+
+
+.split-pane {
+    -fx-background-color: -fx-primary;
+}
+
+#playerName1, #playerName2, #playerName3, #playerName4, #publicGoalLabel1, #publicGoalLabel2, #privateGoalLabel {
+    -fx-font-family: 'Georgia';
+    -fx-font-size: 15pt;
+    -fx-text-fill: -fx-secondary;
 }

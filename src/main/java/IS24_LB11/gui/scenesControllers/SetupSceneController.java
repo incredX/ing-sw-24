@@ -7,22 +7,21 @@ import IS24_LB11.gui.phases.SetupGUIState;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 
-public class SetupSceneController extends GenericSceneController{
+/**
+ * Controller class for the setup scene.
+ */
+public class SetupSceneController extends GenericSceneController {
     @FXML
     private ImageView goalCard1;
-
     @FXML
     private ImageView goalCard2;
-
     @FXML
     private ImageView starterCard;
     @FXML
@@ -31,14 +30,18 @@ public class SetupSceneController extends GenericSceneController{
     private ImageView publicGoal1;
     @FXML
     private ImageView publicGoal2;
+    private SetupGUIState state;
 
-
-    SetupGUIState state;
-
-    public SetupSceneController(ClientGUIState state, Stage stage){
-        this.state=(SetupGUIState) state;
-        this.genericState=state;
-        this.stage=stage;
+    /**
+     * Constructs a SetupSceneController and initializes the stage and scene.
+     *
+     * @param state the current client GUI state
+     * @param stage the stage to set the scene on
+     */
+    public SetupSceneController(ClientGUIState state, Stage stage) {
+        this.state = (SetupGUIState) state;
+        this.genericState = state;
+        this.stage = stage;
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/SetupPage.fxml"));
         loader.setController(this);
 
@@ -55,9 +58,12 @@ public class SetupSceneController extends GenericSceneController{
         });
     }
 
+    /**
+     * Initializes the setup scene, setting event handlers and default values.
+     */
     @FXML
-    private void initialize(){
-        readyButton.setOnAction(event->ready());
+    private void initialize() {
+        readyButton.setOnAction(event -> ready());
         goalCard1.setOnMouseClicked(mouseEvent -> chooseGoal(0));
         goalCard2.setOnMouseClicked(mouseEvent -> chooseGoal(1));
         starterCard.setOnMouseClicked(mouseEvent -> flipStarterCard());
@@ -68,17 +74,23 @@ public class SetupSceneController extends GenericSceneController{
         chatBox.setOnMouseExited(mouseEvent -> chatHide());
         buttonSend.setOnMouseClicked(mouseEvent -> send());
         addMessage("Enter with mouse the chat to expand the chat");
-        addMessage("Exit with mouse the chat to minimze the chat");
+        addMessage("Exit with mouse the chat to minimize the chat");
         addMessage("Type help for commands");
         chatHide();
     }
 
-    public void changeToGameState(){
-        GameSceneController gameSceneController = new GameSceneController(new GameGUIState(state),stage);
+    /**
+     * Changes the scene to the game scene.
+     */
+    public void changeToGameState() {
+        GameSceneController gameSceneController = new GameSceneController(new GameGUIState(state), stage);
         gameSceneController.updateChat(this.chat.getMessages());
-        System.out.println(this.chat.getMessages());
         gameSceneController.showStage();
     }
+
+    /**
+     * Displays the stage and sets the images for the goal and starter cards.
+     */
     public void showStage() {
         chatDisplay();
         goalCard1.setImage(ImageLoader.getImage(state.getPrivateGoals().get(0).asString()));
@@ -92,32 +104,38 @@ public class SetupSceneController extends GenericSceneController{
         this.stage.show();
     }
 
-    private void chooseGoal(int n){
+    /**
+     * Chooses a goal card by index and visually indicates the chosen goal.
+     *
+     * @param n the index of the goal card to choose
+     */
+    private void chooseGoal(int n) {
         state.setChoosenGoalIndex(n);
         ColorAdjust colorAdjustChoosen = new ColorAdjust();
         ColorAdjust colorAdjustNotChoosen = new ColorAdjust();
         colorAdjustChoosen.setContrast(0);
         colorAdjustNotChoosen.setContrast(-0.5);
-        if (n==1){
+        if (n == 1) {
             goalCard1.setEffect(colorAdjustNotChoosen);
             goalCard2.setEffect(colorAdjustChoosen);
-        }
-        else{
+        } else {
             goalCard2.setEffect(colorAdjustNotChoosen);
             goalCard1.setEffect(colorAdjustChoosen);
         }
     }
 
-    private void flipStarterCard(){
+    /**
+     * Flips the starter card and updates its image.
+     */
+    private void flipStarterCard() {
         state.flipStarterCard();
         starterCard.setImage(ImageLoader.getImage(state.getStarterCard().asString()));
     }
 
-    public SetupGUIState getState() {
-        return state;
-    }
-
-    public void ready(){
+    /**
+     * Handles the ready action, disabling the buttons and sending the setup information to the server.
+     */
+    public void ready() {
         goalCard1.setDisable(true);
         goalCard2.setDisable(true);
         starterCard.setDisable(true);
@@ -125,10 +143,15 @@ public class SetupSceneController extends GenericSceneController{
         state.execute();
     }
 
+    /**
+     * Removes a player from the state.
+     *
+     * @param playerDisconnected the name of the disconnected player
+     */
     public void removePlayer(String playerDisconnected) {
         state.removePlayer(playerDisconnected);
     }
-
-
-
+    public SetupGUIState getState() {
+        return state;
+    }
 }

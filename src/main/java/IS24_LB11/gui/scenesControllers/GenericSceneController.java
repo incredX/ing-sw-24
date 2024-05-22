@@ -4,30 +4,54 @@ import IS24_LB11.gui.Chat;
 import IS24_LB11.gui.PopUps;
 import IS24_LB11.gui.phases.ClientGUIState;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.ListView;
+import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
 
+/**
+ * Generic controller class for scenes in the application.
+ */
 public class GenericSceneController {
-    Chat chat = new Chat();
+    protected Chat chat = new Chat();
+
     @FXML
-    protected ListView chatPane;
-    @FXML protected TextArea messageBox;
+    protected ListView<Text> chatPane;
+
+    @FXML
+    protected TextArea messageBox;
+
     @FXML
     protected BorderPane chatBox;
+
     @FXML
     protected Button buttonSend;
-    ClientGUIState genericState;
-    PopUps popUps = new PopUps();
 
-    public Stage stage;
-    public void showPopUpNotification(String message){
+    protected ClientGUIState genericState;
+    protected PopUps popUps = new PopUps();
+    protected Stage stage;
+
+    /**
+     * Shows a pop-up notification with the given message.
+     *
+     * @param message the message to display in the pop-up
+     */
+    public void showPopUpNotification(String message) {
         popUps.popUpMaker(message);
     }
-    public void exit(Stage stage)  {
+
+    /**
+     * Handles the exit action, displaying a confirmation dialog.
+     *
+     * @param stage the stage to close if the exit is confirmed
+     */
+    public void exit(Stage stage) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.getDialogPane().getStylesheets().add("PopUpStyle.css");
 
@@ -35,96 +59,157 @@ public class GenericSceneController {
         alert.setHeaderText("You are about to exit!");
         alert.setContentText("Are you sure?");
 
-        if(alert.showAndWait().get() == ButtonType.OK){
+        if (alert.showAndWait().get() == ButtonType.OK) {
             genericState.shutdown();
             System.out.println("You successfully logged out!");
             stage.close();
         }
     }
-    public void showPopUpRestartGame(){
-        popUps.restartGame(genericState,this);
+
+    /**
+     * Shows a pop-up to restart the game.
+     */
+    public void showPopUpRestartGame() {
+        popUps.restartGame(genericState, this);
     }
+
+    /**
+     * Restarts the game by closing the current stage and starting the client GUI.
+     *
+     * @throws Exception if an error occurs during the restart
+     */
     public void restart() throws Exception {
         stage.close();
         genericState.getClientGUI().start(stage);
     }
-    public void showExitNotification(String s) {
-        popUps.lastPlayerLeft(stage,genericState, this);
-    }
-    public void send(){
-        String[] strings = messageBox.getText().split(" ",3);
-        switch (strings[0]){
-            case "help":
-                Text help = new Text("Private chat command:");
-                chatPane.getItems().add(new Text("--------------------------------------------------"));
-                chatPane.getItems().add(new Text("Private chat command:"));
-                chatPane.getItems().add(new Text("sendto username msg"));
-                chatPane.getItems().add(new Text("--------------------------------------------------"));
-                chatPane.getItems().add(new Text("Public chat command:"));
-                chatPane.getItems().add(new Text("sendtoall msg"));
-                chatPane.getItems().add(new Text("--------------------------------------------------"));
-                chatPane.getItems().add(new Text("Clear messages chat command:"));
-                chatPane.getItems().add(new Text("clear"));
-                chatPane.getItems().add(new Text("--------------------------------------------------"));
-                break;
 
+    /**
+     * Shows an exit notification with the given message.
+     *
+     * @param message the message to display in the notification
+     */
+    public void showExitNotification(String message) {
+        popUps.lastPlayerLeft(stage, genericState, this);
+    }
+
+    /**
+     * Handles sending messages from the chat box.
+     * Processes different commands based on the input text.
+     */
+    public void send() {
+        String[] strings = messageBox.getText().split(" ", 3);
+        switch (strings[0]) {
+            case "help":
+                showHelp();
+                break;
             case "sendto":
-                genericState.sendMessage(strings[1], genericState.getUsername(), strings[2]);
-                Text sendTo = new Text("<me> " + strings[2]);
-                chatPane.getItems().add(sendTo);
-                chat.addMessage(sendTo);
+                sendPrivateMessage(strings);
                 break;
             case "sendtoall":
-                String msg = new String();
-                if (strings.length==2)
-                    msg=strings[1];
-                else
-                    msg=strings[1] + " " + strings[2];
-                Text sendToAll = new Text("<me> "+msg);
-                genericState.sendToAll(genericState.getUsername(), msg);
-                chatPane.getItems().add(sendToAll);
-                chat.addMessage(sendToAll);
+                sendPublicMessage(strings);
                 break;
             case "clear":
                 clearChat();
                 break;
             default:
-                chatPane.getItems().add("Invalid input");
+                chatPane.getItems().add(new Text("Invalid input"));
                 break;
         }
         messageBox.setText("");
     }
 
+    /**
+     * Hides the chat box by minimizing its size.
+     */
     public void chatHide() {
         chatBox.setPrefWidth(chatBox.getMinWidth());
         chatBox.setPrefHeight(chatBox.getMinHeight());
         chatBox.setLayoutX(20);
         chatBox.setLayoutY(600);
     }
+
+    /**
+     * Displays the chat box by expanding its size.
+     */
     public void chatDisplay() {
         chatBox.setPrefWidth(chatBox.getMaxWidth());
         chatBox.setPrefHeight(chatBox.getMaxHeight());
         chatBox.setLayoutX(20);
         chatBox.setLayoutY(300);
     }
-    public void chatHideLogin(){
-        chatHide();
-        chatBox.setLayoutX(-500);
-        chatBox.setLayoutY(-500);
-    }
 
-    public void addMessage(String msg){
+    /**
+     * Adds a message to the chat pane and chat history.
+     *
+     * @param msg the message to add
+     */
+    public void addMessage(String msg) {
         Text text = new Text(msg);
         chatPane.getItems().add(text);
         chat.addMessage(text);
     }
+
+    /**
+     * Updates the chat pane with a list of messages.
+     *
+     * @param messages the list of messages to add to the chat pane
+     */
     public void updateChat(ArrayList<Text> messages) {
-        for(Text text:messages) {
+        for (Text text : messages) {
             chatPane.getItems().add(text);
             chat.addMessage(text);
         }
     }
-    public void clearChat(){
+
+    /**
+     * Clears all messages from the chat pane.
+     */
+    public void clearChat() {
         chatPane.getItems().clear();
+    }
+
+    /**
+     * Shows commands in the chat pane.
+     */
+    private void showHelp() {
+        chatPane.getItems().add(new Text("--------------------------------------------------"));
+        chatPane.getItems().add(new Text("Private chat command:"));
+        chatPane.getItems().add(new Text("sendto username msg"));
+        chatPane.getItems().add(new Text("--------------------------------------------------"));
+        chatPane.getItems().add(new Text("Public chat command:"));
+        chatPane.getItems().add(new Text("sendtoall msg"));
+        chatPane.getItems().add(new Text("--------------------------------------------------"));
+        chatPane.getItems().add(new Text("Clear messages chat command:"));
+        chatPane.getItems().add(new Text("clear"));
+        chatPane.getItems().add(new Text("--------------------------------------------------"));
+    }
+
+    /**
+     * Sends a private message to a specified user.
+     *
+     * @param strings the array containing the command, username, and message
+     */
+    private void sendPrivateMessage(String[] strings) {
+        if (strings.length < 3) {
+            chatPane.getItems().add(new Text("Invalid input for private message"));
+            return;
+        }
+        genericState.sendMessage(strings[1], genericState.getUsername(), strings[2]);
+        Text sendTo = new Text("<me> " + strings[2]);
+        chatPane.getItems().add(sendTo);
+        chat.addMessage(sendTo);
+    }
+
+    /**
+     * Send message to all users.
+     *
+     * @param strings the array containing the command and message
+     */
+    private void sendPublicMessage(String[] strings) {
+        String msg = strings.length == 2 ? strings[1] : strings[1] + " " + strings[2];
+        Text sendToAll = new Text("<me> " + msg);
+        genericState.sendToAll(genericState.getUsername(), msg);
+        chatPane.getItems().add(sendToAll);
+        chat.addMessage(sendToAll);
     }
 }

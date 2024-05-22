@@ -52,6 +52,8 @@ public class Scoreboard {
         }
     }
 
+    public int getNumPlayers() { return players.size(); }
+
     public ArrayList<String> getPlayers() {
         return players;
     }

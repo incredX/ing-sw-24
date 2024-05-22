@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.ScrollPane?>
@@ -19,75 +20,94 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.paint.Color?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" stylesheets="@GameStyle.css" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" stylesheets="@GamePageBackupSyle.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <TabPane prefHeight="720.0" prefWidth="1280.0" styleClass="playerBoard" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <TabPane fx:id="tabPane" prefHeight="720.0" prefWidth="1280.0" styleClass="playerBoard" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <tabs>
-          <Tab text="Board">
+          <Tab id="boardTab" text="Board">
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" style="-fx-background-color: transparent;" fx:id="x">
                      <children>
                          <ImageView fx:id="boardBackground" fitHeight="686.5" fitWidth="968.0" pickOnBounds="true" />
-                         <ImageView fx:id="cardBackground" fitHeight="690.0" fitWidth="303.0" layoutX="980.0" pickOnBounds="true" preserveRatio="true" />
+                         <ImageView fx:id="cardBackground" fitHeight="690.0" fitWidth="314.0" layoutX="969.0" pickOnBounds="true" preserveRatio="true" />
                         <SplitPane dividerPositions="0.7" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="688.5" prefWidth="1280.0" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                           <items>
                               <ScrollPane fx:id="scrollPane" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="686.5" prefWidth="968.0" styleClass="scrollPane">
                                  <content>
-                                    <Pane fx:id="playerBoard" minHeight="20000.0" minWidth="20000.0" style="-fx-background-color: transparent;"/>
+                                    <Pane fx:id="playerBoard" minHeight="20000.0" minWidth="20000.0" style="-fx-background-color: transparent;" />
                                  </content>
                               </ScrollPane>
                             <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="686.5" prefWidth="303.0">
                                  <children>
                                     <TabPane prefHeight="686.5" prefWidth="252.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                       <tabs>
-                                        <Tab text="Hand">
+                                        <Tab fx:id="handTab" text="Hand">
                                           <content>
                                             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                                    <children>
                                                       <SplitPane dividerPositions="0.333333333333, 0.666666666666" maxHeight="-Infinity" maxWidth="-Infinity" orientation="VERTICAL" prefHeight="655.0" prefWidth="303.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                         <items>
-                                                            <StackPane prefHeight="214.0" prefWidth="301.0">
+                                                            <StackPane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="208.0" prefWidth="295.0">
                                                                <children>
-                                                                  <ImageView fx:id="handCard1" fitHeight="210.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" x="0.5" y="3.5">
+                                                                  <ImageView fx:id="handCard1" fitHeight="195.0" fitWidth="290.0" pickOnBounds="true" preserveRatio="true" x="0.5" y="3.5">
                                                                      <effect>
-                                                                        <DropShadow />
+                                                                        <DropShadow blurType="TWO_PASS_BOX" spread="0.3">
+                                                                           <color>
+                                                                              <Color red="0.2549019753932953" green="0.16078431904315948" blue="0.06666667014360428" />
+                                                                           </color></DropShadow>
                                                                      </effect>
                                                                   </ImageView>
                                                                   <Button fx:id="flipHandCard1" mnemonicParsing="false" prefHeight="17.0" prefWidth="42.0" text="Flip" StackPane.alignment="TOP_RIGHT">
                                                                      <font>
                                                                         <Font size="10.0" />
                                                                      </font>
+                                                                     <StackPane.margin>
+                                                                        <Insets right="5.0" top="2.0" />
+                                                                     </StackPane.margin>
                                                                   </Button>
                                                                </children>
                                                             </StackPane>
-                                                            <StackPane prefHeight="211.0" prefWidth="301.0">
+                                                            <StackPane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="205.0" prefWidth="295.0">
                                                                <children>
-                                                                  <ImageView fx:id="handCard2" fitHeight="210.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" x="0.5" y="3.5">
+                                                                  <ImageView fx:id="handCard2" fitHeight="195.0" fitWidth="290.0" pickOnBounds="true" preserveRatio="true" x="0.5" y="3.5">
                                                                      <effect>
-                                                                        <DropShadow />
+                                                                        <DropShadow blurType="TWO_PASS_BOX" spread="0.3">
+                                                                           <color>
+                                                                              <Color red="0.2549019753932953" green="0.16078431904315948" blue="0.06666667014360428" />
+                                                                           </color></DropShadow>
                                                                      </effect>
                                                                   </ImageView>
                                                                   <Button fx:id="flipHandCard2" mnemonicParsing="false" prefHeight="17.0" prefWidth="42.0" text="Flip" StackPane.alignment="TOP_RIGHT">
                                                                      <font>
                                                                         <Font size="10.0" />
                                                                      </font>
+                                                                     <StackPane.margin>
+                                                                        <Insets right="5.0" top="2.0" />
+                                                                     </StackPane.margin>
                                                                   </Button>
                                                                </children>
                                                             </StackPane>
-                                                            <StackPane prefHeight="214.0" prefWidth="301.0">
+                                                            <StackPane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="205.0" prefWidth="295.0">
                                                                <children>
-                                                                  <ImageView fx:id="handCard3" fitHeight="210.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" x="0.5" y="3.5">
+                                                                  <ImageView fx:id="handCard3" fitHeight="195.0" fitWidth="290.0" pickOnBounds="true" preserveRatio="true" x="0.5" y="3.5">
                                                                      <effect>
-                                                                        <DropShadow />
+                                                                        <DropShadow blurType="TWO_PASS_BOX" spread="0.3">
+                                                                           <color>
+                                                                              <Color red="0.2549019753932953" green="0.16078431904315948" blue="0.06666667014360428" />
+                                                                           </color></DropShadow>
                                                                      </effect>
                                                                   </ImageView>
                                                                   <Button fx:id="flipHandCard3" mnemonicParsing="false" prefHeight="17.0" prefWidth="42.0" text="Flip" StackPane.alignment="TOP_RIGHT">
                                                                      <font>
                                                                         <Font size="10.0" />
                                                                      </font>
+                                                                     <StackPane.margin>
+                                                                        <Insets right="5.0" top="2.0" />
+                                                                     </StackPane.margin>
                                                                   </Button>
                                                                </children>
                                                             </StackPane>
@@ -97,33 +117,33 @@
                                                 </AnchorPane>
                                           </content>
                                         </Tab>
-                                        <Tab text="NormalCardDeck">
+                                        <Tab text="NormalDeck">
                                           <content>
                                             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                                    <children>
                                                       <SplitPane dividerPositions="0.33333333333333, 0.66666666666666" maxHeight="-Infinity" maxWidth="-Infinity" orientation="VERTICAL" prefHeight="655.0" prefWidth="303.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                         <items>
-                                                          <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="214.0" prefWidth="301.0">
+                                                          <AnchorPane layoutX="1.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="208.0" prefWidth="295.0">
                                                                <children>
-                                                                  <ImageView fx:id="normalDeckCard1" fitHeight="210.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" x="0.5" y="3.5">
+                                                                  <ImageView fx:id="normalDeckCard1" fitHeight="195.0" fitWidth="290.0" pickOnBounds="true" preserveRatio="true" x="2.0" y="3.5">
                                                                      <effect>
                                                                         <DropShadow />
                                                                      </effect>
                                                                   </ImageView>
                                                                </children>
                                                             </AnchorPane>
-                                                          <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="211.0" prefWidth="301.0">
+                                                          <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="205.0" prefWidth="295.0">
                                                                <children>
-                                                                  <ImageView fx:id="normalDeckCard2" fitHeight="210.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" x="0.5" y="3.5">
+                                                                  <ImageView fx:id="normalDeckCard2" fitHeight="195.0" fitWidth="290.0" layoutX="1.0" pickOnBounds="true" preserveRatio="true" x="2.0" y="3.5">
                                                                      <effect>
                                                                         <DropShadow />
                                                                      </effect>
                                                                   </ImageView>
                                                                </children>
                                                             </AnchorPane>
-                                                            <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="214.0" prefWidth="301.0">
+                                                            <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="208.0" prefWidth="295.0">
                                                                <children>
-                                                                  <ImageView fx:id="normalDeckCard3" fitHeight="210.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" x="0.5" y="3.5">
+                                                                  <ImageView fx:id="normalDeckCard3" fitHeight="195.0" fitWidth="290.0" layoutX="1.0" pickOnBounds="true" preserveRatio="true" x="2.0" y="3.5">
                                                                      <effect>
                                                                         <DropShadow />
                                                                      </effect>
@@ -136,33 +156,33 @@
                                                 </AnchorPane>
                                           </content>
                                         </Tab>
-                                          <Tab text="GoldenCardDeck">
+                                          <Tab text="GoldenDeck">
                                              <content>
                                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                                    <children>
                                                       <SplitPane dividerPositions="0.3333333333333, 0.6666666666666" maxHeight="-Infinity" maxWidth="-Infinity" orientation="VERTICAL" prefHeight="655.0" prefWidth="303.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                         <items>
-                                                          <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="214.0" prefWidth="301.0">
+                                                          <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="208.0" prefWidth="295.0">
                                                                <children>
-                                                                  <ImageView fx:id="goldenDeckCard1" fitHeight="210.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" x="0.5" y="3.5">
+                                                                  <ImageView fx:id="goldenDeckCard1" fitHeight="195.0" fitWidth="290.0" pickOnBounds="true" preserveRatio="true" x="2.0" y="3.5">
                                                                      <effect>
                                                                         <DropShadow />
                                                                      </effect>
                                                                   </ImageView>
                                                                </children>
                                                             </AnchorPane>
-                                                          <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="211.0" prefWidth="301.0">
+                                                          <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="208.0" prefWidth="295.0">
                                                                <children>
-                                                                  <ImageView fx:id="goldenDeckCard2" fitHeight="210.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" x="0.5" y="3.5">
+                                                                  <ImageView fx:id="goldenDeckCard2" fitHeight="195.0" fitWidth="290.0" pickOnBounds="true" preserveRatio="true" x="2.0" y="3.5">
                                                                      <effect>
                                                                         <DropShadow />
                                                                      </effect>
                                                                   </ImageView>
                                                                </children>
                                                             </AnchorPane>
-                                                            <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="214.0" prefWidth="301.0">
+                                                            <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="208.0" prefWidth="295.0">
                                                                <children>
-                                                                  <ImageView fx:id="goldenDeckCard3" fitHeight="210.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" x="0.5" y="3.5">
+                                                                  <ImageView fx:id="goldenDeckCard3" fitHeight="195.0" fitWidth="290.0" pickOnBounds="true" preserveRatio="true" x="2.0" y="3.5">
                                                                      <effect>
                                                                         <DropShadow />
                                                                      </effect>
@@ -181,12 +201,12 @@
                               </AnchorPane>
                           </items>
                         </SplitPane>
-                        <Button fx:id="centerBoardButton" alignment="BOTTOM_LEFT" mnemonicParsing="false" text="Center Board" AnchorPane.bottomAnchor="15.0" AnchorPane.rightAnchor="325.0" />
+                        <Button fx:id="centerBoardButton" alignment="BOTTOM_LEFT" mnemonicParsing="false" stylesheets="@GamePageBackupSyle.css" text="Center Board" AnchorPane.bottomAnchor="15.0" AnchorPane.rightAnchor="325.0" />
                      </children>
                   </AnchorPane>
             </content>
           </Tab>
-            <Tab text="Scoreboard">
+            <Tab id="scoreboardTab" text="Scoreboard">
                <content>
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="720.0" prefWidth="1280.0">
                      <children>
@@ -212,7 +232,10 @@
                                                 <Image url="@graphicResources/codexCards/pawns/redPawn.png" />
                                              </image>
                                              <effect>
-                                                <DropShadow />
+                                                <DropShadow blurType="TWO_PASS_BOX" height="60.0" radius="29.5" spread="0.3" width="60.0">
+                                                   <color>
+                                                      <Color red="0.2549019753932953" green="0.16078431904315948" blue="0.06666667014360428" />
+                                                   </color></DropShadow>
                                              </effect>
                                           </ImageView>
                                           <ImageView fx:id="playerColor2" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" GridPane.rowIndex="1">
@@ -220,7 +243,10 @@
                                                 <Image url="@graphicResources/codexCards/pawns/greenPawn.png" />
                                              </image>
                                              <effect>
-                                                <DropShadow />
+                                                <DropShadow blurType="TWO_PASS_BOX" height="60.0" radius="29.5" spread="0.3" width="60.0">
+                                                   <color>
+                                                      <Color red="0.2549019753932953" green="0.16078431904315948" blue="0.06666667014360428" />
+                                                   </color></DropShadow>
                                              </effect>
                                           </ImageView>
                                           <ImageView fx:id="playerColor3" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" GridPane.rowIndex="2">
@@ -228,7 +254,10 @@
                                                 <Image url="@graphicResources/codexCards/pawns/bluePawn.png" />
                                              </image>
                                              <effect>
-                                                <DropShadow />
+                                                <DropShadow blurType="TWO_PASS_BOX" height="60.0" radius="29.5" spread="0.3" width="60.0">
+                                                   <color>
+                                                      <Color red="0.2549019753932953" green="0.16078431904315948" blue="0.06666667014360428" />
+                                                   </color></DropShadow>
                                              </effect>
                                           </ImageView>
                                           <ImageView fx:id="playerColor4" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" GridPane.rowIndex="3">
@@ -236,7 +265,10 @@
                                                 <Image url="@graphicResources/codexCards/pawns/yellowPawn.png" />
                                              </image>
                                              <effect>
-                                                <DropShadow />
+                                                <DropShadow height="60.0" radius="29.5" spread="0.3" width="60.0">
+                                                   <color>
+                                                      <Color red="0.2549019753932953" green="0.16078431904315948" blue="0.06666667014360428" />
+                                                   </color></DropShadow>
                                              </effect>
                                           </ImageView>
                                           <Text fx:id="playerName1" strokeType="OUTSIDE" strokeWidth="0.0" text="Player1" textAlignment="JUSTIFY" GridPane.columnIndex="1">
@@ -255,15 +287,15 @@
                                              <font>
                                                 <Font size="20.0" />
                                              </font></Text>
-                                          <Text fx:id="playerScore1" strokeType="OUTSIDE" strokeWidth="0.0" text="789" GridPane.columnIndex="2">
+                                          <Text fx:id="playerScore1" strokeType="OUTSIDE" strokeWidth="0.0" text="0" GridPane.columnIndex="2">
                                              <font>
                                                 <Font size="20.0" />
                                              </font></Text>
-                                          <Text fx:id="playerScore2" strokeType="OUTSIDE" strokeWidth="0.0" text="456" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                                          <Text fx:id="playerScore2" strokeType="OUTSIDE" strokeWidth="0.0" text="0" GridPane.columnIndex="2" GridPane.rowIndex="1">
                                              <font>
                                                 <Font size="20.0" />
                                              </font></Text>
-                                          <Text fx:id="playerScore3" strokeType="OUTSIDE" strokeWidth="0.0" text="123" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                                          <Text fx:id="playerScore3" strokeType="OUTSIDE" strokeWidth="0.0" text="0" GridPane.columnIndex="2" GridPane.rowIndex="2">
                                              <font>
                                                 <Font size="20.0" />
                                              </font></Text>
@@ -275,13 +307,16 @@
                                     </GridPane>
                                     <ImageView fitHeight="676.0" fitWidth="365.0" pickOnBounds="true" preserveRatio="true" x="350.0" y="5.0">
                                        <image>
-                                          <Image url="@graphicResources/codexCards/board/PLATEAU-SCORE%20Crop.jpg" />
+                                          <Image url="@graphicResources/codexCards/board/ScoreboardCrop.jpg" />
                                        </image>
                                        <effect>
-                                          <DropShadow />
+                                          <DropShadow blurType="TWO_PASS_BOX" height="60.0" radius="29.5" spread="0.3" width="60.0">
+                                             <color>
+                                                <Color red="0.2549019753932953" green="0.16078431904315948" blue="0.06666667014360428" />
+                                             </color></DropShadow>
                                        </effect>
                                     </ImageView>
-                                    <ImageView fx:id="bluePion" fitHeight="30.0" fitWidth="30.0" layoutX="415.0" layoutY="597.0" pickOnBounds="true" preserveRatio="true" x="2.0" y="3.0">
+                                    <ImageView fx:id="bluePion" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" x="415.0" y="597.0">
                                        <image>
                                           <Image url="@graphicResources/codexCards/pawns/bluePawn.png" />
                                        </image>
@@ -289,7 +324,7 @@
                                           <DropShadow />
                                        </effect>
                                     </ImageView>
-                                    <ImageView fx:id="redPion" fitHeight="30.0" fitWidth="30.0" layoutX="415.0" layoutY="622.0" pickOnBounds="true" preserveRatio="true" x="2.0" y="3.0">
+                                    <ImageView fx:id="redPion" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" x="415.0" y="622.0">
                                        <image>
                                           <Image url="@graphicResources/codexCards/pawns/redPawn.png" />
                                        </image>
@@ -297,7 +332,7 @@
                                           <DropShadow />
                                        </effect>
                                     </ImageView>
-                                    <ImageView fx:id="greenPion" fitHeight="30.0" fitWidth="30.0" layoutX="440.0" layoutY="597.0" pickOnBounds="true" preserveRatio="true" x="2.0" y="3.0">
+                                    <ImageView fx:id="greenPion" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" x="440.0" y="597.0">
                                        <image>
                                           <Image url="@graphicResources/codexCards/pawns/greenPawn.png" />
                                        </image>
@@ -305,7 +340,7 @@
                                           <DropShadow />
                                        </effect>
                                     </ImageView>
-                                    <ImageView fx:id="yellowPion" fitHeight="30.0" fitWidth="30.0" layoutX="440.0" layoutY="622.0" pickOnBounds="true" preserveRatio="true" x="2.0" y="3.0">
+                                    <ImageView fx:id="yellowPion" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" x="440.0" y="622.0">
                                        <image>
                                           <Image url="@graphicResources/codexCards/pawns/yellowPawn.png" />
                                        </image>
@@ -320,42 +355,51 @@
                                       <items>
                                         <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="225.0" prefWidth="301.0">
                                              <children>
-                                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Public Goal 1" wrappingWidth="118.343017578125" x="90.0" y="16.0">
+                                                <Text fx:id="publicGoalLabel1" strokeType="OUTSIDE" strokeWidth="0.0" text="Public Goal 1" wrappingWidth="118.343017578125" x="90.0" y="16.0">
                                                    <font>
                                                       <Font size="20.0" />
                                                    </font>
                                                 </Text>
                                                 <ImageView fx:id="goalCard1" fitHeight="195.0" fitWidth="295.0" pickOnBounds="true" preserveRatio="true" x="9.0" y="24.0">
                                                    <effect>
-                                                      <DropShadow />
+                                                      <DropShadow blurType="TWO_PASS_BOX" height="60.0" radius="29.5" spread="0.3" width="60.0">
+                                                         <color>
+                                                            <Color red="0.2549019753932953" green="0.16078431904315948" blue="0.06666667014360428" />
+                                                         </color></DropShadow>
                                                    </effect>
                                                 </ImageView>
                                              </children>
                                           </AnchorPane>
                                         <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="221.0" prefWidth="301.0">
                                              <children>
-                                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Public Goal" x="90.0" y="16.0">
+                                                <Text fx:id="publicGoalLabel2" strokeType="OUTSIDE" strokeWidth="0.0" text="Public Goal 2" x="90.0" y="16.0" AnchorPane.topAnchor="-2.3359375">
                                                    <font>
                                                       <Font size="20.0" />
                                                    </font>
                                                 </Text>
                                                 <ImageView fx:id="goalCard2" fitHeight="195.0" fitWidth="295.0" pickOnBounds="true" preserveRatio="true" x="9.0" y="24.0">
                                                    <effect>
-                                                      <DropShadow />
+                                                      <DropShadow blurType="TWO_PASS_BOX" height="60.0" radius="29.5" spread="0.3" width="60.0">
+                                                         <color>
+                                                            <Color red="0.2549019753932953" green="0.16078431904315948" blue="0.06666667014360428" />
+                                                         </color></DropShadow>
                                                    </effect>
                                                 </ImageView>
                                              </children>
                                           </AnchorPane>
                                           <AnchorPane layoutX="10.0" layoutY="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="224.5" prefWidth="301.0">
                                              <children>
-                                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Private Goal" x="90.0" y="16.0">
+                                                <Text fx:id="privateGoalLabel" strokeType="OUTSIDE" strokeWidth="0.0" text="Private Goal" x="90.0" y="16.0" AnchorPane.topAnchor="-2.3359375">
                                                    <font>
                                                       <Font size="20.0" />
                                                    </font>
                                                 </Text>
                                                 <ImageView fx:id="privateGoalCard" fitHeight="195.0" fitWidth="295.0" pickOnBounds="true" preserveRatio="true" x="9.0" y="24.0">
                                                    <effect>
-                                                      <DropShadow />
+                                                      <DropShadow blurType="TWO_PASS_BOX" height="60.0" radius="29.5" spread="0.3" width="60.0">
+                                                         <color>
+                                                            <Color red="0.2549019753932953" green="0.16078431904315948" blue="0.06666667014360428" />
+                                                         </color></DropShadow>
                                                    </effect>
                                                 </ImageView>
                                              </children>

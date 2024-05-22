@@ -6,82 +6,93 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
 
-import java.util.ArrayList;
-import java.util.Objects;
-
+/**
+ * This class handles various pop-up dialogs used in the GUI.
+ */
 public class PopUps {
 
+    /**
+     * Displays a confirmation dialog for selecting the maximum number of players.
+     *
+     * @return the number of players selected by the user
+     */
     public int maxPlayersAlert() {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.getDialogPane().getStylesheets().add("PopUpStyle.css");
         alert.setTitle("Max Number Of Players");
         alert.setHeaderText("Please select the max number of players: ");
 
-        //create the wanted buttons
+        // Create the desired buttons
         ButtonType buttonTypeTwo = new ButtonType("2");
         ButtonType buttonTypeThree = new ButtonType("3");
         ButtonType buttonTypeFour = new ButtonType("4");
 
-
-        //put the buttons into the alert
+        // Add the buttons to the alert
         alert.getButtonTypes().setAll(buttonTypeTwo, buttonTypeThree, buttonTypeFour);
 
-        //needed to show the alert and wait the button pressing
+        // Show the alert and wait for a button press
         ButtonType result = alert.showAndWait().orElse(null);
         int selectedNumber = 0;
         if (result != null) {
-            //this will take the input pressed and parse that into int
+            // Parse the selected number from the button text
             selectedNumber = Integer.parseInt(result.getText());
 
-            //send to server the selected number
+            // Send the selected number to the server
             System.out.println("You selected: " + selectedNumber + " players.");
         }
         return selectedNumber;
     }
 
-    //da implementare nel controller perchè altrimenti non riconosce l'azione
-    //          /\
-    //          ||
-//    public void makePopUp(ActionEvent event) {
-//        popUpMaker(message);
-//    }
+    /**
+     * Displays a pop-up with a specified message.
+     *
+     * @param message the message to display in the pop-up
+     */
     public void popUpMaker(String message) {
-        //create a new type of alert without symbol
+        // Create a new alert without a symbol
         Alert alert = new Alert(Alert.AlertType.NONE);
         alert.getDialogPane().getStylesheets().add("PopUpStyle.css");
 
-
-        //create the button with "ok" text inside
+        // Create the OK button
         ButtonType buttonType = new ButtonType("OK");
 
-        //import the button inside the alert
+        // Add the button to the alert
         alert.getButtonTypes().setAll(buttonType);
 
-        //insert the received message into the alert field
+        // Set the message in the alert
         alert.setContentText(message);
         alert.show();
     }
 
-
+    /**
+     * Displays a dialog when the player is the last one left in the game, offering
+     * the options to quit or restart.
+     *
+     * @param stage the current stage
+     * @param state the current client GUI state
+     * @param genericSceneController the current scene controller
+     */
     public void lastPlayerLeft(Stage stage, ClientGUIState state, GenericSceneController genericSceneController) {
-
         Alert alert = new Alert(Alert.AlertType.NONE);
         alert.getDialogPane().getStylesheets().add("PopUpStyle.css");
 
-
+        // Create the quit and restart buttons
         ButtonType quit = new ButtonType("QUIT");
         ButtonType restart = new ButtonType("RESTART");
 
+        // Add the buttons to the alert
         alert.getButtonTypes().setAll(quit, restart);
 
+        // Set the content text in the alert
         alert.setContentText("You are the only player left! Press OK to quit!");
 
+        // Show the alert and wait for a button press
         ButtonType result = alert.showAndWait().orElse(null);
 
-        if(result.equals(quit)){
+        // Handle the button press
+        if (result.equals(quit)) {
             stage.close();
-        }
-        else if(result.equals(restart)) {
+        } else if (result.equals(restart)) {
             try {
                 genericSceneController.restart();
             } catch (Exception e) {
@@ -89,23 +100,32 @@ public class PopUps {
             }
         }
         state.shutdown();
-
     }
 
-    public void restartGame(ClientGUIState state, GenericSceneController genericSceneController){
+    /**
+     * Displays a dialog indicating the server has crashed and create pop up to restart the client.
+     *
+     * @param state the current client GUI state
+     * @param genericSceneController the current scene controller
+     */
+    public void restartGame(ClientGUIState state, GenericSceneController genericSceneController) {
         Alert alert = new Alert(Alert.AlertType.NONE);
         alert.getDialogPane().getStylesheets().add("PopUpStyle.css");
 
-
+        // Create the OK button
         ButtonType buttonType = new ButtonType("OK");
 
+        // Add the button to the alert
         alert.getButtonTypes().setAll(buttonType);
 
+        // Set the content text in the alert
         alert.setContentText("Server CRASHED, press OK to restart Client");
 
+        // Show the alert and wait for a button press
         ButtonType result = alert.showAndWait().orElse(null);
 
-        if(result != null){
+        // Handle the button press
+        if (result != null) {
             try {
                 genericSceneController.restart();
             } catch (Exception e) {
@@ -113,5 +133,4 @@ public class PopUps {
             }
         }
     }
-
 }

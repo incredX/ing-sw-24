@@ -427,6 +427,5 @@ public class GameTest {
         System.out.println(game.getPublicGoals().getFirst().asString());
         System.out.println(game.getPublicGoals().getLast().asString());
         System.out.println(game.getPlayers());
-
     }
 }
