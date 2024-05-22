@@ -15,23 +15,24 @@ public class NotifyTurnPhase {
     public static void startPhase(ClientHandler clientHandler) {
         JsonObject response = new JsonObject();
 
-        // send notification to next player turn
-        response.addProperty("type", "notification");
-        if (clientHandler.getGame().getFinalTurn()) {
-            response.addProperty("message", "It is your FINAL turn");
-        } else {
-            response.addProperty("message", "It is your turn");
+        if (!clientHandler.getGame().hasGameEnded()){
+            // send notification to next player turn
+            response.addProperty("type", "notification");
+            if (clientHandler.getGame().getFinalTurn() ) {
+                response.addProperty("message", "It is your FINAL turn");
+            } else {
+                response.addProperty("message", "It is your turn");
+            }
+            clientHandler.sendMessage(response.toString());
+            response.remove("message");
         }
-        clientHandler.sendMessage(response.toString());
-        response.remove("message");
-
 
         response.addProperty("type", "turn");
         if(clientHandler.getGame().hasGameEnded() || clientHandler.getGame().getPlayers().size() == 1){
             response.addProperty("player", "");
             response.addProperty("gameFinished", "");
         }
-            else
+        else
             response.addProperty("player", clientHandler.getGame().currentPlayer().name());
 
         //add player respective scores

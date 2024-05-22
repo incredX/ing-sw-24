@@ -20,49 +20,40 @@ public abstract class ClientGUIState {
         this.username = "";
         personalChat = new Chat();
     }
-
-    public void setState(ClientGUIState nextState) {
-        this.actualState = nextState;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public ServerHandlerGUI getServerHandler() {
-        return serverHandler;
-    }
-
-
     public void shutdown() {
         if (serverHandler == null)
             return;
         serverHandler.shutdown();
     }
 
-    public ClientGUI getClientGUI() {
-        return clientGUI;
-    }
-
-    public Boolean isFinalTurn(){
-        return isFinalTurn;
-    }
-
-    public void setIsFinalTurn(Boolean isFinalTurn){
-        this.isFinalTurn = isFinalTurn;
-    }
-
-    public InputHandlerGUI getInputHandlerGUI() {
-        return inputHandlerGUI;
-    }
     public void sendMessage(String to, String from,String mex){
         inputHandlerGUI.sendMessage(to,from,mex);
     }
     public void sendToAll (String from, String mex){
         inputHandlerGUI.sendToAllMessage(from, mex);
+    }
+    public ClientGUI getClientGUI() {
+        return clientGUI;
+    }
+    public String getUsername() {
+        return username;
+    }
+    public InputHandlerGUI getInputHandlerGUI() {
+        return inputHandlerGUI;
+    }
+    public ServerHandlerGUI getServerHandler() {
+        return serverHandler;
+    }
+    public Boolean isFinalTurn(){
+        return isFinalTurn;
+    }
+    public void setIsFinalTurn(Boolean isFinalTurn){
+        this.isFinalTurn = isFinalTurn;
+    }
+    public void setState(ClientGUIState nextState) {
+        this.actualState = nextState;
+    }
+    public void setUsername(String username) {
+        this.username = username;
     }
 }
