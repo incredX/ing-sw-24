@@ -16,11 +16,13 @@ import java.net.Socket;
 import static IS24_LB11.game.Result.Error;
 
 public class ServerHandler extends Listener implements Runnable {
+    private static final int MIN_TIMEOUT = 1_000;
+    private static final int MAX_TIMEOUT = 8_000;
     private Socket socket;
     private JsonStreamParser parser;
     private PrintWriter writer;
     private final Object timerLock = new Object();
-    private int timeout = 3_000;
+    private int timeout = MIN_TIMEOUT;
 
     public ServerHandler(ClientState state, String serverIP, int serverPORT) throws IOException {
         super(state);
@@ -101,6 +103,7 @@ public class ServerHandler extends Listener implements Runnable {
 
     private void startEventTimer() {
         new Thread(() -> {
+            Thread.currentThread().setName("event-timer");
             Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
             long timeStamp = System.currentTimeMillis();
             while (true) {
@@ -111,15 +114,25 @@ public class ServerHandler extends Listener implements Runnable {
                         if (timeout == 0) // => needs to be shutdown
                             break;
                         if (diff >= timeout) {
-                            state.queueEvent(new ServerDownEvent());
-                            Debugger.print("Server down (time = "+diff+")");
-                            break;
+                            if (timeout < MAX_TIMEOUT) {
+                                Debugger.print("lost pace (time = "+diff+")");
+                                timeout *= 2;
+                            }
+                            else {
+                                state.queueEvent(new ServerDownEvent());
+                                Debugger.print("Server down (time = "+diff+")");
+                                break;
+                            }
                         } else {
                             Debugger.print("Server up  "+diff);
                             timeStamp += diff;
+                            if (timeout > MIN_TIMEOUT) timeout -= MIN_TIMEOUT;
                         }
                     }
-                    catch (InterruptedException e) { break; }
+                    catch (InterruptedException e) {
+                        Debugger.print(e);
+                        break;
+                    }
                 }
             }
         }).start();

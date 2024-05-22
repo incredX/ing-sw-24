@@ -92,7 +92,7 @@ public class GameState extends ClientState implements PlayerStateInterface {
      * @param table the game table
      * @throws IOException if an I/O error occurs
      */
-    public GameState(ViewHub viewHub, NotificationStack stack, PlayerSetup setup, Table table) throws IOException {
+    public GameState(ViewHub viewHub, NotificationStack stack, PlayerSetup setup, Table table) {
         super(viewHub, stack);
         this.player = new Player(username, setup);
         this.table = table;
@@ -100,6 +100,11 @@ public class GameState extends ClientState implements PlayerStateInterface {
         this.placedCard = null;
     }
 
+    /**
+     * Executes the game state after settig up the stage and popups.
+     *
+     * @return the next client state to be executed.
+     */
     @Override
     public ClientState execute() {
         if (getPlacedCardsInBoard().isEmpty()) player.applySetup();
@@ -122,6 +127,11 @@ public class GameState extends ClientState implements PlayerStateInterface {
         setNextState(new LobbyState(viewHub));
     }
 
+    /**
+     * Processes the received server event based one the type of server event.
+     *
+     * @param serverEvent the server event to be processed.
+     */
     @Override
     protected void processServerEvent(ServerEvent serverEvent) {
         if (processServerEventIfCommon(serverEvent)) return;
@@ -159,6 +169,11 @@ public class GameState extends ClientState implements PlayerStateInterface {
         }
     }
 
+    /**
+     * Processes .
+     *
+     * @param serverEvent the server event to be processed.
+     */
     @Override
     protected void processCommand(String command) {
         if (processCommandIfCommon(command)) return;
