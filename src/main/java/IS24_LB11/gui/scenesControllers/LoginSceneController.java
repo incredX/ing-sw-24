@@ -1,6 +1,5 @@
 package IS24_LB11.gui.scenesControllers;
 
-
 import IS24_LB11.game.PlayerSetup;
 import IS24_LB11.game.components.GoalCard;
 import IS24_LB11.game.components.PlayableCard;
@@ -19,7 +18,10 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class LoginSceneController extends GenericSceneController{
+/**
+ * Controller class for the login scene.
+ */
+public class LoginSceneController extends GenericSceneController {
 
     @FXML
     private AnchorPane scenePane;
@@ -38,19 +40,23 @@ public class LoginSceneController extends GenericSceneController{
 
     @FXML
     private TextField ipTextField;
+
     @FXML
     private TextField portTextField;
 
-    LoginGUIState state;
+    private LoginGUIState state;
 
+    /**
+     * Constructs a LoginSceneController and initializes the stage and scene.
+     *
+     * @param state the current client GUI state
+     */
     public LoginSceneController(ClientGUIState state) {
-        this.stage=new Stage();
-
+        this.stage = new Stage();
         this.state = (LoginGUIState) state;
-        this.genericState=state;
+        this.genericState = state;
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/LoginPage.fxml"));
         loader.setController(this);
-
         this.stage.setTitle("Codex");
         try {
             this.stage.setScene(new Scene(loader.load()));
@@ -62,11 +68,13 @@ public class LoginSceneController extends GenericSceneController{
             event.consume();
             exit(stage);
         });
-
     }
 
+    /**
+     * Initializes the login scene, setting default values and event handlers.
+     */
     @FXML
-    private void initialize(){
+    private void initialize() {
         loginButton.setOnAction(event -> login());
         exitButton.setOnAction(event -> exit(stage));
         chatBox.setOnMouseEntered(mouseEvent -> chatDisplay());
@@ -77,54 +85,76 @@ public class LoginSceneController extends GenericSceneController{
         portTextField.setText("54321");
     }
 
+    /**
+     * Changes the scene to the setup stage with the setup parameters.
+     *
+     * @param playerSetup the player setup information
+     * @param publicGoals the public goal cards
+     * @param normalDeck the normal deck of playable cards
+     * @param goldenDeck the golden deck of playable cards
+     * @param playerNames the list of player names
+     */
     public void changeToSetupState(PlayerSetup playerSetup,
                                    ArrayList<GoalCard> publicGoals,
                                    ArrayList<PlayableCard> normalDeck,
                                    ArrayList<PlayableCard> goldenDeck,
-                                   ArrayList<String> playerNames){
-        SetupSceneController setupSceneController = new SetupSceneController(new SetupGUIState(state),stage);
+                                   ArrayList<String> playerNames) {
+        SetupSceneController setupSceneController = new SetupSceneController(new SetupGUIState(state), stage);
         setupSceneController.updateChat(this.chat.getMessages());
-        setupSceneController.state.initialize(playerSetup,publicGoals,normalDeck,goldenDeck,playerNames);
+        setupSceneController.state.initialize(playerSetup, publicGoals, normalDeck, goldenDeck, playerNames);
         setupSceneController.showStage();
     }
 
+    /**
+     * Displays the stage.
+     */
     public void showStage() {
         this.stage.setResizable(false);
         this.stage.show();
     }
 
-
-
-    public void login(){
+    /**
+     * Handles the login action, validating the username and opening the connection.
+     */
+    public void login() {
         String username = usernameTextField.getText();
-        if (username.isEmpty()){
+        if (username.isEmpty()) {
             popUps.popUpMaker("Insert username please");
             return;
         }
-        if (username.contains(" ")){
+        if (username.contains(" ")) {
             popUps.popUpMaker("No spaces allowed");
             return;
         }
-        if (username.length()>11){
+        if (username.length() > 11) {
             popUps.popUpMaker("Username too long");
             return;
         }
         String serverIP = ipTextField.getText();
         int port = Integer.valueOf(portTextField.getText());
-        state.initialize(username,serverIP,port);
+        state.initialize(username, serverIP, port);
         state.execute();
         state.getServerHandler().setLoginSceneController(this);
     }
 
-    public void setPlayers(){
+    /**
+     * Sets the maximum number of players and show popUp that let you choose the maximum number of players.
+     */
+    public void setPlayers() {
         state.setMaxPlayers(popUps.maxPlayersAlert());
     }
-    public void resetServerHandler(){
+
+    /**
+     * Resets the server handler in the state.
+     */
+    public void resetServerHandler() {
         state.resetServerHandler();
     }
 
-
-    public void disableLogin(){
+    /**
+     * Disables the login button.
+     */
+    public void disableLogin() {
         loginButton.setDisable(true);
     }
 
