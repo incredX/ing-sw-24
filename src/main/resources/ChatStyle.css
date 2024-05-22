@@ -1,0 +1,54 @@
+* {
+    -fx-primary : #EDE2BB;
+    -fx-secondary : #412911;
+}
+
+.root {
+    -fx-background-color: -fx-primary;
+    -fx-border-color: -fx-secondary;
+    -fx-border-width: 3;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+}
+
+.VBox {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane {
+    -fx-background-color: -fx-primary;
+}
+
+.list-view {
+    -fx-background-color: transparent;
+}
+
+.text-field{
+    -fx-font-family: 'Georgia';
+    -fx-font-size: 14px;
+    -fx-text-fill: -fx-primary;
+}
+
+#messageBox {
+    -fx-background-color: transparent;
+    -fx-text-fill: -fx-secondary;
+    -fx-font-family: 'Georgia';
+    -fx-font-size: 14pt;
+}
+
+.button {
+    -fx-text-fill: -fx-secondary;
+    -fx-font-family: 'Georgia';
+    -fx-background-color: transparent;
+    -fx-border-width: 3;
+    -fx-border-color: -fx-secondary;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+    -fx-font-size: 14px;
+}
+
+.button:hover {
+    -fx-border-color: -fx-secondary;
+    -fx-background-color: -fx-secondary;
+    -fx-text-fill: -fx-primary;
+}
