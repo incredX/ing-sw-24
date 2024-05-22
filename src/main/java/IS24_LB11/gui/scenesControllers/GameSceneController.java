@@ -6,6 +6,7 @@ import IS24_LB11.game.components.PlayableCard;
 import IS24_LB11.game.symbol.Item;
 import IS24_LB11.game.symbol.Suit;
 import IS24_LB11.game.symbol.Symbol;
+import IS24_LB11.game.utils.Color;
 import IS24_LB11.game.utils.Position;
 import IS24_LB11.gui.ImageLoader;
 import IS24_LB11.gui.phases.ClientGUIState;
@@ -486,20 +487,20 @@ public class GameSceneController extends GenericSceneController{
         }
         state.removePlayer(playerDisconnected);
         numberPlayerInGame--;
-        if (playerDisconnected.equals(playerName1.getText())) {
-            playerColor1.setImage(new Image(GameSceneController.class.getResourceAsStream("/graphicResources/codexCards/pawns/greenPawn.png")));
-            playerColor2.setImage(new Image(GameSceneController.class.getResourceAsStream("/graphicResources/codexCards/pawns/yellowPawn.png")));
-            playerColor3.setImage(new Image(GameSceneController.class.getResourceAsStream("/graphicResources/codexCards/pawns/bluePawn.png")));
-        }
-        if (playerDisconnected.equals(playerName2.getText())) {
-            playerColor2.setImage(new Image(GameSceneController.class.getResourceAsStream("/graphicResources/codexCards/pawns/yellowPawn.png")));
-            playerColor3.setImage(new Image(GameSceneController.class.getResourceAsStream("/graphicResources/codexCards/pawns/bluePawn.png")));
-        }
-        if (playerDisconnected.equals(playerName3.getText())) {
-            playerColor3.setImage(new Image(GameSceneController.class.getResourceAsStream("/graphicResources/codexCards/pawns/bluePawn.png")));
-        }
-        hidePlayersInScoreboard();
+
         setUsernamesBoard();
+
+        String basePath = "/graphicResources/codexCards/pawns/";
+        if (numberPlayerInGame >=2) {
+            playerColor1.setImage(new Image(GameSceneController.class.getResourceAsStream(basePath + Color.toPawn(state.getPlayersColors().get(playerName1.getText())))));
+            playerColor2.setImage(new Image(GameSceneController.class.getResourceAsStream(basePath + Color.toPawn(state.getPlayersColors().get(playerName2.getText())))));
+        }
+        if (numberPlayerInGame>=3)
+            playerColor3.setImage(new Image(GameSceneController.class.getResourceAsStream(basePath + Color.toPawn(state.getPlayersColors().get(playerName3.getText())))));
+
+
+        hidePlayersInScoreboard();
+
         updateScore();
     }
 
