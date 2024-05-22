@@ -3,6 +3,9 @@ package IS24_LB11.gui.scenesControllers;
 
 import IS24_LB11.game.PlacedCard;
 import IS24_LB11.game.components.PlayableCard;
+import IS24_LB11.game.symbol.Item;
+import IS24_LB11.game.symbol.Suit;
+import IS24_LB11.game.symbol.Symbol;
 import IS24_LB11.game.utils.Position;
 import IS24_LB11.gui.ImageLoader;
 import IS24_LB11.gui.phases.ClientGUIState;
@@ -26,6 +29,7 @@ import javafx.util.Duration;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 
 public class GameSceneController extends GenericSceneController{
@@ -118,6 +122,22 @@ public class GameSceneController extends GenericSceneController{
     @FXML
     private Tab handTab;
 
+    @FXML
+    private Text animal;
+    @FXML
+    private Text plant;
+    @FXML
+    private Text mushroom;
+    @FXML
+    private Text insect;
+    @FXML
+    private Text quill;
+    @FXML
+    private Text manuscript;
+    @FXML
+    private Text inkwell;
+
+
     GameGUIState state;
     int numberPlayerInGame;
     private final int centerBoardX = 10000;
@@ -201,10 +221,8 @@ public class GameSceneController extends GenericSceneController{
         }
         hidePlayersInScoreboard();
         setUsernamesBoard();
-
-
+        updateSymbolsCounter();
         scoreboardPositions = ScoreboardCoordinates.generate();
-
     }
 
 
@@ -579,6 +597,7 @@ public class GameSceneController extends GenericSceneController{
 
         if(state.placeCard(new PlacedCard(state.getCardChooseToPlay(), realPosition))){
             playerBoard.getChildren().add(cardToBePlaced);
+            updateSymbolsCounter();
             clearTemporaryCardsFromBoard(playerBoard);
             updateHand();
             disableHand(true);
@@ -590,6 +609,20 @@ public class GameSceneController extends GenericSceneController{
         else {
             this.addMessage("Card can't be placed there");
         }
+    }
+
+
+    public void updateSymbolsCounter() {
+        HashMap<Symbol,Integer> data = state.getPlayer().getBoard().getSymbolCounter();
+
+        animal.setText(String.valueOf(data.get(Suit.ANIMAL)));
+        plant.setText(String.valueOf(data.get(Suit.PLANT)));
+        mushroom.setText(String.valueOf(data.get(Suit.MUSHROOM)));
+        insect.setText(String.valueOf(data.get(Suit.INSECT)));
+
+        inkwell.setText(String.valueOf(data.get(Item.INKWELL)));
+        quill.setText(String.valueOf(data.get(Item.QUILL)));
+        manuscript.setText(String.valueOf(data.get(Item.MANUSCRIPT)));
     }
 
     private Position getRealPosition(int relativeX, int relativeY){

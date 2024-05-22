@@ -214,11 +214,11 @@
                           <items>
                             <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="686.5" prefWidth="968.0">
                                  <children>
-                                    <GridPane layoutX="27.0" layoutY="140.0" prefHeight="155.0" prefWidth="309.0">
+                                    <GridPane layoutX="31.0" layoutY="266.0" prefHeight="155.0" prefWidth="264.0">
                                        <columnConstraints>
-                                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="98.0" minWidth="10.0" prefWidth="58.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="192.0" minWidth="10.0" prefWidth="162.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="95.0" minWidth="10.0" prefWidth="88.0" />
                                        </columnConstraints>
                                        <rowConstraints>
                                           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -348,6 +348,142 @@
                                           <DropShadow />
                                        </effect>
                                     </ImageView>
+                                    <GridPane layoutX="763.0" layoutY="59.0" prefHeight="569.0" prefWidth="167.0">
+                                       <columnConstraints>
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="129.0" minWidth="10.0" prefWidth="82.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="135.0" minWidth="10.0" prefWidth="85.0" />
+                                       </columnConstraints>
+                                       <rowConstraints>
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                       </rowConstraints>
+                                       <children>
+                                          <ImageView fitHeight="80.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@graphicResources/symbols/Animal.png" />
+                                             </image>
+                                             <effect>
+                                                <DropShadow blurType="TWO_PASS_BOX" height="60.0" radius="29.5" spread="0.3" width="60.0">
+                                                   <color>
+                                                      <Color red="0.2549019753932953" green="0.16078431904315948" blue="0.06666667014360428" />
+                                                   </color>
+                                                </DropShadow>
+                                             </effect>
+                                          </ImageView>
+                                          <Text fx:id="animal" strokeType="OUTSIDE" strokeWidth="0.0" text="0" GridPane.columnIndex="1">
+                                             <font>
+                                                <Font size="20.0" />
+                                             </font>
+                                          </Text>
+                                          <Text fx:id="plant" strokeType="OUTSIDE" strokeWidth="0.0" text="0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                             <font>
+                                                <Font size="20.0" />
+                                             </font>
+                                          </Text>
+                                          <Text fx:id="insect" strokeType="OUTSIDE" strokeWidth="0.0" text="0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                             <font>
+                                                <Font size="20.0" />
+                                             </font>
+                                          </Text>
+                                          <Text fx:id="mushroom" strokeType="OUTSIDE" strokeWidth="0.0" text="0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                             <font>
+                                                <Font size="20.0" />
+                                             </font>
+                                          </Text>
+                                          <Text fx:id="inkwell" strokeType="OUTSIDE" strokeWidth="0.0" text="0" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                                             <font>
+                                                <Font size="20.0" />
+                                             </font>
+                                          </Text>
+                                          <Text fx:id="quill" strokeType="OUTSIDE" strokeWidth="0.0" text="0" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                                             <font>
+                                                <Font size="20.0" />
+                                             </font>
+                                          </Text>
+                                          <Text fx:id="manuscript" strokeType="OUTSIDE" strokeWidth="0.0" text="0" GridPane.columnIndex="1" GridPane.rowIndex="6">
+                                             <font>
+                                                <Font size="20.0" />
+                                             </font>
+                                          </Text>
+                                          <ImageView fitHeight="80.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true" GridPane.rowIndex="6">
+                                             <image>
+                                                <Image url="@graphicResources/symbols/Manuscript.png" />
+                                             </image>
+                                             <effect>
+                                                <DropShadow blurType="TWO_PASS_BOX" height="60.0" radius="29.5" spread="0.3" width="60.0">
+                                                   <color>
+                                                      <Color red="0.2549019753932953" green="0.16078431904315948" blue="0.06666667014360428" />
+                                                   </color>
+                                                </DropShadow>
+                                             </effect>
+                                          </ImageView>
+                                          <ImageView fitHeight="80.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true" GridPane.rowIndex="5">
+                                             <image>
+                                                <Image url="@graphicResources/symbols/Quill.png" />
+                                             </image>
+                                             <effect>
+                                                <DropShadow blurType="TWO_PASS_BOX" height="60.0" radius="29.5" spread="0.3" width="60.0">
+                                                   <color>
+                                                      <Color red="0.2549019753932953" green="0.16078431904315948" blue="0.06666667014360428" />
+                                                   </color>
+                                                </DropShadow>
+                                             </effect>
+                                          </ImageView>
+                                          <ImageView fitHeight="80.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true" GridPane.rowIndex="4">
+                                             <image>
+                                                <Image url="@graphicResources/symbols/Inkwell.png" />
+                                             </image>
+                                             <effect>
+                                                <DropShadow blurType="TWO_PASS_BOX" height="60.0" radius="29.5" spread="0.3" width="60.0">
+                                                   <color>
+                                                      <Color red="0.2549019753932953" green="0.16078431904315948" blue="0.06666667014360428" />
+                                                   </color>
+                                                </DropShadow>
+                                             </effect>
+                                          </ImageView>
+                                          <ImageView fitHeight="80.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true" GridPane.rowIndex="3">
+                                             <image>
+                                                <Image url="@graphicResources/symbols/Foongus.png" />
+                                             </image>
+                                             <effect>
+                                                <DropShadow blurType="TWO_PASS_BOX" height="60.0" radius="29.5" spread="0.3" width="60.0">
+                                                   <color>
+                                                      <Color red="0.2549019753932953" green="0.16078431904315948" blue="0.06666667014360428" />
+                                                   </color>
+                                                </DropShadow>
+                                             </effect>
+                                          </ImageView>
+                                          <ImageView fitHeight="80.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true" GridPane.rowIndex="2">
+                                             <image>
+                                                <Image url="@graphicResources/symbols/Insect.png" />
+                                             </image>
+                                             <effect>
+                                                <DropShadow blurType="TWO_PASS_BOX" height="60.0" radius="29.5" spread="0.3" width="60.0">
+                                                   <color>
+                                                      <Color red="0.2549019753932953" green="0.16078431904315948" blue="0.06666667014360428" />
+                                                   </color>
+                                                </DropShadow>
+                                             </effect>
+                                          </ImageView>
+                                          <ImageView fitHeight="80.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true" GridPane.rowIndex="1">
+                                             <image>
+                                                <Image url="@graphicResources/symbols/Plant.png" />
+                                             </image>
+                                             <effect>
+                                                <DropShadow blurType="TWO_PASS_BOX" height="60.0" radius="29.5" spread="0.3" width="60.0">
+                                                   <color>
+                                                      <Color red="0.2549019753932953" green="0.16078431904315948" blue="0.06666667014360428" />
+                                                   </color>
+                                                </DropShadow>
+                                             </effect>
+                                          </ImageView>
+                                       </children>
+                                    </GridPane>
                                  </children></AnchorPane>
                             <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="686.5" prefWidth="303.0">
                                  <children>
@@ -355,7 +491,7 @@
                                       <items>
                                         <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="225.0" prefWidth="301.0">
                                              <children>
-                                                <Text fx:id="publicGoalLabel1" strokeType="OUTSIDE" strokeWidth="0.0" text="Public Goal 1" wrappingWidth="118.343017578125" x="90.0" y="16.0">
+                                                <Text fx:id="publicGoalLabel1" strokeType="OUTSIDE" strokeWidth="0.0" text="Public Goal" wrappingWidth="118.343017578125" x="90.0" y="16.0">
                                                    <font>
                                                       <Font size="20.0" />
                                                    </font>
@@ -372,7 +508,7 @@
                                           </AnchorPane>
                                         <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="221.0" prefWidth="301.0">
                                              <children>
-                                                <Text fx:id="publicGoalLabel2" strokeType="OUTSIDE" strokeWidth="0.0" text="Public Goal 2" x="90.0" y="16.0" AnchorPane.topAnchor="-2.3359375">
+                                                <Text fx:id="publicGoalLabel2" strokeType="OUTSIDE" strokeWidth="0.0" text="Public Goal" x="90.0" y="16.0" AnchorPane.topAnchor="-2.3359375">
                                                    <font>
                                                       <Font size="20.0" />
                                                    </font>

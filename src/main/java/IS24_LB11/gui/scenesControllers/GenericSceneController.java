@@ -97,7 +97,7 @@ public class GenericSceneController {
      * Processes different commands based on the input text.
      */
     public void send() {
-        String[] strings = messageBox.getText().split(" ", 3);
+        String[] strings = messageBox.getText().split(" +", 3);
         switch (strings[0]) {
             case "help":
                 showHelp();
