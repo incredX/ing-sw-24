@@ -214,7 +214,8 @@ public class ClientHandler implements Runnable {
                             this.getGame().setGameEnded(true);
                             NotifyTurnPhase.startPhase(this.getClientHandlerWithUsername(this.getGame().currentPlayer().name()));
                         } else if (this.getGame().getPlayers().size() > 1) {
-                            NotifyTurnPhase.startPhase(this.getClientHandlerWithUsername(this.getGame().currentPlayer().name()));
+                            if(this.getGame().currentPlayer().name().equals(this.userName))
+                                NotifyTurnPhase.startPhase(this.getClientHandlerWithUsername(this.getGame().currentPlayer().name()));
                         }
                     }
 

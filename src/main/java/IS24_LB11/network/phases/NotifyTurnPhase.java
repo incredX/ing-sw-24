@@ -37,9 +37,11 @@ public class NotifyTurnPhase {
         }
 
         response.addProperty("type", "turn");
-        if (clientHandler.getGame().hasGameEnded() || clientHandler.getGame().getPlayers().size() == 1) {
+        if (clientHandler.getGame().hasGameEnded()) {
             response.addProperty("player", "");
-            response.addProperty("gameFinished", "");
+            if(clientHandler.getGame().getPlayers().size() == 1) {
+                response.addProperty("gameFinished", "");
+            }
         } else {
             response.addProperty("player", clientHandler.getGame().currentPlayer().name());
         }
