@@ -115,6 +115,8 @@ public class LobbyState extends ClientState {
     private void processCommandLogin(String username) {
         if (username.contains(" ")) {
             notificationStack.addUrgent("ERROR", INVALID_ARG.apply(username, "login"));
+        } else if (username.length() >= 11) {
+            notificationStack.addUrgent("ERROR", INVALID_ARG.apply(username, "login") + "(max accepted lenght is 10)");
         } else {
             sendToServer("login", "username", username);
         }
