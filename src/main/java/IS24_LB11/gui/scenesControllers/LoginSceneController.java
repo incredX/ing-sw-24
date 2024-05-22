@@ -101,7 +101,7 @@ public class LoginSceneController extends GenericSceneController {
                                    ArrayList<String> playerNames) {
         SetupSceneController setupSceneController = new SetupSceneController(new SetupGUIState(state), stage);
         setupSceneController.updateChat(this.chat.getMessages());
-        setupSceneController.state.initialize(playerSetup, publicGoals, normalDeck, goldenDeck, playerNames);
+        setupSceneController.getState().initialize(playerSetup, publicGoals, normalDeck, goldenDeck, playerNames);
         setupSceneController.showStage();
     }
 
