@@ -32,15 +32,10 @@ import java.util.HashMap;
 
 import static IS24_LB11.cli.notification.Priority.MEDIUM;
 
-//NOTE : URGENT PRIORITY
-//NOTE : HIGH PRIORITY
-//NOTE : MEDIUM PRIORITY
-//TODO : remove debugger
-//NOTE : LOW PRIORITY
-//TODO : sowly remove resize from viewhub and assign to notification their views to resize
-//TODO : refactor viewhub as a cliBox's queue consumer. (maybe?)
-//TODO : add boolean edited in cliBox (on in drawAll & set to off in print)
-
+/**
+ * The {@code GameState} class represents the state of the game from the client's perspective.
+ * It handles the game's logic, player interactions, and communication with the server.
+ */
 public class GameState extends ClientState implements PlayerStateInterface {
     private final Player player;
     private Table table;
@@ -52,6 +47,11 @@ public class GameState extends ClientState implements PlayerStateInterface {
     private boolean playerTurn = false;
     private boolean gameOver = false;
 
+    /**
+     * Constructs a new {@code GameState} object from a setup state.
+     *
+     * @param setupState the setup state
+     */
     public GameState(SetupState setupState) {
         super(setupState);
         this.player = new Player(username, setupState.getSetup());
@@ -62,6 +62,11 @@ public class GameState extends ClientState implements PlayerStateInterface {
         popManager.addPopup(new SymbolsPopup(getViewHub(), this));
     }
 
+    /**
+     * Constructs a new {@code GameState} object from an automated state.
+     *
+     * @param automatedState the automated state
+     */
     public GameState(AutomatedState automatedState) {
         super(automatedState);
         this.player = automatedState.getPlayer();
@@ -75,9 +80,18 @@ public class GameState extends ClientState implements PlayerStateInterface {
                 new HandPopup(getViewHub(), this),
                 new DecksPopup(getViewHub(), this),
                 new SymbolsPopup(getViewHub(), this)
-                );
+        );
     }
 
+    /**
+     * Constructs a new {@code GameState} object with the specified parameters.
+     *
+     * @param viewHub the view hub
+     * @param stack the notification stack
+     * @param setup the player setup
+     * @param table the game table
+     * @throws IOException if an I/O error occurs
+     */
     public GameState(ViewHub viewHub, NotificationStack stack, PlayerSetup setup, Table table) throws IOException {
         super(viewHub, stack);
         this.player = new Player(username, setup);
@@ -113,7 +127,7 @@ public class GameState extends ClientState implements PlayerStateInterface {
         if (processServerEventIfCommon(serverEvent)) return;
         switch (serverEvent) {
             case ServerNewTurnEvent newTurnEvent -> {
-                Debugger.print("turn of "+newTurnEvent.player()+" (I'm "+username+")");
+                Debugger.print("turn of " + newTurnEvent.player() + " (I'm " + username + ")");
                 if (newTurnEvent.player().isEmpty()) {
                     if (newTurnEvent.endOfGame()) {
                         gameOver = true;
@@ -148,7 +162,7 @@ public class GameState extends ClientState implements PlayerStateInterface {
     @Override
     protected void processCommand(String command) {
         if (processCommandIfCommon(command)) return;
-        Debugger.print("command: "+command);
+        Debugger.print("command: " + command);
         String[] tokens = command.split(" ", 2);
         switch (tokens[0].toUpperCase()) {
             case "HOME" -> {
@@ -157,7 +171,6 @@ public class GameState extends ClientState implements PlayerStateInterface {
                 gameStage.updateBoard();
             }
             case "LOGOUT" -> logout();
-            //case "HELP", "TABLE", "HAND", "DECKS" -> popManager.showPopup(tokens[0]);
             default -> {
                 notificationStack.addUrgent("ERROR", INVALID_CMD.apply(tokens[0], "game"));
             }
@@ -176,7 +189,7 @@ public class GameState extends ClientState implements PlayerStateInterface {
                 case ArrowLeft -> shiftBoardPointer(Side.WEST);
                 case ArrowRight -> shiftBoardPointer(Side.EAST);
                 case Enter -> {
-                    System.out.println("game over: "+gameOver);
+                    System.out.println("game over: " + gameOver);
                     if (gameOver) logout();
                 }
             }
@@ -190,6 +203,9 @@ public class GameState extends ClientState implements PlayerStateInterface {
         popManager.resizePopups();
     }
 
+    /**
+     * Draws a card from the deck.
+     */
     public void drawCardFromDeck() {
         JsonConverter converter = new JsonConverter();
         if (cardPicked || !cardPlaced || !playerTurn)
@@ -204,7 +220,7 @@ public class GameState extends ClientState implements PlayerStateInterface {
         try {
             JsonObject jsonPlacedCard = (JsonObject) new JsonParser().parse(converter.objectToJSON(placedCard));
             JsonElement jsonDeckType = new JsonPrimitive(!decksPopup.selectedNormalDeck());
-            JsonElement jsonCardIndex = new JsonPrimitive(decksPopup.getCardIndex()+1);
+            JsonElement jsonCardIndex = new JsonPrimitive(decksPopup.getCardIndex() + 1);
             sendToServer("turnActions", new String[]{"placedCard", "deckType", "indexVisibleCards"},
                     new JsonElement[]{jsonPlacedCard, jsonDeckType, jsonCardIndex});
         } catch (JsonException e) {
@@ -213,6 +229,9 @@ public class GameState extends ClientState implements PlayerStateInterface {
         notificationStack.removeNotifications(Priority.LOW);
     }
 
+    /**
+     * Places a card from the hand onto the board.
+     */
     public void placeCardFromHand() {
         HandPopup handPopup = (HandPopup) popManager.getPopup("hand");
         if (!playerTurn) {
@@ -220,7 +239,7 @@ public class GameState extends ClientState implements PlayerStateInterface {
             return;
         }
         if (cardPlaced) {
-            notificationStack.addUrgent("WARNING", "a card has alredy been placed in this turn");
+            notificationStack.addUrgent("WARNING", "a card has already been placed in this turn");
             return;
         }
         PlayableCard selectedCard = handPopup.getSelectedCard();
@@ -230,12 +249,16 @@ public class GameState extends ClientState implements PlayerStateInterface {
             updateBoardPointerImage();
             gameStage.updateBoard();
             popManager.getPopup("symbols").update();
+        } else {
+            notificationStack.addUrgent("WARNING", "cannot place card");
         }
-        else notificationStack.addUrgent("WARNING", "cannot place card");
     }
 
+    /**
+     * Close connection with the server (if still open) and return to the lobby.
+     */
     public void logout() {
-        Debugger.print("loggin out");
+        Debugger.print("logging out");
         sendToServer("quit");
         popManager.hideAllPopups();
         notificationStack.removeAllNotifications();
@@ -243,11 +266,19 @@ public class GameState extends ClientState implements PlayerStateInterface {
         setNextState(new LobbyState(viewHub));
     }
 
+    /**
+     * Centers the board pointer to the starter card position.
+     */
     private void centerBoardPointer() {
-        boardPointer = new Position(0,0);
+        boardPointer = new Position(0, 0);
         updateBoardPointerImage();
     }
 
+    /**
+     * Shifts the board pointer in the specified direction.
+     *
+     * @param side the direction to shift the pointer
+     */
     private void shiftBoardPointer(Side side) {
         gameStage.clearPointer();
         boardPointer = boardPointer.withRelative(side.asRelativePosition());
@@ -255,6 +286,9 @@ public class GameState extends ClientState implements PlayerStateInterface {
         gameStage.updatePointer();
     }
 
+    /**
+     * Updates the board pointer image.
+     */
     private void updateBoardPointerImage() {
         if (!playerTurn || (cardPlaced && cardPlaced)) gameStage.setPointerColor(TextColor.ANSI.BLACK_BRIGHT);
         else {
@@ -262,56 +296,124 @@ public class GameState extends ClientState implements PlayerStateInterface {
             else gameStage.setPointerColor(TextColor.ANSI.RED_BRIGHT);
         }
     }
-    
+
+    /**
+     * Flips the card in the hand at the specified index.
+     *
+     * @param cardIndex the index of the card to flip
+     */
     public void flipHandCard(int cardIndex) {
         player.getHand().get(cardIndex).flip();
     }
 
+    /**
+     * Checks if the board pointer is in a valid spot.
+     *
+     * @return {@code true} if the pointer is in a valid spot; {@code false} otherwise
+     */
     public boolean pointerInValidSpot() {
         return player.getBoard().spotAvailable(boardPointer);
     }
 
+    /**
+     * Checks if the specified position on the board is valid.
+     *
+     * @param position the position to check
+     * @return {@code true} if the position is valid; {@code false} otherwise
+     */
     public boolean boardValidSpot(Position position) {
         return player.getBoard().spotAvailable(position);
     }
 
+    /**
+     * Checks if the game is over.
+     *
+     * @return {@code true} if the game is over; {@code false} otherwise
+     */
     public boolean isGameOver() {
         return gameOver;
     }
 
+    /**
+     * Gets the list of placed cards on the board.
+     *
+     * @return the list of placed cards
+     */
     public ArrayList<PlacedCard> getPlacedCardsInBoard() {
         return player.getBoard().getPlacedCards();
     }
 
-    public HashMap<Symbol, Integer> getSymbolsCounter() { return player.getBoard().getSymbolCounter(); }
+    /**
+     * Gets the symbols counter on the board.
+     *
+     * @return the symbols counter
+     */
+    public HashMap<Symbol, Integer> getSymbolsCounter() {
+        return player.getBoard().getSymbolCounter();
+    }
 
+    /**
+     * Gets the player's hand.
+     *
+     * @return the player's hand
+     */
     public ArrayList<PlayableCard> getPlayerHand() {
         return player.getHand();
     }
 
+    /**
+     * Gets the game table.
+     *
+     * @return the game table
+     */
     public Table getTable() {
         return table;
     }
 
+    /**
+     * Gets the scoreboard.
+     *
+     * @return the scoreboard
+     */
     public Scoreboard getScoreboard() {
         return table.getScoreboard();
     }
-    
+
+    /**
+     * Gets the list of goal cards.
+     *
+     * @return the list of goal cards
+     */
     public ArrayList<GoalCard> getGoals() {
         ArrayList<GoalCard> goals = new ArrayList<>();
         goals.add(player.getPersonalGoal());
         goals.addAll(table.getPublicGoals());
         return goals;
     }
-    
+
+    /**
+     * Gets the normal deck.
+     *
+     * @return the normal deck
+     */
     public ArrayList<NormalCard> getNormalDeck() {
         return table.getNormalDeck();
     }
-    
+
+    /**
+     * Gets the golden deck.
+     *
+     * @return the golden deck
+     */
     public ArrayList<GoldenCard> getGoldenDeck() {
         return table.getGoldenDeck();
     }
 
+    /**
+     * Gets the position of the board pointer.
+     *
+     * @return the position of the board pointer
+     */
     public Position getBoardPointer() {
         return boardPointer;
     }
