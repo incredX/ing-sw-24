@@ -288,65 +288,41 @@ public class GameSceneController extends GenericSceneController{
         updateScore();
     }
 
+    private void disableGenericDeck(ImageView deckCard1, ImageView deckCard2, ImageView deckCard3, Boolean disable, Boolean deckType){
+        int size = deckType?state.getGoldenDeck().size():state.getNormalDeck().size();
+        switch (size){
+            case 0:
+                deckCard1.setDisable(true);
+                deckCard2.setDisable(true);
+                deckCard3.setDisable(true);
+                deckCard1.setImage(null);
+                deckCard2.setImage(null);
+                deckCard3.setImage(null);
+                break;
+            case 1:
+                deckCard1.setDisable(disable);
+                deckCard2.setDisable(true);
+                deckCard3.setDisable(true);
+                deckCard2.setImage(null);
+                deckCard3.setImage(null);
+                break;
+            case 2:
+                deckCard1.setDisable(disable);
+                deckCard2.setDisable(disable);
+                deckCard3.setDisable(true);
+                deckCard3.setImage(null);
+                break;
+            default:
+                deckCard1.setDisable(disable);
+                deckCard2.setDisable(disable);
+                deckCard3.setDisable(disable);
+                break;
+        }
+    }
 
     private void disableDecks(Boolean bool) {
-        switch (state.getNormalDeck().size()){
-            case 0:
-                normalDeckCard1.setDisable(true);
-                normalDeckCard2.setDisable(true);
-                normalDeckCard3.setDisable(true);
-                normalDeckCard1.setImage(null);
-                normalDeckCard2.setImage(null);
-                normalDeckCard3.setImage(null);
-                break;
-            case 1:
-                normalDeckCard1.setDisable(bool);
-                normalDeckCard2.setDisable(true);
-                normalDeckCard3.setDisable(true);
-                normalDeckCard2.setImage(null);
-                normalDeckCard3.setImage(null);
-                break;
-            case 2:
-                normalDeckCard1.setDisable(bool);
-                normalDeckCard2.setDisable(bool);
-                normalDeckCard3.setDisable(true);
-                normalDeckCard3.setImage(null);
-
-                break;
-            default:
-                normalDeckCard1.setDisable(bool);
-                normalDeckCard2.setDisable(bool);
-                normalDeckCard3.setDisable(bool);
-                break;
-        }
-        switch (state.getGoldenDeck().size()){
-            case 0:
-                goldenDeckCard1.setDisable(true);
-                goldenDeckCard2.setDisable(true);
-                goldenDeckCard2.setDisable(true);
-                goldenDeckCard1.setImage(null);
-                goldenDeckCard2.setImage(null);
-                goldenDeckCard3.setImage(null);
-                break;
-            case 1:
-                goldenDeckCard1.setDisable(bool);
-                goldenDeckCard2.setDisable(true);
-                goldenDeckCard3.setDisable(true);
-                goldenDeckCard2.setImage(null);
-                goldenDeckCard3.setImage(null);
-                break;
-            case 2:
-                goldenDeckCard1.setDisable(bool);
-                goldenDeckCard2.setDisable(bool);
-                goldenDeckCard3.setDisable(true);
-                goldenDeckCard3.setImage(null);
-                break;
-            default:
-                goldenDeckCard1.setDisable(bool);
-                goldenDeckCard2.setDisable(bool);
-                goldenDeckCard3.setDisable(bool);
-                break;
-        }
+        disableGenericDeck(normalDeckCard1,normalDeckCard2,normalDeckCard3,bool,false);
+        disableGenericDeck(goldenDeckCard1,goldenDeckCard2,goldenDeckCard3,bool,true);
     }
 
     public void disableAllCardInputs(Boolean bool){
@@ -697,6 +673,5 @@ public class GameSceneController extends GenericSceneController{
         }
         return updatingScoreboard;
     }
-
 
 }
