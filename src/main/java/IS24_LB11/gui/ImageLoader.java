@@ -8,15 +8,24 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
-public class ImageLoader{
+/**
+ * Utility class for loading and processing images.
+ */
+public class ImageLoader {
+
+    /**
+     * Retrieves an image based on the given card ID.
+     *
+     * @param cardId the ID of the card whose image is to be retrieved
+     * @return the Image corresponding to the provided card ID
+     */
     public static Image getImage(String cardId) {
         // Provide the file path of the image
         String path = "/graphicResources/codexCards/croppedCards/";
 
-        if(cardId.equals("AvailableSpot")) {
+        if (cardId.equals("AvailableSpot")) {
             path = "/graphicResources/" + cardId + ".png";
-        }
-        else {
+        } else {
             if (cardId.length() >= 8 && cardId.charAt(6) == 'F') {
                 switch (cardId.charAt(0)) {
                     case 'N':
@@ -28,7 +37,6 @@ public class ImageLoader{
                     case 'S':
                         path = path + "croppedFront/starterFront/" + cardId.substring(1) + ".jpg";
                         break;
-
                 }
             } else if (cardId.length() >= 8 && cardId.charAt(6) == 'B') {
                 switch (cardId.charAt(0)) {
@@ -54,8 +62,13 @@ public class ImageLoader{
         return image;
     }
 
-    public static void roundCorners(ImageView imageView){
-        // set a clip to apply rounded border to the original image.
+    /**
+     * Applies rounded corners and a shadow effect to the given ImageView.
+     *
+     * @param imageView the ImageView to which the effects will be applied
+     */
+    public static void roundCorners(ImageView imageView) {
+        // Set a clip to apply rounded border to the original image.
         Rectangle clip = new Rectangle(
                 imageView.getFitWidth(), imageView.getFitHeight()
         );
@@ -63,19 +76,18 @@ public class ImageLoader{
         clip.setArcHeight(20);
         imageView.setClip(clip);
 
-        // snapshot the rounded image.
+        // Snapshot the rounded image.
         SnapshotParameters parameters = new SnapshotParameters();
         parameters.setFill(Color.TRANSPARENT);
         WritableImage image = imageView.snapshot(parameters, null);
 
-        // remove the rounding clip so that our effect can show through.
+        // Remove the rounding clip so that our effect can show through.
         imageView.setClip(null);
 
-        // apply a shadow effect.
+        // Apply a shadow effect.
         imageView.setEffect(new DropShadow(20, Color.BLACK));
 
-        // store the rounded image in the imageView.
+        // Store the rounded image in the imageView.
         imageView.setImage(image);
     }
 }
-

@@ -79,12 +79,16 @@ public class Game {
         goldenDeck.shuffle();
         normalDeck.shuffle();
         starterDeck.shuffle();
+
+        //uncomment to test final game phase
+        /*
         for (int i = 0; i < 35; i++) {
             goldenDeck.drawCard();
             normalDeck.drawCard();
         }
         goldenDeck.drawCard();
         goldenDeck.drawCard();
+        */
         for (String name : playerNames)
             setupPlayer(name);
         return GameMessages.SETUP_COMPLETE;
