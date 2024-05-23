@@ -141,8 +141,8 @@ public class AutomatedState extends ClientState {
                     setNextState(new GameState(this));
             }
             case ServerPlayerDisconnectEvent disconnectEvent -> {
-                table.getScoreboard().removePlayer(disconnectEvent.player());
-                //popManager.getPopup("table").redrawView();
+                if (table != null)
+                    table.getScoreboard().removePlayer(disconnectEvent.player());
             }
             default -> {}
         }

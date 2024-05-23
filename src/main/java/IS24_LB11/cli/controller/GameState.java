@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static IS24_LB11.cli.notification.Priority.LOW;
 import static IS24_LB11.cli.notification.Priority.MEDIUM;
 
 /**
@@ -141,11 +142,11 @@ public class GameState extends ClientState implements PlayerStateInterface {
                 if (newTurnEvent.player().isEmpty()) {
                     if (newTurnEvent.endOfGame()) {
                         gameOver = true;
-                        popManager.hideAllPopups();
-                        popManager.showPopup("table");
-                        popManager.getPopup("table").enable();
-                        notificationStack.add(MEDIUM, "GAME ENDED", "press [ENTER] to go back to the lobby");
-                    } else logout();
+                    }
+                    popManager.hideAllPopups();
+                    popManager.showPopup("table");
+                    popManager.getPopup("table").enable();
+                    notificationStack.add(MEDIUM, "GAME ENDED", "press [ENTER] to go back to the lobby");
                 }
                 if (newTurnEvent.player().equals(username)) {
                     cardPlaced = false;
@@ -276,7 +277,7 @@ public class GameState extends ClientState implements PlayerStateInterface {
         Debugger.print("logging out");
         sendToServer("quit");
         popManager.hideAllPopups();
-        notificationStack.removeAllNotifications();
+        notificationStack.removeNotifications(LOW);
         serverHandler.shutdown();
         setNextState(new LobbyState(viewHub));
     }

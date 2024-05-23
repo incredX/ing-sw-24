@@ -19,7 +19,7 @@ public class ClientCLI {
         ResizeListener resizeListener;
         HashMap<String, Thread> threadMap = new HashMap<>();
 
-        //Debugger.startDebugger();
+        Debugger.startDebugger();
         //Debugger.closeDebugger();
 
         try {

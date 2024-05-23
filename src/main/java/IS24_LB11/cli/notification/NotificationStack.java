@@ -57,7 +57,7 @@ public class NotificationStack implements KeyConsumer {
             if (notification.getTitle().isEmpty())
                 viewHub.addNotification(notification.getText(), String.format(" [%d]", numNotifications));
             else
-                viewHub.addNotification(notification.getText(), String.format("[%d] %s", numNotifications, notification.getTitle()));
+                viewHub.addNotification(notification.getText(), String.format(" [%d] %s", numNotifications, notification.getTitle()));
         } else viewHub.removeNotification();
     }
 
