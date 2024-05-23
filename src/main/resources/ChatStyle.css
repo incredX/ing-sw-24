@@ -19,15 +19,63 @@
     -fx-background-color: -fx-primary;
 }
 
+
+.scroll-bar:horizontal, .scroll-bar:vertical{
+    -fx-background-color: -fx-secondary;
+    -fx-border-color: -fx-primary;
+    -fx-border-width: 1;
+    -fx-border-radius: 2px;
+    -fx-background-radius: 2px;
+}
+
+
+.increment-button, .decrement-button {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.scroll-bar:horizontal .thumb,
+.scroll-bar:vertical .thumb {
+    -fx-background-color: -fx-primary;
+    -fx-background-radius: 1em;
+}
+
+.scroll-bar > .increment-button > .increment-arrow,
+.scroll-bar > .decrement-button > .decrement-arrow {
+    -fx-background-color: -fx-primary;
+}
+
 .list-view {
     -fx-background-color: transparent;
 }
 
-.text-field{
+.text-area{
     -fx-font-family: 'Georgia';
     -fx-font-size: 14px;
     -fx-text-fill: -fx-primary;
 }
+
+.text-area:focused .content {
+    -fx-border-width: 3;
+    -fx-border-radius: 4px;
+    -fx-border-color: -fx-secondary;
+}
+
+.text-area .scroll-bar:vertical {
+    -fx-background-color: -fx-secondary;
+    -fx-border-color: -fx-primary;
+    -fx-border-width: 2;
+    -fx-border-radius: 3px;
+    -fx-background-radius: 3px;
+}
+
+
+
+.text-area .scroll-bar > .increment-button > .increment-arrow,
+.text-area .scroll-bar > .decrement-button > .decrement-arrow {
+    -fx-background-color: -fx-primary;
+}
+
 
 #messageBox {
     -fx-background-color: transparent;

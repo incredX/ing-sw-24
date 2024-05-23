@@ -23,12 +23,12 @@ public class BoardTest {
     public void testInvalidPlaceCard() throws SyntaxException, JsonException {
         Board board = new Board();
         JsonConverter jsonConverter = new JsonConverter();
-        board.start((StarterCard)CardFactory.newPlayableCard("SEPIE_F0I__FPIA"));
-
+        board.start((StarterCard)CardFactory.newPlayableCard("SEPIE_F0___FPIA"));
         assertEquals(false, board.placeCard((GoldenCard)CardFactory.newPlayableCard("G_EEQFF1QFFA__"),new Position(1,1)));
         assertEquals(false, board.placeCard((GoldenCard)CardFactory.newPlayableCard("GE_EEAF2EAAAF_"),new Position(1,1)));
         assertEquals(false, board.placeCard((GoldenCard)CardFactory.newPlayableCard("G_EEEAF2EAAAP_"),new Position(1,1)));
         assertEquals(false, board.placeCard((GoldenCard)CardFactory.newPlayableCard("GEM__IF3_III__"),new Position(1,1)));
+        assertEquals(false, board.placeCard((GoldenCard)CardFactory.newPlayableCard("GEM__IF3_IIIII"),new Position(1,1)));
 
     }
 

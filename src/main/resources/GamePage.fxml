@@ -201,7 +201,7 @@
                               </AnchorPane>
                           </items>
                         </SplitPane>
-                        <Button fx:id="centerBoardButton" alignment="BOTTOM_LEFT" mnemonicParsing="false" stylesheets="@GamePageBackupSyle.css" text="Center Board" AnchorPane.bottomAnchor="15.0" AnchorPane.rightAnchor="325.0" />
+                        <Button fx:id="centerBoardButton" alignment="BOTTOM_LEFT" mnemonicParsing="false" stylesheets="@GamePageBackupSyle.css" text="Center Board" AnchorPane.bottomAnchor="21.0" AnchorPane.rightAnchor="331.0" />
                      </children>
                   </AnchorPane>
             </content>
@@ -414,7 +414,7 @@
             </Tab>
         </tabs>
       </TabPane>
-      <BorderPane fx:id="chatBox" layoutX="10.0" layoutY="600.0" maxHeight="400.0" maxWidth="300.0" minHeight="100.0" minWidth="250.0" prefHeight="100.0" prefWidth="250.0">
+      <BorderPane fx:id="chatBox" layoutX="10.0" layoutY="600.0" maxHeight="400.0" maxWidth="300.0" minHeight="100.0" minWidth="250.0" prefHeight="100.0" prefWidth="250.0" AnchorPane.bottomAnchor="25.0">
          <center>
             <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                <children>

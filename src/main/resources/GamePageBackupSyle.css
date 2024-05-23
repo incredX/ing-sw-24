@@ -70,6 +70,7 @@
 
 
 .tab-pane:top *.tab-header-area {
+    -fx-background-color: -fx-primary;
     -fx-background-insets: 0, 0 0 0 0;
     -fx-padding: 0.5 0.1 0 0;
 }
@@ -83,11 +84,62 @@
     -fx-background-color: transparent;
 }
 
+.scroll-bar:horizontal, .scroll-bar:vertical{
+    -fx-background-color: -fx-secondary;
+    -fx-border-color: -fx-primary;
+    -fx-border-width: 2;
+    -fx-border-radius: 2px;
+    -fx-background-radius: 2px;
+}
+
+
+.increment-button, .decrement-button {
+    -fx-background-size: 2;
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.scroll-bar:horizontal .thumb,
+.scroll-bar:vertical .thumb {
+    -fx-background-color: -fx-primary;
+    -fx-background-radius: 3em;
+}
+
+
+.scroll-pane > .corner {
+    -fx-background-color: -fx-primary;
+    -fx-border-width: 10;
+    -fx-border-color: -fx-primary;
+}
+
+
+.scroll-bar > .increment-button > .increment-arrow,
+.scroll-bar > .decrement-button > .decrement-arrow {
+    -fx-background-color: -fx-primary;
+}
 
 
 #flipHandCard1, #flipHandCard2, #flipHandCard3 {
     -fx-text-fill: -fx-secondary;
     -fx-font-size: 7pt;
+}
+
+#flipHandCard1:hover {
+    -fx-border-color: -fx-secondary;
+    -fx-background-color: -fx-secondary;
+    -fx-text-fill: -fx-primary;
+}
+
+#flipHandCard2:hover {
+    -fx-border-color: -fx-secondary;
+    -fx-background-color: -fx-secondary;
+    -fx-text-fill: -fx-primary;
+}
+
+#flipHandCard3:hover {
+    -fx-border-color: -fx-secondary;
+    -fx-background-color: -fx-secondary;
+    -fx-text-fill: -fx-primary;
 }
 
 .button {
@@ -110,6 +162,13 @@
 
 .split-pane {
     -fx-background-color: -fx-primary;
+}
+
+.split-pane:horizontal > .split-pane-divider {
+    -fx-background-color: -fx-primary;
+}
+.split-pane:vertical > .split-pane-divider {
+    -fx-background-color: transparent;
 }
 
 #playerName1, #playerName2, #playerName3, #playerName4, #publicGoalLabel1, #publicGoalLabel2, #privateGoalLabel {
