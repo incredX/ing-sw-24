@@ -24,7 +24,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" stylesheets="@../GamePageBackupSyle.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" stylesheets="@../GamePageSyle.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <TabPane fx:id="tabPane" prefHeight="720.0" prefWidth="1280.0" styleClass="playerBoard" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <tabs>
@@ -201,7 +201,7 @@
                               </AnchorPane>
                           </items>
                         </SplitPane>
-                        <Button fx:id="centerBoardButton" alignment="BOTTOM_LEFT" mnemonicParsing="false" stylesheets="@../GamePageBackupSyle.css" text="Center Board" AnchorPane.bottomAnchor="21.0" AnchorPane.rightAnchor="331.0" />
+                        <Button fx:id="centerBoardButton" alignment="BOTTOM_LEFT" mnemonicParsing="false" stylesheets="@../GamePageSyle.css" text="Center Board" AnchorPane.bottomAnchor="21.0" AnchorPane.rightAnchor="331.0" />
                      </children>
                   </AnchorPane>
             </content>
