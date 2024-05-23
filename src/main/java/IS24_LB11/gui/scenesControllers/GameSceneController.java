@@ -33,10 +33,8 @@ import javafx.util.Duration;
 import javafx.animation.SequentialTransition;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 
 public class GameSceneController extends GenericSceneController{
@@ -163,7 +161,7 @@ public class GameSceneController extends GenericSceneController{
         this.state = (GameGUIState) state;
         this.genericState=state;
         this.stage = stage;
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/GamePage.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/FXMLScenes/GamePage.fxml"));
         loader.setController(this);
 
         this.stage.setTitle("Codex");
@@ -189,7 +187,7 @@ public class GameSceneController extends GenericSceneController{
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
         boardBackground.setImage(new Image(GameSceneController.class.getResourceAsStream("/graphicResources/backGround.jpeg")));
-//        cardBackground.setImage(new Image(GameSceneController.class.getResourceAsStream("/graphicResources/backGround.jpeg")));
+        //cardBackground.setImage(new Image(GameSceneController.class.getResourceAsStream("/graphicResources/backGround.jpeg")));
         // button and image event has to be declared here
         handCard1.setOnMouseClicked(mouseEvent -> chooseHandCard(0));
         handCard2.setOnMouseClicked(mouseEvent -> chooseHandCard(1));

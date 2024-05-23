@@ -42,7 +42,7 @@ public class SetupSceneController extends GenericSceneController {
         this.state = (SetupGUIState) state;
         this.genericState = state;
         this.stage = stage;
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/SetupPage.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/FXMLScenes/SetupPage.fxml"));
         loader.setController(this);
 
         this.stage.setTitle("Codex");

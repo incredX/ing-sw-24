@@ -285,7 +285,7 @@ public class JsonConverter {
      */
     public Deck JSONToDeck(Character character) throws SyntaxException, FileNotFoundException {
 //        Scanner scFile = new Scanner(new File("resources/Cards.json"));
-        Scanner scFile = new Scanner(JsonConverter.class.getResourceAsStream("/Cards.json"));
+        Scanner scFile = new Scanner(JsonConverter.class.getResourceAsStream("/JSONFiles/Cards.json"));
         String text = "";
         while (scFile.hasNextLine())
             text = text.concat(scFile.nextLine());
