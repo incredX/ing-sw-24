@@ -96,10 +96,8 @@ public class Board implements JsonConvertable {
         Direction.forEachDirection(corner -> {
             Position cornerPosition = position.withRelative(corner.relativePosition());
             getPlayableCard(cornerPosition).ifPresent(card -> {
-                if (!card.isFaceDown() && card.hasCorner(corner.opposite())) {
-                    Symbol symbol = card.getCorner(corner.opposite());
-                    symbolCounter.computeIfPresent(symbol, (s, count) -> count - 1);
-                }
+                Symbol symbol = card.getCorner(corner.opposite());
+                symbolCounter.computeIfPresent(symbol, (s, count) -> count - 1);
             });
         });
     }
@@ -117,7 +115,7 @@ public class Board implements JsonConvertable {
         for (PlacedCard placedCard : placedCards.stream().skip(1).toList()) {
             Position position = placedCard.position();
             int matchedSteps = 1, counter = 1;
-            if (placedCard.isVisited() || placedCard.card().getSuit() != symbols.get(0)) continue;
+            if (placedCard.isVisited() || placedCard.card().getSuit() != symbols.getFirst()) continue;
             for (Position step : steps) {
                 Optional<PlacedCard> card = getPlacedCard(position.withRelative(step));
                 if (card.isPresent()) {
@@ -163,7 +161,7 @@ public class Board implements JsonConvertable {
      * @return the score of the last placed card
      */
     public int calculateScoreOnLastPlacedCard() {
-        PlayableCard playableCard = placedCards.get(placedCards.size() - 1).card();
+        PlayableCard playableCard = placedCards.getLast().card();
         int score = Character.getNumericValue(playableCard.asString().charAt(7));
         HashMap<Symbol, Integer> symbolCounter = getSymbolCounter();
         if (playableCard.isFaceDown()) return 0;
@@ -189,7 +187,7 @@ public class Board implements JsonConvertable {
                     case '_':
                         return score;
                     case 'E':
-                        Position positionLastCard = placedCards.get(placedCards.size() - 1).position();
+                        Position positionLastCard = placedCards.getLast().position();
                         return (int) (score * placedCards.stream().filter(card ->
                                 Math.abs(card.position().getY() - positionLastCard.getY()) == 1 &&
                                         Math.abs(card.position().getX() - positionLastCard.getX()) == 1).count());

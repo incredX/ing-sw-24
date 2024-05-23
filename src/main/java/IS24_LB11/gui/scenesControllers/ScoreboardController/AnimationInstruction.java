@@ -2,26 +2,26 @@ package IS24_LB11.gui.scenesControllers.ScoreboardController;
 
 public class AnimationInstruction {
 
-    private final double pointRepresented;
-    private final double X;
-    private final double Y;
+    private final int pointRepresented;
+    private final int X;
+    private final int Y;
 
 
-    public AnimationInstruction(double pointRepresented, double x, double y) {
+    public AnimationInstruction(int pointRepresented, int x, int y) {
         this.pointRepresented = pointRepresented;
         this.X = x;
         this.Y = y;
     }
 
-    public double getPointRepresented() {
+    public int getPointRepresented() {
         return pointRepresented;
     }
 
-    public double getX() {
+    public int getX() {
         return X;
     }
 
-    public double getY() {
+    public int getY() {
         return Y;
     }
 
