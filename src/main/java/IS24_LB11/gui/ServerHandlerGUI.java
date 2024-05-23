@@ -161,8 +161,10 @@ public class ServerHandlerGUI implements Runnable {
      */
     private void handleDisconnectedEvent(JsonObject serverEvent) {
         String playerDisconnected = serverEvent.get("player").getAsString();
-        if (gameSceneController == (null) && setupSceneController!=(null))
-            Platform.runLater(() -> setupSceneController.removePlayer(playerDisconnected));
+        if (gameSceneController == (null)) {
+            if (setupSceneController != null)
+                Platform.runLater(() -> setupSceneController.removePlayer(playerDisconnected));
+        }
         else {
             Platform.runLater(() -> gameSceneController.removePlayer(playerDisconnected));
         }
