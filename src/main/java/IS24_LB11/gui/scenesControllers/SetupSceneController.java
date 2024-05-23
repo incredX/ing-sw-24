@@ -70,6 +70,7 @@ public class SetupSceneController extends GenericSceneController {
         state.getServerHandler().setSetupSceneController(this);
         System.out.println("Setup initialized");
 
+        chatBox.getStylesheets().add("/ChatStyle.css");
         chatBox.setOnMouseEntered(mouseEvent -> chatDisplay());
         chatBox.setOnMouseExited(mouseEvent -> chatHide());
         buttonSend.setOnMouseClicked(mouseEvent -> send());

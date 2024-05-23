@@ -205,6 +205,7 @@ public class GameSceneController extends GenericSceneController{
 
         centerBoardButton.setOnAction(mouseEvent -> moveToCenter(scrollPane));
 
+        chatBox.getStylesheets().add("/ChatStyle.css");
         chatBox.setOnMouseEntered(mouseEvent -> chatDisplay());
         chatBox.setOnMouseExited(mouseEvent -> chatHide());
         buttonSend.setOnMouseClicked(mouseEvent -> send());
@@ -228,39 +229,6 @@ public class GameSceneController extends GenericSceneController{
         setUsernamesBoard();
         updateSymbolsCounter();
         scoreboardPositions = ScoreboardCoordinates.generate();
-
-
-
-        scoreboardPositions.add(new AnimationInstruction(0, 430, 615));
-        scoreboardPositions.add(new AnimationInstruction(1, 508, 615));
-        scoreboardPositions.add(new AnimationInstruction(2, 586, 615));
-        scoreboardPositions.add(new AnimationInstruction(3, 623, 544));
-        scoreboardPositions.add(new AnimationInstruction(4, 545, 544));
-        scoreboardPositions.add(new AnimationInstruction(5, 467, 544));
-        scoreboardPositions.add(new AnimationInstruction(6, 389, 544));
-        scoreboardPositions.add(new AnimationInstruction(7, 389, 473));
-        scoreboardPositions.add(new AnimationInstruction(8, 467, 473));
-        scoreboardPositions.add(new AnimationInstruction(9, 545, 473));
-        scoreboardPositions.add(new AnimationInstruction(10, 623, 473));
-        scoreboardPositions.add(new AnimationInstruction(11, 623, 402));
-        scoreboardPositions.add(new AnimationInstruction(12, 545, 402));
-        scoreboardPositions.add(new AnimationInstruction(13, 467, 402));
-        scoreboardPositions.add(new AnimationInstruction(14, 389, 402));
-        scoreboardPositions.add(new AnimationInstruction(15, 389, 331));
-        scoreboardPositions.add(new AnimationInstruction(16, 467, 331));
-        scoreboardPositions.add(new AnimationInstruction(17, 545, 331));
-        scoreboardPositions.add(new AnimationInstruction(18, 623, 331));
-        scoreboardPositions.add(new AnimationInstruction(19, 623, 260));
-        scoreboardPositions.add(new AnimationInstruction(20, 508, 228));
-        scoreboardPositions.add(new AnimationInstruction(21, 389, 260));
-        scoreboardPositions.add(new AnimationInstruction(22, 389, 189));
-        scoreboardPositions.add(new AnimationInstruction(23, 389, 118));
-        scoreboardPositions.add(new AnimationInstruction(24, 432, 59));
-        scoreboardPositions.add(new AnimationInstruction(25, 505, 45));
-        scoreboardPositions.add(new AnimationInstruction(26, 578, 59));
-        scoreboardPositions.add(new AnimationInstruction(27, 621, 118));
-        scoreboardPositions.add(new AnimationInstruction(28, 621, 189));
-        scoreboardPositions.add(new AnimationInstruction(29, 508, 131));
 
 
         for (int i=1; i<=scoreboardPositions.size(); i++) {
@@ -331,21 +299,7 @@ public class GameSceneController extends GenericSceneController{
 
     }
 
-    public void exit(Stage stage) {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Exit");
-        alert.setHeaderText("You are about to exit!");
-        alert.setContentText("Are you sure?");
-
-        if (alert.showAndWait().get() == ButtonType.OK) {
-            state.shutdown();
-            System.out.println("You successfully logged out!");
-            stage.close();
-        }
-    }
-
     public void executeAnimations(int[] initScore, int[] finalScore){
-
 
         try {
             for (Color color : state.getPlayersColors().values()) {
@@ -421,17 +375,25 @@ public class GameSceneController extends GenericSceneController{
 
         state.update(playerScores);
 
-        for (int i=0; i <state.getPlayers().size(); i++) {
-            finalScore[i]=state.getPlayersScore().get(state.getPlayers().get(i));
-            System.out.println(finalScore[i]);
-        }
-
-
-        executeAnimations(initScore, finalScore);
-
         updateScore();
 
+        for (int i=0; i <state.getPlayers().size(); i++) {
+            finalScore[i]=state.getPlayersScore().get(state.getPlayers().get(i));
 
+        }
+
+//        finalScore[0]= Integer.valueOf(playerScore1.getText());
+//        finalScore[1]= Integer.valueOf(playerScore2.getText());
+//        finalScore[2]= Integer.valueOf(playerScore3.getText());
+//        finalScore[3]= Integer.valueOf(playerScore4.getText());
+//
+//        for (int i=0; i < 4; i++) {
+//
+//            executeAnimations(initScore, finalScore);
+//
+//        }
+
+        executeAnimations(initScore,finalScore);
     }
 
     private void disableGenericDeck(ImageView deckCard1, ImageView deckCard2, ImageView deckCard3, Boolean disable, Boolean deckType){
