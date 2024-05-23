@@ -3,7 +3,6 @@ package IS24_LB11.gui.scenesControllers;
 
 import IS24_LB11.game.PlacedCard;
 
-import IS24_LB11.game.Player;
 import IS24_LB11.game.components.PlayableCard;
 import IS24_LB11.game.symbol.Item;
 import IS24_LB11.game.symbol.Suit;

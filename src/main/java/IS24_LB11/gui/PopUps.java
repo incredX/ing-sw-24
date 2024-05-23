@@ -18,7 +18,7 @@ public class PopUps {
      */
     public int maxPlayersAlert() {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.getDialogPane().getStylesheets().add("Styles/PopUpStyle.css");
+        alert.getDialogPane().getStylesheets().add("PopUpStyle.css");
         alert.setTitle("Max Number Of Players");
         alert.setHeaderText("Please select the max number of players: ");
 
@@ -51,7 +51,7 @@ public class PopUps {
     public void popUpMaker(String message) {
         // Create a new alert without a symbol
         Alert alert = new Alert(Alert.AlertType.NONE);
-        alert.getDialogPane().getStylesheets().add("Styles/PopUpStyle.css");
+        alert.getDialogPane().getStylesheets().add("PopUpStyle.css");
 
         // Create the OK button
         ButtonType buttonType = new ButtonType("OK");
@@ -74,7 +74,7 @@ public class PopUps {
      */
     public void lastPlayerLeft(Stage stage, ClientGUIState state, GenericSceneController genericSceneController) {
         Alert alert = new Alert(Alert.AlertType.NONE);
-        alert.getDialogPane().getStylesheets().add("Styles/PopUpStyle.css");
+        alert.getDialogPane().getStylesheets().add("PopUpStyle.css");
 
         // Create the quit and restart buttons
         ButtonType quit = new ButtonType("QUIT");
@@ -110,7 +110,7 @@ public class PopUps {
      */
     public void restartGame(ClientGUIState state, GenericSceneController genericSceneController) {
         Alert alert = new Alert(Alert.AlertType.NONE);
-        alert.getDialogPane().getStylesheets().add("Styles/PopUpStyle.css");
+        alert.getDialogPane().getStylesheets().add("PopUpStyle.css");
 
         // Create the OK button
         ButtonType buttonType = new ButtonType("OK");

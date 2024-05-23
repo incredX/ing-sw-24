@@ -49,7 +49,7 @@ public class Board extends Application {
      */
     @Override
     public void start(Stage stage) throws Exception {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/GamePage.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/FXMLScenes/GamePage.fxml"));
         loader.setController(this);
 
         Parent root = loader.load();

@@ -53,7 +53,7 @@ public class GenericSceneController {
      */
     public void exit(Stage stage) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.getDialogPane().getStylesheets().add("Styles/PopUpStyle.css");
+        alert.getDialogPane().getStylesheets().add("/PopUpStyle.css");
 
         alert.setTitle("Exit");
         alert.setHeaderText("You are about to exit!");
