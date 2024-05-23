@@ -80,11 +80,8 @@ public class SetupState extends ClientState implements PlayerStateInterface {
      */
     @Override
     protected void processServerDown() {
-        notificationStack.removeAllNotifications();
-        popManager.hideAllPopups();
-        serverHandler.shutdown();
         super.processServerDown();
-        setNextState(new LobbyState(viewHub));
+        setNextState(new LobbyState(this));
     }
 
     /**
@@ -121,10 +118,10 @@ public class SetupState extends ClientState implements PlayerStateInterface {
                     notificationStack.addUrgent("ERROR", MISSING_ARG.apply("goal"));
                     return;
                 }
-                int index = 'a' - tokens[1].charAt(0);
+                int index = tokens[1].charAt(0) - 'a';
                 if (index < 0 || index > 1 || tokens[1].length() > 1)
                     notificationStack.addUrgent("ERROR",
-                            "command \"GOAL\" expects 'a' or 'b' as argument, "+tokens[1]+"was given");
+                            "command \"GOAL\" expects 'a' or 'b' as argument, "+tokens[1]+" was given");
                 else
                     setChosenGoal(index);
             }

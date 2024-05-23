@@ -30,7 +30,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import static IS24_LB11.cli.notification.Priority.LOW;
 import static IS24_LB11.cli.notification.Priority.MEDIUM;
 
 /**
@@ -102,7 +101,7 @@ public class GameState extends ClientState implements PlayerStateInterface {
     }
 
     /**
-     * Executes the game state after settig up the stage and popups.
+     * Executes the game state after setting up the stage and popups.
      *
      * @return the next client state to be executed.
      */
@@ -121,11 +120,8 @@ public class GameState extends ClientState implements PlayerStateInterface {
 
     @Override
     protected void processServerDown() {
-        notificationStack.removeAllNotifications();
-        popManager.hideAllPopups();
-        serverHandler.shutdown();
         super.processServerDown();
-        setNextState(new LobbyState(viewHub));
+        setNextState(new LobbyState(this));
     }
 
     /**
@@ -146,9 +142,9 @@ public class GameState extends ClientState implements PlayerStateInterface {
                     popManager.hideAllPopups();
                     popManager.showPopup("table");
                     popManager.getPopup("table").enable();
+                    cmdLine.disable();
                     notificationStack.add(MEDIUM, "GAME ENDED", "press [ENTER] to go back to the lobby");
-                }
-                if (newTurnEvent.player().equals(username)) {
+                }else if (newTurnEvent.player().equals(username)) {
                     cardPlaced = false;
                     cardPicked = false;
                     playerTurn = true;
@@ -277,7 +273,7 @@ public class GameState extends ClientState implements PlayerStateInterface {
         Debugger.print("logging out");
         sendToServer("quit");
         popManager.hideAllPopups();
-        notificationStack.removeNotifications(LOW);
+        notificationStack.removeAllNotifications();
         serverHandler.shutdown();
         setNextState(new LobbyState(viewHub));
     }

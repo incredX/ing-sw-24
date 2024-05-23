@@ -121,6 +121,7 @@ public abstract class ClientState {
             case CommandEvent commandEvent -> processCommand(commandEvent.command());
             case KeyboardEvent keyboardEvent -> processKeyStroke(keyboardEvent.keyStroke());
             case ResizeEvent resizeEvent -> processResize(resizeEvent.size());
+            case NotificationEvent notificationEvent -> processNotification(notificationEvent);
             case ResultServerEvent resultServerEvent -> processResult(resultServerEvent.result());
             case ServerDownEvent serverDownEvent -> processServerDown();
             default -> Debugger.print("Unknown event: " + event.getClass().getName());
@@ -164,7 +165,7 @@ public abstract class ClientState {
     /**
      * Processes a key stroke.
      *
-     * @param keyStroke the key stroke to process
+     * @param keyStroke the keystroke to process
      */
     protected abstract void processKeyStroke(KeyStroke keyStroke);
 
@@ -172,7 +173,10 @@ public abstract class ClientState {
      * Processes the event of the server going down.
      */
     protected void processServerDown() {
-        notificationStack.addUrgent("WARNING", "lost connection to server");
+        popManager.hideAllPopups();
+        notificationStack.removeAllNotifications();
+        serverHandler.shutdown();
+        tryQueueEvent(NotificationEvent.urgent("WARNING", "lost connection to server"));
     }
 
     /**
@@ -183,6 +187,15 @@ public abstract class ClientState {
     protected void processResize(TerminalSize screenSize) {
         cmdLine.resize(screenSize);
         viewHub.resize(screenSize);
+    }
+
+    /**
+     * Processes a notification event issued by a listener or other client-side component.
+     *
+     * @param event {@code NotificationEvent} containing the data to display
+     */
+    protected void processNotification(NotificationEvent event) {
+        notificationStack.add(event.getPriority(), event.getTitle(), event.getMessage());
     }
 
     /**
@@ -329,8 +342,11 @@ public abstract class ClientState {
      */
     public void queueEvent(Event event) throws InterruptedException {
         synchronized (queue) {
-            if (queue.offer(event, 20, TimeUnit.MILLISECONDS))
-                queue.notify();
+            if (queue.offer(event, 100, TimeUnit.MILLISECONDS))
+                queue.notifyAll();
+            else {
+                Debugger.print("lost event " + event.getClass().getSimpleName());
+            }
         }
     }
 
@@ -341,7 +357,7 @@ public abstract class ClientState {
      */
     public void tryQueueEvent(Event event) {
         synchronized (queue) {
-            if (queue.offer(event)) queue.notify();
+            if (queue.offer(event)) queue.notifyAll();
         }
     }
 
@@ -360,14 +376,17 @@ public abstract class ClientState {
     }
 
     /**
-     * Sends a message to the server.
+     * Sends a {@code JsonObject} representing an event to the server.
      *
-     * @param type the message type
+     * @param type the type of event
      * @param field the field name
      * @param value the field value
      */
     protected void sendToServer(String type, String field, String value) {
-        if (serverHandler == null) return;
+        if (serverHandler == null) {
+            notificationStack.addUrgent("WARNING", "disconnected from server");
+            return;
+        }
         JsonObject object = new JsonObject();
         object.addProperty("type", type);
         object.addProperty(field, value);
@@ -375,9 +394,9 @@ public abstract class ClientState {
     }
 
     /**
-     * Sends a message to the server.
+     * Sends a {@code JsonObject} representing an event to the server.
      *
-     * @param type the message type
+     * @param type the type of event
      * @param field the field name
      * @param value the field value
      */
@@ -390,11 +409,11 @@ public abstract class ClientState {
     }
 
     /**
-     * Sends a message to the server.
+     * Sends a {@code JsonObject} representing an event to the server.
      *
-     * @param type the message type
-     * @param field the field name
-     * @param value the field value
+     * @param type the type of event
+     * @param field the field name to be added to the {@code JsonObject}
+     * @param value the field's value
      */
     protected void sendToServer(String type, String field, JsonObject value) {
         if (serverHandler == null) return;
@@ -405,9 +424,9 @@ public abstract class ClientState {
     }
 
     /**
-     * Sends a message to the server.
+     * Sends a {@code JsonObject} with only the type of event to the server.
      *
-     * @param type the message type
+     * @param type the type of event
      */
     protected void sendToServer(String type) {
         if (serverHandler == null) return;
@@ -417,10 +436,10 @@ public abstract class ClientState {
     }
 
     /**
-     * Sends a message to the server.
+     * Sends a {@code JsonObject} representing an event to the server.
      *
-     * @param type the message type
-     * @param object the JSON object to send
+     * @param type the type of event
+     * @param object the JSON object to which add the type of event and send
      */
     protected void sendToServer(String type, JsonObject object) {
         object.addProperty("type", type);
@@ -428,9 +447,9 @@ public abstract class ClientState {
     }
 
     /**
-     * Sends a message to the server.
+     * Sends a {@code JsonObject} representing an event to the server.
      *
-     * @param type the message type
+     * @param type the type of event
      * @param dataFields the data fields
      * @param values the values
      */
@@ -439,9 +458,9 @@ public abstract class ClientState {
     }
 
     /**
-     * Sends a message to the server.
+     * Sends a {@code JsonObject} representing an event to the server.
      *
-     * @param type the message type
+     * @param type the type of event
      * @param dataFields the data fields
      * @param values the values
      */
@@ -478,6 +497,7 @@ public abstract class ClientState {
     public void consumeKey() {
         keyConsumed = true;
     }
+
     protected void setNextState(ClientState nextState) {
         this.nextState = nextState;
     }
@@ -497,7 +517,6 @@ public abstract class ClientState {
     public ServerHandler getServerHandler() {
         return serverHandler;
     }
-
 
     public String getUsername() {
         return username;

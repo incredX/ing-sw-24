@@ -88,6 +88,7 @@ public class NotificationStack implements KeyConsumer {
     public void removeAllNotifications() {
         for (Priority p: Priority.values())
             notifications.get(p).clear();
+        numNotifications = 0;
         viewHub.removeNotification();
     }
 

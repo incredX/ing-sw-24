@@ -5,10 +5,11 @@
   },
   {
     "command" : "help",
-    "description" : "show di popup"
+    "description" : "show this popup"
   },
   {
-    "command" : "@",
+    "command" : "sendto <username> <message>",
+    "commandline-shortcut" : "the command can be replaced by \"@\"",
     "argument(s)" : [
       ["username", "user to whom the message is intended"],
       ["message", "text to send"]
@@ -16,7 +17,8 @@
     "description" : "send the given message to the user (if exists)"
   },
   {
-    "command" : "@all",
+    "command" : "sendtoall <message>",
+    "commandline-shortcut" : "the command can be replaced by \"@all\"",
     "argument(s)" : [
       ["message", "text to send"]
     ],
@@ -34,7 +36,6 @@
   {
     "command" : "hide",
     "keyboard-shortcut" : "first letter of the label",
-    "commandline-shortcut" : "the command <hide> can be omitted",
     "argument(s)" : [
       ["label", "pop-up to hide"]
     ],

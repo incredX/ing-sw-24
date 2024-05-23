@@ -2,6 +2,7 @@ package IS24_LB11.cli.listeners;
 
 import IS24_LB11.cli.Debugger;
 import IS24_LB11.cli.controller.ClientState;
+import IS24_LB11.cli.event.NotificationEvent;
 import IS24_LB11.cli.event.ResultServerEvent;
 import IS24_LB11.cli.event.ServerDownEvent;
 import IS24_LB11.cli.event.server.ServerEventFactory;
@@ -16,31 +17,32 @@ import static IS24_LB11.game.Result.Error;
 
 /**
  * ServerHandler is a class that handles communication with a server.
- * It listens for server events, dispatching them to the current {@code CLientState}, and sends responses back to the server.
+ * It listens for server events, dispatching them to the current {@code ClientState}, and sends responses back to the server.
  * It extends the Listener class and implements the Runnable interface to run in a separate thread.
  */
 public class ServerHandler extends Listener implements Runnable {
-    private static final int MIN_TIMEOUT = 2_000;
-    private static final int MAX_TIMEOUT = 8_000;
+    private static final int MIN_TIMEOUT = 1_000;
+    private static final int MAX_TIMEOUT = 5_000;
+    private final Object timerLock = new Object();
+    private final String serverIp;
+    private final int serverPort;
     private Socket socket;
     private JsonStreamParser parser;
     private PrintWriter writer;
-    private final Object timerLock = new Object();
     private int timeout = MIN_TIMEOUT;
 
     /**
      * Constructs a ServerHandler with the given client state, server IP, and server port.
      *
      * @param state the client state which holds the event queue
-     * @param serverIP the IP address of the server
-     * @param serverPORT the port number of the server
+     * @param serverIp the IP address of the server
+     * @param serverPort the port number of the server
      * @throws IOException if an I/O error occurs
      */
-    public ServerHandler(ClientState state, String serverIP, int serverPORT) throws IOException {
+    public ServerHandler(ClientState state, String serverIp, int serverPort) {
         super(state);
-        socket = new Socket(serverIP, serverPORT);
-        parser = new JsonStreamParser(new InputStreamReader(socket.getInputStream()));
-        writer = new PrintWriter(socket.getOutputStream());
+        this.serverIp = serverIp;
+        this.serverPort = serverPort;
     }
 
     /**
@@ -51,6 +53,23 @@ public class ServerHandler extends Listener implements Runnable {
     public void run() {
         Thread.currentThread().setName("server-handler");
         Debugger.print("thread started.");
+
+        try {
+            state.queueEvent(new NotificationEvent("starting connection with server..."));
+            socket = new Socket(serverIp, serverPort);
+            parser = new JsonStreamParser(new InputStreamReader(socket.getInputStream()));
+            writer = new PrintWriter(socket.getOutputStream());
+        } catch (IOException | InterruptedException e) {
+            Debugger.print(e);
+            Debugger.print("thread closed.");
+            state.tryQueueEvent(NotificationEvent.error("connection failed"));
+            return;
+        } catch (IllegalStateException e) {
+            Debugger.print(e);
+            Debugger.print("thread closed.");
+            state.tryQueueEvent(NotificationEvent.error("illegal port number"));
+            return;
+        }
 
         startEventTimer();
 
@@ -66,8 +85,8 @@ public class ServerHandler extends Listener implements Runnable {
                         state.queueEvent(new ResultServerEvent(Error("Bad request", "json syntax error")));
                         continue;
                     }
-                    if (event.has("error") || (event.has("type") && !event.get("type").getAsString().equalsIgnoreCase("heartbeat")))
-                        Debugger.print("from server: " + event);
+                    //if (event.has("error") || (event.has("type") && !event.get("type").getAsString().equalsIgnoreCase("heartbeat")))
+                    Debugger.print("from server: " + event);
                     state.queueEvent(new ResultServerEvent(ServerEventFactory.createServerEvent(event)));
                 }
             } catch (JsonSyntaxException | IllegalStateException e) {
@@ -98,8 +117,9 @@ public class ServerHandler extends Listener implements Runnable {
      * @param object the JSON object to send
      */
     public void write(JsonObject object) {
-        if (object.has("type") && !object.get("type").getAsString().equalsIgnoreCase("heartbeat"))
-            Debugger.print("to server: " + object);
+        //if (object.has("type") && !object.get("type").getAsString().equalsIgnoreCase("heartbeat"))
+        if (writer == null) return;
+        Debugger.print("to server: " + object);
         writer.println(object.toString());
         writer.flush();
     }
@@ -109,7 +129,7 @@ public class ServerHandler extends Listener implements Runnable {
      */
     public void shutdown() {
         try {
-            if (!socket.isClosed()) socket.close();
+            if (socket != null && !socket.isClosed()) socket.close();
         } catch (IOException e) {
             Debugger.print(e);
         }

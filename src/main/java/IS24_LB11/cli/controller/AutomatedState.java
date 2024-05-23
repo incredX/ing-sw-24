@@ -20,7 +20,6 @@ import com.google.gson.JsonPrimitive;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.input.KeyStroke;
 
-import java.io.IOException;
 import java.util.Random;
 
 public class AutomatedState extends ClientState {
@@ -30,35 +29,27 @@ public class AutomatedState extends ClientState {
     private PlayerSetup playerSetup;
     private Player player;
     private Table table;
-    private String serverAddress;
-    private int serverPort;
     private int numPlayers;
     private float goldenRate;
 
-    public AutomatedState(ViewHub viewHub, String username, String serverAddress, int serverPort, int numPlayers, float goldenRate, PlacementFunction placementFunction) {
+    public AutomatedState(ViewHub viewHub, String username,
+                          String serverAddress, int serverPort,
+                          int numPlayers, float goldenRate, PlacementFunction placementFunction) {
         super(viewHub);
         this.username = username;
         this.placementFunction = placementFunction;
-        this.serverAddress = serverAddress;
-        this.serverPort = serverPort;
         this.numPlayers = numPlayers;
         this.goldenRate = goldenRate;
+        this.serverHandler = new ServerHandler(this, serverAddress, serverPort);
     }
 
     @Override
     public ClientState execute() {
         System.out.println("Running automated state...");
-        for (int i=0; i<3; i++) {
-            System.out.println("try num. "+i+" connecting to server");
-            try {
-                serverHandler = new ServerHandler(this, serverAddress, serverPort);
-                new Thread(serverHandler).start();
-                break;
-            } catch (IOException e) {
-                try { Thread.sleep(2500); }
-                catch (InterruptedException ie) { }
-            }
-        }
+        new Thread(serverHandler).start();
+
+        try { Thread.sleep(200); }
+        catch (InterruptedException e) { Debugger.print(e); }
 
         if (numPlayers >= 2) {
             sendToServer("login", "username", username);
