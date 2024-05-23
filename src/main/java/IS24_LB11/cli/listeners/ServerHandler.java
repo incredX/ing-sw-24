@@ -126,7 +126,7 @@ public class ServerHandler extends Listener implements Runnable {
                         } else {
                             Debugger.print("Server up  "+diff);
                             timeStamp += diff;
-                            if (timeout > MIN_TIMEOUT) timeout -= MIN_TIMEOUT;
+                            if (timeout > 2*MIN_TIMEOUT) timeout -= MIN_TIMEOUT;
                         }
                     }
                     catch (InterruptedException e) {
