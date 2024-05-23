@@ -193,13 +193,18 @@ public class ClientHandler implements Runnable {
                 clientDisconnected.addProperty("player", this.getUserName());
                 this.broadcast(clientDisconnected.toString());
 
+
                 // Pass turn to another player
                 if (this.getGame() != null && this.getGame().getPlayers().size() >= 1) {
                     Player currentPlayerReal;
 
+                    Boolean currentPlayerDisconnected = false;
+
                     if (this.getUserName().equals(this.getGame().currentPlayer().name())) {
-                        if (this.getGame().getTurn() >= 0)
+                        if (this.getGame().getTurn() >= 0){
+                            currentPlayerDisconnected = true;
                             this.getGame().setTurn(this.getGame().getTurn() + 1);
+                        }
                         currentPlayerReal = this.getGame().currentPlayer();
                     } else {
                         currentPlayerReal = this.getGame().currentPlayer();
@@ -214,7 +219,7 @@ public class ClientHandler implements Runnable {
                             this.getGame().setGameEnded(true);
                             NotifyTurnPhase.startPhase(this.getClientHandlerWithUsername(this.getGame().currentPlayer().name()));
                         } else if (this.getGame().getPlayers().size() > 1) {
-                            if(this.getGame().currentPlayer().name().equals(this.userName))
+                            if(currentPlayerDisconnected)
                                 NotifyTurnPhase.startPhase(this.getClientHandlerWithUsername(this.getGame().currentPlayer().name()));
                         }
                     }
