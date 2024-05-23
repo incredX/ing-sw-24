@@ -9,10 +9,20 @@ import IS24_LB11.network.ClientHandler;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
-
+/**
+ * The TurnPhase class handles the turn phase of the game, executing a player's turn and notifying the next player.
+ */
 public class TurnPhase {
     static Gson gson = new Gson();
 
+    /**
+     * Starts the turn phase for the game.
+     * This method processes the turn event, executes the turn for the current player, and sends a notification
+     * with the status of the turn. After the turn is executed, it starts the notification phase for the next player's turn.
+     *
+     * @param clientHandler the client handler managing the clients
+     * @param event the JSON object representing the turn event
+     */
     public static void startPhase(ClientHandler clientHandler, JsonObject event) {
         JsonObject response = new JsonObject();
         Gson gson = new Gson();
@@ -39,7 +49,6 @@ public class TurnPhase {
         response.addProperty("type", "notification");
         response.addProperty("message", status);
         clientHandler.sendMessage(response.toString());
-
 
         NotifyTurnPhase.startPhase(clientHandler.getClientHandlerWithUsername(clientHandler.getGame().currentPlayer().name()));
     }

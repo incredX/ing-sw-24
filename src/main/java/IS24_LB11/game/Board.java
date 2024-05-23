@@ -1,7 +1,6 @@
 package IS24_LB11.game;
 
 import java.util.*;
-
 import IS24_LB11.game.components.*;
 import IS24_LB11.game.symbol.Item;
 import IS24_LB11.game.symbol.Suit;
@@ -9,12 +8,19 @@ import IS24_LB11.game.symbol.Symbol;
 import IS24_LB11.game.utils.Direction;
 import IS24_LB11.game.utils.Position;
 
+/**
+ * Represents the game board that holds placed cards and manages available and closed spots,
+ * as well as symbol counters.
+ */
 public class Board implements JsonConvertable {
     private final ArrayList<PlacedCard> placedCards;
     private final ArrayList<Position> availableSpots;
     private final ArrayList<Position> closedSpots;
     private final HashMap<Symbol, Integer> symbolCounter;
 
+    /**
+     * Constructs an empty game board.
+     */
     public Board() {
         placedCards = new ArrayList<>();
         availableSpots = new ArrayList<>();
@@ -23,27 +29,29 @@ public class Board implements JsonConvertable {
     }
 
     /**
-     * constrain the initialization of the board with a <code>StarterCard</code>
+     * Initializes the board with a {@link StarterCard}.
      *
-     * @param starterCard first card of the board
+     * @param starterCard the first card to be placed on the board
      */
     public void start(StarterCard starterCard) {
         Position start = new Position(0, 0);
         placedCards.add(new PlacedCard(starterCard, start));
-        for (Suit suit : Suit.values()) symbolCounter.put(suit, 0);
-        for (Item item : Item.values()) symbolCounter.put(item, 0);
+        for (Suit suit : Suit.values()) {
+            symbolCounter.put(suit, 0);
+        }
+        for (Item item : Item.values()) {
+            symbolCounter.put(item, 0);
+        }
         updateCounters(start);
         updateSpots(starterCard, start);
     }
 
-
     /**
-     * place the specified card in the given position, if able.
-     * To be placed, the card's position must belong to the available spots.
+     * Places the specified card at the given position if it is available.
      *
-     * @param card     <code>PlayableCard</code> to be placed
-     * @param position where the card is to be placed
-     * @return true if the card has been placed
+     * @param card the {@link PlayableCard} to be placed
+     * @param position the position where the card is to be placed
+     * @return true if the card was successfully placed, false otherwise
      */
     public boolean placeCard(PlayableCard card, Position position) {
         if (!spotAvailable(position)) return false;
@@ -54,11 +62,19 @@ public class Board implements JsonConvertable {
         return true;
     }
 
+    /**
+     * Checks if the required suits for placing a golden card are met.
+     *
+     * @param card the {@link GoldenCard} to be placed
+     * @return true if the required suits are met, false otherwise
+     */
     public boolean placeGoldCardCheck(GoldenCard card) {
         ArrayList<Suit> suitNeeded = card.getSuitsNeeded();
-        for (Symbol symbol:symbolCounter.keySet())
-            if (symbolCounter.get(symbol)<suitNeeded.stream().filter(x->x==symbol).count())
+        for (Symbol symbol : symbolCounter.keySet()) {
+            if (symbolCounter.get(symbol) < suitNeeded.stream().filter(x -> x == symbol).count()) {
                 return false;
+            }
+        }
         return true;
     }
 
@@ -73,30 +89,25 @@ public class Board implements JsonConvertable {
                 availableSpots.add(diagonal);
             }
         });
-//        getPlayableCard(position).ifPresent(card ->
-//                Direction.forEachDirection(corner -> {
-//                    Position diagonal = position.withRelative(corner.relativePosition());
-//                    if (card.hasCorner(corner) && !(spotAvailable(diagonal) || spotTaken(diagonal))) {
-//                        availableSpots.add(diagonal);
-//                    }
-//                })
-//        );
     }
 
     private void updateCounters(Position position) {
         getPlayableCard(position).ifPresent(card -> card.updateCounters(symbolCounter));
-
         Direction.forEachDirection(corner -> {
             Position cornerPosition = position.withRelative(corner.relativePosition());
             getPlayableCard(cornerPosition).ifPresent(card -> {
-                if (!card.isFaceDown() && card.hasCorner(corner.opposite())) {
-                    Symbol symbol = card.getCorner(corner.opposite());
-                    symbolCounter.computeIfPresent(symbol, (s, count) -> count - 1);
-                }
+                Symbol symbol = card.getCorner(corner.opposite());
+                symbolCounter.computeIfPresent(symbol, (s, count) -> count - 1);
             });
         });
     }
 
+    /**
+     * Counts the number of patterns matching the specified goal pattern on the board.
+     *
+     * @param goal the {@link GoalPattern} to count matches for
+     * @return the number of matching patterns multiplied by the goal points
+     */
     public int countGoalPatterns(GoalPattern goal) {
         ArrayList<Symbol> symbols = goal.getSymbols();
         Position[] steps = goal.getPatternSteps();
@@ -108,39 +119,50 @@ public class Board implements JsonConvertable {
             for (Position step : steps) {
                 Optional<PlacedCard> card = getPlacedCard(position.withRelative(step));
                 if (card.isPresent()) {
-                    if (!card.get().isVisited() && card.get().card().getSuit() == symbols.get(counter))
+                    if (!card.get().isVisited() && card.get().card().getSuit() == symbols.get(counter)) {
                         matchedSteps++;
+                    }
                 }
                 counter++;
             }
             if (matchedSteps == counter) {
                 patternsFound++;
                 placedCard.setVisited(true);
-                for (Position step : steps)
+                for (Position step : steps) {
                     getPlacedCard(position.withRelative(step)).ifPresent(card -> card.setVisited(true));
+                }
             }
         }
-
-        for (PlacedCard placedCard : placedCards.stream().skip(1).toList())
+        for (PlacedCard placedCard : placedCards.stream().skip(1).toList()) {
             getPlacedCard(placedCard.position()).ifPresent(card -> card.setVisited(false));
-
-        return patternsFound * (goal.getPoints());
+        }
+        return patternsFound * goal.getPoints();
     }
 
+    /**
+     * Counts the number of goal symbols present on the board for the specified goal.
+     *
+     * @param goal the {@link GoalSymbol} to count symbols for
+     * @return the number of goal symbols multiplied by the goal points
+     */
     public int countGoalSymbols(GoalSymbol goal) {
         HashMap<Symbol, Integer> symbols = new HashMap<>();
-        goal.getSymbols().stream().forEach(symbol -> {
-            if (!symbols.containsKey(symbol)) symbols.put(symbol, 1);
-            else symbols.put(symbol, symbols.get(symbol)+1);
+        goal.getSymbols().forEach(symbol -> {
+            symbols.put(symbol, symbols.getOrDefault(symbol, 0) + 1);
         });
         return goal.getPoints() * symbols.entrySet().stream()
-                .map(entry -> symbolCounter.get(entry.getKey())/entry.getValue())
-                .min(Integer::compareTo).get();
+                .map(entry -> symbolCounter.get(entry.getKey()) / entry.getValue())
+                .min(Integer::compareTo).orElse(0);
     }
 
+    /**
+     * Calculates the score based on the last placed card on the board.
+     *
+     * @return the score of the last placed card
+     */
     public int calculateScoreOnLastPlacedCard() {
         PlayableCard playableCard = placedCards.getLast().card();
-        int score = playableCard.asString().charAt(7)-48;
+        int score = Character.getNumericValue(playableCard.asString().charAt(7));
         HashMap<Symbol, Integer> symbolCounter = getSymbolCounter();
         if (playableCard.isFaceDown()) return 0;
         switch (playableCard.asString().charAt(0)) {
@@ -166,7 +188,9 @@ public class Board implements JsonConvertable {
                         return score;
                     case 'E':
                         Position positionLastCard = placedCards.getLast().position();
-                        return (int) (score * placedCards.stream().filter(card -> Math.abs(card.position().getY() - positionLastCard.getY())==1 && Math.abs(card.position().getX() - positionLastCard.getX())==1).count());
+                        return (int) (score * placedCards.stream().filter(card ->
+                                Math.abs(card.position().getY() - positionLastCard.getY()) == 1 &&
+                                        Math.abs(card.position().getX() - positionLastCard.getX()) == 1).count());
                     default:
                         return 0;
                 }
@@ -175,14 +199,32 @@ public class Board implements JsonConvertable {
         }
     }
 
+    /**
+     * Checks if a given position is taken by a card.
+     *
+     * @param position the position to check
+     * @return true if the position is taken, false otherwise
+     */
     public boolean spotTaken(Position position) {
         return placedCards.stream().anyMatch(card -> card.position().equals(position));
     }
 
+    /**
+     * Checks if a given position is available for placing a card.
+     *
+     * @param position the position to check
+     * @return true if the position is available, false otherwise
+     */
     public boolean spotAvailable(Position position) {
         return availableSpots.stream().anyMatch(spot -> spot.equals(position));
     }
 
+    /**
+     * Checks if a given position is closed and not available for placing a card.
+     *
+     * @param position the position to check
+     * @return true if the position is closed, false otherwise
+     */
     public boolean spotClosed(Position position) {
         return closedSpots.stream().anyMatch(spot -> spot.equals(position));
     }

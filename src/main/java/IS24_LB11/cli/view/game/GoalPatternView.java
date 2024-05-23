@@ -5,8 +5,6 @@ import IS24_LB11.game.components.GoalPattern;
 import IS24_LB11.game.symbol.Symbol;
 import com.googlecode.lanterna.TerminalPosition;
 
-import static IS24_LB11.cli.utils.Side.NORD;
-
 public class GoalPatternView extends GoalView {
     public GoalPatternView(GoalPattern goal) {
         super(goal);
@@ -19,8 +17,8 @@ public class GoalPatternView extends GoalView {
         if (goal.getVariant() == 'D') {
             int start = firstColumn() + 6;
             int row = firstRow();
-            int col = (goal.getDir() == NORD.ordinal()) ? lastColumn()-4 : start;
-            int dx = (goal.getDir() == NORD.ordinal()) ? -2 : 2;
+            int col = ((goal.getDir()&1) == 1) ? lastColumn()-4 : start;
+            int dx = ((goal.getDir()&1) == 1) ? -2 : 2;
 
             for (Symbol symbol: goal.getSymbols()) {
                 fillRow(row, col, "[ ]");

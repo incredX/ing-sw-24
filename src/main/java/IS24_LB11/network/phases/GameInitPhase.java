@@ -7,8 +7,19 @@ import IS24_LB11.network.ClientHandler;
 
 import java.io.FileNotFoundException;
 
+/**
+ * The GameInitPhase class handles the initialization phase of the game.
+ */
 public class GameInitPhase {
 
+    /**
+     * Starts the game initialization phase.
+     * This method sets up a new game, configures the game with player usernames, and transitions to the setup phase.
+     *
+     * @param clientHandler the client handler managing the client
+     * @param game the game instance to be initialized
+     * @param players the number of players participating in the game
+     */
     public static void startPhase(ClientHandler clientHandler, Game game, int players) {
         try {
             game = new Game(players);

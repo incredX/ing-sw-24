@@ -6,11 +6,11 @@ import IS24_LB11.game.tools.JsonException;
 import IS24_LB11.game.utils.Color;
 import IS24_LB11.game.utils.Position;
 
-/*
-java.awt.* (Abstract Window Toolkit)  allows us to use some intefaces that help us to menage graphic intefaces
- */
 import java.util.ArrayList;
 
+/**
+ * Represents a player in the game, holding the player's state and behaviors.
+ */
 public class Player implements JsonConvertable {
     private final String name;
     private final Color color;
@@ -20,6 +20,12 @@ public class Player implements JsonConvertable {
     private GoalCard personalGoal;
     private int score;
 
+    /**
+     * Constructs a new player with the specified name and a setup with the initials cards.
+     *
+     * @param name the name of the player
+     * @param setup the player's setup configuration
+     */
     public Player(String name, PlayerSetup setup) {
         this.name = name;
         this.color = setup.getColor();
@@ -27,15 +33,24 @@ public class Player implements JsonConvertable {
         this.setup = setup;
         this.hand = setup.hand();
         this.personalGoal = null;
-        //TODO:RESET THIS
         this.score = 0;
     }
 
+    /**
+     * Applies the player's setup, initializing their personal goal and place his starter card.
+     */
     public void applySetup() {
         this.personalGoal = setup.chosenGoal();
         this.board.start(setup.getStarterCard());
     }
 
+    /**
+     * Places a card on the board at the specified position.
+     *
+     * @param card the card to place
+     * @param position the position to place the card
+     * @return true if the card was placed successfully, false otherwise
+     */
     public boolean placeCard(PlayableCard card, Position position) {
         if (board.placeCard(card, position)) {
             hand.removeIf(carhand -> carhand.equals(card));
@@ -44,70 +59,64 @@ public class Player implements JsonConvertable {
             return false;
         }
     }
-    public void personalGoalScore(){
+
+    /**
+     * Calculates and prints the score for the player's personal goal.
+     */
+    public void personalGoalScore() {
         int scoreGoal;
-        if (personalGoal.asString().length()==5)
-            scoreGoal=(board.countGoalSymbols((GoalSymbol) personalGoal));
-        else
-            scoreGoal=(board.countGoalPatterns((GoalPattern) personalGoal));
+        if (personalGoal.asString().length() == 5) {
+            scoreGoal = (board.countGoalSymbols((GoalSymbol) personalGoal));
+        } else {
+            scoreGoal = (board.countGoalPatterns((GoalPattern) personalGoal));
+        }
         System.out.println(name + " Personal Goal Score: " + scoreGoal);
         incrementScore(scoreGoal);
     }
 
-    public void publicGoalScore(ArrayList<GoalCard> publicGoals){
+    /**
+     * Calculates and prints the score for the player's public goals.
+     *
+     * @param publicGoals the list of public goals
+     */
+    public void publicGoalScore(ArrayList<GoalCard> publicGoals) {
         int scoreGoal;
-        for (GoalCard goalCard: publicGoals){
-            if (goalCard.asString().length()==5) {
-                scoreGoal=(board.countGoalSymbols((GoalSymbol) goalCard));
+        for (GoalCard goalCard : publicGoals) {
+            if (goalCard.asString().length() == 5) {
+                scoreGoal = (board.countGoalSymbols((GoalSymbol) goalCard));
+            } else {
+                scoreGoal = (board.countGoalPatterns((GoalPattern) goalCard));
             }
-            else
-                scoreGoal=(board.countGoalPatterns((GoalPattern) goalCard));
-            System.out.println(name + "Private Goal Score: " + scoreGoal);
+            System.out.println(name + " Private Goal Score: " + scoreGoal);
             incrementScore(scoreGoal);
         }
-        
     }
+
+    /**
+     * Increments the player's score based on the last placed card.
+     */
     public void incrementScoreLastCardPlaced() {
         score += board.calculateScoreOnLastPlacedCard();
     }
 
+    /**
+     * Increments the player's score by a specified amount.
+     *
+     * @param amount the amount to increment the score by
+     */
     public void incrementScore(int amount) {
         score += amount;
     }
 
-    public String name() {
-        return name;
-    }
-
-    public PlayerSetup setup() {
-        return setup;
-    }
-
-    public int getScore() {
-        return score;
-    }
-
-    public Board getBoard() {
-        return board;
-    }
-
-    public GoalCard getPersonalGoal() {
-        return personalGoal;
-    }
-
-    public PlayerSetup getSetup() {
-        return setup;
-    }
-
-    public ArrayList<PlayableCard> getHand() {
-        return hand;
-    }
-
+    /**
+     * Adds a card to the player's hand.
+     *
+     * @param playableCard the card to add to the hand
+     */
     public void addCardToHand(PlayableCard playableCard) {
         hand.add(playableCard);
     }
-
-    @Override
+@Override
     public String toString() {
         JsonConverter jsonConverter = new JsonConverter();
         try {
@@ -125,12 +134,32 @@ public class Player implements JsonConvertable {
             throw new RuntimeException(e);
         }
     }
-
     public Color getColor() {
         return color;
     }
+    public void setBoard(Board board) {
+        this.board = board;
+    }
+    public String name() {
+        return name;
+    }
+    public PlayerSetup setup() {
+        return setup;
+    }
+    public int getScore() {
+        return score;
+    }
+    public Board getBoard() {
+        return board;
+    }
+    public GoalCard getPersonalGoal() {
+        return personalGoal;
+    }
 
-    public void setBoard(Board board){
-        this.board=board;
+    public PlayerSetup getSetup() {
+        return setup;
+    }
+    public ArrayList<PlayableCard> getHand() {
+        return hand;
     }
 }

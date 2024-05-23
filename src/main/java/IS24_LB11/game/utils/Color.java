@@ -33,6 +33,16 @@ public enum Color {
         };
     }
 
+    public static String toPawn(Color color){
+        return switch (color){
+            case RED -> "redPawn.png";
+            case GREEN -> "greenPawn.png";
+            case BLUE -> "bluePawn.png";
+            case YELLOW -> "yellowPawn.png";
+            default -> null;
+        };
+    }
+
 
 }
 
