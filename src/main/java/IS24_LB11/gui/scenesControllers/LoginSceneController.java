@@ -77,6 +77,7 @@ public class LoginSceneController extends GenericSceneController {
     private void initialize() {
         loginButton.setOnAction(event -> login());
         exitButton.setOnAction(event -> exit(stage));
+        chatBox.getStylesheets().add("/ChatStyle.css");
         chatBox.setOnMouseEntered(mouseEvent -> chatDisplay());
         chatBox.setOnMouseExited(mouseEvent -> chatHide());
         chatHide();
