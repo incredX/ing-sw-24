@@ -2,8 +2,6 @@ package IS24_LB11.gui.scenesControllers;
 
 
 import IS24_LB11.game.PlacedCard;
-
-import IS24_LB11.game.Player;
 import IS24_LB11.game.components.PlayableCard;
 import IS24_LB11.game.symbol.Item;
 import IS24_LB11.game.symbol.Suit;
@@ -15,9 +13,9 @@ import IS24_LB11.gui.phases.ClientGUIState;
 import IS24_LB11.gui.phases.GameGUIState;
 import IS24_LB11.gui.scenesControllers.ScoreboardController.AnimationInstruction;
 import IS24_LB11.gui.scenesControllers.ScoreboardController.ScoreboardCoordinates;
+import javafx.animation.SequentialTransition;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
-
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -30,13 +28,10 @@ import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import javafx.animation.SequentialTransition;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 
 public class GameSceneController extends GenericSceneController{
@@ -411,6 +406,8 @@ public class GameSceneController extends GenericSceneController{
         updateScore();
 
         disableAllCardInputs(!state.isThisPlayerTurn());
+        if (currentPlayerTurn!= state.getUsername())
+            addMessage("<Server> It's " + currentPlayerTurn + " turn");
     }
     public void updateGame(ArrayList<Integer> playerScores) throws InterruptedException {
         //Useful for animating scores
@@ -433,8 +430,6 @@ public class GameSceneController extends GenericSceneController{
         executeAnimations(initScore, finalScore);
 
         updateScore();
-
-
     }
 
     private void disableGenericDeck(ImageView deckCard1, ImageView deckCard2, ImageView deckCard3, Boolean disable, Boolean deckType){

@@ -197,10 +197,12 @@ public class GameGUIState extends ClientGUIState {
     public void execute() {
         PlacedCard placedCard = new PlacedCard(cardChooseToPlay, positionPlacedCard);
         if (!normalDeck.isEmpty() || !goldenDeck.isEmpty()) {
-            if (!deckType) {
-                player.addCardToHand(normalDeck.get(indexCardDeck));
-            } else {
-                player.addCardToHand(goldenDeck.get(indexCardDeck));
+            if (!isFinalTurn){
+                if (!deckType) {
+                    player.addCardToHand(normalDeck.get(indexCardDeck));
+                } else {
+                    player.addCardToHand(goldenDeck.get(indexCardDeck));
+                }
             }
             inputHandlerGUI.sendTurn(placedCard, deckType, indexCardDeck);
         } else {
