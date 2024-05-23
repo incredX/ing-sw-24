@@ -20,11 +20,22 @@ import com.googlecode.lanterna.input.KeyStroke;
 import java.io.IOException;
 import java.util.ArrayList;
 
+/**
+ * The SetupState class represents the state of the client during the game setup phase.
+ * It handles server events, user commands, and various input methods.
+ */
 public class SetupState extends ClientState implements PlayerStateInterface {
     private final PlayerSetup setup;
     private Table table;
     private SetupStage setupStage;
 
+    /**
+     * Constructs a new SetupState with the specified LobbyState, PlayerSetup, and Table.
+     *
+     * @param lobbyState the previous lobby state.
+     * @param setup the player setup details.
+     * @param table the table instance for the game.
+     */
     public SetupState(LobbyState lobbyState, PlayerSetup setup, Table table) {
         super(lobbyState);
         this.setup = setup;
@@ -36,12 +47,25 @@ public class SetupState extends ClientState implements PlayerStateInterface {
                 new DecksPopup(getViewHub(), this));
     }
 
+    /**
+     * Constructs a new SetupState with the specified ViewHub, PlayerSetup, and Table.
+     *
+     * @param viewHub the view hub used for managing views and stages.
+     * @param setup the player setup details.
+     * @param table the table instance for the game.
+     * @throws IOException if an I/O error occurs.
+     */
     public SetupState(ViewHub viewHub, PlayerSetup setup, Table table) throws IOException {
         super(viewHub);
         this.setup = setup;
         this.table = table;
     }
 
+    /**
+     * Executes the setup state after setting up the setup stage and updating necessary components.
+     *
+     * @return the next client state to be executed.
+     */
     @Override
     public ClientState execute() {
         setupStage = viewHub.setSetupStage(this);
@@ -50,6 +74,9 @@ public class SetupState extends ClientState implements PlayerStateInterface {
         return super.execute();
     }
 
+    /**
+     * Processes the event when the server goes down.
+     */
     @Override
     protected void processServerDown() {
         notificationStack.removeAllNotifications();
@@ -59,6 +86,11 @@ public class SetupState extends ClientState implements PlayerStateInterface {
         setNextState(new LobbyState(viewHub));
     }
 
+    /**
+     * Processes the received server event.
+     *
+     * @param serverEvent the server event to be processed.
+     */
     @Override
     protected void processServerEvent(ServerEvent serverEvent) {
         if (processServerEventIfCommon(serverEvent)) return;
@@ -73,6 +105,11 @@ public class SetupState extends ClientState implements PlayerStateInterface {
         }
     }
 
+    /**
+     * Processes the received command.
+     *
+     * @param command the command to be processed.
+     */
     @Override
     protected void processCommand(String command) {
         if (processCommandIfCommon(command)) return;
@@ -101,6 +138,11 @@ public class SetupState extends ClientState implements PlayerStateInterface {
         };
     }
 
+    /**
+     * Processes the received keystroke.
+     *
+     * @param keyStroke the keystroke to be processed.
+     */
     @Override
     protected void processKeyStroke(KeyStroke keyStroke) {
         keyConsumed = notificationStack.consumeKeyStroke(keyStroke);
@@ -123,51 +165,105 @@ public class SetupState extends ClientState implements PlayerStateInterface {
         }
     }
 
+    /**
+     * Processes the screen resize event.
+     *
+     * @param screenSize the new size of the screen.
+     */
     @Override
     protected void processResize(TerminalSize screenSize) {
         super.processResize(screenSize);
         popManager.resizePopups();
-//        viewHub.updateStage();
     }
 
+    /**
+     * Sets the chosen goal based on the specified index.
+     *
+     * @param index the index of the chosen goal.
+     */
     private void setChosenGoal(int index) {
         setup.chooseGoal(index);
         setupStage.setChosenGoal(index);
         viewHub.update();
     }
 
+    /**
+     * Gets the player setup.
+     *
+     * @return the player setup.
+     */
     public PlayerSetup getSetup() {
         return setup;
     }
 
+    /**
+     * Gets the table.
+     *
+     * @return the table.
+     */
     public Table getTable() {
         return table;
     }
 
+    /**
+     * Gets the starter card.
+     *
+     * @return the starter card.
+     */
     public StarterCard getStarterCard() {
         return setup.getStarterCard();
     }
 
+    /**
+     * Gets the possible private goals.
+     *
+     * @return an array of possible private goal cards.
+     */
     public GoalCard[] getPossiblePrivateGoals() {
         return setup.getGoals();
     }
 
+    /**
+     * Gets the player's hand.
+     *
+     * @return an array list of playable cards in the player's hand.
+     */
     public ArrayList<PlayableCard> getPlayerHand() {
         return setup.hand();
     }
 
+    /**
+     * Gets the scoreboard.
+     *
+     * @return the scoreboard.
+     */
     public Scoreboard getScoreboard() {
         return table.getScoreboard();
     }
 
+    /**
+     * Gets the public goals.
+     *
+     * @return an array list of public goal cards.
+     */
     public ArrayList<GoalCard> getGoals() {
         return table.getPublicGoals();
     }
 
+    /**
+     * Gets the normal deck.
+     *
+     * @return an array list of normal cards.
+     */
     public ArrayList<NormalCard> getNormalDeck() {
         return table.getNormalDeck();
     }
 
+    /**
+     * Gets the golden deck.
+     *
+     * @return an array list of golden cards.
+     */
     public ArrayList<GoldenCard> getGoldenDeck() {
         return table.getGoldenDeck();
     }

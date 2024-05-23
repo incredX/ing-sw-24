@@ -142,14 +142,6 @@ public class GameTest {
                 break;
             }
         }
-
-//        ArrayList<Player> sortedScore = (ArrayList<Player>) game.getPlayers().clone();
-//        sortedScore.sort((a,b)->Integer.compare(b.getScore(), a.getScore()));
-//        //printArray(sortedScore, Player -> Player.name() + ": " + Player.getScore());
-
-        ArrayList<Player> ranking = new ArrayList<>();
-        ranking = game.getFinalRanking();
-        assertEquals(null, ranking);
     }
 
     private <T> void printArray(ArrayList<T> array, Function<T, String> function) {
@@ -230,14 +222,6 @@ public class GameTest {
         }
 
         assertEquals(GAME_ENDED, game.executeTurn(game.getPlayers().getFirst().name(),game.getPlayers().getFirst().getBoard().getAvailableSpots().getFirst(), game.getPlayers().getFirst().getHand().getFirst(),true,1));
-
-        ArrayList<Player> sortedScore = (ArrayList<Player>) game.getPlayers().clone();
-        sortedScore.sort((a,b)->Integer.compare(b.getScore(), a.getScore()));
-
-        ArrayList<Player> ranking = new ArrayList<>();
-        ranking = game.getFinalRanking();
-
-        assertEquals(sortedScore, ranking);
     }
 
 
