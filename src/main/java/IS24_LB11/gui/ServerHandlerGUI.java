@@ -180,7 +180,14 @@ public class ServerHandlerGUI implements Runnable {
 
         if (currentPlayerTurn.equals("")) {
             if (serverEvent.has("gameFinished")) {
-                Platform.runLater(() -> gameSceneController.updateGame(playerScores));
+                Platform.runLater(() -> {
+                    try {
+
+                        gameSceneController.updateGame(playerScores);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
                 Platform.runLater(() -> gameSceneController.showPopUpNotification("The game is finished, check scoreboard for the winner"));
                 Platform.runLater(() -> gameSceneController.disableAllCardInputs(true));
             } else {
@@ -196,7 +203,13 @@ public class ServerHandlerGUI implements Runnable {
                 gameTurnStateStarted = true;
                 Platform.runLater(() -> setupSceneController.changeToGameState());
             }
-            Platform.runLater(() -> gameSceneController.updateGame(currentPlayerTurn, playerScores, normalDeck, goldenDeck));
+            Platform.runLater(()-> {
+                try {
+                    gameSceneController.updateGame(currentPlayerTurn,playerScores,normalDeck,goldenDeck);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            });
         }
     }
 
