@@ -131,13 +131,14 @@ public class ServerHandlerGUI implements Runnable {
                 loginSceneController.resetServerHandler();
                 try {
                     loginSceneController.restart();
+                    loginSceneController.showPopUpNotification("Server full, try again later.");
                 } catch (Exception e) {
-                    throw new RuntimeException(e);
+                    System.out.println("Server full, try again later.");
                 }
             });
             shutdown();
         } else {
-            String msg = serverEvent.get("error").getAsString();
+            String msg = "<Server - error> " + serverEvent.get("error").getAsString();
             addMessage(msg);
         }
     }

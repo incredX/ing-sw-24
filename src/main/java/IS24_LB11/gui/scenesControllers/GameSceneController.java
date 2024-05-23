@@ -260,16 +260,13 @@ public class GameSceneController extends GenericSceneController{
         scoreboardPositions.add(new AnimationInstruction(28, 621, 189));
         scoreboardPositions.add(new AnimationInstruction(29, 508, 131));
 
-
         for (int i=1; i<=scoreboardPositions.size(); i++) {
-
             int diffX = scoreboardPositions.get(i%30).getX() - scoreboardPositions.get((i-1)%30).getX();
             int diffY = scoreboardPositions.get(i%30).getY() - scoreboardPositions.get((i-1)%30).getY();
 
             translations.add(new TranslateTransition(Duration.millis(500)));
             translations.getLast().setByX(diffX);
             translations.getLast().setByY(diffY);
-
         }
     }
 
@@ -324,27 +321,9 @@ public class GameSceneController extends GenericSceneController{
 
         this.stage.setResizable(false);
         this.stage.show();
-
-
-
-    }
-
-    public void exit(Stage stage) {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Exit");
-        alert.setHeaderText("You are about to exit!");
-        alert.setContentText("Are you sure?");
-
-        if (alert.showAndWait().get() == ButtonType.OK) {
-            state.shutdown();
-            System.out.println("You successfully logged out!");
-            stage.close();
-        }
     }
 
     public void executeAnimations(int[] initScore, int[] finalScore){
-
-
         try {
             for (Color color : state.getPlayersColors().values()) {
                 switch (color) {
@@ -773,9 +752,7 @@ public class GameSceneController extends GenericSceneController{
 
         ArrayList<TranslateTransition> tts = new ArrayList<>();
 
-
         SequentialTransition st = new SequentialTransition(player);
-
 
         st.getChildren().addAll(getSubarray(startingPoints, finalPoints));
 
@@ -786,15 +763,11 @@ public class GameSceneController extends GenericSceneController{
 
 
     private ArrayList<TranslateTransition> getSubarray(int startingPoints, int finalPoints) {
-
         ArrayList<TranslateTransition> tts = new ArrayList<>();
-
 
         for (int i=startingPoints ; i < finalPoints ; i++) {
             tts.add(translations.get(i%30));
         }
-
-
         return tts;
     }
 

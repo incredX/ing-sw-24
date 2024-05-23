@@ -191,11 +191,11 @@ public class GenericSceneController {
      */
     private void sendPrivateMessage(String[] strings) {
         if (strings.length < 3) {
-            chatPane.getItems().add(new Text("Invalid input for private message"));
+            chatPane.getItems().add(new Text("<Client> Invalid input for private message"));
             return;
         }
         genericState.sendMessage(strings[1], genericState.getUsername(), strings[2]);
-        Text sendTo = new Text("<me> " + strings[2]);
+        Text sendTo = new Text("<Me -> " + strings[1] + "> " + strings[2]);
         chatPane.getItems().add(sendTo);
         chat.addMessage(sendTo);
     }

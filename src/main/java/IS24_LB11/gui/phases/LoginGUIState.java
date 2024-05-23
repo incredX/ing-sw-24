@@ -4,6 +4,7 @@ import IS24_LB11.gui.ClientGUI;
 import IS24_LB11.gui.InputHandlerGUI;
 import IS24_LB11.gui.ServerHandlerGUI;
 import IS24_LB11.gui.scenesControllers.LoginSceneController;
+import javafx.application.Platform;
 
 import java.io.IOException;
 
@@ -58,7 +59,20 @@ public class LoginGUIState extends ClientGUIState implements PlayerStateInterfac
                 System.out.println("Connection refused");
             }
         }
-        inputHandlerGUI.sendLogin(desiredUsername);
+        try {
+            inputHandlerGUI.sendLogin(desiredUsername);
+        }
+        catch (Exception e){
+            Platform.runLater(() -> {
+                loginSceneController.resetServerHandler();
+                try {
+                    loginSceneController.restart();
+                    loginSceneController.showPopUpNotification("Connection failed.");
+                } catch (Exception e2) {
+                    System.out.println("Connection failed");
+                }
+            });
+        }
     }
 
     /**
