@@ -16,9 +16,9 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.ListView?>
-<AnchorPane fx:id="scenePane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" stylesheets="@LoginStyle.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane fx:id="scenePane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" stylesheets="@Styles/LoginStyle.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <TextField fx:id="usernameTextField" layoutX="850.0" layoutY="230.0" prefHeight="37.0" prefWidth="260.0" promptText="Username" styleClass="custom-text-field" stylesheets="@LoginStyle.css">
+      <TextField fx:id="usernameTextField" layoutX="850.0" layoutY="230.0" prefHeight="37.0" prefWidth="260.0" promptText="Username" styleClass="custom-text-field" stylesheets="@Styles/LoginStyle.css">
          <font>
             <Font size="18.0" />
          </font>
@@ -26,12 +26,12 @@
 
       <Label contentDisplay="CENTER" layoutX="780.0" layoutY="70.0" prefHeight="109.0" prefWidth="338.0" text="Login" textFill="WHITE">
       </Label>
-      <TextField fx:id="ipTextField" layoutX="850.0" layoutY="300.0" prefHeight="37.0" prefWidth="260.0" promptText="IP" styleClass="custom-text-field" stylesheets="@LoginStyle.css">
+      <TextField fx:id="ipTextField" layoutX="850.0" layoutY="300.0" prefHeight="37.0" prefWidth="260.0" promptText="IP" styleClass="custom-text-field" stylesheets="@Styles/LoginStyle.css">
          <font>
             <Font size="18.0" />
          </font>
       </TextField>
-      <TextField fx:id="portTextField" layoutX="850.0" layoutY="370.0" prefHeight="37.0" prefWidth="260.0" promptText="Port" styleClass="custom-text-field" stylesheets="@LoginStyle.css">
+      <TextField fx:id="portTextField" layoutX="850.0" layoutY="370.0" prefHeight="37.0" prefWidth="260.0" promptText="Port" styleClass="custom-text-field" stylesheets="@Styles/LoginStyle.css">
          <font>
             <Font size="18.0" />
          </font>
