@@ -72,7 +72,7 @@ public class Board implements JsonConvertable {
         ArrayList<Suit> suitNeeded = card.getSuitsNeeded();
         for (Symbol symbol : symbolCounter.keySet()) {
             if (symbol!=null){
-                if (symbolCounter.get(symbol) < suitNeeded.stream().filter(x -> x.equals(symbol)).count()) {
+                if (symbolCounter.get(symbol) < suitNeeded.stream().filter(x -> symbol.equals(x)).count()) {
                     return false;
                 }
             }
