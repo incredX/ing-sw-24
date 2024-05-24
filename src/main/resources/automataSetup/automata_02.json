@@ -1,12 +1,12 @@
 {
   "username" : "automata_02",
-  "serverAddress" : "localhost",
+  "serverAddress" : "localhost", //172.20.10.4
   "serverPort" : 54321,
   "numPlayers" : 0, // num of players to be set (if equals to 0, this step will be skipped)
   // note: the choice of the setup is automatic.
   "cardPlacement" : "random", // define a criterion of cards placement ( the other option is "preset")
   // the following are settings for the random criterion
-  "numPlacements" : 24, // number of card placement
-  "oldestSpotsRate" : 0.5, // probabilty to chose one of the 4 oldest spots
-  "goldenRate" : 0.3 // probability to draw a card from the golden deck
+  "numPlacements" : 0, // number of card placement
+  "oldestSpotsRate" : 0.3, // probability to chose one of the 4 oldest spots
+  "goldenRate" : 0.5 // probability to draw a card from the golden deck
 }

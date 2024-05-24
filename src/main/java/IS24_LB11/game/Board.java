@@ -62,6 +62,17 @@ public class Board implements JsonConvertable {
         return true;
     }
 
+    public Result<Position> tryPlaceCard(PlayableCard card, Position position) {
+        if (!spotAvailable(position))
+            return Result.Error("placement denied", String.format("[%s] is not an available spot", position));
+        if (card.asString().charAt(0) == 'G' && !placeGoldCardCheck((GoldenCard) card) && !card.isFaceDown())
+            return Result.Error("placement denied", String.format("not enough suits to place %s", card.asString()));
+        placedCards.add(new PlacedCard(card, position));
+        updateCounters(position);
+        updateSpots(card, position);
+        return Result.Ok(position);
+    }
+
     /**
      * Checks if the required suits for placing a golden card are met.
      *

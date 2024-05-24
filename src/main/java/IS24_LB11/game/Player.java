@@ -60,6 +60,10 @@ public class Player implements JsonConvertable {
         }
     }
 
+    public Result<Position> tryPlaceCard(PlayableCard card, Position position) {
+        return board.tryPlaceCard(card, position).execIfOk(() -> hand.removeIf(carhand -> carhand.equals(card)));
+    }
+
     /**
      * Calculates and prints the score for the player's personal goal.
      */

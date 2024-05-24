@@ -148,6 +148,7 @@ public class GameState extends ClientState implements PlayerStateInterface {
                     cardPlaced = false;
                     cardPicked = false;
                     playerTurn = true;
+                    processCommandSendtoall("turn done");
                 }
                 updateBoardPointerImage();
                 gameStage.updatePointer();

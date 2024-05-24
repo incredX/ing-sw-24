@@ -67,7 +67,7 @@ public class ChatPopup extends Popup {
         castView(chatView -> {
             chatView.loadChat(chats.get(currentEndUser), currentEndUser);
             numLines = chatView.getChatLength();
-            firstLine = numLines > ChatView.DEFAULT_HEIGHT ? numLines - ChatView.DEFAULT_HEIGHT : 0;
+            firstLine = numLines > ChatView.DEFAULT_HEIGHT + 2 ? numLines - ChatView.DEFAULT_HEIGHT + 2 : 0;
             chatView.setOffset(firstLine);
             chatView.redraw();
         });
@@ -97,7 +97,7 @@ public class ChatPopup extends Popup {
         castView(chatView -> {
             chatView.loadChat(chats.get(currentEndUser), currentEndUser);
             numLines = chatView.getChatLength();
-            if (numLines >= ChatView.DEFAULT_HEIGHT-2) firstLine = numLines;
+            if (numLines >= ChatView.DEFAULT_HEIGHT - 2) firstLine = numLines - ChatView.DEFAULT_HEIGHT + 2;
             chatView.setOffset(firstLine);
             chatView.redraw();
         });

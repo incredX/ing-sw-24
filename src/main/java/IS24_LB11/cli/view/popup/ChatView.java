@@ -43,7 +43,8 @@ public class ChatView extends PopupView {
         for (int i = 0; i < array.size(); i++) {
             JsonObject message = array.get(i).getAsJsonObject();
             String head = message.get("from").getAsString();
-            List<String> body = getMessageBodyAsLines(message.get("message").getAsString());
+            String text = message.get("message").getAsString().replaceAll("[\t\r]+", " ");
+            List<String> body = getMessageBodyAsLines(text);
             if (message.has("fromUser")) {
                 head = head + " <";
                 head = " ".repeat(innerWidth() - head.length()) + head;

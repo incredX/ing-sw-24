@@ -30,6 +30,7 @@ public class AutomatedState extends ClientState {
     private Player player;
     private Table table;
     private int numPlayers;
+    private int turn = 0;
     private float goldenRate;
 
     public AutomatedState(ViewHub viewHub, String username,
@@ -115,8 +116,9 @@ public class AutomatedState extends ClientState {
                         selectedCardIndex = rand.nextInt(table.getNormalDeck().size());
                 }
 
+                if (handCard.isFaceDown()) handCard.flip();
                 if (!player.placeCard(handCard, spot)) {
-                    if (!handCard.isFaceDown()) handCard.flip();
+                    handCard.flip();
                     player.placeCard(handCard, spot);
                 }
                 player.addCardToHand(fromGoldenDeck ? table.getGoldenDeck().get(selectedCardIndex) : table.getNormalDeck().get(selectedCardIndex));
@@ -129,6 +131,9 @@ public class AutomatedState extends ClientState {
                 } catch (JsonException e) {
                     Debugger.print(e);
                 }
+
+                processCommandSendtoall("turn "+turn+" done");
+                turn++;
 
                 if (placementFunction.placementTerminated())
                     setNextState(new GameState(this));

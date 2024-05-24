@@ -21,15 +21,14 @@ import static IS24_LB11.game.Result.Error;
  * It extends the Listener class and implements the Runnable interface to run in a separate thread.
  */
 public class ServerHandler extends Listener implements Runnable {
-    private static final int MIN_TIMEOUT = 1_000;
-    private static final int MAX_TIMEOUT = 5_000;
+    private static final int TIMEOUT = 3_000;
     private final Object timerLock = new Object();
     private final String serverIp;
     private final int serverPort;
     private Socket socket;
     private JsonStreamParser parser;
     private PrintWriter writer;
-    private int timeout = MIN_TIMEOUT;
+    private int timeout = TIMEOUT;
 
     /**
      * Constructs a ServerHandler with the given client state, server IP, and server port.
@@ -85,8 +84,8 @@ public class ServerHandler extends Listener implements Runnable {
                         state.queueEvent(new ResultServerEvent(Error("Bad request", "json syntax error")));
                         continue;
                     }
-                    //if (event.has("error") || (event.has("type") && !event.get("type").getAsString().equalsIgnoreCase("heartbeat")))
-                    Debugger.print("from server: " + event);
+                    if (event.has("error") || (event.has("type") && !event.get("type").getAsString().equalsIgnoreCase("heartbeat")))
+                        Debugger.print("from server: " + event);
                     state.queueEvent(new ResultServerEvent(ServerEventFactory.createServerEvent(event)));
                 }
             } catch (JsonSyntaxException | IllegalStateException e) {
@@ -117,11 +116,11 @@ public class ServerHandler extends Listener implements Runnable {
      * @param object the JSON object to send
      */
     public void write(JsonObject object) {
-        //if (object.has("type") && !object.get("type").getAsString().equalsIgnoreCase("heartbeat"))
         if (writer == null) return;
-        Debugger.print("to server: " + object);
+        if (object.has("type") && !object.get("type").getAsString().equalsIgnoreCase("heartbeat"))
+            Debugger.print("to server: " + object);
         writer.println(object.toString());
-        writer.flush();
+        if (serverIp.equals("localhost")) writer.flush();
     }
 
     /**
@@ -170,18 +169,12 @@ public class ServerHandler extends Listener implements Runnable {
                         if (timeout == 0) // => needs to be shutdown
                             break;
                         if (diff >= timeout) {
-                            if (timeout < MAX_TIMEOUT) {
-                                Debugger.print("lost pace (time = " + diff + ")");
-                                timeout *= 2;
-                            } else {
-                                state.queueEvent(new ServerDownEvent());
-                                Debugger.print("Server down (time = " + diff + ")");
-                                break;
-                            }
+                            state.queueEvent(new ServerDownEvent());
+                            Debugger.print("Server down (time = " + diff + ")");
+                            break;
                         } else {
-                            Debugger.print("Server up  " + diff);
+                            //Debugger.print("Server up  " + diff);
                             timeStamp += diff;
-                            if (timeout > 2 * MIN_TIMEOUT) timeout -= MIN_TIMEOUT;
                         }
                     } catch (InterruptedException e) {
                         Debugger.print(e);
