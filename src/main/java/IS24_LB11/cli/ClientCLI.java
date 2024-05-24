@@ -21,6 +21,8 @@ public class ClientCLI {
 
         Debugger.startDebugger();
 
+
+
         try {
             viewHub = new ViewHub();
             state = new LobbyState(viewHub);

@@ -61,6 +61,8 @@ public class Game {
      * @return the current player
      */
     public Player currentPlayer() {
+        if (players.size()==1)
+            gameEnded=true;
         if (turn == -1)
             return players.getFirst();
         return players.get(turn % players.size());

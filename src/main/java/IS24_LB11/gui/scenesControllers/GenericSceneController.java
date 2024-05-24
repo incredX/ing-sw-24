@@ -53,7 +53,7 @@ public class GenericSceneController {
      */
     public void exit(Stage stage) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.getDialogPane().getStylesheets().add("PopUpStyle.css");
+        alert.getDialogPane().getStylesheets().add("/PopUpStyle.css");
 
         alert.setTitle("Exit");
         alert.setHeaderText("You are about to exit!");
@@ -97,7 +97,7 @@ public class GenericSceneController {
      * Processes different commands based on the input text.
      */
     public void send() {
-        String[] strings = messageBox.getText().split(" ", 3);
+        String[] strings = messageBox.getText().split(" +", 3);
         switch (strings[0]) {
             case "help":
                 showHelp();
@@ -191,11 +191,11 @@ public class GenericSceneController {
      */
     private void sendPrivateMessage(String[] strings) {
         if (strings.length < 3) {
-            chatPane.getItems().add(new Text("Invalid input for private message"));
+            chatPane.getItems().add(new Text("<Client> Invalid input for private message"));
             return;
         }
         genericState.sendMessage(strings[1], genericState.getUsername(), strings[2]);
-        Text sendTo = new Text("<me> " + strings[2]);
+        Text sendTo = new Text("<Me -> " + strings[1] + "> " + strings[2]);
         chatPane.getItems().add(sendTo);
         chat.addMessage(sendTo);
     }

@@ -84,7 +84,7 @@ public class PopUps {
         alert.getButtonTypes().setAll(quit, restart);
 
         // Set the content text in the alert
-        alert.setContentText("You are the only player left! Press OK to quit!");
+        alert.setContentText("You are the only player left!");
 
         // Show the alert and wait for a button press
         ButtonType result = alert.showAndWait().orElse(null);

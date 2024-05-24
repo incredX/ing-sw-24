@@ -18,6 +18,10 @@ import javafx.stage.Stage;
 
 import java.util.ArrayList;
 
+/**
+ * The Board class represents the graphical board of the game.
+ * It extends the JavaFX Application class and handles the display and placement of game cards on the board.
+ */
 public class Board extends Application {
 
     @FXML
@@ -35,15 +39,22 @@ public class Board extends Application {
     private final int cardCornerX = 70;
     private final int cardCornerY = 82;
 
-
+    /**
+     * The main entry point for all JavaFX applications.
+     * The start method is called after the init method has returned,
+     * and after the system is ready for the application to begin running.
+     *
+     * @param stage the primary stage for this application
+     * @throws Exception if an error occurs during loading the FXML resource
+     */
     @Override
     public void start(Stage stage) throws Exception {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/GamePage.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/FXMLScenes/GamePage.fxml"));
         loader.setController(this);
 
         Parent root = loader.load();
 
-        //Test cards
+        // Test cards
         ArrayList<String> cardStrings = new ArrayList<>();
         cardStrings.add("SEPIE_F0I__FPIA");
         cardStrings.add("NFEF_FB0");
@@ -71,22 +82,34 @@ public class Board extends Application {
         moveToCenter(scrollPane);
     }
 
-    private void clearBoard(Pane playerBoard){
+    /**
+     * Clears the player board by removing all children nodes.
+     *
+     * @param playerBoard the player board to clear
+     */
+    private void clearBoard(Pane playerBoard) {
         playerBoard.getChildren().clear();
     }
 
-    private void clearTemporaryCardsFromBoard(Pane playerBoard){
-        //TODO: complete this
-    }
-
-    private void moveToCenter(ScrollPane scrollPane){
+    /**
+     * Moves the view to the center of the board.
+     *
+     * @param scrollPane the scroll pane to center
+     */
+    private void moveToCenter(ScrollPane scrollPane) {
         Platform.runLater(() -> {
-            scrollPane.setHvalue((double) (centerBoardX+(cardX/2)) / playerBoard.getWidth());
-            scrollPane.setVvalue((double) (centerBoardY+(cardY/2)) / playerBoard.getHeight());
+            scrollPane.setHvalue((double) (centerBoardX + (cardX / 2)) / playerBoard.getWidth());
+            scrollPane.setVvalue((double) (centerBoardY + (cardY / 2)) / playerBoard.getHeight());
         });
     }
 
-    private ImageView getImageView(PlacedCard placedCard){
+    /**
+     * Creates an ImageView for the given placed card.
+     *
+     * @param placedCard the placed card to create an ImageView for
+     * @return the ImageView representing the placed card
+     */
+    private ImageView getImageView(PlacedCard placedCard) {
         Image image = ImageLoader.getImage(placedCard.card().asString());
         ImageView imageView = new ImageView(image);
 
@@ -101,16 +124,23 @@ public class Board extends Application {
         return imageView;
     }
 
-    private Position getPositionOnBoard(int x, int y){
-
-        Position pos =
-                new Position(centerBoardX+(x*(cardX-cardCornerX)), centerBoardY+(y*(cardY-cardCornerY)));
-
-        return pos;
+    /**
+     * Calculates the position on the board for the given coordinates.
+     *
+     * @param x the x coordinate
+     * @param y the y coordinate
+     * @return the position on the board
+     */
+    private Position getPositionOnBoard(int x, int y) {
+        return new Position(centerBoardX + (x * (cardX - cardCornerX)), centerBoardY + (y * (cardY - cardCornerY)));
     }
 
+    /**
+     * The main method to launch the JavaFX application.
+     *
+     * @param args the command-line arguments
+     */
     public static void main(String[] args) {
         launch(args);
     }
-
 }

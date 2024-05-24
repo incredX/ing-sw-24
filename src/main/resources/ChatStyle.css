@@ -1,0 +1,115 @@
+* {
+    -fx-primary : #EDE2BB;
+    -fx-secondary : #412911;
+    -fx-listcell : #FFFFFF;
+}
+
+.root {
+    -fx-background-color: -fx-secondary;
+    -fx-border-color: -fx-secondary;
+    -fx-border-width: 5;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 6px;
+}
+
+
+.VBox {
+    -fx-background-color: -fx-primary;
+}
+
+.scroll-pane {
+    -fx-background-color: -fx-primary;
+}
+
+.scroll-pane .scroll-bar:horizontal,
+.scroll-pane .scroll-bar:vertical,
+.list-view .scroll-bar:vertical {
+    -fx-background-color: -fx-secondary;
+    -fx-border-color: -fx-primary;
+    -fx-border-width: 2;
+    -fx-border-radius: 3px;
+    -fx-background-radius: 3px;
+}
+
+
+.increment-button, .decrement-button {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.scroll-bar:horizontal .thumb,
+.scroll-bar:vertical .thumb {
+    -fx-background-color: -fx-primary;
+    -fx-background-radius: 1em;
+}
+
+.scroll-bar > .increment-button > .increment-arrow,
+.scroll-bar > .decrement-button > .decrement-arrow {
+    -fx-background-color: -fx-primary;
+}
+
+.list-view {
+    -fx-background-color: -fx-primary;
+    -fx-border-color: -fx-secondary;
+    -fx-border-width: 2;
+    -fx-border-radius: 3px;
+}
+
+.text-area{
+    -fx-background-color: -fx-primary;
+    -fx-font-family: 'Georgia';
+    -fx-font-size: 10px;
+    -fx-text-fill: -fx-secondary;
+    -fx-background-radius: 0.0px;
+    -fx-border-radius: 0.0px;
+    -fx-background-insets: 2;
+}
+
+.text-area:focused .content {
+    -fx-border-width: 3;
+    -fx-border-radius: 4px;
+    -fx-border-color: -fx-secondary;
+}
+
+.list-cell:even {
+    -fx-text-fill: -fx-secondary;
+    -fx-font-family: 'Georgia';
+    -fx-font-size: 10pt;
+}
+
+.list-cell:odd {
+    -fx-background-color: -fx-primary;
+    -fx-text-fill: -fx-secondary;
+    -fx-font-family: 'Georgia';
+    -fx-font-size: 10pt;
+}
+
+.list-view .list-cell:selected:even {
+    -fx-background-color: -fx-listcell;
+}
+
+
+#messageBox {
+    -fx-background-color: -fx-primary;
+    -fx-text-fill: -fx-secondary;
+    -fx-font-family: 'Georgia';
+    -fx-font-size: 10pt;
+}
+
+.button {
+    -fx-text-fill: -fx-secondary;
+    -fx-font-family: 'Georgia';
+    -fx-background-color: -fx-primary;
+    -fx-border-width: 3;
+    -fx-border-color: -fx-secondary;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+    -fx-background-insets: 1px;
+    -fx-font-size: 14px;
+}
+
+.button:hover {
+    -fx-border-color: -fx-secondary;
+    -fx-background-color: -fx-secondary;
+    -fx-text-fill: -fx-primary;
+}

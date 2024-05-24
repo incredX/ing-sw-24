@@ -131,13 +131,14 @@ public class ServerHandlerGUI implements Runnable {
                 loginSceneController.resetServerHandler();
                 try {
                     loginSceneController.restart();
+                    loginSceneController.showPopUpNotification("Server full, try again later.");
                 } catch (Exception e) {
-                    throw new RuntimeException(e);
+                    System.out.println("Server full, try again later.");
                 }
             });
             shutdown();
         } else {
-            String msg = serverEvent.get("error").getAsString();
+            String msg = "<Server - error> " + serverEvent.get("error").getAsString();
             addMessage(msg);
         }
     }
@@ -161,8 +162,11 @@ public class ServerHandlerGUI implements Runnable {
      */
     private void handleDisconnectedEvent(JsonObject serverEvent) {
         String playerDisconnected = serverEvent.get("player").getAsString();
-        if (gameSceneController == (null))
-            Platform.runLater(() -> setupSceneController.removePlayer(playerDisconnected));
+        //TODO: check why in login message doesn't work
+        if (gameSceneController == (null)) {
+            if (setupSceneController != null)
+                Platform.runLater(() -> setupSceneController.removePlayer(playerDisconnected));
+        }
         else {
             Platform.runLater(() -> gameSceneController.removePlayer(playerDisconnected));
         }
@@ -180,7 +184,14 @@ public class ServerHandlerGUI implements Runnable {
 
         if (currentPlayerTurn.equals("")) {
             if (serverEvent.has("gameFinished")) {
-                Platform.runLater(() -> gameSceneController.updateGame(playerScores));
+                Platform.runLater(() -> {
+                    try {
+
+                        gameSceneController.updateGame(playerScores);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
                 Platform.runLater(() -> gameSceneController.showPopUpNotification("The game is finished, check scoreboard for the winner"));
                 Platform.runLater(() -> gameSceneController.disableAllCardInputs(true));
             } else {
@@ -196,7 +207,13 @@ public class ServerHandlerGUI implements Runnable {
                 gameTurnStateStarted = true;
                 Platform.runLater(() -> setupSceneController.changeToGameState());
             }
-            Platform.runLater(() -> gameSceneController.updateGame(currentPlayerTurn, playerScores, normalDeck, goldenDeck));
+            Platform.runLater(()-> {
+                try {
+                    gameSceneController.updateGame(currentPlayerTurn,playerScores,normalDeck,goldenDeck);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            });
         }
     }
 
