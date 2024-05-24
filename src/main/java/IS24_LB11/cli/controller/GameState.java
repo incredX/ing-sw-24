@@ -101,7 +101,7 @@ public class GameState extends ClientState implements PlayerStateInterface {
     }
 
     /**
-     * Executes the game state after settig up the stage and popups.
+     * Executes the game state after setting up the stage and popups.
      *
      * @return the next client state to be executed.
      */
@@ -120,11 +120,8 @@ public class GameState extends ClientState implements PlayerStateInterface {
 
     @Override
     protected void processServerDown() {
-        notificationStack.removeAllNotifications();
-        popManager.hideAllPopups();
-        serverHandler.shutdown();
         super.processServerDown();
-        setNextState(new LobbyState(viewHub));
+        setNextState(new LobbyState(this));
     }
 
     /**
@@ -141,13 +138,13 @@ public class GameState extends ClientState implements PlayerStateInterface {
                 if (newTurnEvent.player().isEmpty()) {
                     if (newTurnEvent.endOfGame()) {
                         gameOver = true;
-                        popManager.hideAllPopups();
-                        popManager.showPopup("table");
-                        popManager.getPopup("table").enable();
-                        notificationStack.add(MEDIUM, "GAME ENDED", "press [ENTER] to go back to the lobby");
-                    } else logout();
-                }
-                if (newTurnEvent.player().equals(username)) {
+                    }
+                    popManager.hideAllPopups();
+                    popManager.showPopup("table");
+                    popManager.getPopup("table").enable();
+                    cmdLine.disable();
+                    notificationStack.add(MEDIUM, "GAME ENDED", "press [ENTER] to go back to the lobby");
+                }else if (newTurnEvent.player().equals(username)) {
                     cardPlaced = false;
                     cardPicked = false;
                     playerTurn = true;
