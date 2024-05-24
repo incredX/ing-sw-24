@@ -115,8 +115,10 @@ public class AutomatedState extends ClientState {
                         selectedCardIndex = rand.nextInt(table.getNormalDeck().size());
                 }
 
-                if (handCard.asString().startsWith("G") && !handCard.isFaceDown()) handCard.flip();
-                player.placeCard(handCard, spot);
+                if (!player.placeCard(handCard, spot)) {
+                    if (!handCard.isFaceDown()) handCard.flip();
+                    player.placeCard(handCard, spot);
+                }
                 player.addCardToHand(fromGoldenDeck ? table.getGoldenDeck().get(selectedCardIndex) : table.getNormalDeck().get(selectedCardIndex));
                 try {
                     JsonObject jsonPlacedCard = (JsonObject) new JsonParser().parse(converter.objectToJSON(placedCard));

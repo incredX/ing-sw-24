@@ -20,7 +20,6 @@ public class ClientCLI {
         HashMap<String, Thread> threadMap = new HashMap<>();
 
         Debugger.startDebugger();
-        //Debugger.closeDebugger();
 
         try {
             viewHub = new ViewHub();
