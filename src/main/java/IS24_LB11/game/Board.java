@@ -71,7 +71,7 @@ public class Board implements JsonConvertable {
     public boolean placeGoldCardCheck(GoldenCard card) {
         ArrayList<Suit> suitNeeded = card.getSuitsNeeded();
         for (Symbol symbol : symbolCounter.keySet()) {
-            if (symbolCounter.get(symbol) < suitNeeded.stream().filter(x -> x == symbol).count()) {
+            if (symbolCounter.get(symbol) < suitNeeded.stream().filter(x -> x.equals(symbol)).count()) {
                 return false;
             }
         }

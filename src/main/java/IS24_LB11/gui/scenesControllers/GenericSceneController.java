@@ -166,6 +166,7 @@ public class GenericSceneController {
      */
     public void clearChat() {
         chatPane.getItems().clear();
+        chat.clearChat();
     }
 
     /**
