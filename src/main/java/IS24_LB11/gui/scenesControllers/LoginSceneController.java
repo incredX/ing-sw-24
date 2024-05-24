@@ -55,7 +55,7 @@ public class LoginSceneController extends GenericSceneController {
         this.stage = new Stage();
         this.state = (LoginGUIState) state;
         this.genericState = state;
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/LoginPage.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/FXMLScenes/LoginPage.fxml"));
         loader.setController(this);
         this.stage.setTitle("Codex");
         try {

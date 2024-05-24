@@ -16,6 +16,7 @@ import IS24_LB11.gui.scenesControllers.ScoreboardController.ScoreboardCoordinate
 import javafx.animation.SequentialTransition;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
+
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -158,7 +159,7 @@ public class GameSceneController extends GenericSceneController{
         this.state = (GameGUIState) state;
         this.genericState=state;
         this.stage = stage;
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/GamePage.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/FXMLScenes/GamePage.fxml"));
         loader.setController(this);
 
         this.stage.setTitle("Codex");
@@ -184,7 +185,7 @@ public class GameSceneController extends GenericSceneController{
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
         boardBackground.setImage(new Image(GameSceneController.class.getResourceAsStream("/graphicResources/backGround.jpeg")));
-//        cardBackground.setImage(new Image(GameSceneController.class.getResourceAsStream("/graphicResources/backGround.jpeg")));
+        //cardBackground.setImage(new Image(GameSceneController.class.getResourceAsStream("/graphicResources/backGround.jpeg")));
         // button and image event has to be declared here
         handCard1.setOnMouseClicked(mouseEvent -> chooseHandCard(0));
         handCard2.setOnMouseClicked(mouseEvent -> chooseHandCard(1));
@@ -203,6 +204,7 @@ public class GameSceneController extends GenericSceneController{
 
         centerBoardButton.setOnAction(mouseEvent -> moveToCenter(scrollPane));
 
+        chatBox.getStylesheets().add("/ChatStyle.css");
         chatBox.setOnMouseEntered(mouseEvent -> chatDisplay());
         chatBox.setOnMouseExited(mouseEvent -> chatHide());
         buttonSend.setOnMouseClicked(mouseEvent -> send());
@@ -367,15 +369,14 @@ public class GameSceneController extends GenericSceneController{
 
         state.update(playerScores);
 
+        updateScore();
+
         for (int i=0; i <state.getPlayers().size(); i++) {
             finalScore[i]=state.getPlayersScore().get(state.getPlayers().get(i));
-            System.out.println(finalScore[i]);
         }
 
 
         executeAnimations(initScore, finalScore);
-
-        updateScore();
     }
 
     private void disableGenericDeck(ImageView deckCard1, ImageView deckCard2, ImageView deckCard3, Boolean disable, Boolean deckType){
