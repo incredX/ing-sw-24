@@ -61,7 +61,12 @@ public class Player implements JsonConvertable {
     }
 
     public Result<Position> tryPlaceCard(PlayableCard card, Position position) {
-        return board.tryPlaceCard(card, position).execIfOk(() -> hand.removeIf(carhand -> carhand.equals(card)));
+        return board.tryPlaceCard(card, position)
+                .andThen(pos -> {
+                    if (hand.removeIf(carhand -> carhand.equals(card))) return Result.Ok(pos);
+                    ArrayList<String> hand = new ArrayList<>(getHand().stream().map(c -> c.asString()).toList());
+                    return Result.Error("card " + card.asString() + " not found in hand", "hand: " + hand);
+                });
     }
 
     /**

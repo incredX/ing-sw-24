@@ -162,7 +162,7 @@ public class Game {
         }
         Result<String> status;
         if (finalTurn) status = Result.Ok(executeFinalTurn(position, playableCard));
-        else status = tryExecNormalTurn(position, playableCard, deckType, indexDeck).map(pos -> pos.toString());
+        else status = tryExecNormalTurn(position, playableCard, deckType, indexDeck).map(pos -> VALID_TURN);
 
         System.out.println("Turn status: " + status.toString() + "\n");
 
@@ -172,50 +172,50 @@ public class Game {
         return status.toString();
     }
 
-    /**
-     * Executes a normal turn for the current player.
-     *
-     * @param position     the position to place the card
-     * @param playableCard the card to be played
-     * @param deckType     the type of deck (true for golden, false for normal)
-     * @param indexDeck    the index of the card in the deck
-     * @return a message indicating the result of the turn
-     * @throws DeckException   if there is an error with the deck
-     * @throws JsonException   if there is a JSON error
-     * @throws SyntaxException if there is a syntax error
-     */
-    private String executeNormalTurn(Position position, PlayableCard playableCard, boolean deckType, int indexDeck) throws DeckException, JsonException, SyntaxException {
-        Player player = currentPlayer();
-        String faceDown = playableCard.isFaceDown() ? "face-down" : "face-up";
-        String suit = playableCard.getSuit().toString();
-
-        System.out.printf("executing turn of %s (turn %d)\n", currentPlayer().name(), turn);
-        System.out.println("available spots: " + player.getBoard().getAvailableSpots());
-        System.out.printf("placed card: %s in %s (%s, %s)\n", playableCard.asString(), position, suit, faceDown);
-
-        if (normalDeck.isEmpty() && !deckType)
-            return CANT_DRAW_FROM_NORMAL_DECK_IS_EMPTY;
-        if (goldenDeck.isEmpty() && deckType)
-            return CANT_DRAW_FROM_GOLDEN_DECK_IS_EMPTY;
-        if ((!deckType && normalDeck.getCards().size() - indexDeck < 0) || (deckType && goldenDeck.getCards().size() - indexDeck < 0) || indexDeck < 1 || indexDeck > 3)
-            return INDEX_DECK_WRONG;
-        if (!player.placeCard(playableCard, position))
-            return INVALID_POSITION_CARD_OR_NOT_IN_HAND;
-        else {
-            player.incrementScoreLastCardPlaced();
-        }
-
-        if (!deckType) {
-            player.addCardToHand((PlayableCard) normalDeck.drawCard(indexDeck));
-        } else if (deckType) {
-            player.addCardToHand((PlayableCard) goldenDeck.drawCard(indexDeck));
-        }
-
-        turn++;
-        if (!finalTurn)
-            isFinalTurn();
-        return VALID_TURN;
-    }
+//    /**
+//     * Executes a normal turn for the current player.
+//     *
+//     * @param position     the position to place the card
+//     * @param playableCard the card to be played
+//     * @param deckType     the type of deck (true for golden, false for normal)
+//     * @param indexDeck    the index of the card in the deck
+//     * @return a message indicating the result of the turn
+//     * @throws DeckException   if there is an error with the deck
+//     * @throws JsonException   if there is a JSON error
+//     * @throws SyntaxException if there is a syntax error
+//     */
+//    private String executeNormalTurn(Position position, PlayableCard playableCard, boolean deckType, int indexDeck) throws DeckException, JsonException, SyntaxException {
+//        Player player = currentPlayer();
+//        String faceDown = playableCard.isFaceDown() ? "face-down" : "face-up";
+//        String suit = playableCard.getSuit().toString();
+//
+//        System.out.printf("executing turn of %s (turn %d)\n", currentPlayer().name(), turn);
+//        System.out.println("available spots: " + player.getBoard().getAvailableSpots());
+//        System.out.printf("placed card: %s in %s (%s, %s)\n", playableCard.asString(), position, suit, faceDown);
+//
+//        if (normalDeck.isEmpty() && !deckType)
+//            return CANT_DRAW_FROM_NORMAL_DECK_IS_EMPTY;
+//        if (goldenDeck.isEmpty() && deckType)
+//            return CANT_DRAW_FROM_GOLDEN_DECK_IS_EMPTY;
+//        if ((!deckType && normalDeck.getCards().size() - indexDeck < 0) || (deckType && goldenDeck.getCards().size() - indexDeck < 0) || indexDeck < 1 || indexDeck > 3)
+//            return INDEX_DECK_WRONG;
+//        if (!player.placeCard(playableCard, position))
+//            return INVALID_POSITION_CARD_OR_NOT_IN_HAND;
+//        else {
+//            player.incrementScoreLastCardPlaced();
+//        }
+//
+//        if (!deckType) {
+//            player.addCardToHand((PlayableCard) normalDeck.drawCard(indexDeck));
+//        } else if (deckType) {
+//            player.addCardToHand((PlayableCard) goldenDeck.drawCard(indexDeck));
+//        }
+//
+//        turn++;
+//        if (!finalTurn)
+//            isFinalTurn();
+//        return VALID_TURN;
+//    }
 
     private Result<Position> tryExecNormalTurn(Position position, PlayableCard playableCard, boolean deckType, int indexDeck) {
         Player player = currentPlayer();
@@ -244,6 +244,7 @@ public class Game {
                     } catch (DeckException e) {
                         return Result.Error("invalid turn", e.getMessage());
                     }
+                    System.out.println("hand after draw: " + new ArrayList<String>(player.getHand().stream().map(c -> c.asString()).toList()));
                     player.incrementScoreLastCardPlaced();
                     turn++;
                     if (!finalTurn) isFinalTurn();

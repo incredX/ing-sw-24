@@ -132,7 +132,7 @@ public class AutomatedState extends ClientState {
                     Debugger.print(e);
                 }
 
-                processCommandSendtoall("turn "+turn+" done");
+                //processCommandSendtoall("turn "+turn+" done");
                 turn++;
 
                 if (placementFunction.placementTerminated())
