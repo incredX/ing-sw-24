@@ -347,32 +347,32 @@ public class GameTest {
         Board board3 = new Board();
         board3.start(game.getPlayers().get(2).getSetup().getStarterCard());
         for (int i = 0; i < 5; i++) {
-            board2.placeCard(CardFactory.newPlayableCard("NIIE_IB0"), board2.getAvailableSpots().getFirst());
+            board3.placeCard(CardFactory.newPlayableCard("NIIE_IB0"), board3.getAvailableSpots().getFirst());
         }
         for (int i = 0; i < 5; i++) {
-            board2.placeCard(CardFactory.newPlayableCard("NIIE_AB0"), board2.getAvailableSpots().getFirst());
+            board3.placeCard(CardFactory.newPlayableCard("NIIE_AB0"), board3.getAvailableSpots().getFirst());
         }
         for (int i = 0; i < 5; i++) {
-            board2.placeCard(CardFactory.newPlayableCard("NIIE_FB0"), board2.getAvailableSpots().getFirst());
+            board3.placeCard(CardFactory.newPlayableCard("NIIE_FB0"), board3.getAvailableSpots().getFirst());
         }
         for (int i = 0; i < 5; i++) {
-            board2.placeCard(CardFactory.newPlayableCard("NIIE_PB0"), board2.getAvailableSpots().getFirst());
+            board3.placeCard(CardFactory.newPlayableCard("NIIE_PB0"), board3.getAvailableSpots().getFirst());
         }
         game.getPlayers().get(2).setBoard(board3);
 
         Board board4 = new Board();
         board4.start(game.getPlayers().getLast().getSetup().getStarterCard());
         for (int i = 0; i < 5; i++) {
-            board2.placeCard(CardFactory.newPlayableCard("NIIE_IB0"), board2.getAvailableSpots().getFirst());
+            board4.placeCard(CardFactory.newPlayableCard("NIIE_IB0"), board4.getAvailableSpots().getFirst());
         }
         for (int i = 0; i < 5; i++) {
-            board2.placeCard(CardFactory.newPlayableCard("NIIE_AB0"), board2.getAvailableSpots().getFirst());
+            board4.placeCard(CardFactory.newPlayableCard("NIIE_AB0"), board4.getAvailableSpots().getFirst());
         }
         for (int i = 0; i < 5; i++) {
-            board2.placeCard(CardFactory.newPlayableCard("NIIE_FB0"), board2.getAvailableSpots().getFirst());
+            board4.placeCard(CardFactory.newPlayableCard("NIIE_FB0"), board4.getAvailableSpots().getFirst());
         }
         for (int i = 0; i < 5; i++) {
-            board2.placeCard(CardFactory.newPlayableCard("NIIE_PB0"), board2.getAvailableSpots().getFirst());
+            board4.placeCard(CardFactory.newPlayableCard("NIIE_PB0"), board4.getAvailableSpots().getFirst());
         }
         game.getPlayers().getLast().setBoard(board4);
 
