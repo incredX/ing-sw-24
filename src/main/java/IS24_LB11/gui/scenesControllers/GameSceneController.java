@@ -354,7 +354,7 @@ public class GameSceneController extends GenericSceneController{
         updateScore();
 
         disableAllCardInputs(!state.isThisPlayerTurn());
-        if (currentPlayerTurn!= state.getUsername())
+        if (!currentPlayerTurn.equals(state.getUsername()))
             addMessage("<Server> It's " + currentPlayerTurn + " turn");
     }
     public void updateGame(ArrayList<Integer> playerScores) throws InterruptedException {

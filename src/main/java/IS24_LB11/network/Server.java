@@ -122,9 +122,7 @@ public class Server
     }
 
     public void removeClientHandler(ClientHandler clientHandler){
-
         clientHandlers.remove(clientHandler);
-
         if(clientHandlers.size() == 0){
             System.out.printf("All players disconnected!!!");
             game = null;
