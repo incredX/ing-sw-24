@@ -5,6 +5,8 @@ import IS24_LB11.game.components.*;
 import IS24_LB11.game.symbol.Item;
 import IS24_LB11.game.symbol.Suit;
 import IS24_LB11.game.symbol.Symbol;
+import IS24_LB11.game.tools.JsonConverter;
+import IS24_LB11.game.tools.JsonException;
 import IS24_LB11.game.utils.Direction;
 import IS24_LB11.game.utils.Position;
 
@@ -59,6 +61,12 @@ public class Board implements JsonConvertable {
         placedCards.add(new PlacedCard(card, position));
         updateCounters(position);
         updateSpots(card, position);
+        System.out.println("Placed Card: " + card.asString() + " " + position.toString());
+        try {
+            System.out.println(new JsonConverter().objectToJSON(this) + "\n\n");
+        } catch (JsonException e) {
+            throw new RuntimeException(e);
+        }
         return true;
     }
 

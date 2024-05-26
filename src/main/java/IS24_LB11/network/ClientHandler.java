@@ -5,10 +5,7 @@ import IS24_LB11.game.Player;
 import IS24_LB11.network.phases.NotifyTurnPhase;
 import com.google.gson.JsonObject;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.ArrayList;
@@ -25,7 +22,7 @@ public class ClientHandler implements Runnable {
     private String userName = null;
     private Server server;
     private boolean connectionClosed = false;
-    private static final int HEARTBEAT_INTERVAL = 1000;
+    private static final int HEARTBEAT_INTERVAL = 250;
     private long lastHeartbeatTime;
 
     private ArrayList<Thread> allStartedThreads = new ArrayList<>();
@@ -56,7 +53,7 @@ public class ClientHandler implements Runnable {
                         heartbeat.addProperty("type", "heartbeat");
                         sendMessage(heartbeat.toString());
                         Thread.sleep(HEARTBEAT_INTERVAL);
-                        System.out.println(userName + " -> " + (System.currentTimeMillis() - lastHeartbeatTime));
+                        //System.out.println(userName + " -> " + (System.currentTimeMillis() - lastHeartbeatTime));
                         if (System.currentTimeMillis() - lastHeartbeatTime > HEARTBEAT_INTERVAL * 5.5) {
                             System.out.println("Heartbeat timed out for " + userName);
 
@@ -80,7 +77,6 @@ public class ClientHandler implements Runnable {
 
             heartbeatThread.start();
             addToStartedThreads(heartbeatThread);
-
             String inputLine;
             try {
                 while (!connectionClosed && (inputLine = in.readLine()) != null) {
