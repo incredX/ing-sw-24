@@ -120,7 +120,7 @@ public class ServerHandler extends Listener implements Runnable {
         if (object.has("type") && !object.get("type").getAsString().equalsIgnoreCase("heartbeat"))
             Debugger.print("to server: " + object);
         writer.println(object.toString());
-        if (serverIp.equals("localhost")) writer.flush();
+        writer.flush();
     }
 
     /**
