@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SplitPane?>
@@ -21,6 +22,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.paint.Color?>
+<?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
@@ -217,8 +219,8 @@
                                     <GridPane layoutX="31.0" layoutY="266.0" prefHeight="155.0" prefWidth="264.0">
                                        <columnConstraints>
                                           <ColumnConstraints hgrow="SOMETIMES" maxWidth="98.0" minWidth="10.0" prefWidth="58.0" />
-                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="192.0" minWidth="10.0" prefWidth="162.0" />
-                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="95.0" minWidth="10.0" prefWidth="88.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="192.0" minWidth="10.0" prefWidth="138.3193817138672" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="95.0" minWidth="10.0" prefWidth="82.68061828613281" />
                                        </columnConstraints>
                                        <rowConstraints>
                                           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -237,6 +239,9 @@
                                                       <Color red="0.2549019753932953" green="0.16078431904315948" blue="0.06666667014360428" />
                                                    </color></DropShadow>
                                              </effect>
+                                             <GridPane.margin>
+                                                <Insets left="10.0" />
+                                             </GridPane.margin>
                                           </ImageView>
                                           <ImageView fx:id="playerColor2" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" GridPane.rowIndex="1">
                                              <image>
@@ -248,6 +253,9 @@
                                                       <Color red="0.2549019753932953" green="0.16078431904315948" blue="0.06666667014360428" />
                                                    </color></DropShadow>
                                              </effect>
+                                             <GridPane.margin>
+                                                <Insets left="10.0" />
+                                             </GridPane.margin>
                                           </ImageView>
                                           <ImageView fx:id="playerColor3" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" GridPane.rowIndex="2">
                                              <image>
@@ -259,6 +267,9 @@
                                                       <Color red="0.2549019753932953" green="0.16078431904315948" blue="0.06666667014360428" />
                                                    </color></DropShadow>
                                              </effect>
+                                             <GridPane.margin>
+                                                <Insets left="10.0" />
+                                             </GridPane.margin>
                                           </ImageView>
                                           <ImageView fx:id="playerColor4" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" GridPane.rowIndex="3">
                                              <image>
@@ -270,39 +281,66 @@
                                                       <Color red="0.2549019753932953" green="0.16078431904315948" blue="0.06666667014360428" />
                                                    </color></DropShadow>
                                              </effect>
+                                             <GridPane.margin>
+                                                <Insets left="10.0" />
+                                             </GridPane.margin>
                                           </ImageView>
                                           <Text fx:id="playerName1" strokeType="OUTSIDE" strokeWidth="0.0" text="Player1" textAlignment="JUSTIFY" GridPane.columnIndex="1">
                                              <font>
                                                 <Font size="20.0" />
-                                             </font></Text>
+                                             </font>
+                                             <GridPane.margin>
+                                                <Insets left="15.0" />
+                                             </GridPane.margin></Text>
                                           <Text fx:id="playerName2" strokeType="OUTSIDE" strokeWidth="0.0" text="Player2" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                              <font>
                                                 <Font size="20.0" />
-                                             </font></Text>
+                                             </font>
+                                             <GridPane.margin>
+                                                <Insets left="15.0" />
+                                             </GridPane.margin></Text>
                                           <Text fx:id="playerName3" strokeType="OUTSIDE" strokeWidth="0.0" text="Player3" GridPane.columnIndex="1" GridPane.rowIndex="2">
                                              <font>
                                                 <Font size="20.0" />
-                                             </font></Text>
+                                             </font>
+                                             <GridPane.margin>
+                                                <Insets left="15.0" />
+                                             </GridPane.margin></Text>
                                           <Text fx:id="playerName4" strokeType="OUTSIDE" strokeWidth="0.0" text="Player4" GridPane.columnIndex="1" GridPane.rowIndex="3">
                                              <font>
                                                 <Font size="20.0" />
-                                             </font></Text>
+                                             </font>
+                                             <GridPane.margin>
+                                                <Insets left="15.0" />
+                                             </GridPane.margin></Text>
                                           <Text fx:id="playerScore1" strokeType="OUTSIDE" strokeWidth="0.0" text="0" GridPane.columnIndex="2">
                                              <font>
                                                 <Font size="20.0" />
-                                             </font></Text>
+                                             </font>
+                                             <GridPane.margin>
+                                                <Insets left="10.0" />
+                                             </GridPane.margin></Text>
                                           <Text fx:id="playerScore2" strokeType="OUTSIDE" strokeWidth="0.0" text="0" GridPane.columnIndex="2" GridPane.rowIndex="1">
                                              <font>
                                                 <Font size="20.0" />
-                                             </font></Text>
+                                             </font>
+                                             <GridPane.margin>
+                                                <Insets left="10.0" />
+                                             </GridPane.margin></Text>
                                           <Text fx:id="playerScore3" strokeType="OUTSIDE" strokeWidth="0.0" text="0" GridPane.columnIndex="2" GridPane.rowIndex="2">
                                              <font>
                                                 <Font size="20.0" />
-                                             </font></Text>
+                                             </font>
+                                             <GridPane.margin>
+                                                <Insets left="10.0" />
+                                             </GridPane.margin></Text>
                                           <Text fx:id="playerScore4" strokeType="OUTSIDE" strokeWidth="0.0" text="0" GridPane.columnIndex="2" GridPane.rowIndex="3">
                                              <font>
                                                 <Font size="20.0" />
-                                             </font></Text>
+                                             </font>
+                                             <GridPane.margin>
+                                                <Insets left="10.0" />
+                                             </GridPane.margin></Text>
                                        </children>
                                     </GridPane>
                                     <ImageView fitHeight="676.0" fitWidth="365.0" pickOnBounds="true" preserveRatio="true" x="350.0" y="5.0">
@@ -379,36 +417,57 @@
                                              <font>
                                                 <Font size="20.0" />
                                              </font>
+                                             <GridPane.margin>
+                                                <Insets left="5.0" />
+                                             </GridPane.margin>
                                           </Text>
                                           <Text fx:id="plant" strokeType="OUTSIDE" strokeWidth="0.0" text="0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                              <font>
                                                 <Font size="20.0" />
                                              </font>
+                                             <GridPane.margin>
+                                                <Insets left="5.0" />
+                                             </GridPane.margin>
                                           </Text>
                                           <Text fx:id="insect" strokeType="OUTSIDE" strokeWidth="0.0" text="0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                                              <font>
                                                 <Font size="20.0" />
                                              </font>
+                                             <GridPane.margin>
+                                                <Insets left="5.0" />
+                                             </GridPane.margin>
                                           </Text>
                                           <Text fx:id="mushroom" strokeType="OUTSIDE" strokeWidth="0.0" text="0" GridPane.columnIndex="1" GridPane.rowIndex="3">
                                              <font>
                                                 <Font size="20.0" />
                                              </font>
+                                             <GridPane.margin>
+                                                <Insets left="5.0" />
+                                             </GridPane.margin>
                                           </Text>
                                           <Text fx:id="inkwell" strokeType="OUTSIDE" strokeWidth="0.0" text="0" GridPane.columnIndex="1" GridPane.rowIndex="4">
                                              <font>
                                                 <Font size="20.0" />
                                              </font>
+                                             <GridPane.margin>
+                                                <Insets left="5.0" />
+                                             </GridPane.margin>
                                           </Text>
                                           <Text fx:id="quill" strokeType="OUTSIDE" strokeWidth="0.0" text="0" GridPane.columnIndex="1" GridPane.rowIndex="5">
                                              <font>
                                                 <Font size="20.0" />
                                              </font>
+                                             <GridPane.margin>
+                                                <Insets left="5.0" />
+                                             </GridPane.margin>
                                           </Text>
                                           <Text fx:id="manuscript" strokeType="OUTSIDE" strokeWidth="0.0" text="0" GridPane.columnIndex="1" GridPane.rowIndex="6">
                                              <font>
                                                 <Font size="20.0" />
                                              </font>
+                                             <GridPane.margin>
+                                                <Insets left="5.0" />
+                                             </GridPane.margin>
                                           </Text>
                                           <ImageView fitHeight="80.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true" GridPane.rowIndex="6">
                                              <image>
@@ -484,6 +543,10 @@
                                           </ImageView>
                                        </children>
                                     </GridPane>
+                                    <Rectangle arcHeight="5.0" arcWidth="5.0" height="617.0" layoutX="728.0" layoutY="35.0" stroke="#412911" strokeType="INSIDE" strokeWidth="3.0" style="-fx-fill: transparent;" width="177.0" />
+                                    <Label fx:id="symbolsLabel" layoutX="765.0" layoutY="20.0" text="Symbols" />
+                                    <Rectangle arcHeight="5.0" arcWidth="5.0" height="192.0" layoutX="25.0" layoutY="245.0" stroke="#412911" strokeType="INSIDE" strokeWidth="3.0" style="-fx-fill: transparent;" width="233.0" />
+                                    <Label fx:id="playersLabel" layoutX="99.0" layoutY="230.0" text="Players" />
                                  </children></AnchorPane>
                             <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="686.5" prefWidth="303.0">
                                  <children>

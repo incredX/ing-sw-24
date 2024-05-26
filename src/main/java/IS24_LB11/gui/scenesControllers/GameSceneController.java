@@ -652,7 +652,7 @@ public class GameSceneController extends GenericSceneController{
 
         if(this.state.getPlayer().name().equals("Jonh") || this.state.getPlayer().name().equals("John") ||
                 this.state.getPlayer().name().equals("john") || this.state.getPlayer().name().equals("jonh"))
-            boardBackground.setImage(new Image(GameSceneController.class.getResourceAsStream("/graphicResources/codexCards/croppedCards/croppedBack/GXB.png")));
+            boardBackground.setImage(new Image(GameSceneController.class.getResourceAsStream("/graphicResources/Deck1.jpg")));
 
 
         Position realPosition = getRealPosition((int)availableSpot.getLayoutX(), (int)availableSpot.getLayoutY());
