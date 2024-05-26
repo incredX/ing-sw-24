@@ -1,6 +1,6 @@
 {
-  "username" : "automata_01",
-  "serverAddress" : "localhost",
+  "username" : "automata_01_gabbo",
+  "serverAddress" : "172.20.10.5",
   "serverPort" : 54321,
   "numPlayers" : 0, // num of players to be set (if equals to 0, this step will be skipped)
   // note: the choice of the setup is automatic.

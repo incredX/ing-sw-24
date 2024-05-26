@@ -68,7 +68,7 @@ public class Board implements JsonConvertable {
         updateSpots(card, position);
         System.out.println("Placed Card: " + card.asString() + " " + position.toString());
         try {
-            System.out.println(new JsonConverter().objectToJSON(this) + "\n\n");
+            System.out.println(new JsonConverter().objectToJSON(this));
         } catch (JsonException e) {
             throw new RuntimeException(e);
         }

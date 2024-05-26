@@ -30,7 +30,7 @@ public class TurnPhase {
         String status = null;
         try {
             PlacedCard placedCard = (PlacedCard) new JsonConverter().JSONToObject(event.get("placedCard").toString());
-            System.out.println("Converted card from json converter: " + placedCard.card().asString() + "  " + placedCard.position().toString());
+
             status = clientHandler.getGame().executeTurn(
                     clientHandler.getUserName(),
                     placedCard.position(),
@@ -38,7 +38,7 @@ public class TurnPhase {
                     event.get("deckType").getAsBoolean(),
                     event.get("indexVisibleCards").getAsInt()
             );
-            System.out.println("Status: " + status + "    " + clientHandler.getUserName());
+            System.out.println("Status: " + status + "    " + clientHandler.getUserName() + "\n\n");
         } catch (JsonException e) {
             throw new RuntimeException(e);
         } catch (DeckException e) {
