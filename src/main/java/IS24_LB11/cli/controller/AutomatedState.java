@@ -52,7 +52,7 @@ public class AutomatedState extends ClientState {
         System.out.println("Running automated state...");
         new Thread(serverHandler).start();
 
-        try { Thread.sleep(250); }
+        try { Thread.sleep(200); }
         catch (InterruptedException e) { Debugger.print(e); }
 
         if (numPlayers >= 2) {
@@ -62,7 +62,7 @@ public class AutomatedState extends ClientState {
             sendToServer("numOfPlayers", "numOfPlayers", numPlayers);
         } else {
             try {
-                Thread.sleep(1000);
+                Thread.sleep(500);
                 sendToServer("login", "username", username);
             } catch (InterruptedException e) {
                 Debugger.print(e);
