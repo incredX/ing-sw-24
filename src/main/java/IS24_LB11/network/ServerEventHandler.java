@@ -36,12 +36,10 @@ public class ServerEventHandler {
      * @param ch the client handler managing the client
      * @param eventJson the JSON string representing the event
      */
-    public static void handleEvent(ClientHandler ch, String eventJson) {
+    public static void handleEvent(ClientHandler ch, JsonObject event) {
         clientHandler = ch;
 
-        JsonObject event = gson.fromJson(eventJson, JsonObject.class);
         String eventType = event.get("type").getAsString().toLowerCase();
-
         switch (eventType) {
             case "login":
                 handleLoginEvent(event);

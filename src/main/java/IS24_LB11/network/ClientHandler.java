@@ -3,14 +3,14 @@ package IS24_LB11.network;
 import IS24_LB11.game.Game;
 import IS24_LB11.game.Player;
 import IS24_LB11.network.phases.NotifyTurnPhase;
+import com.google.gson.JsonIOException;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonStreamParser;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.net.SocketException;
 import java.util.ArrayList;
 
 /**
@@ -20,7 +20,7 @@ import java.util.ArrayList;
  */
 public class ClientHandler implements Runnable {
     private Socket clientSocket;
-    private BufferedReader in;
+    private JsonStreamParser parser;
     private PrintWriter out;
     private String userName = null;
     private Server server;
@@ -56,7 +56,7 @@ public class ClientHandler implements Runnable {
                         heartbeat.addProperty("type", "heartbeat");
                         sendMessage(heartbeat.toString());
                         Thread.sleep(HEARTBEAT_INTERVAL);
-                        System.out.println(userName + " -> " + (System.currentTimeMillis() - lastHeartbeatTime));
+//                        System.out.println(userName + " -> " + (System.currentTimeMillis() - lastHeartbeatTime));
                         if (System.currentTimeMillis() - lastHeartbeatTime > HEARTBEAT_INTERVAL * 5.5) {
                             System.out.println("Heartbeat timed out for " + userName);
 
@@ -75,7 +75,7 @@ public class ClientHandler implements Runnable {
             });
 
             // Wait for inputs from client
-            in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+            parser = new JsonStreamParser(new InputStreamReader(clientSocket.getInputStream()));
             out = new PrintWriter(clientSocket.getOutputStream());
 
             heartbeatThread.start();
@@ -83,12 +83,12 @@ public class ClientHandler implements Runnable {
 
             String inputLine;
             try {
-                while (!connectionClosed && (inputLine = in.readLine()) != null) {
+                while (!connectionClosed && parser.hasNext()) {
                     // Handle the received JSON data
-                    ServerEventHandler.handleEvent(this, inputLine);
+                    ServerEventHandler.handleEvent(this, parser.next().getAsJsonObject());
                 }
-            } catch (SocketException socketException){
-                System.out.println("Socket Exception...");
+            } catch (JsonIOException e){
+
             }
 
 
@@ -234,7 +234,6 @@ public class ClientHandler implements Runnable {
                 }
 
                 connectionClosed = true;
-                in.close();
                 out.close();
                 clientSocket.close();
                 for (Thread thread : allStartedThreads) {
