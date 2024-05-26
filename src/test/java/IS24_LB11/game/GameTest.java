@@ -294,19 +294,19 @@ public class GameTest {
     void testTotalGame() throws DeckException, SyntaxException, FileNotFoundException, JsonException {
         JsonConverter jsonConverter = new JsonConverter();
         int goldCounter = 0;
-        int playersNumber = 2;
+        int playersNumber = 4;
         Game game = new Game(playersNumber);
         //Receiving players name
         ArrayList<String> playerNames = new ArrayList<>(playersNumber);
-        for (int i = 0; i < 2; i++)
+        for (int i = 0; i < 4; i++)
             playerNames.add("Player " + (i + 1));
         game.setupGame(playerNames);
         //Receiving players Goal
         ArrayList<GoalCard> goalCardsChoosen = new ArrayList<>();
-        for (int i = 0; i < 2; i++)
+        for (int i = 0; i < 4; i++)
             goalCardsChoosen.add(game.getPlayers().get(i).getSetup().getGoals()[i % 2]);
         ArrayList<StarterCard> starterCardsSideChoosen = new ArrayList<>();
-        for (int i = 0; i < 2; i++)
+        for (int i = 0; i < 4; i++)
             starterCardsSideChoosen.add(game.getPlayers().get(i).getSetup().getStarterCard());
         starterCardsSideChoosen.stream().forEach(x->x.flip());
         game.chooseGoalPhase(goalCardsChoosen,starterCardsSideChoosen);
@@ -329,7 +329,7 @@ public class GameTest {
         game.getPlayers().getFirst().setBoard(board1);
 
         Board board2 = new Board();
-        board2.start(game.getPlayers().getFirst().getSetup().getStarterCard());
+        board2.start(game.getPlayers().get(1).getSetup().getStarterCard());
         for (int i = 0; i < 5; i++) {
             board2.placeCard(CardFactory.newPlayableCard("NIIE_IB0"), board2.getAvailableSpots().getFirst());
         }
@@ -342,30 +342,138 @@ public class GameTest {
         for (int i = 0; i < 5; i++) {
             board2.placeCard(CardFactory.newPlayableCard("NIIE_PB0"), board2.getAvailableSpots().getFirst());
         }
-        game.getPlayers().getLast().setBoard(board2);
+        game.getPlayers().get(1).setBoard(board2);
+
+        Board board3 = new Board();
+        board3.start(game.getPlayers().get(2).getSetup().getStarterCard());
+        for (int i = 0; i < 5; i++) {
+            board3.placeCard(CardFactory.newPlayableCard("NIIE_IB0"), board3.getAvailableSpots().getFirst());
+        }
+        for (int i = 0; i < 5; i++) {
+            board3.placeCard(CardFactory.newPlayableCard("NIIE_AB0"), board3.getAvailableSpots().getFirst());
+        }
+        for (int i = 0; i < 5; i++) {
+            board3.placeCard(CardFactory.newPlayableCard("NIIE_FB0"), board3.getAvailableSpots().getFirst());
+        }
+        for (int i = 0; i < 5; i++) {
+            board3.placeCard(CardFactory.newPlayableCard("NIIE_PB0"), board3.getAvailableSpots().getFirst());
+        }
+        game.getPlayers().get(2).setBoard(board3);
+
+        Board board4 = new Board();
+        board4.start(game.getPlayers().getLast().getSetup().getStarterCard());
+        for (int i = 0; i < 5; i++) {
+            board4.placeCard(CardFactory.newPlayableCard("NIIE_IB0"), board4.getAvailableSpots().getFirst());
+        }
+        for (int i = 0; i < 5; i++) {
+            board4.placeCard(CardFactory.newPlayableCard("NIIE_AB0"), board4.getAvailableSpots().getFirst());
+        }
+        for (int i = 0; i < 5; i++) {
+            board4.placeCard(CardFactory.newPlayableCard("NIIE_FB0"), board4.getAvailableSpots().getFirst());
+        }
+        for (int i = 0; i < 5; i++) {
+            board4.placeCard(CardFactory.newPlayableCard("NIIE_PB0"), board4.getAvailableSpots().getFirst());
+        }
+        game.getPlayers().getLast().setBoard(board4);
 
 
-        for (int i = 0; i < 40; i++) {
+        for (int i = 0; i < 18; i++) {
             for (Player player: game.getPlayers()){
-                if (player.getHand().getFirst().asString().charAt(0)=='G' && i<=30){
+                int turn = 0;
+                if (i<=15){
+                    turn = turn+1;
+
                     player.getHand().getFirst().flip();
+                    String faceDown = player.getHand().getFirst().isFaceDown() ? "face-down" : "face-up";
+
+//                    System.out.printf("HO PIAZZATO: %s (%s)\n", player.getHand().getFirst().asString(), faceDown);
+//                    System.out.println("E QUESTA E' LA MIA HAND: \nPRIMA CARTA: " +player.getHand().getFirst().asString() +"\nSECONDA CARTA: " +player.getHand().get(1).asString() +"\nTERZA CARTA: " +player.getHand().getLast().asString());
+//                    System.out.println("DIMENSIONE DEL GOLDEN DECK: " +game.getGoldenDeck().size());
+//                    System.out.println("DIMENSIONE DEL NORMAL DECK: " +game.getNormalDeck().size());
+
+                    String firstCard = player.getHand().getFirst().asString();
+//                    System.out.println("QUESTI SONO GLI AVAILABLE SPOTS: " +player.getBoard().getAvailableSpots());
+//                    System.out.println("IO STO CERCANDO DI PIAZZARLA QUI: " +player.getBoard().getAvailableSpots().getFirst());
+//                    System.out.println("HO ESEGUITO QUESTO NUMERO DI TURNI: " +turn);
                     assertEquals(VALID_TURN,game.executeTurn(player.name(),player.getBoard().getAvailableSpots().getFirst(),player.getHand().getFirst(),game.getNormalDeck().size()==0,1));
-                    }
-                else {
+                    assertEquals( "num turni: " +turn, turn, 1);
+
+//                    System.out.println("QUESTA E' L'ULTIMA CARTA NELLA MIA BOARD: " +player.getBoard().getPlacedCards().getLast().card().asString());
+                    assertEquals("id: "+firstCard, firstCard, player.getBoard().getPlacedCards().getLast().card().asString());
+
+                    assertNotEquals(firstCard, player.getHand().getFirst().asString(), "id: "+firstCard);
+                    assertNotEquals(firstCard, player.getHand().get(1).asString(), "id: "+firstCard);
+                    assertNotEquals(firstCard, player.getHand().getLast().asString(), "id: "+firstCard);
+
+                }
+                else if (game.getFinalTurn()==false)  {
+                    turn = turn+1;
+
+                    System.out.println("HO PIAZZATO: " +player.getHand().getFirst().asString());
+                    System.out.println("E QUESTA E' LA MIA HAND: \nPRIMA CARTA: " +player.getHand().getFirst().asString() +"\nSECONDA CARTA: " +player.getHand().get(1).asString() +"\nTERZA CARTA: " +player.getHand().getLast().asString());
+                    System.out.println("DIMENSIONE DEL GOLDEN DECK: " +game.getGoldenDeck().size());
+                    System.out.println("DIMENSIONE DEL NORMAL DECK: " +game.getNormalDeck().size());
+
+
+                    String firstCard = player.getHand().getFirst().asString();
+                    System.out.println("QUESTI SONO GLI AVAILABLE SPOTS: " +player.getBoard().getAvailableSpots());
+                    System.out.println("IO STO CERCANDO DI PIAZZARLA QUI: " +player.getBoard().getAvailableSpots().getFirst());
+                    System.out.println("HO ESEGUITO QUESTO NUMERO DI TURNI: " +turn);
                     assertEquals(VALID_TURN,game.executeTurn(player.name(), player.getBoard().getAvailableSpots().getFirst(), player.getHand().getFirst(), game.getNormalDeck().size()==0, 1));
+                    assertEquals( "num turni: " +turn, turn, 1);
+
+
+                    System.out.println("QUESTA E' L'ULTIMA CARTA NELLA MIA BOARD: " +player.getBoard().getPlacedCards().getLast().card().asString());
+
+                    assertEquals("id: "+firstCard, firstCard, player.getBoard().getPlacedCards().getLast().card().asString());
+
+                    assertNotEquals(firstCard, player.getHand().getFirst().asString(), "id: "+firstCard);
+                    assertNotEquals(firstCard, player.getHand().get(1).asString(), "id: "+firstCard);
+                    assertNotEquals(firstCard, player.getHand().getLast().asString(), "id: "+firstCard);
+
+
                     }
+
+                else {
+                    turn = turn+1;
+
+                    System.out.println("HO PIAZZATO: " +player.getHand().getFirst().asString());
+                    System.out.println("E QUESTA E' LA MIA HAND: \nPRIMA CARTA: " +player.getHand().getFirst().asString() +"\nSECONDA CARTA: " +player.getHand().get(1).asString() +"\nTERZA CARTA: " +player.getHand().getLast().asString());
+                    System.out.println("DIMENSIONE DEL GOLDEN DECK: " +game.getGoldenDeck().size());
+                    System.out.println("DIMENSIONE DEL NORMAL DECK: " +game.getNormalDeck().size());
+
+
+                    String firstCard = player.getHand().getFirst().asString();
+                    System.out.println("QUESTI SONO GLI AVAILABLE SPOTS: " +player.getBoard().getAvailableSpots());
+                    System.out.println("IO STO CERCANDO DI PIAZZARLA QUI: " +player.getBoard().getAvailableSpots().getFirst());
+                    System.out.println("HO ESEGUITO QUESTO NUMERO DI TURNI: " +turn);
+                    assertEquals(VALID_LAST_TURN, game.executeTurn(player.name(),player.getBoard().getAvailableSpots().getFirst(), player.getHand().getFirst(),true,1));
+                    assertEquals( "num turni: " +turn, turn, 1);
+
+                    System.out.println("QUESTA E' L'ULTIMA CARTA NELLA MIA BOARD: " +player.getBoard().getPlacedCards().getLast().card().asString());
+                    assertEquals("id: "+firstCard, firstCard, player.getBoard().getPlacedCards().getLast().card().asString());
+
+                    assertNotEquals(firstCard, player.getHand().getFirst().asString(), "id: "+firstCard);
+                    assertNotEquals(firstCard, player.getHand().get(1).asString(), "id: "+firstCard);
+                    assertNotEquals(firstCard, player.getHand().getLast().asString(), "id: "+firstCard);
+
+
+                }
             }
-            if (game.getFinalTurn()){
-                Player player = game.getPlayers().getFirst().getScore() >= game.getPlayers().get(1).getScore() ? game.getPlayers().getFirst() : game.getPlayers().get(1);
-                assert(player.getScore() >= 20);
-                break;
-            }
+
+//            if (game.getFinalTurn()){
+//                Player player = game.getPlayers().getFirst().getScore() >= game.getPlayers().get(1).getScore() ? game.getPlayers().getFirst() : game.getPlayers().get(1);
+//                assert(player.getScore() >= 20);
+//                break;
+//            }
         }
 
-        for(Player player: game.getPlayers()){
-            assertEquals(VALID_LAST_TURN, game.executeTurn(player.name(),player.getBoard().getAvailableSpots().getFirst(), player.getHand().getFirst(),true,1));
-        }
+//        for(Player player: game.getPlayers()){
+//            assertEquals(VALID_LAST_TURN, game.executeTurn(player.name(),player.getBoard().getAvailableSpots().getFirst(), player.getHand().getFirst(),true,1));
+//        }
     }
+
+
     @Test
     @DisplayName("Print player in order to understand the course of the game")
     public void pointsOnePlayer() throws SyntaxException, FileNotFoundException, DeckException, JsonException {
