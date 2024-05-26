@@ -1,6 +1,5 @@
 package IS24_LB11.game;
 
-import IS24_LB11.cli.Debugger;
 import IS24_LB11.game.components.*;
 import IS24_LB11.game.tools.JsonConverter;
 import IS24_LB11.game.tools.JsonException;
@@ -57,34 +56,28 @@ public class Player implements JsonConvertable {
         hand.stream().forEach(x-> System.out.printf(x.asString() + "  "));
         System.out.println();
 
-        if (hand.stream().filter(x -> x.equals(card)).count()!=1){
+        if (hand.stream().filter(x -> x.equals(card)).count()!=1) {
             System.out.println("CARD NOT FOUND " + card.asString());
             return false;
         }
 
-
-        int i=-1;
-        if (board.placeCard(card, position)) {
-            for (PlayableCard playableCard : hand) {
-                if (playableCard.equals(card))
-                    i=hand.indexOf(playableCard);
-            }
-            if (i!=-1)
-                hand.remove(i);
-            return true;
-        } else {
-            return false;
-        }
+        if (board.placeCard(card, position)) return hand.removeIf(handCard -> handCard.equals(card));
+        else return false;
     }
 
     public Result<Position> tryPlaceCard(PlayableCard card, Position position) {
-        return board.tryPlaceCard(card, position)
-                .andThen(pos -> {
-                    Debugger.print("placed " + card.asString() + " in " + pos.toString());
-                    if (hand.removeIf(carhand -> carhand.equals(card))) return Result.Ok(pos);
-                    ArrayList<String> hand = new ArrayList<>(getHand().stream().map(c -> c.asString()).toList());
-                    return Result.Error("card " + card.asString() + " not found in hand", "hand: " + hand);
-                });
+        ArrayList<String> hand = new ArrayList<>(getHand().stream().map(c -> c.asString()).toList());
+
+        System.out.println("HAND : " + hand);
+        System.out.println("PLACING CARD " + card.asString() + " IN " + position);
+
+        if (this.hand.stream().anyMatch(x -> x.equals(card))) {
+            return board.tryPlaceCard(card, position)
+                    .andThen(pos -> {
+                        if (this.hand.removeIf(carhand -> carhand.equals(card))) return Result.Ok(pos);
+                        return Result.Error("card " + card.asString() + " not found in hand", "hand: " + hand);
+                    });
+        } else return Result.Error("card " + card.asString() + " not found in hand", "hand: " + hand);
     }
 
     /**
