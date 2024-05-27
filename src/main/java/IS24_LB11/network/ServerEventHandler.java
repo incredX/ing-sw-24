@@ -16,8 +16,6 @@ import java.util.ArrayList;
  */
 public class ServerEventHandler {
 
-    private ClientHandler clientHandler;
-
     private static ArrayList<GoalCard> pickedGoalCards = new ArrayList<>();
     private static ArrayList<StarterCard> pickedStarterCards = new ArrayList<>();
 
