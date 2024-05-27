@@ -179,7 +179,10 @@ public class Game {
 //            return CANT_DRAW_FROM_GOLDEN_DECK_IS_EMPTY;
 //        if ((!deckType && normalDeck.getCards().size() - indexDeck < 0) || (deckType && goldenDeck.getCards().size() - indexDeck < 0) || indexDeck < 1 || indexDeck > 3)
 //            return INDEX_DECK_WRONG;
-        if (!player.placeCard(playableCard, position)) {
+        Result<Position> placementResult = player.tryPlaceCard(playableCard, position);
+
+        if (placementResult.isError()) {
+            System.out.println("PLACEMENT ERROR: " + placementResult.toString());
             return INVALID_POSITION_CARD_OR_NOT_IN_HAND;
         } else {
             player.incrementScoreLastCardPlaced();
@@ -214,9 +217,12 @@ public class Game {
             return GAME_ENDED;
         }
         Player player = players.get(turn % players.size());
-        if (!player.placeCard(playableCard, position))
+        Result<Position> placementResult = player.tryPlaceCard(playableCard, position);
+
+        if (placementResult.isError()) {
+            System.out.println("PLACEMENT ERROR: " + placementResult.toString());
             return INVALID_POSITION_CARD_OR_NOT_IN_HAND;
-        else {
+        } else {
             player.incrementScoreLastCardPlaced();
         }
 
