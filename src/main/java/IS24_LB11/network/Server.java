@@ -122,13 +122,15 @@ public class Server
     }
 
     public void removeClientHandler(ClientHandler clientHandler){
-        clientHandlers.remove(clientHandler);
-        if(clientHandlers.size() == 0){
-            System.out.println("All players disconnected!!!");
-            game = null;
-            gameStarted = false;
-            maxPlayers = 1;
-            ServerEventHandler.reset();
+        synchronized (this.clientHandlers) {
+            clientHandlers.remove(clientHandler);
+            if (clientHandlers.size() == 0) {
+                System.out.println("All players disconnected!!!");
+                game = null;
+                gameStarted = false;
+                maxPlayers = 1;
+                ServerEventHandler.reset();
+            }
         }
     }
 
