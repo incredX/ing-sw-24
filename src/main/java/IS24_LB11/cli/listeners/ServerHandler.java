@@ -122,10 +122,10 @@ public class ServerHandler extends Listener implements Runnable {
         if (writer == null) return;
         if (object.has("type") && !object.get("type").getAsString().equalsIgnoreCase("heartbeat"))
             Debugger.print("to server: " + object);
-        synchronized (writer) {
-            writer.println(object.toString());
-            writer.flush();
-        }
+        writer.println(object.toString());
+        writer.flush();
+//        synchronized (timerLock) {
+//        }
     }
 
     /**

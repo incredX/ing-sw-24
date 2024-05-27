@@ -183,7 +183,8 @@ public class Game {
 
         if (placementResult.isError()) {
             System.out.println("PLACEMENT ERROR: " + placementResult.toString());
-            return INVALID_POSITION_CARD_OR_NOT_IN_HAND;
+            throw new RuntimeException(placementResult.toString());
+            //return INVALID_POSITION_CARD_OR_NOT_IN_HAND;
         } else {
             player.incrementScoreLastCardPlaced();
         }
