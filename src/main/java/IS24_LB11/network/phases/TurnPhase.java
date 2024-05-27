@@ -30,8 +30,9 @@ public class TurnPhase {
         String status = null;
         try {
             PlacedCard placedCard = (PlacedCard) new JsonConverter().JSONToObject(event.get("placedCard").toString());
+            System.out.printf("Thread of %s (clientHandler: %s)\n", Thread.currentThread().getName(), clientHandler.getGame());
             status = clientHandler.getGame().executeTurn(
-                    clientHandler.getUserName(),
+                    Thread.currentThread().getName(),
                     placedCard.position(),
                     placedCard.card(),
                     event.get("deckType").getAsBoolean(),

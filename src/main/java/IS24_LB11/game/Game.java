@@ -153,7 +153,10 @@ public class Game {
      * @throws SyntaxException if there is a syntax error
      */
     public String executeTurn(String playerName, Position position, PlayableCard playableCard, boolean deckType, int indexDeck) throws JsonException, DeckException, SyntaxException {
-        if (!playerName.equals(currentPlayer().name())) return NOT_PLAYER_TURN;
+        if (!playerName.equals(currentPlayer().name())) {
+            System.out.printf("ClientHandler: %s VS PlayerName: %s\n", playerName, currentPlayer().name());
+            return NOT_PLAYER_TURN;
+        }
         if (hasGameEnded()) return GAME_ENDED;
         return finalTurn ? executeFinalTurn(position, playableCard) : executeNormalTurn(position, playableCard, deckType, indexDeck);
     }

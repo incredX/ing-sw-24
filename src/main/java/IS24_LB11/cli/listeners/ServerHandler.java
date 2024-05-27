@@ -56,7 +56,7 @@ public class ServerHandler extends Listener implements Runnable {
         try {
             state.queueEvent(new NotificationEvent("starting connection with server..."));
             socket = new Socket(serverIp, serverPort);
-            socket.setTrafficClass(0x04); // IPTOS_RELIABILITY (0x04)
+            //socket.setTrafficClass(0x04); // IPTOS_RELIABILITY (0x04)
             //socket.setKeepAlive(true);
             //socket.setTcpNoDelay(true);
             parser = new JsonStreamParser(new InputStreamReader(socket.getInputStream()));

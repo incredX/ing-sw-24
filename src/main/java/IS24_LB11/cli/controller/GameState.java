@@ -47,6 +47,7 @@ public class GameState extends ClientState implements PlayerStateInterface {
     private boolean playerTurn = false;
     private boolean finalTurn = false;
     private boolean gameOver = false;
+    private int turn = 0;
 
     /**
      * Constructs a new {@code GameState} object from a setup state.
@@ -156,6 +157,9 @@ public class GameState extends ClientState implements PlayerStateInterface {
                 table.update(newTurnEvent);
                 popManager.getOptionalPopup("decks").ifPresent(Popup::update);
                 popManager.getOptionalPopup("table").ifPresent(Popup::update);
+
+                System.out.println("\nTURN " + turn);
+                turn ++;
 
                 finalTurn = (table.getNormalDeck().isEmpty() && table.getGoldenDeck().isEmpty())
                         || table.getScoreboard().getScores().get(table.getCurrentTopPlayerIndex()) >= 20;
