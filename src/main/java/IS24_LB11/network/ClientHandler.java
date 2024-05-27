@@ -125,7 +125,8 @@ public class ClientHandler implements Runnable {
      * @return the client's username
      */
     public String getUserName() {
-        return userName;
+        //return userName;
+        return Thread.currentThread().getName();
     }
 
     /**
@@ -134,6 +135,7 @@ public class ClientHandler implements Runnable {
      */
     public void setUserName(String userName) {
         this.userName = userName;
+        Thread.currentThread().setName(userName);
     }
 
     /**

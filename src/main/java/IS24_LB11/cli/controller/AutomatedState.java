@@ -108,23 +108,23 @@ public class AutomatedState extends ClientState {
                 PlayableCard handCard = player.getHand().get(rand.nextInt(player.getHand().size()));
                 PlacedCard placedCard = new PlacedCard(handCard, spot);
                 boolean fromGoldenDeck = rand.nextFloat() < goldenRate;
-                int selectedCardIndex;
+                int deckIndex;
 
                 if (finalTurn) {
                     fromGoldenDeck = false;
-                    selectedCardIndex = 0;
+                    deckIndex = 0;
                 } else if (fromGoldenDeck) {
                     if (table.getGoldenDeck().isEmpty()) {
                         fromGoldenDeck = false;
-                        selectedCardIndex = rand.nextInt(table.getNormalDeck().size());
+                        deckIndex = rand.nextInt(table.getNormalDeck().size());
                     } else
-                        selectedCardIndex = rand.nextInt(table.getGoldenDeck().size());
+                        deckIndex = rand.nextInt(table.getGoldenDeck().size());
                 } else {
                     if (table.getNormalDeck().isEmpty()) {
                         fromGoldenDeck = true;
-                        selectedCardIndex = rand.nextInt(table.getGoldenDeck().size());
+                        deckIndex = rand.nextInt(table.getGoldenDeck().size());
                     } else
-                        selectedCardIndex = rand.nextInt(table.getNormalDeck().size());
+                        deckIndex = rand.nextInt(table.getNormalDeck().size());
                 }
 
                 System.out.println("\nTURN " + turn);
@@ -140,21 +140,12 @@ public class AutomatedState extends ClientState {
 
                 if (!finalTurn) {
                     player.addCardToHand(fromGoldenDeck ?
-                            table.getGoldenDeck().get(selectedCardIndex) :
-                            table.getNormalDeck().get(selectedCardIndex));
+                            table.getGoldenDeck().get(deckIndex) :
+                            table.getNormalDeck().get(deckIndex));
                 }
 
-                try {
-                    JsonObject jsonPlacedCard = (JsonObject) new JsonParser().parse(converter.objectToJSON(placedCard));
-                    JsonElement jsonDeckType = new JsonPrimitive(fromGoldenDeck);
-                    JsonElement jsonCardIndex = new JsonPrimitive(selectedCardIndex+1);
-                    sendToServer("turnActions", new String[]{"placedCard", "deckType", "indexVisibleCards"},
-                            new JsonElement[]{jsonPlacedCard, jsonDeckType, jsonCardIndex});
-                } catch (JsonException e) {
-                    Debugger.print(e);
-                }
+                sendTurnActions(placedCard, fromGoldenDeck, deckIndex+1);
 
-                //processCommandSendtoall("turn "+turn+" done");
                 turn++;
 
                 if (placementFunction.placementTerminated())
@@ -183,13 +174,14 @@ public class AutomatedState extends ClientState {
         //
     }
 
-    private void sendTurnActions(PlacedCard placedCard) {
+    @Override
+    protected void processServerDown() {
+        quit();
+    }
+
+    private void sendTurnActions(PlacedCard placedCard, boolean deckType, int deckIndex) {
         JsonConverter converter = new JsonConverter();
         DecksPopup decksPopup = (DecksPopup) popManager.getPopup("decks");
-
-        boolean deckType = finalTurn ? false : !decksPopup.selectedNormalDeck();
-        int deckIndex = 1 + (finalTurn ? 0 : decksPopup.getCardIndex());
-
 
         try {
             JsonObject jsonPlacedCard = (JsonObject) new JsonParser().parse(converter.objectToJSON(placedCard));
