@@ -31,6 +31,12 @@ public class GoldenCard extends NormalCard {
             suitsNeeded.add(Suit.fromCharacter(id.charAt(i)));
         }
     }
+    @Override
+    public boolean equals(PlayableCard other) {
+        String id = asString().replace('B', 'F');
+        String otherId = other.asString().replace('B', 'F');
+        return id.equals(otherId);
+    }
 
     @Override
     public String asString() {

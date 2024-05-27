@@ -38,7 +38,7 @@ public class TurnPhase {
                     event.get("deckType").getAsBoolean(),
                     event.get("indexVisibleCards").getAsInt()
             );
-
+            System.out.println("Status: " + status + "    " + clientHandler.getUserName() + "\n\n");
         } catch (JsonException e) {
             throw new RuntimeException(e);
         } catch (DeckException e) {

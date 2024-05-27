@@ -84,13 +84,14 @@ public class Game {
 
         //uncomment to test final game phase
         /*
-        for (int i = 0; i < 35; i++) {
+        for (int i = 0; i < 32; i++) {
             goldenDeck.drawCard();
             normalDeck.drawCard();
         }
         goldenDeck.drawCard();
         goldenDeck.drawCard();
         */
+        // ------------------
         for (String name : playerNames)
             setupPlayer(name);
         return GameMessages.SETUP_COMPLETE;
@@ -172,25 +173,26 @@ public class Game {
     private String executeNormalTurn(Position position, PlayableCard playableCard, boolean deckType, int indexDeck) throws DeckException, JsonException, SyntaxException {
         System.out.printf("executing turn of %s (turn %d)\n", currentPlayer().name(), turn);
         Player player = currentPlayer();
-        if (normalDeck.isEmpty() && !deckType)
-            return CANT_DRAW_FROM_NORMAL_DECK_IS_EMPTY;
-        if (goldenDeck.isEmpty() && deckType)
-            return CANT_DRAW_FROM_GOLDEN_DECK_IS_EMPTY;
-        if ((!deckType && normalDeck.getCards().size() - indexDeck < 0) || (deckType && goldenDeck.getCards().size() - indexDeck < 0) || indexDeck < 1 || indexDeck > 3)
-            return INDEX_DECK_WRONG;
-        if (!player.placeCard(playableCard, position))
+//        if (normalDeck.isEmpty() && !deckType)
+//            return CANT_DRAW_FROM_NORMAL_DECK_IS_EMPTY;
+//        if (goldenDeck.isEmpty() && deckType)
+//            return CANT_DRAW_FROM_GOLDEN_DECK_IS_EMPTY;
+//        if ((!deckType && normalDeck.getCards().size() - indexDeck < 0) || (deckType && goldenDeck.getCards().size() - indexDeck < 0) || indexDeck < 1 || indexDeck > 3)
+//            return INDEX_DECK_WRONG;
+        if (!player.placeCard(playableCard, position)) {
             return INVALID_POSITION_CARD_OR_NOT_IN_HAND;
-        else {
+        } else {
             player.incrementScoreLastCardPlaced();
         }
 
-        if (!deckType) {
+        if (!deckType && !normalDeck.isEmpty()) {
             player.addCardToHand((PlayableCard) normalDeck.drawCard(indexDeck));
-        } else if (deckType) {
+        } else if (deckType && !goldenDeck.isEmpty()) {
             player.addCardToHand((PlayableCard) goldenDeck.drawCard(indexDeck));
         }
 
         turn++;
+
         if (!finalTurn)
             isFinalTurn();
         return VALID_TURN;
@@ -206,6 +208,7 @@ public class Game {
      * @throws SyntaxException if there is a syntax error
      */
     private String executeFinalTurn(Position position, PlayableCard playableCard) throws JsonException, SyntaxException {
+        System.out.printf("executing final turn of %s (turn %d)\n", currentPlayer().name(), turn);
         if (hasGameEnded()) {
             System.out.println("game finito");
             return GAME_ENDED;

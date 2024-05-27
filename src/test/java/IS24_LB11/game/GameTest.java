@@ -384,28 +384,26 @@ public class GameTest {
                     turn = turn+1;
 
                     player.getHand().getFirst().flip();
+                    String faceDown = player.getHand().getFirst().isFaceDown() ? "face-down" : "face-up";
 
-
-                    System.out.println("HO PIAZZATO: " +player.getHand().getFirst().asString());
-                    System.out.println("E QUESTA E' LA MIA HAND: \nPRIMA CARTA: " +player.getHand().getFirst().asString() +"\nSECONDA CARTA: " +player.getHand().get(1).asString() +"\nTERZA CARTA: " +player.getHand().getLast().asString());
-                    System.out.println("DIMENSIONE DEL GOLDEN DECK: " +game.getGoldenDeck().size());
-                    System.out.println("DIMENSIONE DEL NORMAL DECK: " +game.getNormalDeck().size());
+//                    System.out.printf("HO PIAZZATO: %s (%s)\n", player.getHand().getFirst().asString(), faceDown);
+//                    System.out.println("E QUESTA E' LA MIA HAND: \nPRIMA CARTA: " +player.getHand().getFirst().asString() +"\nSECONDA CARTA: " +player.getHand().get(1).asString() +"\nTERZA CARTA: " +player.getHand().getLast().asString());
+//                    System.out.println("DIMENSIONE DEL GOLDEN DECK: " +game.getGoldenDeck().size());
+//                    System.out.println("DIMENSIONE DEL NORMAL DECK: " +game.getNormalDeck().size());
 
                     String firstCard = player.getHand().getFirst().asString();
-                    System.out.println("QUESTI SONO GLI AVAILABLE SPOTS: " +player.getBoard().getAvailableSpots());
-                    System.out.println("IO STO CERCANDO DI PIAZZARLA QUI: " +player.getBoard().getAvailableSpots().getFirst());
-                    System.out.println("HO ESEGUITO QUESTO NUMERO DI TURNI: " +turn);
+//                    System.out.println("QUESTI SONO GLI AVAILABLE SPOTS: " +player.getBoard().getAvailableSpots());
+//                    System.out.println("IO STO CERCANDO DI PIAZZARLA QUI: " +player.getBoard().getAvailableSpots().getFirst());
+//                    System.out.println("HO ESEGUITO QUESTO NUMERO DI TURNI: " +turn);
                     assertEquals(VALID_TURN,game.executeTurn(player.name(),player.getBoard().getAvailableSpots().getFirst(),player.getHand().getFirst(),game.getNormalDeck().size()==0,1));
                     assertEquals( "num turni: " +turn, turn, 1);
 
-                    System.out.println("QUESTA E' L'ULTIMA CARTA NELLA MIA BOARD: " +player.getBoard().getPlacedCards().getLast().card().asString());
+//                    System.out.println("QUESTA E' L'ULTIMA CARTA NELLA MIA BOARD: " +player.getBoard().getPlacedCards().getLast().card().asString());
                     assertEquals("id: "+firstCard, firstCard, player.getBoard().getPlacedCards().getLast().card().asString());
 
                     assertNotEquals(firstCard, player.getHand().getFirst().asString(), "id: "+firstCard);
                     assertNotEquals(firstCard, player.getHand().get(1).asString(), "id: "+firstCard);
                     assertNotEquals(firstCard, player.getHand().getLast().asString(), "id: "+firstCard);
-
-
 
                 }
                 else if (game.getFinalTurn()==false)  {
