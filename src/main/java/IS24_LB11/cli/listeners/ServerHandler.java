@@ -56,6 +56,9 @@ public class ServerHandler extends Listener implements Runnable {
         try {
             state.queueEvent(new NotificationEvent("starting connection with server..."));
             socket = new Socket(serverIp, serverPort);
+            socket.setTrafficClass(0x04); // IPTOS_RELIABILITY (0x04)
+            //socket.setKeepAlive(true);
+            //socket.setTcpNoDelay(true);
             parser = new JsonStreamParser(new InputStreamReader(socket.getInputStream()));
             writer = new PrintWriter(socket.getOutputStream());
         } catch (IOException | InterruptedException e) {
@@ -119,8 +122,10 @@ public class ServerHandler extends Listener implements Runnable {
         if (writer == null) return;
         if (object.has("type") && !object.get("type").getAsString().equalsIgnoreCase("heartbeat"))
             Debugger.print("to server: " + object);
-        writer.println(object.toString());
-        writer.flush();
+        synchronized (writer) {
+            writer.println(object.toString());
+            writer.flush();
+        }
     }
 
     /**

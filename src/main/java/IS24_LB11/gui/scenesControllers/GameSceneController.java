@@ -145,10 +145,10 @@ public class GameSceneController extends GenericSceneController{
     int numberPlayerInGame;
     private final int centerBoardX = 10000;
     private final int centerBoardY = 10000;
-    private final int cardX = 300;
-    private final int cardY = 210;
-    private final int cardCornerX = 70;
-    private final int cardCornerY = 84;
+    private final int cardX = 270;
+    private final int cardY = 189;
+    private final int cardCornerX = 63;
+    private final int cardCornerY = 76;
     private ArrayList<ImageView> availableSpotsTemporaryCards = new ArrayList<>();
 
     ArrayList<AnimationInstruction> scoreboardPositions = new ArrayList<>();

@@ -57,12 +57,12 @@ public class AutomatedState extends ClientState {
 
         if (numPlayers >= 2) {
             sendToServer("login", "username", username);
-            try { Thread.sleep(200); }
+            try { Thread.sleep(250); }
             catch (InterruptedException e) { Debugger.print(e); }
             sendToServer("numOfPlayers", "numOfPlayers", numPlayers);
         } else {
             try {
-                Thread.sleep(750);
+                Thread.sleep(500);
                 sendToServer("login", "username", username);
             } catch (InterruptedException e) {
                 Debugger.print(e);
@@ -110,7 +110,10 @@ public class AutomatedState extends ClientState {
                 boolean fromGoldenDeck = rand.nextFloat() < goldenRate;
                 int selectedCardIndex;
 
-                if (fromGoldenDeck) {
+                if (finalTurn) {
+                    fromGoldenDeck = false;
+                    selectedCardIndex = 0;
+                } else if (fromGoldenDeck) {
                     if (table.getGoldenDeck().isEmpty()) {
                         fromGoldenDeck = false;
                         selectedCardIndex = rand.nextInt(table.getNormalDeck().size());
@@ -124,12 +127,23 @@ public class AutomatedState extends ClientState {
                         selectedCardIndex = rand.nextInt(table.getNormalDeck().size());
                 }
 
+                System.out.println("\nTURN " + turn);
+
                 if (handCard.isFaceDown()) handCard.flip();
-                if (!player.placeCard(handCard, spot)) {
+                player.tryPlaceCard(handCard, spot).ifError(result -> {
+                    System.out.println("PLACEMENT ERROR : " + result.toString());
                     handCard.flip();
-                    player.placeCard(handCard, spot);
+                    player.tryPlaceCard(handCard, spot).ifError(result2 -> {
+                        System.out.println("PLACEMENT ERROR : " + result2.toString());
+                    });
+                });
+
+                if (!finalTurn) {
+                    player.addCardToHand(fromGoldenDeck ?
+                            table.getGoldenDeck().get(selectedCardIndex) :
+                            table.getNormalDeck().get(selectedCardIndex));
                 }
-                player.addCardToHand(fromGoldenDeck ? table.getGoldenDeck().get(selectedCardIndex) : table.getNormalDeck().get(selectedCardIndex));
+
                 try {
                     JsonObject jsonPlacedCard = (JsonObject) new JsonParser().parse(converter.objectToJSON(placedCard));
                     JsonElement jsonDeckType = new JsonPrimitive(fromGoldenDeck);
