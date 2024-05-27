@@ -25,7 +25,7 @@ public class ClientHandler implements Runnable {
     private String userName = null;
     private Server server;
     private boolean connectionClosed = false;
-    private static final int HEARTBEAT_INTERVAL = 1000;
+    private static final int HEARTBEAT_INTERVAL = 500;
     private long lastHeartbeatTime;
 
     private ArrayList<Thread> allStartedThreads = new ArrayList<>();
@@ -80,7 +80,6 @@ public class ClientHandler implements Runnable {
 
             heartbeatThread.start();
             addToStartedThreads(heartbeatThread);
-
             String inputLine;
             try {
                 while (!connectionClosed && parser.hasNext()) {

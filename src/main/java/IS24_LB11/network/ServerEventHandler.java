@@ -40,6 +40,9 @@ public class ServerEventHandler {
         clientHandler = ch;
 
         String eventType = event.get("type").getAsString().toLowerCase();
+        if (!event.get("type").getAsString().equals("heartbeat"))
+            System.out.println(event);
+
         switch (eventType) {
             case "login":
                 handleLoginEvent(event);

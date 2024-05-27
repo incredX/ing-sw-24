@@ -448,8 +448,10 @@ public class GameSceneController extends GenericSceneController{
         handCard1.setImage(ImageLoader.getImage(state.getPlayer().getHand().get(0).asString()));
         handCard1.setOpacity(1);
 
-        handCard2.setImage(ImageLoader.getImage(state.getPlayer().getHand().get(1).asString()));
-        handCard2.setOpacity(1);
+        if (state.getPlayer().getHand().size()>1){
+            handCard2.setImage(ImageLoader.getImage(state.getPlayer().getHand().get(1).asString()));
+            handCard2.setOpacity(1);
+        }
 
         if (state.getPlayer().getHand().size()>2) {
             handCard3.setImage(ImageLoader.getImage(state.getPlayer().getHand().get(2).asString()));
@@ -672,7 +674,7 @@ public class GameSceneController extends GenericSceneController{
             updateHand();
             disableHand(true);
             state.setPositionOfPlacedCard(realPosition);
-            if((state.getGoldenDeck().size() == 0 && state.getNormalDeck().size()==0) || state.isFinalTurn()){
+            if((state.getGoldenDeck().size() == 0 && state.getNormalDeck().size()==0 ) || state.isFinalTurn()){
                 state.execute();
             }
         }

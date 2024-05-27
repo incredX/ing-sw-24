@@ -75,7 +75,7 @@ public class Debugger {
     private void printMessage(String msg) {
         if(!active) return;
         //out.println("*********************** DEBUG - MESSAGE ************************");
-        out.printf("in <%s> (%d) => %s\n", Thread.currentThread().getName(), Thread.currentThread().threadId(), msg);
+        out.printf("in <%s> => %s\n", Thread.currentThread().getName(), msg);
         out.flush();
     }
 
@@ -84,7 +84,7 @@ public class Debugger {
         String message = e.getMessage();
         Throwable cause = e.getCause();
         out.println("******************* DEBUG - CAUGHT EXCEPTION *******************");
-        out.printf("in <%s> (%d) :\n", Thread.currentThread().getName(), Thread.currentThread().threadId());
+        out.printf("in <%s> :\n", Thread.currentThread().getName());
         out.println("CLASS: " + e.getClass().getName());
         if (message != null) out.println("MESSAGE: " + message);
         if (cause != null) out.println("CAUSE: " + cause.getMessage());

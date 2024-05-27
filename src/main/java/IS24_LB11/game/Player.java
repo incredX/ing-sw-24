@@ -52,12 +52,32 @@ public class Player implements JsonConvertable {
      * @return true if the card was placed successfully, false otherwise
      */
     public boolean placeCard(PlayableCard card, Position position) {
-        if (board.placeCard(card, position)) {
-            hand.removeIf(carhand -> carhand.equals(card));
-            return true;
-        } else {
+        System.out.print("HAND: ");
+        hand.stream().forEach(x-> System.out.printf(x.asString() + "  "));
+        System.out.println();
+
+        if (hand.stream().filter(x -> x.equals(card)).count()!=1) {
+            System.out.println("CARD NOT FOUND " + card.asString());
             return false;
         }
+
+        if (board.placeCard(card, position)) return hand.removeIf(handCard -> handCard.equals(card));
+        else return false;
+    }
+
+    public Result<Position> tryPlaceCard(PlayableCard card, Position position) {
+        ArrayList<String> hand = new ArrayList<>(getHand().stream().map(c -> c.asString()).toList());
+
+        System.out.println("HAND : " + hand);
+        System.out.println("PLACING CARD " + card.asString() + " IN " + position);
+
+        if (this.hand.stream().anyMatch(x -> x.equals(card))) {
+            return board.tryPlaceCard(card, position)
+                    .andThen(pos -> {
+                        if (this.hand.removeIf(carhand -> carhand.equals(card))) return Result.Ok(pos);
+                        return Result.Error("card " + card.asString() + " not found in hand", "hand: " + hand);
+                    });
+        } else return Result.Error("card " + card.asString() + " not found in hand", "hand: " + hand);
     }
 
     /**
