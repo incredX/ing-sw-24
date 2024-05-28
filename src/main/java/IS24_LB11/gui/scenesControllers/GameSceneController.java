@@ -2,6 +2,7 @@ package IS24_LB11.gui.scenesControllers;
 
 
 import IS24_LB11.game.PlacedCard;
+import IS24_LB11.game.Player;
 import IS24_LB11.game.components.PlayableCard;
 import IS24_LB11.game.symbol.Item;
 import IS24_LB11.game.symbol.Suit;
@@ -161,7 +162,7 @@ public class GameSceneController extends GenericSceneController{
         this.stage = stage;
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/FXMLScenes/GamePage.fxml"));
         loader.setController(this);
-
+        System.out.println(this.state.getPlayersColors());
         this.stage.setTitle("Codex");
         try {
             this.stage.setScene(new Scene(loader.load()));
@@ -215,15 +216,7 @@ public class GameSceneController extends GenericSceneController{
         privateGoalCard.setImage(ImageLoader.getImage(state.getPlayer().getPersonalGoal().asString()));
 
         //same as disconnected
-        switch (numberPlayerInGame) {
-            case 3:
-                yellowPion.setVisible(false);
-                break;
-            case 2:
-                yellowPion.setVisible(false);
-                bluePion.setVisible(false);
-                break;
-        }
+        hideInitialPawns();
         hidePlayersInScoreboard();
         setUsernamesBoard();
         updateSymbolsCounter();
@@ -242,6 +235,19 @@ public class GameSceneController extends GenericSceneController{
 
 
     private void hideInitialPawns() {
+        for (String username : state.getPlayers()){
+            switch (state.getPlayersColors().get(username)){
+                case RED -> redPion.setVisible(false);
+                case YELLOW -> yellowPion.setVisible(false);
+                case GREEN -> greenPion.setVisible(false);
+                case BLUE -> bluePion.setVisible(false);
+                default -> {
+                    return;
+                }
+            }
+        }
+
+
         if (numberPlayerInGame <= 3)
             yellowPion.setVisible(false);
         if (numberPlayerInGame <= 2)
@@ -277,6 +283,15 @@ public class GameSceneController extends GenericSceneController{
         if (numberPlayerInGame >= 4) {
             playerName4.setText(state.getPlayers().get(3));
         }
+
+        String basePath = "/graphicResources/codexCards/pawns/";
+
+        if (numberPlayerInGame >=2) {
+            playerColor1.setImage(new Image(GameSceneController.class.getResourceAsStream(basePath + Color.toPawn(state.getPlayersColors().get(playerName1.getText())))));
+            playerColor2.setImage(new Image(GameSceneController.class.getResourceAsStream(basePath + Color.toPawn(state.getPlayersColors().get(playerName2.getText())))));
+        }
+        if (numberPlayerInGame>=3)
+            playerColor3.setImage(new Image(GameSceneController.class.getResourceAsStream(basePath + Color.toPawn(state.getPlayersColors().get(playerName3.getText())))));
 
     }
 
@@ -363,10 +378,6 @@ public class GameSceneController extends GenericSceneController{
         HashMap<String, Integer> initScore = new HashMap<>();
         HashMap<String, Integer> finalScore = new HashMap<>();
 
-//        for (int i=0; i <state.getPlayers().size(); i++) {
-//            initScore.add(state.getPlayersScore().get(state.getPlayers().get(i)));
-//        }
-
         initScore = (HashMap<String, Integer>) state.getPlayersScore().clone();
         System.out.println("INIT SCORE: " +initScore);
 
@@ -379,10 +390,6 @@ public class GameSceneController extends GenericSceneController{
 
         updateScore();
 
-
-//        for (int i=0; i <state.getPlayers().size(); i++) {
-//            finalScore.add(state.getPlayersScore().get(state.getPlayers().get(i)));
-//        }
     }
 
     private void disableGenericDeck(ImageView deckCard1, ImageView deckCard2, ImageView deckCard3, Boolean disable, Boolean deckType){
@@ -576,8 +583,6 @@ public class GameSceneController extends GenericSceneController{
 
         hidePlayersInScoreboard();
         setUsernamesBoard();
-        updateScore();
-
         updateScore();
     }
 
