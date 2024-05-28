@@ -292,31 +292,30 @@ public class GameSceneController extends GenericSceneController{
         this.stage.show();
     }
 
-    public void executeAnimations(int[] initScore, int[] finalScore){
+    public void executeAnimations(HashMap<String, Integer> initScore, HashMap<String, Integer> finalScore){
         try {
-            for (Color color : state.getPlayersColors().values()) {
-                switch (color) {
+            for (String playername : state.getPlayers()) {
+                switch (state.getPlayersColors().get(playername)) {
                     case Color.RED:
-
-                        animate(redPion, initScore[0], finalScore[0]);
+                        animate(redPion, initScore.get(playername), finalScore.get(playername));
 
                         break;
 
                     case Color.GREEN:
 
-                        animate(greenPion, initScore[1], finalScore[1]);
+                        animate(greenPion, initScore.get(playername), finalScore.get(playername));
 
                         break;
 
                     case Color.BLUE:
 
-                        animate(bluePion, initScore[2], finalScore[2]);
+                        animate(bluePion, initScore.get(playername), finalScore.get(playername));
 
                         break;
 
                     case Color.YELLOW:
 
-                        animate(yellowPion, initScore[3], finalScore[3]);
+                        animate(yellowPion, initScore.get(playername), finalScore.get(playername));
 
                         break;
                 }
@@ -332,19 +331,21 @@ public class GameSceneController extends GenericSceneController{
                            ArrayList<PlayableCard> goldenDeck) throws InterruptedException {
 
         //Useful for animating scores
-        int[] initScore = new int[4];
-        int[] finalScore = new int[4];
+        HashMap<String, Integer> initScore = new HashMap<>();
+        HashMap<String, Integer> finalScore = new HashMap<>();
 
-        for (int i=0; i <state.getPlayers().size(); i++) {
-            initScore[i]=state.getPlayersScore().get(state.getPlayers().get(i));
-        }
+//        for (int i=0; i <state.getPlayers().size(); i++) {
+//            initScore.add(state.getPlayersScore().get(state.getPlayers().get(i)));
+//        }
 
+        initScore = (HashMap<String, Integer>) state.getPlayersScore().clone();
         state.update(currentPlayerTurn, playerScores, normalDeck, goldenDeck);
 
-        for (int i=0; i <state.getPlayers().size(); i++) {
-            finalScore[i]=state.getPlayersScore().get(state.getPlayers().get(i));
-        }
+//        for (int i=0; i <state.getPlayers().size(); i++) {
+//            finalScore.add(state.getPlayersScore().get(state.getPlayers().get(i)));
+//        }
 
+        finalScore = (HashMap<String, Integer>) state.getPlayersScore().clone();
         updateDeck();
 
         updateHand();
@@ -359,24 +360,29 @@ public class GameSceneController extends GenericSceneController{
     }
     public void updateGame(ArrayList<Integer> playerScores) throws InterruptedException {
         //Useful for animating scores
-        int[] initScore = new int[4];
-        int[] finalScore = new int[4];
+        HashMap<String, Integer> initScore = new HashMap<>();
+        HashMap<String, Integer> finalScore = new HashMap<>();
 
-        for (int i=0; i <state.getPlayers().size(); i++) {
-            initScore[i]=state.getPlayersScore().get(state.getPlayers().get(i));
-            System.out.println(initScore[i]);
-        }
+//        for (int i=0; i <state.getPlayers().size(); i++) {
+//            initScore.add(state.getPlayersScore().get(state.getPlayers().get(i)));
+//        }
+
+        initScore = (HashMap<String, Integer>) state.getPlayersScore().clone();
+        System.out.println("INIT SCORE: " +initScore);
 
         state.update(playerScores);
 
-        updateScore();
-
-        for (int i=0; i <state.getPlayers().size(); i++) {
-            finalScore[i]=state.getPlayersScore().get(state.getPlayers().get(i));
-        }
-
+        finalScore = (HashMap<String, Integer>) state.getPlayersScore().clone();
+        System.out.println("FINAL SCORE: " +finalScore);
 
         executeAnimations(initScore, finalScore);
+
+        updateScore();
+
+
+//        for (int i=0; i <state.getPlayers().size(); i++) {
+//            finalScore.add(state.getPlayersScore().get(state.getPlayers().get(i)));
+//        }
     }
 
     private void disableGenericDeck(ImageView deckCard1, ImageView deckCard2, ImageView deckCard3, Boolean disable, Boolean deckType){
