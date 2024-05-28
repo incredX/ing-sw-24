@@ -154,7 +154,6 @@ public class Game {
      */
     public String executeTurn(String playerName, Position position, PlayableCard playableCard, boolean deckType, int indexDeck) throws JsonException, DeckException, SyntaxException {
         if (!playerName.equals(currentPlayer().name())) {
-            System.out.printf("ClientHandler: %s VS PlayerName: %s\n", playerName, currentPlayer().name());
             return NOT_PLAYER_TURN;
         }
         if (hasGameEnded()) return GAME_ENDED;
@@ -174,7 +173,6 @@ public class Game {
      * @throws SyntaxException if there is a syntax error
      */
     private String executeNormalTurn(Position position, PlayableCard playableCard, boolean deckType, int indexDeck) throws DeckException, JsonException, SyntaxException {
-        System.out.printf("executing turn of %s (turn %d)\n", currentPlayer().name(), turn);
         Player player = currentPlayer();
 //        if (normalDeck.isEmpty() && !deckType)
 //            return CANT_DRAW_FROM_NORMAL_DECK_IS_EMPTY;
@@ -185,7 +183,6 @@ public class Game {
         Result<Position> placementResult = player.tryPlaceCard(playableCard, position);
 
         if (placementResult.isError()) {
-            System.out.println("PLACEMENT ERROR: " + placementResult.toString());
             throw new RuntimeException(placementResult.toString());
             //return INVALID_POSITION_CARD_OR_NOT_IN_HAND;
         } else {
@@ -215,16 +212,13 @@ public class Game {
      * @throws SyntaxException if there is a syntax error
      */
     private String executeFinalTurn(Position position, PlayableCard playableCard) throws JsonException, SyntaxException {
-        System.out.printf("executing final turn of %s (turn %d)\n", currentPlayer().name(), turn);
         if (hasGameEnded()) {
-            System.out.println("game finito");
             return GAME_ENDED;
         }
         Player player = players.get(turn % players.size());
         Result<Position> placementResult = player.tryPlaceCard(playableCard, position);
 
         if (placementResult.isError()) {
-            System.out.println("PLACEMENT ERROR: " + placementResult.toString());
             return INVALID_POSITION_CARD_OR_NOT_IN_HAND;
         } else {
             player.incrementScoreLastCardPlaced();

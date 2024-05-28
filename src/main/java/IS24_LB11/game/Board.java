@@ -6,8 +6,6 @@ import IS24_LB11.game.components.*;
 import IS24_LB11.game.symbol.Item;
 import IS24_LB11.game.symbol.Suit;
 import IS24_LB11.game.symbol.Symbol;
-import IS24_LB11.game.tools.JsonConverter;
-import IS24_LB11.game.tools.JsonException;
 import IS24_LB11.game.utils.Direction;
 import IS24_LB11.game.utils.Position;
 
@@ -60,18 +58,8 @@ public class Board implements JsonConvertable {
         if (!spotAvailable(position)) return false;
         if (card.asString().charAt(0) == 'G' && !placeGoldCardCheck((GoldenCard) card) && !card.isFaceDown()) return false;
         placedCards.add(new PlacedCard(card, position));
-        try {
-            System.out.println("PLACED CARD: " + card.asString());
-            System.out.println("BOARD: " + new JsonConverter().objectToJSON(this));
-        } catch (JsonException e) {}
         updateCounters(position);
         updateSpots(card, position);
-        System.out.println("Placed Card: " + card.asString() + " " + position.toString());
-        try {
-            System.out.println(new JsonConverter().objectToJSON(this));
-        } catch (JsonException e) {
-            throw new RuntimeException(e);
-        }
         return true;
     }
 
@@ -81,10 +69,6 @@ public class Board implements JsonConvertable {
         if (card.asString().charAt(0) == 'G' && !placeGoldCardCheck((GoldenCard) card) && !card.isFaceDown())
             return Result.Error("placement denied", String.format("not enough suits to place %s", card.asString()));
         placedCards.add(new PlacedCard(card, position));
-//        try {
-//            Debugger.print("\n\n");
-//            Debugger.print(new JsonConverter().objectToJSON(this));
-//        } catch (JsonException e) {}
         updateCounters(position);
         updateSpots(card, position);
         return Result.Ok(position);
