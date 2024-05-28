@@ -6,6 +6,10 @@ import IS24_LB11.game.utils.SyntaxException;
 
 import java.util.ArrayList;
 
+/**
+ * Represents a Golden Card in the game, which extends the functionality of a {@link NormalCard} by adding specific
+ * suits needed and a condition to win points.
+ */
 public class GoldenCard extends NormalCard {
     private final ArrayList<Suit> suitsNeeded;
     private final Symbol pointsCondition;
@@ -31,6 +35,14 @@ public class GoldenCard extends NormalCard {
             suitsNeeded.add(Suit.fromCharacter(id.charAt(i)));
         }
     }
+
+    /**
+     * Checks if this <code>GoldenCard</code> is equal to another <code>PlayableCard</code>. The cards are considered equal if their string representations,
+     * with 'B' replaced by 'F', are the same.
+     *
+     * @param other the other <code>PlayableCard</code> to compare with
+     * @return <code>true</code> if the cards are equal, <code>false</code> otherwise
+     */
     @Override
     public boolean equals(PlayableCard other) {
         String id = asString().replace('B', 'F');
@@ -38,16 +50,35 @@ public class GoldenCard extends NormalCard {
         return id.equals(otherId);
     }
 
+    /**
+     * Returns the string representation of the <code>GoldenCard</code>.
+     *
+     * @return a string that represents the <code>GoldenCard</code>
+     */
     @Override
     public String asString() {
         String str = super.asString();
-        str = str.replace(str.charAt(0),'G');
+        str = str.replace(str.charAt(0), 'G');
         str += Symbol.toChar(pointsCondition);
-        str += suitsNeeded.stream().map(s -> Symbol.toChar(s).toString()).reduce("", (acc, s) -> acc+s);
+        str += suitsNeeded.stream().map(s -> Symbol.toChar(s).toString()).reduce("", (acc, s) -> acc + s);
         return str;
     }
 
-    public Symbol getPointsCondition() { return pointsCondition; }
+    /**
+     * Returns the condition to win points for this <code>GoldenCard</code>.
+     *
+     * @return the points condition as a {@link Symbol}
+     */
+    public Symbol getPointsCondition() {
+        return pointsCondition;
+    }
 
-    public ArrayList<Suit> getSuitsNeeded() { return suitsNeeded; }
+    /**
+     * Returns the list of suits needed to play this <code>GoldenCard</code>.
+     *
+     * @return an <code>ArrayList</code> of {@link Suit}
+     */
+    public ArrayList<Suit> getSuitsNeeded() {
+        return suitsNeeded;
+    }
 }
