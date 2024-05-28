@@ -43,16 +43,6 @@ public class ServerEventFactory {
                                     .map(to -> new ServerMessageEvent(message, from, to))
                             )
                     );
-            case "UPDATE" -> extractString(data, "player")
-                    .andThen(name -> extractJsonObject(data, "board")
-                            .andThen(board -> {
-                                try {
-                                    return Ok(new ServerUpdatePlayerBoardEvent(name, converter.JSONToBoard(board.toString())));
-                                } catch (JsonException | SyntaxException e) {
-                                    return Error("error parsing board");
-                                }
-                            })
-                    );
             case "TURN" -> extractString(data, "player")
                     .andThen(player -> extractCardArray(data, "normalDeck")
                             .andThen(normalDeck -> extractCardArray(data,"goldenDeck")

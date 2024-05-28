@@ -21,14 +21,16 @@ import static IS24_LB11.game.Result.Error;
  * It extends the Listener class and implements the Runnable interface to run in a separate thread.
  */
 public class ServerHandler extends Listener implements Runnable {
-    private static final int TIMEOUT = 3_000;
+    private static final int MAX_TIMEOUT = 3_000;
+    private static final int MIN_TIMEOUT = 1_000;
+    //private static final int TIMEOUT = 1_000;
     private final Object timerLock = new Object();
     private final String serverIp;
     private final int serverPort;
     private Socket socket;
     private JsonStreamParser parser;
     private PrintWriter writer;
-    private int timeout = TIMEOUT;
+    private int timeout = MIN_TIMEOUT;
 
     /**
      * Constructs a ServerHandler with the given client state, server IP, and server port.
@@ -58,7 +60,7 @@ public class ServerHandler extends Listener implements Runnable {
             socket = new Socket(serverIp, serverPort);
             socket.setTrafficClass(0x04); // IPTOS_RELIABILITY (0x04)
             //socket.setKeepAlive(true);
-            //socket.setTcpNoDelay(true);
+            socket.setTcpNoDelay(true);
             parser = new JsonStreamParser(new InputStreamReader(socket.getInputStream()));
             writer = new PrintWriter(socket.getOutputStream());
         } catch (IOException | InterruptedException e) {
@@ -122,10 +124,10 @@ public class ServerHandler extends Listener implements Runnable {
         if (writer == null) return;
         if (object.has("type") && !object.get("type").getAsString().equalsIgnoreCase("heartbeat"))
             Debugger.print("to server: " + object);
-        synchronized (writer) {
-            writer.println(object.toString());
-            writer.flush();
-        }
+        writer.println(object.toString());
+        writer.flush();
+//        synchronized (timerLock) {
+//        }
     }
 
     /**
@@ -174,12 +176,19 @@ public class ServerHandler extends Listener implements Runnable {
                         if (timeout == 0) // => needs to be shutdown
                             break;
                         if (diff >= timeout) {
-                            state.queueEvent(new ServerDownEvent());
-                            Debugger.print("Server down (time = " + diff + ")");
-                            break;
+                            if (timeout >= MAX_TIMEOUT) {
+                                state.queueEvent(new ServerDownEvent());
+                                Debugger.print("Server down (time = " + diff + ")");
+                                break;
+                            } else {
+                                timeout *= 2;
+                                state.sendToServer("heartbeat");
+                                Debugger.print("Server lost pace (" + diff + ")");
+                            }
                         } else {
                             //Debugger.print("Server up  " + diff);
                             timeStamp += diff;
+                            timeout = MIN_TIMEOUT;
                         }
                     } catch (InterruptedException e) {
                         Debugger.print(e);

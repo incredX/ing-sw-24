@@ -4,9 +4,12 @@ import IS24_LB11.game.symbol.Suit;
 import IS24_LB11.game.symbol.Symbol;
 import IS24_LB11.game.utils.*;
 
-import java.util.ArrayList;
+        import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * Represents a starter card in the game, extending the functionality of a normal card with additional central suits and back corners.
+ */
 public class StarterCard extends NormalCard {
     private final ArrayList<Suit> centralSuits;
     private final Corners backCorners;
@@ -33,34 +36,62 @@ public class StarterCard extends NormalCard {
         backCorners = new Corners(id.substring(10));
     }
 
+    /**
+     * Returns a string that identifies the card and its state with the syntax described in <code>StarterCard</code>.
+     *
+     * @return a <code>String</code> that represents the card
+     */
     public String asString() {
         String str = super.asString();
-        str = str.replace(str.charAt(0),'S');
-        str += centralSuits.stream().map(s -> Symbol.toChar(s).toString()).reduce("", (acc, s) -> acc+s);
+        str = str.replace(str.charAt(0), 'S');
+        str += centralSuits.stream().map(s -> Symbol.toChar(s).toString()).reduce("", (acc, s) -> acc + s);
         str += backCorners.asString();
         return str;
     }
 
+    /**
+     * Updates the provided counters with the card's suits and corners depending on its face state.
+     *
+     * @param counters a <code>HashMap</code> of <code>Symbol</code> and <code>Integer</code> representing the counters
+     */
     @Override
     public void updateCounters(HashMap<Symbol, Integer> counters) {
         if (faceDown) {
             backCorners.updateCounters(counters);
-        }
-        else {
+        } else {
             frontCorners.updateCounters(counters);
-            centralSuits.forEach(symbol -> counters.computeIfPresent(symbol, ((s, cnt) -> cnt+1)));
+            centralSuits.forEach(symbol -> counters.computeIfPresent(symbol, ((s, cnt) -> cnt + 1)));
         }
     }
 
+    /**
+     * Returns the symbol of the specified corner direction.
+     *
+     * @param dir the direction of the corner as an integer
+     * @return the <code>Symbol</code> of the corner
+     */
     public Symbol getCorner(int dir) {
         if (faceDown) return backCorners.getCorner(Direction.parse(dir));
         return frontCorners.getCorner(Direction.parse(dir));
     }
 
+    /**
+     * Returns the symbol of the specified corner direction.
+     *
+     * @param direction the direction of the corner as a <code>Direction</code>
+     * @return the <code>Symbol</code> of the corner
+     */
     public Symbol getCorner(Direction direction) {
         if (faceDown) return backCorners.getCorner(direction);
         return frontCorners.getCorner(direction);
     }
 
-    public ArrayList<Suit> getCentralSuits() { return centralSuits; }
+    /**
+     * Returns the suits found in the center of the card.
+     *
+     * @return an <code>ArrayList</code> of <code>Suit</code> representing the central suits
+     */
+    public ArrayList<Suit> getCentralSuits() {
+        return centralSuits;
+    }
 }

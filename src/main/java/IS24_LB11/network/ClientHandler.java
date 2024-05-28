@@ -75,8 +75,8 @@ public class ClientHandler implements Runnable {
             });
 
             // Wait for inputs from client
-            parser = new JsonStreamParser(new InputStreamReader(clientSocket.getInputStream()));
-            out = new PrintWriter(clientSocket.getOutputStream());
+            parser = new JsonStreamParser(new InputStreamReader(this.clientSocket.getInputStream()));
+            out = new PrintWriter(this.clientSocket.getOutputStream());
 
             heartbeatThread.start();
             addToStartedThreads(heartbeatThread);
@@ -113,9 +113,11 @@ public class ClientHandler implements Runnable {
      * @param message the message to broadcast
      */
     public void broadcast(String message) {
-        for (ClientHandler clientHandler : getClientHandlers()) {
-            if (!this.equals(clientHandler) && clientHandler.getUserName() != null) {
-                clientHandler.sendMessage(message);
+        synchronized (getClientHandlers()) {
+            for (ClientHandler clientHandler : getClientHandlers()) {
+                if (!this.equals(clientHandler) && clientHandler.getUserName() != null) {
+                    clientHandler.sendMessage(message);
+                }
             }
         }
     }
@@ -125,7 +127,8 @@ public class ClientHandler implements Runnable {
      * @return the client's username
      */
     public String getUserName() {
-        return userName;
+        return this.userName;
+//        return Thread.currentThread().getName();
     }
 
     /**
@@ -134,6 +137,7 @@ public class ClientHandler implements Runnable {
      */
     public void setUserName(String userName) {
         this.userName = userName;
+        Thread.currentThread().setName(userName);
     }
 
     /**
@@ -212,7 +216,9 @@ public class ClientHandler implements Runnable {
                         currentPlayerReal = this.getGame().currentPlayer();
                     }
 
-                    this.getGame().getPlayers().removeIf(player -> player.name().equals(this.getUserName()));
+                    synchronized (this.getGame()) {
+                        this.getGame().getPlayers().removeIf(player -> player.name().equals(this.getUserName()));
+                    }
 
                     if (this.getGame().getTurn() >= 0 && !this.getGame().hasGameEnded()) {
                         this.getGame().setTurn(this.getGame().getPlayers().indexOf(currentPlayerReal));
@@ -238,6 +244,7 @@ public class ClientHandler implements Runnable {
                 for (Thread thread : allStartedThreads) {
                     thread.interrupt();
                 }
+
                 server.removeClientHandler(this);
             } catch (IOException e) {
                 // Handle exception
