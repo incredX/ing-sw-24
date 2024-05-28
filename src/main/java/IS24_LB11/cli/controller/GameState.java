@@ -158,7 +158,6 @@ public class GameState extends ClientState implements PlayerStateInterface {
                 popManager.getOptionalPopup("decks").ifPresent(Popup::update);
                 popManager.getOptionalPopup("table").ifPresent(Popup::update);
 
-                System.out.println("\nTURN " + turn);
                 turn ++;
 
                 finalTurn = (table.getNormalDeck().isEmpty() && table.getGoldenDeck().isEmpty())
@@ -210,7 +209,6 @@ public class GameState extends ClientState implements PlayerStateInterface {
                 case ArrowLeft -> shiftBoardPointer(Side.WEST);
                 case ArrowRight -> shiftBoardPointer(Side.EAST);
                 case Enter -> {
-                    System.out.println("game over: " + gameOver);
                     if (gameOver) logout();
                 }
             }

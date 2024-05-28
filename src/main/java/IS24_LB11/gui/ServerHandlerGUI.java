@@ -40,6 +40,7 @@ public class ServerHandlerGUI implements Runnable {
     private SetupSceneController setupSceneController = null;
     private GameSceneController gameSceneController = null;
     private GenericSceneController activeController = null;
+    Thread listener;
 
     /**
      * Constructs a ServerHandlerGUI object to manage communication with the server.
@@ -62,22 +63,30 @@ public class ServerHandlerGUI implements Runnable {
      * Heartbeat check from the server.
      */
     public void run() {
+
+        listener = new Thread(()->{
+            while (running){
+                if ((System.currentTimeMillis() - lastHeartbeatTime > 3000 && lastHeartbeatTime != 0)) {
+                    Platform.runLater(() -> activeController.showPopUpRestartGame());
+                    running = false;
+                    Thread.currentThread().interrupt();
+                    break;
+                }
+            }
+        });
+        listener.start();
+
         while (running) {
             if (socket.isClosed()) break;
             try {
-                while (!parser.hasNext()) {
-                    if (System.currentTimeMillis() - lastHeartbeatTime > 3000 && lastHeartbeatTime != 0) {
-                        Platform.runLater(() -> activeController.showPopUpRestartGame());
-                        running = false;
-                        break;
-                    }
-                }
-                if (parser.hasNext())
+                if (parser.hasNext()) {
                     processEvent(parser.next().getAsJsonObject());
+                }
             } catch (JsonIOException e) {
                 // Handle JsonIOException
             }
         }
+        listener.interrupt();
         Thread.currentThread().interrupt();
     }
 
@@ -234,7 +243,9 @@ public class ServerHandlerGUI implements Runnable {
      */
     private void handleNotificationEvent(JsonObject serverEvent) {
         if (serverEvent.has("message")) {
+
             String message = serverEvent.get("message").getAsString();
+
             if (message.equals("Welcome " + actualState.getUsername() + "!")) {
                 addMessage("<Server> " + message);
                 Platform.runLater(() -> loginSceneController.disableLogin());
@@ -322,6 +333,7 @@ public class ServerHandlerGUI implements Runnable {
         } catch (IOException e) {
             System.out.println(e);
         }
+        listener.interrupt();
         Thread.currentThread().interrupt();
     }
 

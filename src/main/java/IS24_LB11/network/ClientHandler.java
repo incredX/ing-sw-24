@@ -236,6 +236,11 @@ public class ClientHandler implements Runnable {
                     response.addProperty("type", "notification");
                     response.addProperty("message", "Player " + this.getUserName() + " disconnected");
                     this.broadcast(response.toString());
+                } else{
+                    JsonObject response = new JsonObject();
+                    response.addProperty("type", "notification");
+                    response.addProperty("message", "Player " + this.getUserName() + " disconnected");
+                    this.broadcast(response.toString());
                 }
 
                 connectionClosed = true;

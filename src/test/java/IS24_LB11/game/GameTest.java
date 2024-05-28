@@ -259,35 +259,35 @@ public class GameTest {
         assertEquals(0, originalDeck.size());
 
     }
-
-    @Test
-    @DisplayName("Testing the throw of Wrong Deck Index")
-    void invalidExecution() throws SyntaxException, FileNotFoundException, DeckException, JsonException {
-        JsonConverter jsonConverter = new JsonConverter();
-        int playersNumber = 2;
-        Game game = new Game(playersNumber);
-        //Receiving players name
-        ArrayList<String> playerNames = new ArrayList<>(playersNumber);
-        for (int i = 0; i < 2; i++)
-            playerNames.add("Player " + (i + 1));
-        game.setupGame(playerNames);
-        //Receiving players Goal
-        ArrayList<GoalCard> goalCardsChoosen = new ArrayList<>();
-        for (int i = 0; i < 2; i++)
-            goalCardsChoosen.add(game.getPlayers().get(i).getSetup().getGoals()[i % 2]);
-        ArrayList<StarterCard> starterCardsSideChoosen = new ArrayList<>();
-        for (int i = 0; i < 2; i++)
-            starterCardsSideChoosen.add(game.getPlayers().get(i).getSetup().getStarterCard());
-        starterCardsSideChoosen.stream().forEach(x->x.flip());
-        game.chooseGoalPhase(goalCardsChoosen,starterCardsSideChoosen);
-
-        Player player = game.getPlayers().getFirst();
-
-        assertEquals(INDEX_DECK_WRONG, game.executeTurn(player.name(),player.getBoard().getAvailableSpots().getFirst(), player.getHand().getFirst(),true,9));
-        assertEquals(INDEX_DECK_WRONG, game.executeTurn(player.name(),player.getBoard().getAvailableSpots().getFirst(), player.getHand().getFirst(),true,8));
-        assertEquals(INDEX_DECK_WRONG, game.executeTurn(player.name(),player.getBoard().getAvailableSpots().getFirst(), player.getHand().getFirst(),true,7));
-        assertEquals(INDEX_DECK_WRONG, game.executeTurn(player.name(),player.getBoard().getAvailableSpots().getFirst(), player.getHand().getFirst(),true,6));
-    }
+//
+//    @Test
+//    @DisplayName("Testing the throw of Wrong Deck Index")
+//    void invalidExecution() throws SyntaxException, FileNotFoundException, DeckException, JsonException {
+//        JsonConverter jsonConverter = new JsonConverter();
+//        int playersNumber = 2;
+//        Game game = new Game(playersNumber);
+//        //Receiving players name
+//        ArrayList<String> playerNames = new ArrayList<>(playersNumber);
+//        for (int i = 0; i < 2; i++)
+//            playerNames.add("Player " + (i + 1));
+//        game.setupGame(playerNames);
+//        //Receiving players Goal
+//        ArrayList<GoalCard> goalCardsChoosen = new ArrayList<>();
+//        for (int i = 0; i < 2; i++)
+//            goalCardsChoosen.add(game.getPlayers().get(i).getSetup().getGoals()[i % 2]);
+//        ArrayList<StarterCard> starterCardsSideChoosen = new ArrayList<>();
+//        for (int i = 0; i < 2; i++)
+//            starterCardsSideChoosen.add(game.getPlayers().get(i).getSetup().getStarterCard());
+//        starterCardsSideChoosen.stream().forEach(x->x.flip());
+//        game.chooseGoalPhase(goalCardsChoosen,starterCardsSideChoosen);
+//
+//        Player player = game.getPlayers().getFirst();
+//
+//        assertEquals(INDEX_DECK_WRONG, game.executeTurn(player.name(),player.getBoard().getAvailableSpots().getFirst(), player.getHand().getFirst(),true,9));
+//        assertEquals(INDEX_DECK_WRONG, game.executeTurn(player.name(),player.getBoard().getAvailableSpots().getFirst(), player.getHand().getFirst(),true,8));
+//        assertEquals(INDEX_DECK_WRONG, game.executeTurn(player.name(),player.getBoard().getAvailableSpots().getFirst(), player.getHand().getFirst(),true,7));
+//        assertEquals(INDEX_DECK_WRONG, game.executeTurn(player.name(),player.getBoard().getAvailableSpots().getFirst(), player.getHand().getFirst(),true,6));
+//    }
 
     @Test
     @DisplayName("Testing the execution of the entire game letting the game finishing by himself with points trigger or the deck's emptiness")

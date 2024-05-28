@@ -52,12 +52,7 @@ public class Player implements JsonConvertable {
      * @return true if the card was placed successfully, false otherwise
      */
     public boolean placeCard(PlayableCard card, Position position) {
-        System.out.print("HAND: ");
-        hand.stream().forEach(x-> System.out.printf(x.asString() + "  "));
-        System.out.println();
-
         if (hand.stream().filter(x -> x.equals(card)).count()!=1) {
-            System.out.println("CARD NOT FOUND " + card.asString());
             return false;
         }
 
@@ -67,9 +62,6 @@ public class Player implements JsonConvertable {
 
     public Result<Position> tryPlaceCard(PlayableCard card, Position position) {
         ArrayList<String> hand = new ArrayList<>(getHand().stream().map(c -> c.asString()).toList());
-
-        System.out.println("HAND : " + hand);
-        System.out.println("PLACING CARD " + card.asString() + " IN " + position);
 
         if (this.hand.stream().anyMatch(x -> x.equals(card))) {
             return board.tryPlaceCard(card, position)
@@ -90,7 +82,6 @@ public class Player implements JsonConvertable {
         } else {
             scoreGoal = (board.countGoalPatterns((GoalPattern) personalGoal));
         }
-        System.out.println(name + " Personal Goal Score: " + scoreGoal);
         incrementScore(scoreGoal);
     }
 
@@ -107,7 +98,6 @@ public class Player implements JsonConvertable {
             } else {
                 scoreGoal = (board.countGoalPatterns((GoalPattern) goalCard));
             }
-            System.out.println(name + " Private Goal Score: " + scoreGoal);
             incrementScore(scoreGoal);
         }
     }
