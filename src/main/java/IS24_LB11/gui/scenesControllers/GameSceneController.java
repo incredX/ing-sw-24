@@ -185,7 +185,7 @@ public class GameSceneController extends GenericSceneController{
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
-        boardBackground.setImage(new Image(GameSceneController.class.getResourceAsStream("/graphicResources/backGround.jpeg")));
+        boardBackground.setImage(new Image(GameSceneController.class.getResourceAsStream("/graphicResources/background2.jpg")));
         //cardBackground.setImage(new Image(GameSceneController.class.getResourceAsStream("/graphicResources/backGround.jpeg")));
         // button and image event has to be declared here
         handCard1.setOnMouseClicked(mouseEvent -> chooseHandCard(0));
@@ -662,11 +662,6 @@ public class GameSceneController extends GenericSceneController{
 
 
     private void placeCard(ImageView availableSpot, ImageView selectedCardFromHand){
-
-        if(this.state.getPlayer().name().equals("Jonh") || this.state.getPlayer().name().equals("John") ||
-                this.state.getPlayer().name().equals("john") || this.state.getPlayer().name().equals("jonh"))
-            boardBackground.setImage(new Image(GameSceneController.class.getResourceAsStream("/graphicResources/Deck1.jpg")));
-
 
         Position realPosition = getRealPosition((int)availableSpot.getLayoutX(), (int)availableSpot.getLayoutY());
 
