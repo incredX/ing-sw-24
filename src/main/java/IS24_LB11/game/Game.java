@@ -174,17 +174,9 @@ public class Game {
      */
     private String executeNormalTurn(Position position, PlayableCard playableCard, boolean deckType, int indexDeck) throws DeckException, JsonException, SyntaxException {
         Player player = currentPlayer();
-//        if (normalDeck.isEmpty() && !deckType)
-//            return CANT_DRAW_FROM_NORMAL_DECK_IS_EMPTY;
-//        if (goldenDeck.isEmpty() && deckType)
-//            return CANT_DRAW_FROM_GOLDEN_DECK_IS_EMPTY;
-//        if ((!deckType && normalDeck.getCards().size() - indexDeck < 0) || (deckType && goldenDeck.getCards().size() - indexDeck < 0) || indexDeck < 1 || indexDeck > 3)
-//            return INDEX_DECK_WRONG;
-        Result<Position> placementResult = player.tryPlaceCard(playableCard, position);
 
-        if (placementResult.isError()) {
-            throw new RuntimeException(placementResult.toString());
-            //return INVALID_POSITION_CARD_OR_NOT_IN_HAND;
+        if (!player.placeCard(playableCard,position)) {
+            return INVALID_POSITION_CARD_OR_NOT_IN_HAND;
         } else {
             player.incrementScoreLastCardPlaced();
         }
@@ -216,9 +208,8 @@ public class Game {
             return GAME_ENDED;
         }
         Player player = players.get(turn % players.size());
-        Result<Position> placementResult = player.tryPlaceCard(playableCard, position);
 
-        if (placementResult.isError()) {
+        if (!player.placeCard(playableCard,position)) {
             return INVALID_POSITION_CARD_OR_NOT_IN_HAND;
         } else {
             player.incrementScoreLastCardPlaced();

@@ -232,6 +232,10 @@ public class ClientHandler implements Runnable {
                         }
                     }
 
+                    if(this.getGame().getTurn() == -1 && !this.getGame().hasGameEnded()) {
+                        ServerEventHandler.chooseCurrentSetup(this);
+                    }
+
                     JsonObject response = new JsonObject();
                     response.addProperty("type", "notification");
                     response.addProperty("message", "Player " + this.getUserName() + " disconnected");

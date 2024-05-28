@@ -18,6 +18,8 @@ public class Board implements JsonConvertable {
     private final ArrayList<Position> availableSpots;
     private final ArrayList<Position> closedSpots;
     private final HashMap<Symbol, Integer> symbolCounter;
+    private HashMap<Symbol, Integer> prevSymbolCounter = null;
+
 
     /**
      * Constructs an empty game board.
@@ -58,6 +60,7 @@ public class Board implements JsonConvertable {
         if (!spotAvailable(position)) return false;
         if (card.asString().charAt(0) == 'G' && !placeGoldCardCheck((GoldenCard) card) && !card.isFaceDown()) return false;
         placedCards.add(new PlacedCard(card, position));
+        prevSymbolCounter = (HashMap<Symbol, Integer>) symbolCounter.clone();
         updateCounters(position);
         updateSpots(card, position);
         return true;
@@ -184,20 +187,20 @@ public class Board implements JsonConvertable {
                 return score;
             case 'G':
                 switch (playableCard.asString().charAt(8)) {
-                    case 'A':
-                        return symbolCounter.get(Suit.ANIMAL);
-                    case 'I':
-                        return symbolCounter.get(Suit.INSECT);
-                    case 'F':
-                        return symbolCounter.get(Suit.MUSHROOM);
-                    case 'P':
-                        return symbolCounter.get(Suit.PLANT);
+//                    case 'A':
+//                        return symbolCounter.get(Suit.ANIMAL);
+//                    case 'I':
+//                        return symbolCounter.get(Suit.INSECT);
+//                    case 'F':
+//                        return symbolCounter.get(Suit.MUSHROOM);
+//                    case 'P':
+//                        return symbolCounter.get(Suit.PLANT);
                     case 'Q':
-                        return symbolCounter.get(Item.QUILL);
+                        return prevSymbolCounter.get(Item.QUILL)+1;
                     case 'K':
-                        return symbolCounter.get(Item.INKWELL);
+                        return prevSymbolCounter.get(Item.INKWELL)+1;
                     case 'M':
-                        return symbolCounter.get(Item.MANUSCRIPT);
+                        return prevSymbolCounter.get(Item.MANUSCRIPT)+1;
                     case '_':
                         return score;
                     case 'E':

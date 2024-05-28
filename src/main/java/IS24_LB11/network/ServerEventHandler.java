@@ -217,6 +217,13 @@ public class ServerEventHandler {
         }
     }
 
+    public static void chooseCurrentSetup(ClientHandler clientHandler) {
+        if(pickedGoalCards.size() == clientHandler.getGame().getPlayers().size()) {
+            clientHandler.getGame().chooseGoalPhase(pickedGoalCards, pickedStarterCards);
+            NotifyTurnPhase.startPhase(clientHandler.getClientHandlerWithUsername(clientHandler.getGame().currentPlayer().name()));
+        }
+    }
+
     /**
      * Handles scoreboard events.
      * @param event the JSON object representing the scoreboard event

@@ -36,6 +36,7 @@ public abstract class ClientGUIState {
         if (serverHandler == null)
             return;
         serverHandler.shutdown();
+        Thread.currentThread().interrupt();
     }
 
     /**

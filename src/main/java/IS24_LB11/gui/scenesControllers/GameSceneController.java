@@ -2,7 +2,6 @@ package IS24_LB11.gui.scenesControllers;
 
 
 import IS24_LB11.game.PlacedCard;
-import IS24_LB11.game.Player;
 import IS24_LB11.game.components.PlayableCard;
 import IS24_LB11.game.symbol.Item;
 import IS24_LB11.game.symbol.Suit;
@@ -222,36 +221,36 @@ public class GameSceneController extends GenericSceneController{
         updateSymbolsCounter();
         scoreboardPositions = ScoreboardCoordinates.generate();
 
-        for (int i=1; i<=scoreboardPositions.size(); i++) {
-            int diffX = scoreboardPositions.get(i%30).getX() - scoreboardPositions.get((i-1)%30).getX();
-            int diffY = scoreboardPositions.get(i%30).getY() - scoreboardPositions.get((i-1)%30).getY();
-
-            translations.add(new TranslateTransition(Duration.millis(500)));
-            translations.getLast().setByX(diffX);
-            translations.getLast().setByY(diffY);
-        }
+//        for (int i=1; i<=scoreboardPositions.size(); i++) {
+//            int diffX = scoreboardPositions.get(i%30).getX() - scoreboardPositions.get((i-1)%30).getX();
+//            int diffY = scoreboardPositions.get(i%30).getY() - scoreboardPositions.get((i-1)%30).getY();
+//
+//            translations.add(new TranslateTransition(Duration.millis(500)));
+//            translations.getLast().setByX(diffX);
+//            translations.getLast().setByY(diffY);
+//        }
     }
 
 
 
     private void hideInitialPawns() {
+        ArrayList<Color> presentColor = new ArrayList<>();
         for (String username : state.getPlayers()){
-            switch (state.getPlayersColors().get(username)){
-                case RED -> redPion.setVisible(false);
-                case YELLOW -> yellowPion.setVisible(false);
-                case GREEN -> greenPion.setVisible(false);
-                case BLUE -> bluePion.setVisible(false);
-                default -> {
-                    return;
+            presentColor.add(state.getPlayersColors().get(username));
+        }
+        for (Color color: Color.values()){
+            if (!presentColor.contains(color)){
+                    switch (color){
+                        case RED -> redPion.setVisible(false);
+                        case YELLOW -> yellowPion.setVisible(false);
+                        case GREEN -> greenPion.setVisible(false);
+                        case BLUE -> bluePion.setVisible(false);
+                        default -> {
+                            return;
+                        }
                 }
             }
         }
-
-
-        if (numberPlayerInGame <= 3)
-            yellowPion.setVisible(false);
-        if (numberPlayerInGame <= 2)
-            bluePion.setVisible(false);
     }
 
     private void hidePlayersInScoreboard() {
@@ -312,6 +311,7 @@ public class GameSceneController extends GenericSceneController{
             for (String playername : state.getPlayers()) {
                 switch (state.getPlayersColors().get(playername)) {
                     case Color.RED:
+
                         animate(redPion, initScore.get(playername), finalScore.get(playername));
 
                         break;
@@ -364,6 +364,9 @@ public class GameSceneController extends GenericSceneController{
         updateDeck();
 
         updateHand();
+
+//        animate(redPion, 0,50);
+//        animate(greenPion, 0,50);
 
         executeAnimations(initScore, finalScore);
 
@@ -731,7 +734,6 @@ public class GameSceneController extends GenericSceneController{
         SequentialTransition st = new SequentialTransition(player);
 
         st.getChildren().addAll(getSubarray(startingPoints, finalPoints));
-
         st.setNode(player);
 
         st.play();
@@ -742,7 +744,12 @@ public class GameSceneController extends GenericSceneController{
         ArrayList<TranslateTransition> tts = new ArrayList<>();
 
         for (int i=startingPoints ; i < finalPoints ; i++) {
-            tts.add(translations.get(i%30));
+            int diffX = scoreboardPositions.get((i+1)%30).getX() - scoreboardPositions.get(i%30).getX();
+            int diffY = scoreboardPositions.get((i+1)%30).getY() - scoreboardPositions.get(i%30).getY();
+
+            tts.add(new TranslateTransition(Duration.millis(1000)));
+            tts.getLast().setByX(diffX);
+            tts.getLast().setByY(diffY);
         }
         return tts;
     }
