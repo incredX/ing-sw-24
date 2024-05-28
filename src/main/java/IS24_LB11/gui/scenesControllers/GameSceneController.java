@@ -2,7 +2,6 @@ package IS24_LB11.gui.scenesControllers;
 
 
 import IS24_LB11.game.PlacedCard;
-import IS24_LB11.game.Player;
 import IS24_LB11.game.components.PlayableCard;
 import IS24_LB11.game.symbol.Item;
 import IS24_LB11.game.symbol.Suit;
@@ -235,23 +234,23 @@ public class GameSceneController extends GenericSceneController{
 
 
     private void hideInitialPawns() {
+        ArrayList<Color> presentColor = new ArrayList<>();
         for (String username : state.getPlayers()){
-            switch (state.getPlayersColors().get(username)){
-                case RED -> redPion.setVisible(false);
-                case YELLOW -> yellowPion.setVisible(false);
-                case GREEN -> greenPion.setVisible(false);
-                case BLUE -> bluePion.setVisible(false);
-                default -> {
-                    return;
+            presentColor.add(state.getPlayersColors().get(username));
+        }
+        for (Color color: Color.values()){
+            if (!presentColor.contains(color)){
+                    switch (color){
+                        case RED -> redPion.setVisible(false);
+                        case YELLOW -> yellowPion.setVisible(false);
+                        case GREEN -> greenPion.setVisible(false);
+                        case BLUE -> bluePion.setVisible(false);
+                        default -> {
+                            return;
+                        }
                 }
             }
         }
-
-
-        if (numberPlayerInGame <= 3)
-            yellowPion.setVisible(false);
-        if (numberPlayerInGame <= 2)
-            bluePion.setVisible(false);
     }
 
     private void hidePlayersInScoreboard() {
