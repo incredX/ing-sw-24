@@ -1,5 +1,6 @@
 package IS24_LB11.gui;
 
+import IS24_LB11.cli.Debugger;
 import IS24_LB11.game.PlayerSetup;
 import IS24_LB11.game.components.*;
 import IS24_LB11.game.tools.JsonConverter;
@@ -28,6 +29,8 @@ import java.util.ArrayList;
  * game's progression.
  */
 public class ServerHandlerGUI implements Runnable {
+    private static final int MIN_TIMEOUT = 1_000;
+    private static final int MAX_TIMEOUT = 4_000;
 
     private long lastHeartbeatTime = 0;
     private Socket socket;
@@ -40,7 +43,9 @@ public class ServerHandlerGUI implements Runnable {
     private SetupSceneController setupSceneController = null;
     private GameSceneController gameSceneController = null;
     private GenericSceneController activeController = null;
-    Thread listener;
+
+    private int timeout = MIN_TIMEOUT;
+    private final Object timerLock = new Object();
 
     /**
      * Constructs a ServerHandlerGUI object to manage communication with the server.
@@ -63,30 +68,19 @@ public class ServerHandlerGUI implements Runnable {
      * Heartbeat check from the server.
      */
     public void run() {
-
-        listener = new Thread(()->{
-            while (running){
-                if ((System.currentTimeMillis() - lastHeartbeatTime > 3000 && lastHeartbeatTime != 0)) {
-                    Platform.runLater(() -> activeController.showPopUpRestartGame());
-                    running = false;
-                    Thread.currentThread().interrupt();
-                    break;
-                }
-            }
-        });
-        listener.start();
-
+        startEventTimer();
         while (running) {
             if (socket.isClosed()) break;
             try {
                 if (parser.hasNext()) {
+                    wakeupTimer();
                     processEvent(parser.next().getAsJsonObject());
                 }
             } catch (JsonIOException e) {
                 // Handle JsonIOException
             }
         }
-        listener.interrupt();
+        shutdownEventTimer();
         Thread.currentThread().interrupt();
     }
 
@@ -243,9 +237,7 @@ public class ServerHandlerGUI implements Runnable {
      */
     private void handleNotificationEvent(JsonObject serverEvent) {
         if (serverEvent.has("message")) {
-
             String message = serverEvent.get("message").getAsString();
-
             if (message.equals("Welcome " + actualState.getUsername() + "!")) {
                 addMessage("<Server> " + message);
                 Platform.runLater(() -> loginSceneController.disableLogin());
@@ -333,8 +325,66 @@ public class ServerHandlerGUI implements Runnable {
         } catch (IOException e) {
             System.out.println(e);
         }
-        listener.interrupt();
+        shutdownEventTimer();
         Thread.currentThread().interrupt();
+    }
+
+    /**
+     * Wakes up the event timer to reset the timeout.
+     */
+    private void wakeupTimer() {
+        synchronized (timerLock) {
+            timerLock.notifyAll();
+        }
+    }
+
+    /**
+     * Shuts down the event timer.
+     */
+    private void shutdownEventTimer() {
+        synchronized (timerLock) {
+            timeout = 0;
+            timerLock.notifyAll();
+        }
+    }
+
+    /**
+     * Starts a new event timer thread that monitors the connection to the server.
+     */
+    private void startEventTimer() {
+        new Thread(() -> {
+            Thread.currentThread().setName("event-timer");
+            Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
+            long timeStamp = System.currentTimeMillis();
+            while (true) {
+                synchronized (timerLock) {
+                    try {
+                        timerLock.wait(timeout);
+                        long diff = System.currentTimeMillis() - timeStamp;
+                        if (timeout == 0) // => needs to be shutdown
+                            break;
+                        if (diff >= timeout) {
+                            if (timeout >= MAX_TIMEOUT) {
+                                Platform.runLater(() -> activeController.showPopUpRestartGame());
+                                break;
+                            } else {
+                                timeout *= 2;
+                                JsonObject message = new JsonObject();
+                                message.addProperty("type", "heartbeat");
+                                write(message);
+                            }
+                        } else {
+                            //Debugger.print("Server up  " + diff);
+                            timeStamp += diff;
+                            timeout = MIN_TIMEOUT;
+                        }
+                    } catch (InterruptedException e) {
+                        Debugger.print(e);
+                        break;
+                    }
+                }
+            }
+        }).start();
     }
 
     /**
