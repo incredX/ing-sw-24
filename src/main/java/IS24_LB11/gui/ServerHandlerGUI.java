@@ -65,18 +65,16 @@ public class ServerHandlerGUI implements Runnable {
     public void run() {
 
         listener = new Thread(()->{
-            while (running){
+            while (this.running){
                 if ((System.currentTimeMillis() - lastHeartbeatTime > 3000 && lastHeartbeatTime != 0)) {
+                    this.running = false;
                     Platform.runLater(() -> activeController.showPopUpRestartGame());
-                    running = false;
-                    Thread.currentThread().interrupt();
-                    break;
                 }
             }
         });
         listener.start();
 
-        while (running) {
+        while (this.running) {
             if (socket.isClosed()) break;
             try {
                 if (parser.hasNext()) {
@@ -86,6 +84,7 @@ public class ServerHandlerGUI implements Runnable {
                 // Handle JsonIOException
             }
         }
+
         listener.interrupt();
         Thread.currentThread().interrupt();
     }
