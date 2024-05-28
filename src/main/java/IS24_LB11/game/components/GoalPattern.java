@@ -5,6 +5,9 @@ import IS24_LB11.game.utils.Direction;
 import IS24_LB11.game.utils.Position;
 import IS24_LB11.game.utils.SyntaxException;
 
+/**
+ * Represents a goal pattern in the game. Extends the functionality of a {@link GoalSymbol} by adding a variant and direction.
+ */
 public class GoalPattern extends GoalSymbol {
     private final char variant;
     private final int dir;
@@ -47,6 +50,11 @@ public class GoalPattern extends GoalSymbol {
         }
     }
 
+    /**
+     * Returns the string representation of the goal pattern.
+     *
+     * @return a string that represents the goal pattern
+     */
     @Override
     public String asString() {
         String str = super.asString();
@@ -54,21 +62,40 @@ public class GoalPattern extends GoalSymbol {
         return str;
     }
 
+    /**
+     * Returns the steps of the pattern as an array of {@link Position}.
+     *
+     * @return an array of positions representing the steps of the pattern
+     */
     public Position[] getPatternSteps() {
         Position[] steps = new Position[2];
         steps[0] = Direction.parse(dir).opposite().relativePosition();
         switch (variant) {
             case 'L' -> {
-                steps[1] = steps[0].transformY(y -> y*3);
+                steps[1] = steps[0].transformY(y -> y * 3);
             }
             case 'D' -> {
-                steps[1] = steps[0].transform(c -> c*2);
+                steps[1] = steps[0].transform(c -> c * 2);
             }
         }
         return steps;
     }
 
-    public char getVariant() { return variant; }
+    /**
+     * Returns the variant of the pattern.
+     *
+     * @return the variant character ('D' or 'L')
+     */
+    public char getVariant() {
+        return variant;
+    }
 
-    public int getDir() { return dir; }
+    /**
+     * Returns the direction of the pattern.
+     *
+     * @return the direction as an integer
+     */
+    public int getDir() {
+        return dir;
+    }
 }

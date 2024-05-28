@@ -6,7 +6,6 @@ import IS24_LB11.game.utils.SyntaxException;
 import IS24_LB11.network.phases.GameInitPhase;
 import IS24_LB11.network.phases.NotifyTurnPhase;
 import IS24_LB11.network.phases.TurnPhase;
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
@@ -16,9 +15,6 @@ import java.util.ArrayList;
  * This includes login, quit, message, heartbeat, setup, and turn actions events.
  */
 public class ServerEventHandler {
-
-    private static final Gson gson = new Gson();
-    private static ClientHandler clientHandler;
 
     private static ArrayList<GoalCard> pickedGoalCards = new ArrayList<>();
     private static ArrayList<StarterCard> pickedStarterCards = new ArrayList<>();
@@ -36,41 +32,41 @@ public class ServerEventHandler {
      * @param ch the client handler managing the client
      * @param eventJson the JSON string representing the event
      */
-    public static void handleEvent(ClientHandler ch, String eventJson) {
-        clientHandler = ch;
+    public static void handleEvent(ClientHandler ch, JsonObject event) {
 
-        JsonObject event = gson.fromJson(eventJson, JsonObject.class);
         String eventType = event.get("type").getAsString().toLowerCase();
+        if (!event.get("type").getAsString().equals("heartbeat"))
+            System.out.println(event);
 
         switch (eventType) {
             case "login":
-                handleLoginEvent(event);
+                handleLoginEvent(ch, event);
                 break;
             case "quit":
-                handleQuitEvent();
+                handleQuitEvent(ch);
                 break;
             case "message":
-                handleMessageEvent(event);
+                handleMessageEvent(ch, event);
                 break;
             case "heartbeat":
-                handleHeartBeatEvent(event);
+                handleHeartBeatEvent(ch, event);
                 break;
             case "numofplayers":
-                handleNumOfPlayersEvent(event);
+                handleNumOfPlayersEvent(ch, event);
                 break;
             case "setup":
-                handleSetupEvent(event);
+                handleSetupEvent(ch, event);
                 break;
             case "turnactions":
-                handleTurnActionsEvent(event);
+                handleTurnActionsEvent(ch, event);
                 break;
             case "scoreboard":
-                handleScoreboardEvent(event);
+                handleScoreboardEvent(ch, event);
                 break;
             default:
                 JsonObject error = new JsonObject();
                 error.addProperty("error", "Unknown event (" + eventType + ")");
-                clientHandler.sendMessage(error.toString());
+                ch.sendMessage(error.toString());
                 break;
         }
     }
@@ -79,7 +75,7 @@ public class ServerEventHandler {
      * Handles login events.
      * @param event the JSON object representing the login event
      */
-    private static void handleLoginEvent(JsonObject event) {
+    private static void handleLoginEvent(ClientHandler clientHandler, JsonObject event) {
         System.out.println("Login request received");
 
         String username;
@@ -147,7 +143,7 @@ public class ServerEventHandler {
      * Handles heartbeat events.
      * @param event the JSON object representing the heartbeat event
      */
-    private static void handleHeartBeatEvent(JsonObject event) {
+    private static void handleHeartBeatEvent(ClientHandler clientHandler, JsonObject event) {
         clientHandler.setLastHeartbeatTime(System.currentTimeMillis());
     }
 
@@ -155,7 +151,7 @@ public class ServerEventHandler {
      * Handles message events.
      * @param event the JSON object representing the message event
      */
-    private static void handleMessageEvent(JsonObject event) {
+    private static void handleMessageEvent(ClientHandler clientHandler, JsonObject event) {
         String messageEventSyntax = hasProperties(event, "message", "to", "from");
 
         System.out.println(event.toString());
@@ -190,7 +186,7 @@ public class ServerEventHandler {
     /**
      * Handles quit events.
      */
-    private static void handleQuitEvent() {
+    private static void handleQuitEvent(ClientHandler clientHandler) {
         clientHandler.exit();
     }
 
@@ -198,7 +194,7 @@ public class ServerEventHandler {
      * Handles setup events.
      * @param event the JSON object representing the setup event
      */
-    private static void handleSetupEvent(JsonObject event) {
+    private static void handleSetupEvent(ClientHandler clientHandler, JsonObject event) {
         JsonObject response = new JsonObject();
         String checkEvent = hasProperties(event, "starterCard", "goalCard");
 
@@ -225,7 +221,7 @@ public class ServerEventHandler {
      * Handles scoreboard events.
      * @param event the JSON object representing the scoreboard event
      */
-    private static void handleScoreboardEvent(JsonObject event) {
+    private static void handleScoreboardEvent(ClientHandler clientHandler, JsonObject event) {
         JsonObject response = new JsonObject();
         response.addProperty("type", "scoreboard");
 
@@ -245,7 +241,7 @@ public class ServerEventHandler {
      * Handles turn actions events.
      * @param event the JSON object representing the turn actions event
      */
-    private static void handleTurnActionsEvent(JsonObject event) {
+    private static void handleTurnActionsEvent(ClientHandler clientHandler, JsonObject event) {
         String hasProps = hasProperties(event, "placedCard", "deckType", "indexVisibleCards");
 
         if (hasProps.equals("OK")) {
@@ -261,7 +257,7 @@ public class ServerEventHandler {
      * Handles setting the number of players event.
      * @param event the JSON object representing the number of players event
      */
-    private static void handleNumOfPlayersEvent(JsonObject event) {
+    private static void handleNumOfPlayersEvent(ClientHandler clientHandler, JsonObject event) {
         JsonObject response = new JsonObject();
         String hasProps = hasProperties(event, "numOfPlayers");
 

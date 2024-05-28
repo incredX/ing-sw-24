@@ -13,7 +13,7 @@ import java.io.InputStreamReader;
 import java.util.function.Consumer;
 
 public class HelpPoup extends Popup {
-    private static final String FILE_NAME = "/commands.json";
+    private static final String FILE_NAME = "/JSONFiles/commands.json";
 
     private final JsonArray commandList;
     private ClientState state;

@@ -29,4 +29,8 @@ public class Chat {
     public ArrayList<Text> getMessages() {
         return messages;
     }
+
+    public void clearChat() {
+        messages.clear();
+    }
 }

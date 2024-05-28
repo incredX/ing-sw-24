@@ -45,7 +45,9 @@ public class GameState extends ClientState implements PlayerStateInterface {
     private boolean cardPlaced = false;
     private boolean cardPicked = false;
     private boolean playerTurn = false;
+    private boolean finalTurn = false;
     private boolean gameOver = false;
+    private int turn = 0;
 
     /**
      * Constructs a new {@code GameState} object from a setup state.
@@ -101,7 +103,7 @@ public class GameState extends ClientState implements PlayerStateInterface {
     }
 
     /**
-     * Executes the game state after settig up the stage and popups.
+     * Executes the game state after setting up the stage and popups.
      *
      * @return the next client state to be executed.
      */
@@ -120,11 +122,8 @@ public class GameState extends ClientState implements PlayerStateInterface {
 
     @Override
     protected void processServerDown() {
-        notificationStack.removeAllNotifications();
-        popManager.hideAllPopups();
-        serverHandler.shutdown();
         super.processServerDown();
-        setNextState(new LobbyState(viewHub));
+        setNextState(new LobbyState(this));
     }
 
     /**
@@ -141,22 +140,29 @@ public class GameState extends ClientState implements PlayerStateInterface {
                 if (newTurnEvent.player().isEmpty()) {
                     if (newTurnEvent.endOfGame()) {
                         gameOver = true;
-                        popManager.hideAllPopups();
-                        popManager.showPopup("table");
-                        popManager.getPopup("table").enable();
-                        notificationStack.add(MEDIUM, "GAME ENDED", "press [ENTER] to go back to the lobby");
-                    } else logout();
-                }
-                if (newTurnEvent.player().equals(username)) {
+                    }
+                    popManager.hideAllPopups();
+                    popManager.showPopup("table");
+                    popManager.getPopup("table").enable();
+                    cmdLine.disable();
+                    notificationStack.add(MEDIUM, "GAME ENDED", "press [ENTER] to go back to the lobby");
+                }else if (newTurnEvent.player().equals(username)) {
                     cardPlaced = false;
                     cardPicked = false;
                     playerTurn = true;
+                    processCommandSendtoall("turn done");
                 }
                 updateBoardPointerImage();
                 gameStage.updatePointer();
                 table.update(newTurnEvent);
                 popManager.getOptionalPopup("decks").ifPresent(Popup::update);
                 popManager.getOptionalPopup("table").ifPresent(Popup::update);
+
+                System.out.println("\nTURN " + turn);
+                turn ++;
+
+                finalTurn = (table.getNormalDeck().isEmpty() && table.getGoldenDeck().isEmpty())
+                        || table.getScoreboard().getScores().get(table.getCurrentTopPlayerIndex()) >= 20;
             }
             case ServerPlayerDisconnectEvent disconnectEvent -> {
                 if (gameOver) break;
@@ -222,7 +228,6 @@ public class GameState extends ClientState implements PlayerStateInterface {
      * Draws a card from the deck.
      */
     public void drawCardFromDeck() {
-        JsonConverter converter = new JsonConverter();
         if (cardPicked || !cardPlaced || !playerTurn)
             return;
         DecksPopup decksPopup = (DecksPopup) popManager.getPopup("decks");
@@ -232,16 +237,8 @@ public class GameState extends ClientState implements PlayerStateInterface {
         popManager.hidePopup("decks");
         cardPicked = true;
         playerTurn = false;
-        try {
-            JsonObject jsonPlacedCard = (JsonObject) new JsonParser().parse(converter.objectToJSON(placedCard));
-            JsonElement jsonDeckType = new JsonPrimitive(!decksPopup.selectedNormalDeck());
-            JsonElement jsonCardIndex = new JsonPrimitive(decksPopup.getCardIndex() + 1);
-            sendToServer("turnActions", new String[]{"placedCard", "deckType", "indexVisibleCards"},
-                    new JsonElement[]{jsonPlacedCard, jsonDeckType, jsonCardIndex});
-        } catch (JsonException e) {
-            Debugger.print(e);
-        }
-        notificationStack.removeNotifications(Priority.LOW);
+
+        sendTurnActions();
     }
 
     /**
@@ -264,6 +261,11 @@ public class GameState extends ClientState implements PlayerStateInterface {
             updateBoardPointerImage();
             gameStage.updateBoard();
             popManager.getPopup("symbols").update();
+
+            if (finalTurn) {
+                cardPicked = true;
+                sendTurnActions();
+            }
         } else {
             notificationStack.addUrgent("WARNING", "cannot place card");
         }
@@ -287,6 +289,26 @@ public class GameState extends ClientState implements PlayerStateInterface {
     private void centerBoardPointer() {
         boardPointer = new Position(0, 0);
         updateBoardPointerImage();
+    }
+
+    private void sendTurnActions() {
+        JsonConverter converter = new JsonConverter();
+        DecksPopup decksPopup = (DecksPopup) popManager.getPopup("decks");
+
+        boolean deckType = finalTurn ? false : !decksPopup.selectedNormalDeck();
+        int deckIndex = 1 + (finalTurn ? 0 : decksPopup.getCardIndex());
+
+
+        try {
+            JsonObject jsonPlacedCard = (JsonObject) new JsonParser().parse(converter.objectToJSON(placedCard));
+            JsonElement jsonDeckType = new JsonPrimitive(deckType);
+            JsonElement jsonCardIndex = new JsonPrimitive(deckIndex);
+            sendToServer("turnActions", new String[]{"placedCard", "deckType", "indexVisibleCards"},
+                    new JsonElement[]{jsonPlacedCard, jsonDeckType, jsonCardIndex});
+        } catch (JsonException e) {
+            Debugger.print(e);
+        }
+        notificationStack.removeNotifications(Priority.LOW);
     }
 
     /**

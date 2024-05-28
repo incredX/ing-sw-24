@@ -26,13 +26,13 @@ public class ClientAutomata {
         Result<AutomatedState> automatedClientResult;
         ClientState state;
 
-        // chack for command line argument (filepath of automata settings)
+        // check for command line argument (filepath of automata settings)
         if (args.length == 0) {
             Debugger.print("missing command line argument");
             return;
         }
 
-        // boot the debbuger
+        // boot the debugger
         try {
             Debugger.startDebugger(Debugger.DIR_NAME);
             automataSetup = new JsonParser().parse(new FileReader(args[0])).getAsJsonObject();

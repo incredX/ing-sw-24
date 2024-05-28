@@ -47,6 +47,10 @@ public class Result<T> {
         if (isOk()) consumer.accept(value);
     }
 
+    public void ifError(Consumer<Result<T>> consumer) {
+        if (isError()) consumer.accept(this);
+    }
+
     public <U> Result<T> execIfOk(Runnable runnable) {
         if (isOk()) runnable.run();
         return this;
@@ -87,5 +91,10 @@ public class Result<T> {
                 object.addProperty("cause", result.getCause());
         }
         return object;
+    }
+
+    public String toString() {
+        if (isError()) return error + (cause != null ? " :: " + cause : "");
+        return value.toString();
     }
 }

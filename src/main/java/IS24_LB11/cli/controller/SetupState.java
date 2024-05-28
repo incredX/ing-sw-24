@@ -1,5 +1,6 @@
 package IS24_LB11.cli.controller;
 
+import IS24_LB11.cli.Debugger;
 import IS24_LB11.cli.Scoreboard;
 import IS24_LB11.cli.Table;
 import IS24_LB11.cli.event.server.ServerEvent;
@@ -79,11 +80,8 @@ public class SetupState extends ClientState implements PlayerStateInterface {
      */
     @Override
     protected void processServerDown() {
-        notificationStack.removeAllNotifications();
-        popManager.hideAllPopups();
-        serverHandler.shutdown();
         super.processServerDown();
-        setNextState(new LobbyState(viewHub));
+        setNextState(new LobbyState(this));
     }
 
     /**
@@ -120,10 +118,10 @@ public class SetupState extends ClientState implements PlayerStateInterface {
                     notificationStack.addUrgent("ERROR", MISSING_ARG.apply("goal"));
                     return;
                 }
-                int index = 'a' - tokens[1].charAt(0);
+                int index = tokens[1].charAt(0) - 'a';
                 if (index < 0 || index > 1 || tokens[1].length() > 1)
                     notificationStack.addUrgent("ERROR",
-                            "command \"GOAL\" expects 'a' or 'b' as argument, "+tokens[1]+"was given");
+                            "command \"GOAL\" expects 'a' or 'b' as argument, "+tokens[1]+" was given");
                 else
                     setChosenGoal(index);
             }
@@ -131,9 +129,11 @@ public class SetupState extends ClientState implements PlayerStateInterface {
                 sendToServer("setup",
                         new String[]{"starterCard","goalCard"},
                         new String[]{setup.getStarterCard().asString(), setup.chosenGoal().asString()});
+                //notificationStack.removeNotifications(LOW);
                 setupStage.clear();
                 setNextState(new GameState(this));
             }
+            case "LOGOUT" -> logout();
             default -> notificationStack.addUrgent("ERROR", INVALID_CMD.apply(tokens[0], "game setup"));
         };
     }
@@ -174,6 +174,18 @@ public class SetupState extends ClientState implements PlayerStateInterface {
     protected void processResize(TerminalSize screenSize) {
         super.processResize(screenSize);
         popManager.resizePopups();
+    }
+
+    /**
+     * Close connection with the server (if still open) and return to the lobby.
+     */
+    public void logout() {
+        Debugger.print("logging out");
+        sendToServer("quit");
+        popManager.hideAllPopups();
+        notificationStack.removeAllNotifications();
+        serverHandler.shutdown();
+        setNextState(new LobbyState(viewHub));
     }
 
     /**

@@ -2,8 +2,6 @@ package IS24_LB11.gui.scenesControllers;
 
 
 import IS24_LB11.game.PlacedCard;
-
-import IS24_LB11.game.Player;
 import IS24_LB11.game.components.PlayableCard;
 import IS24_LB11.game.symbol.Item;
 import IS24_LB11.game.symbol.Suit;
@@ -15,6 +13,7 @@ import IS24_LB11.gui.phases.ClientGUIState;
 import IS24_LB11.gui.phases.GameGUIState;
 import IS24_LB11.gui.scenesControllers.ScoreboardController.AnimationInstruction;
 import IS24_LB11.gui.scenesControllers.ScoreboardController.ScoreboardCoordinates;
+import javafx.animation.SequentialTransition;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 
@@ -30,13 +29,10 @@ import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import javafx.animation.SequentialTransition;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 
 public class GameSceneController extends GenericSceneController{
@@ -149,10 +145,10 @@ public class GameSceneController extends GenericSceneController{
     int numberPlayerInGame;
     private final int centerBoardX = 10000;
     private final int centerBoardY = 10000;
-    private final int cardX = 300;
-    private final int cardY = 210;
-    private final int cardCornerX = 70;
-    private final int cardCornerY = 84;
+    private final int cardX = 270;
+    private final int cardY = 189;
+    private final int cardCornerX = 63;
+    private final int cardCornerY = 76;
     private ArrayList<ImageView> availableSpotsTemporaryCards = new ArrayList<>();
 
     ArrayList<AnimationInstruction> scoreboardPositions = new ArrayList<>();
@@ -163,7 +159,7 @@ public class GameSceneController extends GenericSceneController{
         this.state = (GameGUIState) state;
         this.genericState=state;
         this.stage = stage;
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/GamePage.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/FXMLScenes/GamePage.fxml"));
         loader.setController(this);
 
         this.stage.setTitle("Codex");
@@ -189,7 +185,7 @@ public class GameSceneController extends GenericSceneController{
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
         boardBackground.setImage(new Image(GameSceneController.class.getResourceAsStream("/graphicResources/backGround.jpeg")));
-//        cardBackground.setImage(new Image(GameSceneController.class.getResourceAsStream("/graphicResources/backGround.jpeg")));
+        //cardBackground.setImage(new Image(GameSceneController.class.getResourceAsStream("/graphicResources/backGround.jpeg")));
         // button and image event has to be declared here
         handCard1.setOnMouseClicked(mouseEvent -> chooseHandCard(0));
         handCard2.setOnMouseClicked(mouseEvent -> chooseHandCard(1));
@@ -208,6 +204,7 @@ public class GameSceneController extends GenericSceneController{
 
         centerBoardButton.setOnAction(mouseEvent -> moveToCenter(scrollPane));
 
+        chatBox.getStylesheets().add("/ChatStyle.css");
         chatBox.setOnMouseEntered(mouseEvent -> chatDisplay());
         chatBox.setOnMouseExited(mouseEvent -> chatHide());
         buttonSend.setOnMouseClicked(mouseEvent -> send());
@@ -232,49 +229,13 @@ public class GameSceneController extends GenericSceneController{
         updateSymbolsCounter();
         scoreboardPositions = ScoreboardCoordinates.generate();
 
-
-
-        scoreboardPositions.add(new AnimationInstruction(0, 430, 615));
-        scoreboardPositions.add(new AnimationInstruction(1, 508, 615));
-        scoreboardPositions.add(new AnimationInstruction(2, 586, 615));
-        scoreboardPositions.add(new AnimationInstruction(3, 623, 544));
-        scoreboardPositions.add(new AnimationInstruction(4, 545, 544));
-        scoreboardPositions.add(new AnimationInstruction(5, 467, 544));
-        scoreboardPositions.add(new AnimationInstruction(6, 389, 544));
-        scoreboardPositions.add(new AnimationInstruction(7, 389, 473));
-        scoreboardPositions.add(new AnimationInstruction(8, 467, 473));
-        scoreboardPositions.add(new AnimationInstruction(9, 545, 473));
-        scoreboardPositions.add(new AnimationInstruction(10, 623, 473));
-        scoreboardPositions.add(new AnimationInstruction(11, 623, 402));
-        scoreboardPositions.add(new AnimationInstruction(12, 545, 402));
-        scoreboardPositions.add(new AnimationInstruction(13, 467, 402));
-        scoreboardPositions.add(new AnimationInstruction(14, 389, 402));
-        scoreboardPositions.add(new AnimationInstruction(15, 389, 331));
-        scoreboardPositions.add(new AnimationInstruction(16, 467, 331));
-        scoreboardPositions.add(new AnimationInstruction(17, 545, 331));
-        scoreboardPositions.add(new AnimationInstruction(18, 623, 331));
-        scoreboardPositions.add(new AnimationInstruction(19, 623, 260));
-        scoreboardPositions.add(new AnimationInstruction(20, 508, 228));
-        scoreboardPositions.add(new AnimationInstruction(21, 389, 260));
-        scoreboardPositions.add(new AnimationInstruction(22, 389, 189));
-        scoreboardPositions.add(new AnimationInstruction(23, 389, 118));
-        scoreboardPositions.add(new AnimationInstruction(24, 432, 59));
-        scoreboardPositions.add(new AnimationInstruction(25, 505, 45));
-        scoreboardPositions.add(new AnimationInstruction(26, 578, 59));
-        scoreboardPositions.add(new AnimationInstruction(27, 621, 118));
-        scoreboardPositions.add(new AnimationInstruction(28, 621, 189));
-        scoreboardPositions.add(new AnimationInstruction(29, 508, 131));
-
-
         for (int i=1; i<=scoreboardPositions.size(); i++) {
-
             int diffX = scoreboardPositions.get(i%30).getX() - scoreboardPositions.get((i-1)%30).getX();
             int diffY = scoreboardPositions.get(i%30).getY() - scoreboardPositions.get((i-1)%30).getY();
 
             translations.add(new TranslateTransition(Duration.millis(500)));
             translations.getLast().setByX(diffX);
             translations.getLast().setByY(diffY);
-
         }
     }
 
@@ -329,51 +290,32 @@ public class GameSceneController extends GenericSceneController{
 
         this.stage.setResizable(false);
         this.stage.show();
-
-
-
     }
 
-    public void exit(Stage stage) {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Exit");
-        alert.setHeaderText("You are about to exit!");
-        alert.setContentText("Are you sure?");
-
-        if (alert.showAndWait().get() == ButtonType.OK) {
-            state.shutdown();
-            System.out.println("You successfully logged out!");
-            stage.close();
-        }
-    }
-
-    public void executeAnimations(int[] initScore, int[] finalScore){
-
-
+    public void executeAnimations(HashMap<String, Integer> initScore, HashMap<String, Integer> finalScore){
         try {
-            for (Color color : state.getPlayersColors().values()) {
-                switch (color) {
+            for (String playername : state.getPlayers()) {
+                switch (state.getPlayersColors().get(playername)) {
                     case Color.RED:
-
-                        animate(redPion, initScore[0], finalScore[0]);
+                        animate(redPion, initScore.get(playername), finalScore.get(playername));
 
                         break;
 
                     case Color.GREEN:
 
-                        animate(greenPion, initScore[1], finalScore[1]);
+                        animate(greenPion, initScore.get(playername), finalScore.get(playername));
 
                         break;
 
                     case Color.BLUE:
 
-                        animate(bluePion, initScore[2], finalScore[2]);
+                        animate(bluePion, initScore.get(playername), finalScore.get(playername));
 
                         break;
 
                     case Color.YELLOW:
 
-                        animate(yellowPion, initScore[3], finalScore[3]);
+                        animate(yellowPion, initScore.get(playername), finalScore.get(playername));
 
                         break;
                 }
@@ -389,19 +331,21 @@ public class GameSceneController extends GenericSceneController{
                            ArrayList<PlayableCard> goldenDeck) throws InterruptedException {
 
         //Useful for animating scores
-        int[] initScore = new int[4];
-        int[] finalScore = new int[4];
+        HashMap<String, Integer> initScore = new HashMap<>();
+        HashMap<String, Integer> finalScore = new HashMap<>();
 
-        for (int i=0; i <state.getPlayers().size(); i++) {
-            initScore[i]=state.getPlayersScore().get(state.getPlayers().get(i));
-        }
+//        for (int i=0; i <state.getPlayers().size(); i++) {
+//            initScore.add(state.getPlayersScore().get(state.getPlayers().get(i)));
+//        }
 
+        initScore = (HashMap<String, Integer>) state.getPlayersScore().clone();
         state.update(currentPlayerTurn, playerScores, normalDeck, goldenDeck);
 
-        for (int i=0; i <state.getPlayers().size(); i++) {
-            finalScore[i]=state.getPlayersScore().get(state.getPlayers().get(i));
-        }
+//        for (int i=0; i <state.getPlayers().size(); i++) {
+//            finalScore.add(state.getPlayersScore().get(state.getPlayers().get(i)));
+//        }
 
+        finalScore = (HashMap<String, Integer>) state.getPlayersScore().clone();
         updateDeck();
 
         updateHand();
@@ -411,30 +355,34 @@ public class GameSceneController extends GenericSceneController{
         updateScore();
 
         disableAllCardInputs(!state.isThisPlayerTurn());
+        if (!currentPlayerTurn.equals(state.getUsername()))
+            addMessage("<Server> It's " + currentPlayerTurn + " turn");
     }
     public void updateGame(ArrayList<Integer> playerScores) throws InterruptedException {
         //Useful for animating scores
-        int[] initScore = new int[4];
-        int[] finalScore = new int[4];
+        HashMap<String, Integer> initScore = new HashMap<>();
+        HashMap<String, Integer> finalScore = new HashMap<>();
 
-        for (int i=0; i <state.getPlayers().size(); i++) {
-            initScore[i]=state.getPlayersScore().get(state.getPlayers().get(i));
-            System.out.println(initScore[i]);
-        }
+//        for (int i=0; i <state.getPlayers().size(); i++) {
+//            initScore.add(state.getPlayersScore().get(state.getPlayers().get(i)));
+//        }
+
+        initScore = (HashMap<String, Integer>) state.getPlayersScore().clone();
+        System.out.println("INIT SCORE: " +initScore);
 
         state.update(playerScores);
 
-        for (int i=0; i <state.getPlayers().size(); i++) {
-            finalScore[i]=state.getPlayersScore().get(state.getPlayers().get(i));
-            System.out.println(finalScore[i]);
-        }
-
+        finalScore = (HashMap<String, Integer>) state.getPlayersScore().clone();
+        System.out.println("FINAL SCORE: " +finalScore);
 
         executeAnimations(initScore, finalScore);
 
         updateScore();
 
 
+//        for (int i=0; i <state.getPlayers().size(); i++) {
+//            finalScore.add(state.getPlayersScore().get(state.getPlayers().get(i)));
+//        }
     }
 
     private void disableGenericDeck(ImageView deckCard1, ImageView deckCard2, ImageView deckCard3, Boolean disable, Boolean deckType){
@@ -506,8 +454,10 @@ public class GameSceneController extends GenericSceneController{
         handCard1.setImage(ImageLoader.getImage(state.getPlayer().getHand().get(0).asString()));
         handCard1.setOpacity(1);
 
-        handCard2.setImage(ImageLoader.getImage(state.getPlayer().getHand().get(1).asString()));
-        handCard2.setOpacity(1);
+        if (state.getPlayer().getHand().size()>1){
+            handCard2.setImage(ImageLoader.getImage(state.getPlayer().getHand().get(1).asString()));
+            handCard2.setOpacity(1);
+        }
 
         if (state.getPlayer().getHand().size()>2) {
             handCard3.setImage(ImageLoader.getImage(state.getPlayer().getHand().get(2).asString()));
@@ -710,7 +660,7 @@ public class GameSceneController extends GenericSceneController{
 
         if(this.state.getPlayer().name().equals("Jonh") || this.state.getPlayer().name().equals("John") ||
                 this.state.getPlayer().name().equals("john") || this.state.getPlayer().name().equals("jonh"))
-            boardBackground.setImage(new Image(GameSceneController.class.getResourceAsStream("/graphicResources/codexCards/croppedCards/croppedBack/GXB.png")));
+            boardBackground.setImage(new Image(GameSceneController.class.getResourceAsStream("/graphicResources/Deck1.jpg")));
 
 
         Position realPosition = getRealPosition((int)availableSpot.getLayoutX(), (int)availableSpot.getLayoutY());
@@ -730,7 +680,7 @@ public class GameSceneController extends GenericSceneController{
             updateHand();
             disableHand(true);
             state.setPositionOfPlacedCard(realPosition);
-            if((state.getGoldenDeck().size() == 0 && state.getNormalDeck().size()==0) || state.isFinalTurn()){
+            if((state.getGoldenDeck().size() == 0 && state.getNormalDeck().size()==0 ) || state.isFinalTurn()){
                 state.execute();
             }
         }
@@ -778,9 +728,7 @@ public class GameSceneController extends GenericSceneController{
 
         ArrayList<TranslateTransition> tts = new ArrayList<>();
 
-
         SequentialTransition st = new SequentialTransition(player);
-
 
         st.getChildren().addAll(getSubarray(startingPoints, finalPoints));
 
@@ -791,15 +739,11 @@ public class GameSceneController extends GenericSceneController{
 
 
     private ArrayList<TranslateTransition> getSubarray(int startingPoints, int finalPoints) {
-
         ArrayList<TranslateTransition> tts = new ArrayList<>();
-
 
         for (int i=startingPoints ; i < finalPoints ; i++) {
             tts.add(translations.get(i%30));
         }
-
-
         return tts;
     }
 

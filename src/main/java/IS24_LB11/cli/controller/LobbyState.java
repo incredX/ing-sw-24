@@ -14,7 +14,7 @@ import IS24_LB11.game.Result;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.input.KeyStroke;
 
-import java.io.IOException;
+import static IS24_LB11.cli.notification.Priority.LOW;
 
 /**
  * The LobbyState class represents the state of the client when in the lobby.
@@ -34,6 +34,12 @@ public class LobbyState extends ClientState {
         this.popManager.addPopup(
                 new HelpPoup(viewHub, this)
         );
+    }
+
+    public LobbyState(ClientState clientState) {
+        super(clientState);
+        this.username = "";
+        this.popManager.removePopup("chat", "table", "symbols", "hand", "decks");
     }
 
     /**
@@ -65,9 +71,12 @@ public class LobbyState extends ClientState {
             case ServerPlayerSetupEvent setupEvent -> {
                 PlayerSetup setup = setupEvent.setup();
                 Table table = new Table(setupEvent);
+                notificationStack.removeNotifications(LOW);
                 setNextState(new SetupState(this, setup, table));
             }
-            case ServerPlayerDisconnectEvent disconnectEvent -> {}
+            case ServerPlayerDisconnectEvent disconnectEvent -> {
+                notificationStack.add(LOW, "Players "+disconnectEvent.player()+" disconnected");
+            }
             default -> processResult(Result.Error("received unknown server event"));
         }
     }
@@ -149,7 +158,7 @@ public class LobbyState extends ClientState {
     /**
      * Processes the login command with the specified username.
      *
-     * @param username the username to login with.
+     * @param username the username to log in with.
      */
     private void processCommandLogin(String username) {
         if (username.contains(" ")) {
@@ -173,13 +182,11 @@ public class LobbyState extends ClientState {
         else try {
             int serverPort = Integer.parseInt(tokens[1]);
             sendToServer("quit");
-            // serverHandler.shutdown(); // Commented out line from original code
+            if (serverHandler != null) serverHandler.shutdown(); // Commented out line from original code
             serverHandler = new ServerHandler(this, tokens[0], serverPort);
             new Thread(serverHandler).start();
         } catch (NumberFormatException e) {
             notificationStack.addUrgent("ERROR", EXPECTED_INT.apply("port"));
-        } catch (IOException e) {
-            notificationStack.addUrgent("ERROR", "connection to server failed");
         }
     }
 }

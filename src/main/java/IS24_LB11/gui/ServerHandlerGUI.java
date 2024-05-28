@@ -131,13 +131,14 @@ public class ServerHandlerGUI implements Runnable {
                 loginSceneController.resetServerHandler();
                 try {
                     loginSceneController.restart();
+                    loginSceneController.showPopUpNotification("Server full, try again later.");
                 } catch (Exception e) {
-                    throw new RuntimeException(e);
+                    System.out.println("Server full, try again later.");
                 }
             });
             shutdown();
         } else {
-            String msg = serverEvent.get("error").getAsString();
+            String msg = "<Server - error> " + serverEvent.get("error").getAsString();
             addMessage(msg);
         }
     }
@@ -161,9 +162,11 @@ public class ServerHandlerGUI implements Runnable {
      */
     private void handleDisconnectedEvent(JsonObject serverEvent) {
         String playerDisconnected = serverEvent.get("player").getAsString();
-        if (gameSceneController == (null))
-            Platform.runLater(() -> setupSceneController.removePlayer(playerDisconnected));
-        else {
+        //TODO: check why in login message doesn't work
+        if (gameSceneController == (null)) {
+            if (setupSceneController != null)
+                Platform.runLater(() -> setupSceneController.removePlayer(playerDisconnected));
+        } else {
             Platform.runLater(() -> gameSceneController.removePlayer(playerDisconnected));
         }
     }
@@ -203,9 +206,9 @@ public class ServerHandlerGUI implements Runnable {
                 gameTurnStateStarted = true;
                 Platform.runLater(() -> setupSceneController.changeToGameState());
             }
-            Platform.runLater(()-> {
+            Platform.runLater(() -> {
                 try {
-                    gameSceneController.updateGame(currentPlayerTurn,playerScores,normalDeck,goldenDeck);
+                    gameSceneController.updateGame(currentPlayerTurn, playerScores, normalDeck, goldenDeck);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
@@ -234,7 +237,6 @@ public class ServerHandlerGUI implements Runnable {
             String message = serverEvent.get("message").getAsString();
             if (message.equals("Welcome " + actualState.getUsername() + "!")) {
                 addMessage("<Server> " + message);
-                Platform.runLater(() -> loginSceneController.chatDisplay());
                 Platform.runLater(() -> loginSceneController.disableLogin());
             } else if (message.equals("Welcome, please log in")) {
                 return;
@@ -242,16 +244,11 @@ public class ServerHandlerGUI implements Runnable {
                 Platform.runLater(() -> loginSceneController.setPlayers());
             } else {
                 addMessage("<Server> " + message);
-                if (gameSceneController == null) {
-                    if (setupSceneController != null)
-                        Platform.runLater(() -> setupSceneController.chatDisplay());
-                } else {
-                    Platform.runLater(() -> gameSceneController.chatDisplay());
-                    if (message.equals("It is your FINAL turn")) {
-                        Platform.runLater(() -> gameSceneController.showPopUpNotification("It is your FINAL turn"));
-                        Platform.runLater(() -> gameSceneController.setFinalTurn());
-                    }
+                if (message.equals("It is your FINAL turn")) {
+                    Platform.runLater(() -> gameSceneController.showPopUpNotification("It is your FINAL turn"));
+                    Platform.runLater(() -> gameSceneController.setFinalTurn());
                 }
+
             }
         }
     }
@@ -263,6 +260,7 @@ public class ServerHandlerGUI implements Runnable {
      */
     private void addMessage(String msg) {
         Platform.runLater(() -> activeController.addMessage(msg));
+        Platform.runLater(() -> activeController.chatDisplay());
     }
 
     /**
@@ -397,6 +395,7 @@ public class ServerHandlerGUI implements Runnable {
         this.loginSceneController = loginSceneController;
         this.activeController = loginSceneController;
     }
+
     public void setSetupSceneController(SetupSceneController setupSceneController) {
         this.setupSceneController = setupSceneController;
         this.activeController = setupSceneController;

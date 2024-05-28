@@ -3,10 +3,10 @@ package IS24_LB11.network;
 import IS24_LB11.game.Game;
 import IS24_LB11.game.Player;
 import IS24_LB11.network.phases.NotifyTurnPhase;
-import com.google.gson.Gson;
+import com.google.gson.JsonIOException;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonStreamParser;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -20,18 +20,16 @@ import java.util.ArrayList;
  */
 public class ClientHandler implements Runnable {
     private Socket clientSocket;
-    private BufferedReader in;
+    private JsonStreamParser parser;
     private PrintWriter out;
     private String userName = null;
     private Server server;
     private boolean connectionClosed = false;
-    private static final int HEARTBEAT_INTERVAL = 1500;
+    private static final int HEARTBEAT_INTERVAL = 500;
     private long lastHeartbeatTime;
 
     private ArrayList<Thread> allStartedThreads = new ArrayList<>();
 
-    // Useful to convert JSON to string and vice versa
-    private Gson gson = new Gson();
 
     /**
      * Constructs a ClientHandler with the given server and client socket.
@@ -58,7 +56,7 @@ public class ClientHandler implements Runnable {
                         heartbeat.addProperty("type", "heartbeat");
                         sendMessage(heartbeat.toString());
                         Thread.sleep(HEARTBEAT_INTERVAL);
-
+//                        System.out.println(userName + " -> " + (System.currentTimeMillis() - lastHeartbeatTime));
                         if (System.currentTimeMillis() - lastHeartbeatTime > HEARTBEAT_INTERVAL * 5.5) {
                             System.out.println("Heartbeat timed out for " + userName);
 
@@ -77,17 +75,21 @@ public class ClientHandler implements Runnable {
             });
 
             // Wait for inputs from client
-            in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            out = new PrintWriter(clientSocket.getOutputStream());
+            parser = new JsonStreamParser(new InputStreamReader(this.clientSocket.getInputStream()));
+            out = new PrintWriter(this.clientSocket.getOutputStream());
 
             heartbeatThread.start();
             addToStartedThreads(heartbeatThread);
-
             String inputLine;
-            while (!connectionClosed && (inputLine = in.readLine()) != null) {
-                // Handle the received JSON data
-                ServerEventHandler.handleEvent(this, inputLine);
+            try {
+                while (!connectionClosed && parser.hasNext()) {
+                    // Handle the received JSON data
+                    ServerEventHandler.handleEvent(this, parser.next().getAsJsonObject());
+                }
+            } catch (JsonIOException e){
+
             }
+
 
             exit();
         } catch (IOException e) {
@@ -111,9 +113,11 @@ public class ClientHandler implements Runnable {
      * @param message the message to broadcast
      */
     public void broadcast(String message) {
-        for (ClientHandler clientHandler : getClientHandlers()) {
-            if (!this.equals(clientHandler) && clientHandler.getUserName() != null) {
-                clientHandler.sendMessage(message);
+        synchronized (getClientHandlers()) {
+            for (ClientHandler clientHandler : getClientHandlers()) {
+                if (!this.equals(clientHandler) && clientHandler.getUserName() != null) {
+                    clientHandler.sendMessage(message);
+                }
             }
         }
     }
@@ -123,7 +127,8 @@ public class ClientHandler implements Runnable {
      * @return the client's username
      */
     public String getUserName() {
-        return userName;
+        return this.userName;
+//        return Thread.currentThread().getName();
     }
 
     /**
@@ -132,6 +137,7 @@ public class ClientHandler implements Runnable {
      */
     public void setUserName(String userName) {
         this.userName = userName;
+        Thread.currentThread().setName(userName);
     }
 
     /**
@@ -193,19 +199,26 @@ public class ClientHandler implements Runnable {
                 clientDisconnected.addProperty("player", this.getUserName());
                 this.broadcast(clientDisconnected.toString());
 
+
                 // Pass turn to another player
                 if (this.getGame() != null && this.getGame().getPlayers().size() >= 1) {
                     Player currentPlayerReal;
 
+                    Boolean currentPlayerDisconnected = false;
+
                     if (this.getUserName().equals(this.getGame().currentPlayer().name())) {
-                        if (this.getGame().getTurn() >= 0)
+                        if (this.getGame().getTurn() >= 0){
+                            currentPlayerDisconnected = true;
                             this.getGame().setTurn(this.getGame().getTurn() + 1);
+                        }
                         currentPlayerReal = this.getGame().currentPlayer();
                     } else {
                         currentPlayerReal = this.getGame().currentPlayer();
                     }
 
-                    this.getGame().getPlayers().removeIf(player -> player.name().equals(this.getUserName()));
+                    synchronized (this.getGame()) {
+                        this.getGame().getPlayers().removeIf(player -> player.name().equals(this.getUserName()));
+                    }
 
                     if (this.getGame().getTurn() >= 0 && !this.getGame().hasGameEnded()) {
                         this.getGame().setTurn(this.getGame().getPlayers().indexOf(currentPlayerReal));
@@ -214,7 +227,7 @@ public class ClientHandler implements Runnable {
                             this.getGame().setGameEnded(true);
                             NotifyTurnPhase.startPhase(this.getClientHandlerWithUsername(this.getGame().currentPlayer().name()));
                         } else if (this.getGame().getPlayers().size() > 1) {
-                            if(this.getGame().currentPlayer().name().equals(this.userName))
+                            if(currentPlayerDisconnected)
                                 NotifyTurnPhase.startPhase(this.getClientHandlerWithUsername(this.getGame().currentPlayer().name()));
                         }
                     }
@@ -226,12 +239,12 @@ public class ClientHandler implements Runnable {
                 }
 
                 connectionClosed = true;
-                in.close();
                 out.close();
                 clientSocket.close();
                 for (Thread thread : allStartedThreads) {
                     thread.interrupt();
                 }
+
                 server.removeClientHandler(this);
             } catch (IOException e) {
                 // Handle exception

@@ -176,3 +176,10 @@
     -fx-font-size: 15pt;
     -fx-text-fill: -fx-secondary;
 }
+
+#symbolsLabel, #playersLabel {
+    -fx-font-family: 'Georgia';
+    -fx-font-size: 20pt;
+    -fx-text-fill: -fx-secondary;
+    -fx-background-color: -fx-primary;
+}

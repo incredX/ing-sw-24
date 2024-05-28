@@ -23,7 +23,7 @@ public class NotifyTurnPhase {
      */
     public static void startPhase(ClientHandler clientHandler) {
         JsonObject response = new JsonObject();
-
+        //TODO: add gameFinisghed and send message to notify the player
         if (!clientHandler.getGame().hasGameEnded()) {
             // Send notification to the next player about their turn
             response.addProperty("type", "notification");

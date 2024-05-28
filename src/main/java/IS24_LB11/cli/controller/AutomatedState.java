@@ -6,6 +6,8 @@ import IS24_LB11.cli.ViewHub;
 import IS24_LB11.cli.automation.PlacementFunction;
 import IS24_LB11.cli.event.server.*;
 import IS24_LB11.cli.listeners.ServerHandler;
+import IS24_LB11.cli.notification.Priority;
+import IS24_LB11.cli.popup.DecksPopup;
 import IS24_LB11.game.PlacedCard;
 import IS24_LB11.game.Player;
 import IS24_LB11.game.PlayerSetup;
@@ -20,7 +22,6 @@ import com.google.gson.JsonPrimitive;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.input.KeyStroke;
 
-import java.io.IOException;
 import java.util.Random;
 
 public class AutomatedState extends ClientState {
@@ -30,38 +31,34 @@ public class AutomatedState extends ClientState {
     private PlayerSetup playerSetup;
     private Player player;
     private Table table;
-    private String serverAddress;
-    private int serverPort;
     private int numPlayers;
+    private int turn = 0;
     private float goldenRate;
+    private boolean finalTurn = false;
 
-    public AutomatedState(ViewHub viewHub, String username, String serverAddress, int serverPort, int numPlayers, float goldenRate, PlacementFunction placementFunction) {
+    public AutomatedState(ViewHub viewHub, String username,
+                          String serverAddress, int serverPort,
+                          int numPlayers, float goldenRate, PlacementFunction placementFunction) {
         super(viewHub);
         this.username = username;
         this.placementFunction = placementFunction;
-        this.serverAddress = serverAddress;
-        this.serverPort = serverPort;
         this.numPlayers = numPlayers;
         this.goldenRate = goldenRate;
+        this.serverHandler = new ServerHandler(this, serverAddress, serverPort);
     }
 
     @Override
     public ClientState execute() {
         System.out.println("Running automated state...");
-        for (int i=0; i<3; i++) {
-            System.out.println("try num. "+i+" connecting to server");
-            try {
-                serverHandler = new ServerHandler(this, serverAddress, serverPort);
-                new Thread(serverHandler).start();
-                break;
-            } catch (IOException e) {
-                try { Thread.sleep(2500); }
-                catch (InterruptedException ie) { }
-            }
-        }
+        new Thread(serverHandler).start();
+
+        try { Thread.sleep(300); }
+        catch (InterruptedException e) { Debugger.print(e); }
 
         if (numPlayers >= 2) {
             sendToServer("login", "username", username);
+            try { Thread.sleep(300); }
+            catch (InterruptedException e) { Debugger.print(e); }
             sendToServer("numOfPlayers", "numOfPlayers", numPlayers);
         } else {
             try {
@@ -103,46 +100,63 @@ public class AutomatedState extends ClientState {
                 }
                 if (!turnEvent.player().equals(username)) break;
 
+                try { Thread.sleep(200); }
+                catch (InterruptedException e) { Debugger.print(e); }
+
+                finalTurn = (table.getNormalDeck().isEmpty() && table.getGoldenDeck().isEmpty())
+                        || table.getScoreboard().getScores().get(table.getCurrentTopPlayerIndex()) >= 20;
+
                 JsonConverter converter = new JsonConverter();
                 Position spot = placementFunction.getSpot(player.getBoard());
-                PlayableCard handCard = player.getHand().get(rand.nextInt(3));
+                PlayableCard handCard = player.getHand().get(rand.nextInt(player.getHand().size()));
                 PlacedCard placedCard = new PlacedCard(handCard, spot);
                 boolean fromGoldenDeck = rand.nextFloat() < goldenRate;
-                int selectedCardIndex;
+                int deckIndex;
 
-                if (fromGoldenDeck) {
+                if (finalTurn) {
+                    fromGoldenDeck = false;
+                    deckIndex = 0;
+                } else if (fromGoldenDeck) {
                     if (table.getGoldenDeck().isEmpty()) {
                         fromGoldenDeck = false;
-                        selectedCardIndex = rand.nextInt(table.getNormalDeck().size());
+                        deckIndex = rand.nextInt(table.getNormalDeck().size());
                     } else
-                        selectedCardIndex = rand.nextInt(table.getGoldenDeck().size());
+                        deckIndex = rand.nextInt(table.getGoldenDeck().size());
                 } else {
                     if (table.getNormalDeck().isEmpty()) {
                         fromGoldenDeck = true;
-                        selectedCardIndex = rand.nextInt(table.getGoldenDeck().size());
+                        deckIndex = rand.nextInt(table.getGoldenDeck().size());
                     } else
-                        selectedCardIndex = rand.nextInt(table.getNormalDeck().size());
+                        deckIndex = rand.nextInt(table.getNormalDeck().size());
                 }
 
-                if (handCard.asString().startsWith("G") && !handCard.isFaceDown()) handCard.flip();
-                player.placeCard(handCard, spot);
-                player.addCardToHand(fromGoldenDeck ? table.getGoldenDeck().get(selectedCardIndex) : table.getNormalDeck().get(selectedCardIndex));
-                try {
-                    JsonObject jsonPlacedCard = (JsonObject) new JsonParser().parse(converter.objectToJSON(placedCard));
-                    JsonElement jsonDeckType = new JsonPrimitive(fromGoldenDeck);
-                    JsonElement jsonCardIndex = new JsonPrimitive(selectedCardIndex+1);
-                    sendToServer("turnActions", new String[]{"placedCard", "deckType", "indexVisibleCards"},
-                            new JsonElement[]{jsonPlacedCard, jsonDeckType, jsonCardIndex});
-                } catch (JsonException e) {
-                    Debugger.print(e);
+                System.out.println("\nTURN " + turn);
+
+                if (handCard.isFaceDown()) handCard.flip();
+                player.tryPlaceCard(handCard, spot).ifError(result -> {
+                    System.out.println("PLACEMENT ERROR : " + result.toString());
+                    handCard.flip();
+                    player.tryPlaceCard(handCard, spot).ifError(result2 -> {
+                        System.out.println("PLACEMENT ERROR : " + result2.toString());
+                    });
+                });
+
+                if (!finalTurn) {
+                    player.addCardToHand(fromGoldenDeck ?
+                            table.getGoldenDeck().get(deckIndex) :
+                            table.getNormalDeck().get(deckIndex));
                 }
+
+                sendTurnActions(placedCard, fromGoldenDeck, deckIndex+1);
+
+                turn++;
 
                 if (placementFunction.placementTerminated())
                     setNextState(new GameState(this));
             }
             case ServerPlayerDisconnectEvent disconnectEvent -> {
-                table.getScoreboard().removePlayer(disconnectEvent.player());
-                //popManager.getPopup("table").redrawView();
+                if (table != null)
+                    table.getScoreboard().removePlayer(disconnectEvent.player());
             }
             default -> {}
         }
@@ -161,6 +175,27 @@ public class AutomatedState extends ClientState {
     @Override
     protected void processResize(TerminalSize screenSize) {
         //
+    }
+
+    @Override
+    protected void processServerDown() {
+        quit();
+    }
+
+    private void sendTurnActions(PlacedCard placedCard, boolean deckType, int deckIndex) {
+        JsonConverter converter = new JsonConverter();
+        DecksPopup decksPopup = (DecksPopup) popManager.getPopup("decks");
+
+        try {
+            JsonObject jsonPlacedCard = (JsonObject) new JsonParser().parse(converter.objectToJSON(placedCard));
+            JsonElement jsonDeckType = new JsonPrimitive(deckType);
+            JsonElement jsonCardIndex = new JsonPrimitive(deckIndex);
+            sendToServer("turnActions", new String[]{"placedCard", "deckType", "indexVisibleCards"},
+                    new JsonElement[]{jsonPlacedCard, jsonDeckType, jsonCardIndex});
+        } catch (JsonException e) {
+            Debugger.print(e);
+        }
+        notificationStack.removeNotifications(Priority.LOW);
     }
 
     public Player getPlayer() {

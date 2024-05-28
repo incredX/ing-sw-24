@@ -55,7 +55,7 @@ public class LoginSceneController extends GenericSceneController {
         this.stage = new Stage();
         this.state = (LoginGUIState) state;
         this.genericState = state;
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/LoginPage.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/FXMLScenes/LoginPage.fxml"));
         loader.setController(this);
         this.stage.setTitle("Codex");
         try {
@@ -131,11 +131,15 @@ public class LoginSceneController extends GenericSceneController {
             popUps.popUpMaker("Username too long");
             return;
         }
+
         String serverIP = ipTextField.getText();
         int port = Integer.valueOf(portTextField.getText());
+
         state.initialize(username, serverIP, port);
+        state.setLoginSceneController(this);
         state.execute();
-        state.getServerHandler().setLoginSceneController(this);
+        if (state.getServerHandler()!=null)
+            state.getServerHandler().setLoginSceneController(this);
     }
 
     /**

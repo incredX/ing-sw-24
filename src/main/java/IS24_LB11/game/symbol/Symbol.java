@@ -6,7 +6,6 @@ public interface Symbol {
     String INVALID_CHAR_MSG = "invalid char ('%c')";
     Character nullChar = '_';
 
-    //Character getChar();
 
     static Symbol fromChar(Character c) throws SyntaxException {
         if (Suit.isValidChar(c)) return Suit.fromCharacter(c);
