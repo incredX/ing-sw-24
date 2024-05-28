@@ -34,7 +34,7 @@ public class ClientAutomata {
 
         // boot the debugger
         try {
-            Debugger.startDebugger(Debugger.DIR_NAME);
+            //Debugger.startDebugger(Debugger.DIR_NAME);
             automataSetup = new JsonParser().parse(new FileReader(args[0])).getAsJsonObject();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
