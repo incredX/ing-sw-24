@@ -177,5 +177,6 @@ public class SetupGUIState extends ClientGUIState {
      */
     public void removePlayer(String playerDisconnected) {
         players.remove(playerDisconnected);
+        playersColors.remove(playerDisconnected);
     }
 }
