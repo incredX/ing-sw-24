@@ -217,6 +217,10 @@ public class ServerEventHandler {
         }
     }
 
+    public static void chooseCurrentSetup(ClientHandler clientHandler) {
+        clientHandler.getGame().chooseGoalPhase(pickedGoalCards, pickedStarterCards);
+    }
+
     /**
      * Handles scoreboard events.
      * @param event the JSON object representing the scoreboard event
