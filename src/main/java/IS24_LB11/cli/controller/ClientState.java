@@ -428,7 +428,7 @@ public abstract class ClientState {
      *
      * @param type the type of event
      */
-    protected void sendToServer(String type) {
+    public void sendToServer(String type) {
         if (serverHandler == null) return;
         JsonObject object = new JsonObject();
         object.addProperty("type", type);

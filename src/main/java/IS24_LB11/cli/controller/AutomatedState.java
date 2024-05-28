@@ -52,12 +52,12 @@ public class AutomatedState extends ClientState {
         System.out.println("Running automated state...");
         new Thread(serverHandler).start();
 
-        try { Thread.sleep(200); }
+        try { Thread.sleep(300); }
         catch (InterruptedException e) { Debugger.print(e); }
 
         if (numPlayers >= 2) {
             sendToServer("login", "username", username);
-            try { Thread.sleep(250); }
+            try { Thread.sleep(300); }
             catch (InterruptedException e) { Debugger.print(e); }
             sendToServer("numOfPlayers", "numOfPlayers", numPlayers);
         } else {
@@ -99,6 +99,9 @@ public class AutomatedState extends ClientState {
                     break;
                 }
                 if (!turnEvent.player().equals(username)) break;
+
+                try { Thread.sleep(200); }
+                catch (InterruptedException e) { Debugger.print(e); }
 
                 finalTurn = (table.getNormalDeck().isEmpty() && table.getGoldenDeck().isEmpty())
                         || table.getScoreboard().getScores().get(table.getCurrentTopPlayerIndex()) >= 20;
