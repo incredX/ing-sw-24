@@ -165,7 +165,6 @@ public class ServerHandlerGUI implements Runnable {
      */
     private void handleDisconnectedEvent(JsonObject serverEvent) {
         String playerDisconnected = serverEvent.get("player").getAsString();
-        //TODO: check why in login message doesn't work
         if (gameSceneController == (null)) {
             if (setupSceneController != null)
                 Platform.runLater(() -> setupSceneController.removePlayer(playerDisconnected));
