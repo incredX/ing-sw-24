@@ -218,7 +218,10 @@ public class ServerEventHandler {
     }
 
     public static void chooseCurrentSetup(ClientHandler clientHandler) {
-        clientHandler.getGame().chooseGoalPhase(pickedGoalCards, pickedStarterCards);
+        if(pickedGoalCards.size() == clientHandler.getGame().getPlayers().size()) {
+            clientHandler.getGame().chooseGoalPhase(pickedGoalCards, pickedStarterCards);
+            NotifyTurnPhase.startPhase(clientHandler.getClientHandlerWithUsername(clientHandler.getGame().currentPlayer().name()));
+        }
     }
 
     /**

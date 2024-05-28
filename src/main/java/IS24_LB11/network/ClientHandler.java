@@ -234,7 +234,6 @@ public class ClientHandler implements Runnable {
 
                     if(this.getGame().getTurn() == -1 && !this.getGame().hasGameEnded()) {
                         ServerEventHandler.chooseCurrentSetup(this);
-                        NotifyTurnPhase.startPhase(this.getClientHandlerWithUsername(this.getGame().currentPlayer().name()));
                     }
 
                     JsonObject response = new JsonObject();
