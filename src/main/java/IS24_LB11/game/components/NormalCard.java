@@ -5,9 +5,12 @@ import IS24_LB11.game.symbol.Suit;
 import IS24_LB11.game.symbol.Symbol;
 import IS24_LB11.game.utils.*;
 
-import java.util.HashMap;
+        import java.util.HashMap;
 import java.util.function.Consumer;
 
+/**
+ * Represents a normal card in the game with suit, corners, face state, and points.
+ */
 public class NormalCard implements PlayableCard {
     protected final Suit mainSuit;
     protected final Corners frontCorners;
@@ -43,8 +46,9 @@ public class NormalCard implements PlayableCard {
     }
 
     /**
+     * Returns a string that identifies the card and its state with the syntax described in <code>NormalCard</code>.
      *
-     * @return a <code>String</code> that identify the card and its state with the syntax described in <code>NormalCard</code>
+     * @return a <code>String</code> that represents the card
      */
     public String asString() {
         String str = "N";
@@ -55,56 +59,126 @@ public class NormalCard implements PlayableCard {
         return str;
     }
 
+    /**
+     * Updates the provided counters with the card's suit or corners depending on its face state.
+     *
+     * @param counters a <code>HashMap</code> of <code>Symbol</code> and <code>Integer</code> representing the counters
+     */
     public void updateCounters(HashMap<Symbol, Integer> counters) {
         if (faceDown) {
-            counters.computeIfPresent(mainSuit, ((symbol, integer) -> integer+1));
+            counters.computeIfPresent(mainSuit, ((symbol, integer) -> integer + 1));
             return;
         }
         frontCorners.updateCounters(counters);
     }
 
+    /**
+     * Applies the provided consumer to each corner symbol of the card.
+     *
+     * @param consumer a <code>Consumer</code> of <code>Symbol</code>
+     */
     @Override
     public void forEachCorner(Consumer<Symbol> consumer) {
-        for (int i=0; i<4; i++) {
+        for (int i = 0; i < 4; i++) {
             if (hasCorner(i)) consumer.accept(getCorner(i));
         }
     }
 
+    /**
+     * Applies the provided consumer to each direction of the card.
+     *
+     * @param consumer a <code>Consumer</code> of <code>Integer</code>
+     */
     @Override
     public void forEachDirection(Consumer<Integer> consumer) {
-        for (int i=0; i<4; i++) {
+        for (int i = 0; i < 4; i++) {
             consumer.accept(i);
         }
     }
 
+    /**
+     * Flips the card, changing its face state.
+     */
     public void flip() {
         faceDown = !faceDown;
     }
 
-    public Symbol getSuit() { return mainSuit; }
+    /**
+     * Returns the suit of the card.
+     *
+     * @return the card's <code>Suit</code>
+     */
+    public Symbol getSuit() {
+        return mainSuit;
+    }
 
+    /**
+     * Returns the symbol of the specified corner direction.
+     *
+     * @param dir the direction of the corner as an integer
+     * @return the <code>Symbol</code> of the corner
+     */
     public Symbol getCorner(int dir) {
         if (faceDown) return Empty.symbol();
         return frontCorners.getCorner(Direction.parse(dir));
     }
 
+    /**
+     * Returns the symbol of the specified corner direction.
+     *
+     * @param direction the direction of the corner as a <code>Direction</code>
+     * @return the <code>Symbol</code> of the corner
+     */
     public Symbol getCorner(Direction direction) {
         if (faceDown) return Empty.symbol();
         return frontCorners.getCorner(direction);
     }
 
-    public int getPoints() { return points; }
+    /**
+     * Returns the points of the card.
+     *
+     * @return the points as an integer
+     */
+    public int getPoints() {
+        return points;
+    }
 
+    /**
+     * Checks if the card has a corner symbol in the specified direction.
+     *
+     * @param dir the direction of the corner as an integer
+     * @return <code>true</code> if the card has a corner symbol, <code>false</code> otherwise
+     */
     public boolean hasCorner(int dir) {
         return faceDown || frontCorners.hasCorner(Direction.parse(dir));
     }
 
+    /**
+     * Checks if the card has a corner symbol in the specified direction.
+     *
+     * @param direction the direction of the corner as a <code>Direction</code>
+     * @return <code>true</code> if the card has a corner symbol, <code>false</code> otherwise
+     */
     public boolean hasCorner(Direction direction) {
         return faceDown || frontCorners.hasCorner(direction);
     }
 
-    public boolean isFaceDown() { return faceDown; }
+    /**
+     * Returns whether the card is face down.
+     *
+     * @return <code>true</code> if the card is face down, <code>false</code> otherwise
+     */
+    public boolean isFaceDown() {
+        return faceDown;
+    }
 
+    /**
+     * Checks if this <code>NormalCard</code> is equal to another <code>PlayableCard</code>. The cards are considered equal if their string representations,
+     * with 'B' replaced by 'F', are the same.
+     *
+     * @param other the other <code>PlayableCard</code> to compare with
+     * @return <code>true</code> if the cards are equal, <code>false</code> otherwise
+     */
     @Override
     public boolean equals(PlayableCard other) {
         String id = asString().replace('B', 'F');
