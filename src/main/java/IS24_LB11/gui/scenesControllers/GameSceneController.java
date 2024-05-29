@@ -382,12 +382,10 @@ public class GameSceneController extends GenericSceneController{
         HashMap<String, Integer> finalScore = new HashMap<>();
 
         initScore = (HashMap<String, Integer>) state.getPlayersScore().clone();
-        System.out.println("INIT SCORE: " +initScore);
 
         state.update(playerScores);
 
         finalScore = (HashMap<String, Integer>) state.getPlayersScore().clone();
-        System.out.println("FINAL SCORE: " +finalScore);
 
         executeAnimations(initScore, finalScore);
 
