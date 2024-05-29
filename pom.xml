@@ -27,6 +27,28 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
           <version>3.8.1</version>
+          <exclusions>
+              <exclusion>
+                  <artifactId>maven-plugin-api</artifactId>
+                  <groupId>org.apache.maven</groupId>
+              </exclusion>
+              <exclusion>
+                  <artifactId>plexus-compiler-api</artifactId>
+                  <groupId>org.codehaus.plexus</groupId>
+              </exclusion>
+              <exclusion>
+                  <artifactId>plexus-compiler-javac</artifactId>
+                  <groupId>org.codehaus.plexus</groupId>
+              </exclusion>
+              <exclusion>
+                  <artifactId>maven-shared-incremental</artifactId>
+                  <groupId>org.apache.maven.shared</groupId>
+              </exclusion>
+              <exclusion>
+                  <artifactId>maven-core</artifactId>
+                  <groupId>org.apache.maven</groupId>
+              </exclusion>
+          </exclusions>
       </dependency>
       <dependency>
           <groupId>com.google.code.gson</groupId>

@@ -30,7 +30,7 @@ public class ServerEventHandler {
     /**
      * Handles incoming events from clients.
      * @param ch the client handler managing the client
-     * @param eventJson the JSON string representing the event
+     * @param event the JSON string representing the event
      */
     public static void handleEvent(ClientHandler ch, JsonObject event) {
 
