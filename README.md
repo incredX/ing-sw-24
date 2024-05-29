@@ -17,11 +17,11 @@
 | Controller                                | :white_check_mark: |
 | CLI                                       | :white_check_mark: |
 | GUI                                       | :white_check_mark: |
-| Persistence                               | :x:                |
-| Multiple games                            | :x:                |
-| Connection resilience                     | :x:                |
 
 ## Advanced Feature Status
-| Feature     | Status             |
-|-------------|--------------------|
-| Chat        | :white_check_mark: |
+| Feature               | Status             |
+|-----------------------|--------------------|
+| Chat                  | :white_check_mark: |
+| Persistence           | :x:                |
+| Multiple games        | :x:                |
+| Connection resilience | :x:                |
