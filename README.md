@@ -18,7 +18,7 @@
 | CLI                                       | :white_check_mark: |
 | GUI                                       | :white_check_mark: |
 
-## Advanced Feature Status
+## Advanced Features Status
 | Feature               | Status             |
 |-----------------------|--------------------|
 | Chat                  | :white_check_mark: |
