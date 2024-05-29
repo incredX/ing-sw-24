@@ -15,7 +15,7 @@
 | [Final UML](deliveries/final-uml.png)                                     | :white_check_mark: |
 | [JavaDoc](deliveries/JavaDoc)                                             | :white_check_mark: |
 | [Card Encoding Documentation](deliveries/Card_Encoding_Documentation.pdf) | :white_check_mark: |
-| [Network communication protocol]()                                        | :white_check_mark: |
+| [Network communication protocol](deliveries/Network_Documentation.pdf)    | :white_check_mark: |
 | Model                                                                     | :white_check_mark: |
 | Server/Network                                                            | :white_check_mark: |
 | Controller                                                                | :white_check_mark: |
