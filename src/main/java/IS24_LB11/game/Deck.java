@@ -23,7 +23,7 @@ public class Deck {
      *
      * @param cardIndex represent wich card draw: 1/2 = 1st/2nd visible card, 3 = covered card
      * @return the selected card removing it from the deck
-     * @throw the DeckException when there aren't any cards left or the index is not allowed
+     * @throws DeckException when there aren't any cards left or the index is not allowed
      */
     public CardInterface drawCard(int cardIndex) throws DeckException {
 
@@ -53,7 +53,7 @@ public class Deck {
      * This methods show the cards in the position 1,2,3
      * @param cardIndex represent wich card draw: 1/2 = 1st/2nd visible card, 3 = covered card
      * @return the selected card without removing it
-     * @throw the DeckException when there aren't any cards left or the index is not allowed
+     * @throws DeckException when there aren't any cards left or the index is not allowed
      */
 
     public CardInterface showCard(int cardIndex) throws DeckException{

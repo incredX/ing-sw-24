@@ -26,7 +26,6 @@ import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.input.KeyStroke;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -92,7 +91,6 @@ public class GameState extends ClientState implements PlayerStateInterface {
      * @param stack the notification stack
      * @param setup the player setup
      * @param table the game table
-     * @throws IOException if an I/O error occurs
      */
     public GameState(ViewHub viewHub, NotificationStack stack, PlayerSetup setup, Table table) {
         super(viewHub, stack);

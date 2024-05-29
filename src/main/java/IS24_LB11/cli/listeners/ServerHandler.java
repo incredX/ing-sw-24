@@ -38,7 +38,6 @@ public class ServerHandler extends Listener implements Runnable {
      * @param state the client state which holds the event queue
      * @param serverIp the IP address of the server
      * @param serverPort the port number of the server
-     * @throws IOException if an I/O error occurs
      */
     public ServerHandler(ClientState state, String serverIp, int serverPort) {
         super(state);
