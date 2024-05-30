@@ -104,12 +104,11 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>package.mainclass</mainClass>
+                            <mainClass>IS24_LB11.Main</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
             </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
