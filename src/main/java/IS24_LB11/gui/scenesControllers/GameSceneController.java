@@ -258,7 +258,6 @@ public class GameSceneController extends GenericSceneController{
     }
 
     /**
-     * Hides the scoreboard entries for players who are not in the game.
      * This method adjusts the visibility of the player color, name, and score fields
      * based on the number of players currently in the game.
      */
