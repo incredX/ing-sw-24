@@ -208,7 +208,7 @@ public class GenericSceneController {
      */
     private void sendPublicMessage(String[] strings) {
         String msg = strings.length == 2 ? strings[1] : strings[1] + " " + strings[2];
-        Text sendToAll = new Text("<me> " + msg);
+        Text sendToAll = new Text("<Me -> All> " + msg);
         genericState.sendToAll(genericState.getUsername(), msg);
         chatPane.getItems().add(sendToAll);
         chat.addMessage(sendToAll);

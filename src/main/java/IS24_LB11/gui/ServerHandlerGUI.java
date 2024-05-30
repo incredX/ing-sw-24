@@ -153,7 +153,7 @@ public class ServerHandlerGUI implements Runnable {
      */
     private void handleMessageEvent(JsonObject serverEvent) {
         if (serverEvent.has("to") && serverEvent.has("from") && serverEvent.has("message")) {
-            String msg = "<" + serverEvent.get("from").getAsString() + "-> Me> " + serverEvent.get("message").getAsString();
+            String msg = "<" + serverEvent.get("from").getAsString() + " -> Me> " + serverEvent.get("message").getAsString();
             addMessage(msg);
         }
     }
