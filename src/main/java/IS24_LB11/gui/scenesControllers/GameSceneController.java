@@ -155,6 +155,12 @@ public class GameSceneController extends GenericSceneController{
     ArrayList<TranslateTransition> translations = new ArrayList<>();
 
 
+    /**
+     * Constructs a new GameSceneController with the specified client state and stage.
+     *
+     * @param state the current state of the client GUI, cast to GameGUIState.
+     * @param stage the primary stage for this controller.
+     */
     public GameSceneController(ClientGUIState state, Stage stage) {
         this.state = (GameGUIState) state;
         this.genericState=state;
@@ -176,7 +182,12 @@ public class GameSceneController extends GenericSceneController{
 
     }
 
-
+    /**
+     * Initializes the game scene controller.
+     * This method is automatically called after the FXML file has been loaded.
+     * It sets up the game environment, including initializing components, setting event handlers,
+     * loading images, configuring the chat box, and setting up the scoreboard.
+     */
     @FXML
     public void initialize() {
         state.getServerHandler().setGameSceneController(this);
@@ -222,7 +233,10 @@ public class GameSceneController extends GenericSceneController{
     }
 
 
-
+    /**
+     * This method checks the colors of the players currently in the game
+     * and hides the pawns of colors not associated with any player.
+     */
     private void hideInitialPawns() {
         ArrayList<Color> presentColor = new ArrayList<>();
         for (String username : state.getPlayers()){
@@ -243,6 +257,11 @@ public class GameSceneController extends GenericSceneController{
         }
     }
 
+    /**
+     * Hides the scoreboard entries for players who are not in the game.
+     * This method adjusts the visibility of the player color, name, and score fields
+     * based on the number of players currently in the game.
+     */
     private void hidePlayersInScoreboard() {
         if (state.getNumberOfPlayer() <= 3) {
             playerColor4.setVisible(false);
