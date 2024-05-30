@@ -280,6 +280,9 @@ public class GameSceneController extends GenericSceneController{
         }
     }
 
+    /**
+     * Sets the usernames and corresponding pawn images on the game board.
+     */
     private void setUsernamesBoard() {
         String basePath = "/graphicResources/codexCards/pawns/";
 
@@ -302,10 +305,13 @@ public class GameSceneController extends GenericSceneController{
         }
     }
 
+    /**
+     * Displays the game stage.
+     */
     public void showStage() {
-        // Place starterCard
+        // Place starter card
         moveToCenter(scrollPane);
-        ImageView starterCard =  getImageView(state.getPlayer().getBoard().getPlacedCards().getFirst());
+        ImageView starterCard = getImageView(state.getPlayer().getBoard().getPlacedCards().getFirst());
         ImageLoader.roundCorners(starterCard);
         playerBoard.getChildren().add(starterCard);
         scrollPane.setPannable(true);
@@ -314,7 +320,13 @@ public class GameSceneController extends GenericSceneController{
         this.stage.show();
     }
 
-    public void executeAnimations(HashMap<String, Integer> initScore, HashMap<String, Integer> finalScore){
+    /**
+     * Executes score animations for all players.
+     *
+     * @param initScore a HashMap containing the initial scores of the players
+     * @param finalScore a HashMap containing the final scores of the players
+     */
+    public void executeAnimations(HashMap<String, Integer> initScore, HashMap<String, Integer> finalScore) {
         try {
             for (String playername : state.getPlayers()) {
                 switch (state.getPlayersColors().get(playername)) {
@@ -332,22 +344,31 @@ public class GameSceneController extends GenericSceneController{
                         break;
                 }
             }
-        }catch(InterruptedException e){
+        } catch (InterruptedException e) {
             System.out.println(e);
         }
     }
 
+
+    /**
+     * Updates the game state and user interface based on the current player's turn, player scores, and deck states.
+     *
+     * @param currentPlayerTurn the username of the player whose turn it is
+     * @param playerScores a list of player scores
+     * @param normalDeck a list of normal deck cards
+     * @param goldenDeck a list of golden deck cards
+     * @throws InterruptedException if the thread is interrupted during animations
+     */
     public void updateGame(String currentPlayerTurn,
                            ArrayList<Integer> playerScores,
                            ArrayList<PlayableCard> normalDeck,
                            ArrayList<PlayableCard> goldenDeck) throws InterruptedException {
-        //Useful for animating scores
+
         HashMap<String, Integer> initScore = new HashMap<>();
         HashMap<String, Integer> finalScore = new HashMap<>();
 
         initScore = (HashMap<String, Integer>) state.getPlayersScore().clone();
         state.update(currentPlayerTurn, playerScores, normalDeck, goldenDeck);
-
 
         finalScore = (HashMap<String, Integer>) state.getPlayersScore().clone();
         updateDeck();
@@ -362,8 +383,15 @@ public class GameSceneController extends GenericSceneController{
         if (!currentPlayerTurn.equals(state.getUsername()))
             addMessage("<Server> It's " + currentPlayerTurn + " turn");
     }
+
+    /**
+     * Updates the game state and user interface based on the provided player scores.
+     *
+     * @param playerScores a list of player scores
+     * @throws InterruptedException if the thread is interrupted during animations
+     */
     public void updateGame(ArrayList<Integer> playerScores) throws InterruptedException {
-        //Useful for animating scores
+        // Useful for animating scores
         HashMap<String, Integer> initScore = new HashMap<>();
         HashMap<String, Integer> finalScore = new HashMap<>();
 
@@ -377,6 +405,7 @@ public class GameSceneController extends GenericSceneController{
 
         updateScore();
     }
+
 
     private void disableGenericDeck(ImageView deckCard1, ImageView deckCard2, ImageView deckCard3, Boolean disable, Boolean deckType){
         int size = deckType?state.getGoldenDeck().size():state.getNormalDeck().size();
@@ -415,56 +444,81 @@ public class GameSceneController extends GenericSceneController{
         disableGenericDeck(goldenDeckCard1,goldenDeckCard2,goldenDeckCard3,bool,true);
     }
 
-    public void disableAllCardInputs(Boolean bool){
+    /**
+     * Enables or disables all card inputs based on the provided boolean value.
+     *
+     * @param bool a boolean value indicating whether to disable (true) or enable (false) all card inputs
+     */
+    public void disableAllCardInputs(Boolean bool) {
+        // Disable or enable input for the player's hand cards
         disableHand(bool);
+
+        // Disable or enable input for the deck cards
         disableDecks(bool);
     }
 
+
+    /**
+     * Updates the visual representation of the normal and golden decks.
+     */
     public void updateDeck() {
-        if (state.getNormalDeck().size()>=1)
+        if (state.getNormalDeck().size() >= 1) {
             normalDeckCard1.setImage(ImageLoader.getImage(state.getNormalDeck().get(0).asString()));
-        if (state.getNormalDeck().size()>=2)
+        }
+
+        if (state.getNormalDeck().size() >= 2) {
             normalDeckCard2.setImage(ImageLoader.getImage(state.getNormalDeck().get(1).asString()));
-        if (state.getNormalDeck().size()>=3) {
+        }
+
+        if (state.getNormalDeck().size() >= 3) {
             StringBuffer flippedCard = new StringBuffer(state.getNormalDeck().get(2).asString());
             flippedCard.setCharAt(6, 'B');
-
-            normalDeckCard3.setImage(ImageLoader.getImage(String.valueOf(flippedCard)));
+            normalDeckCard3.setImage(ImageLoader.getImage(flippedCard.toString()));
         }
-        if (state.getGoldenDeck().size()>=1)
+
+        if (state.getGoldenDeck().size() >= 1) {
             goldenDeckCard1.setImage(ImageLoader.getImage(state.getGoldenDeck().get(0).asString()));
-        if (state.getGoldenDeck().size()>=2)
+        }
+
+        if (state.getGoldenDeck().size() >= 2) {
             goldenDeckCard2.setImage(ImageLoader.getImage(state.getGoldenDeck().get(1).asString()));
-        if (state.getGoldenDeck().size()>=3) {
+        }
+
+        if (state.getGoldenDeck().size() >= 3) {
             StringBuffer flippedCard = new StringBuffer(state.getGoldenDeck().get(2).asString());
             flippedCard.setCharAt(6, 'B');
-
-            goldenDeckCard3.setImage(ImageLoader.getImage(String.valueOf(flippedCard)));
+            goldenDeckCard3.setImage(ImageLoader.getImage(flippedCard.toString()));
         }
     }
 
+
+    /**
+     * Updates the visual representation of the player's hand.
+     *
+     * The method ensures that the hand cards' visual states are consistent with the player's current hand.
+     */
     public void updateHand() {
         handCard1.setImage(ImageLoader.getImage(state.getPlayer().getHand().get(0).asString()));
         handCard1.setOpacity(1);
 
-        if (state.getPlayer().getHand().size()>1){
+        if (state.getPlayer().getHand().size() > 1) {
             handCard2.setImage(ImageLoader.getImage(state.getPlayer().getHand().get(1).asString()));
             handCard2.setOpacity(1);
         }
 
-        if (state.getPlayer().getHand().size()>2) {
+        if (state.getPlayer().getHand().size() > 2) {
             handCard3.setImage(ImageLoader.getImage(state.getPlayer().getHand().get(2).asString()));
             flipHandCard3.setVisible(true);
             flipHandCard3.setDisable(false);
-        }
-        else {
+        } else {
             handCard3.setImage(null);
             flipHandCard3.setVisible(false);
             flipHandCard3.setDisable(true);
         }
-        handCard3.setOpacity(1);
 
+        handCard3.setOpacity(1);
     }
+
 
     private void disableHand(Boolean bool) {
         handCard1.setDisable(bool);
@@ -489,21 +543,36 @@ public class GameSceneController extends GenericSceneController{
         }
     }
 
+    /**
+     * Updates the displayed scores for all players currently in the game.
+     */
     public void updateScore() {
+        // Update scores for the first two players if there are at least 2 players in the game
         if (numberPlayerInGame >= 2) {
             playerScore1.setText(String.valueOf(state.getPlayersScore().get(playerName1.getText())));
             playerScore2.setText(String.valueOf(state.getPlayersScore().get(playerName2.getText())));
         }
+
+        // Update score for the third player if there are at least 3 players in the game
         if (numberPlayerInGame >= 3) {
             playerScore3.setText(String.valueOf(state.getPlayersScore().get(playerName3.getText())));
         }
+
+        // Update score for the fourth player if there are 4 players in the game
         if (numberPlayerInGame >= 4) {
             playerScore4.setText(String.valueOf(state.getPlayersScore().get(playerName4.getText())));
         }
     }
 
+
+    /**
+     * Allows the player to choose a card from their hand to play.
+     *
+     * @param n the index of the card in the player's hand to be chosen and played
+     */
     public void chooseHandCard(int n) {
         clearTemporaryCardsFromBoard(playerBoard);
+
         switch (n) {
             case 0:
                 state.chooseCardToPlay(state.getPlayer().getHand().getFirst());
@@ -527,25 +596,41 @@ public class GameSceneController extends GenericSceneController{
                 placeTemporaryCardsOnAvailableSpots(handCard3);
                 break;
         }
-
     }
 
+
+    /**
+     * Allows the player to choose a card from a specified deck and add it to their hand.
+     *
+     * @param n the index of the card to draw from the deck
+     * @param deckType true if selecting from the golden deck, false if selecting from the normal deck
+     */
     public void chooseDeckCard(int n, boolean deckType) {
-        if(state.getPlayer().getHand().size()<3) {
-            if (deckType)
+        if (state.getPlayer().getHand().size() < 3) {
+            if (deckType) {
                 state.chooseCardToDraw(state.getGoldenDeck().get(n), n, deckType);
-            else
+            } else {
                 state.chooseCardToDraw(state.getNormalDeck().get(n), n, deckType);
+            }
+
             state.execute();
+
             updateHand();
+
             handTab.getTabPane().getSelectionModel().select(handTab);
         }
     }
+
 
     public GameGUIState getState() {
         return state;
     }
 
+    /**
+     * Removes a player from the game when they disconnect.
+     *
+     * @param playerDisconnected the username of the player who disconnected
+     */
     public void removePlayer(String playerDisconnected) {
         switch (state.getPlayersColors().get(playerDisconnected)) {
             case GREEN -> greenPion.setVisible(false);
@@ -553,23 +638,33 @@ public class GameSceneController extends GenericSceneController{
             case BLUE -> bluePion.setVisible(false);
             case YELLOW -> yellowPion.setVisible(false);
         }
+
         state.removePlayer(playerDisconnected);
         numberPlayerInGame--;
 
         setUsernamesBoard();
 
         String basePath = "/graphicResources/codexCards/pawns/";
-        if (numberPlayerInGame >=2) {
-            playerColor1.setImage(new Image(GameSceneController.class.getResourceAsStream(basePath + Color.toPawn(state.getPlayersColors().get(playerName1.getText())))));
-            playerColor2.setImage(new Image(GameSceneController.class.getResourceAsStream(basePath + Color.toPawn(state.getPlayersColors().get(playerName2.getText())))));
-        }
-        if (numberPlayerInGame>=3)
-            playerColor3.setImage(new Image(GameSceneController.class.getResourceAsStream(basePath + Color.toPawn(state.getPlayersColors().get(playerName3.getText())))));
 
+        if (numberPlayerInGame >= 2) {
+            playerColor1.setImage(new Image(GameSceneController.class.getResourceAsStream(
+                    basePath + Color.toPawn(state.getPlayersColors().get(playerName1.getText())))));
+            playerColor2.setImage(new Image(GameSceneController.class.getResourceAsStream(
+                    basePath + Color.toPawn(state.getPlayersColors().get(playerName2.getText())))));
+        }
+
+        if (numberPlayerInGame >= 3) {
+            playerColor3.setImage(new Image(GameSceneController.class.getResourceAsStream(
+                    basePath + Color.toPawn(state.getPlayersColors().get(playerName3.getText())))));
+        }
+        // Hide the disconnected player from the scoreboard
         hidePlayersInScoreboard();
+        // Update the usernames on the board again
         setUsernamesBoard();
+        // Update the score to reflect the current game state
         updateScore();
     }
+
 
     private void clearBoard(Pane playerBoard){
         playerBoard.getChildren().clear();
@@ -702,9 +797,6 @@ public class GameSceneController extends GenericSceneController{
     public void setFinalTurn(){
         state.setIsFinalTurn(true);
     }
-
-
-
     private void animate (ImageView player, int startingPoints, int finalPoints) throws InterruptedException {
 
         ArrayList<TranslateTransition> tts = new ArrayList<>();
