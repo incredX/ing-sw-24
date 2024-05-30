@@ -185,7 +185,6 @@ public class GameSceneController extends GenericSceneController{
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
         boardBackground.setImage(new Image(GameSceneController.class.getResourceAsStream("/graphicResources/background2.jpg")));
-        //cardBackground.setImage(new Image(GameSceneController.class.getResourceAsStream("/graphicResources/backGround.jpeg")));
         // button and image event has to be declared here
         handCard1.setOnMouseClicked(mouseEvent -> chooseHandCard(0));
         handCard2.setOnMouseClicked(mouseEvent -> chooseHandCard(1));
@@ -220,15 +219,6 @@ public class GameSceneController extends GenericSceneController{
         setUsernamesBoard();
         updateSymbolsCounter();
         scoreboardPositions = ScoreboardCoordinates.generate();
-
-//        for (int i=1; i<=scoreboardPositions.size(); i++) {
-//            int diffX = scoreboardPositions.get(i%30).getX() - scoreboardPositions.get((i-1)%30).getX();
-//            int diffY = scoreboardPositions.get(i%30).getY() - scoreboardPositions.get((i-1)%30).getY();
-//
-//            translations.add(new TranslateTransition(Duration.millis(500)));
-//            translations.getLast().setByX(diffX);
-//            translations.getLast().setByY(diffY);
-//        }
     }
 
 
@@ -272,26 +262,25 @@ public class GameSceneController extends GenericSceneController{
     }
 
     private void setUsernamesBoard() {
+        String basePath = "/graphicResources/codexCards/pawns/";
+
+        if (numberPlayerInGame >= 1) {
+            playerName1.setText(state.getPlayers().getFirst());
+            playerColor1.setImage(new Image(GameSceneController.class.getResourceAsStream(basePath + Color.toPawn(state.getPlayersColors().get(playerName1.getText())))));
+        }
         if (numberPlayerInGame >= 2) {
             playerName1.setText(state.getPlayers().get(0));
             playerName2.setText(state.getPlayers().get(1));
+            playerColor1.setImage(new Image(GameSceneController.class.getResourceAsStream(basePath + Color.toPawn(state.getPlayersColors().get(playerName1.getText())))));
+            playerColor2.setImage(new Image(GameSceneController.class.getResourceAsStream(basePath + Color.toPawn(state.getPlayersColors().get(playerName2.getText())))));
         }
         if (numberPlayerInGame >= 3) {
             playerName3.setText(state.getPlayers().get(2));
+            playerColor3.setImage(new Image(GameSceneController.class.getResourceAsStream(basePath + Color.toPawn(state.getPlayersColors().get(playerName3.getText())))));
         }
         if (numberPlayerInGame >= 4) {
             playerName4.setText(state.getPlayers().get(3));
         }
-
-        String basePath = "/graphicResources/codexCards/pawns/";
-
-        if (numberPlayerInGame >=2) {
-            playerColor1.setImage(new Image(GameSceneController.class.getResourceAsStream(basePath + Color.toPawn(state.getPlayersColors().get(playerName1.getText())))));
-            playerColor2.setImage(new Image(GameSceneController.class.getResourceAsStream(basePath + Color.toPawn(state.getPlayersColors().get(playerName2.getText())))));
-        }
-        if (numberPlayerInGame>=3)
-            playerColor3.setImage(new Image(GameSceneController.class.getResourceAsStream(basePath + Color.toPawn(state.getPlayersColors().get(playerName3.getText())))));
-
     }
 
     public void showStage() {
@@ -311,27 +300,16 @@ public class GameSceneController extends GenericSceneController{
             for (String playername : state.getPlayers()) {
                 switch (state.getPlayersColors().get(playername)) {
                     case Color.RED:
-
                         animate(redPion, initScore.get(playername), finalScore.get(playername));
-
                         break;
-
                     case Color.GREEN:
-
                         animate(greenPion, initScore.get(playername), finalScore.get(playername));
-
                         break;
-
                     case Color.BLUE:
-
                         animate(bluePion, initScore.get(playername), finalScore.get(playername));
-
                         break;
-
                     case Color.YELLOW:
-
                         animate(yellowPion, initScore.get(playername), finalScore.get(playername));
-
                         break;
                 }
             }
@@ -344,29 +322,18 @@ public class GameSceneController extends GenericSceneController{
                            ArrayList<Integer> playerScores,
                            ArrayList<PlayableCard> normalDeck,
                            ArrayList<PlayableCard> goldenDeck) throws InterruptedException {
-
         //Useful for animating scores
         HashMap<String, Integer> initScore = new HashMap<>();
         HashMap<String, Integer> finalScore = new HashMap<>();
 
-//        for (int i=0; i <state.getPlayers().size(); i++) {
-//            initScore.add(state.getPlayersScore().get(state.getPlayers().get(i)));
-//        }
-
         initScore = (HashMap<String, Integer>) state.getPlayersScore().clone();
         state.update(currentPlayerTurn, playerScores, normalDeck, goldenDeck);
 
-//        for (int i=0; i <state.getPlayers().size(); i++) {
-//            finalScore.add(state.getPlayersScore().get(state.getPlayers().get(i)));
-//        }
 
         finalScore = (HashMap<String, Integer>) state.getPlayersScore().clone();
         updateDeck();
 
         updateHand();
-
-//        animate(redPion, 0,50);
-//        animate(greenPion, 0,50);
 
         executeAnimations(initScore, finalScore);
 
@@ -390,7 +357,6 @@ public class GameSceneController extends GenericSceneController{
         executeAnimations(initScore, finalScore);
 
         updateScore();
-
     }
 
     private void disableGenericDeck(ImageView deckCard1, ImageView deckCard2, ImageView deckCard3, Boolean disable, Boolean deckType){
@@ -581,7 +547,6 @@ public class GameSceneController extends GenericSceneController{
         if (numberPlayerInGame>=3)
             playerColor3.setImage(new Image(GameSceneController.class.getResourceAsStream(basePath + Color.toPawn(state.getPlayersColors().get(playerName3.getText())))));
 
-
         hidePlayersInScoreboard();
         setUsernamesBoard();
         updateScore();
@@ -636,10 +601,7 @@ public class GameSceneController extends GenericSceneController{
     }
 
     private Position getPositionOnBoard(int x, int y){
-
-        Position pos =
-                new Position(centerBoardX+(x*(cardX-cardCornerX)), centerBoardY+(y*(cardY-cardCornerY)));
-
+        Position pos = new Position(centerBoardX+(x*(cardX-cardCornerX)), centerBoardY+(y*(cardY-cardCornerY)));
         return pos;
     }
 
@@ -663,7 +625,6 @@ public class GameSceneController extends GenericSceneController{
 
 
     private void placeCard(ImageView availableSpot, ImageView selectedCardFromHand){
-
         Position realPosition = getRealPosition((int)availableSpot.getLayoutX(), (int)availableSpot.getLayoutY());
 
         ImageView cardToBePlaced = new ImageView(selectedCardFromHand.getImage());
