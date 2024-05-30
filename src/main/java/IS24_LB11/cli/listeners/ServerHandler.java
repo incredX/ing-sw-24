@@ -103,6 +103,13 @@ public class ServerHandler extends Listener implements Runnable {
         }
 
         shutdownEventTimer();
+        if (state != null) {
+            try {
+                state.queueEvent(new ServerDownEvent());
+            } catch (InterruptedException e) {
+                Debugger.print(e);
+            }
+        }
 
         if (!socket.isClosed()) {
             try {
